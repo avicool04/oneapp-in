@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OneApp.in | Vault + Renewals Autopilot</title>
+<style>
+:root{--primary:#1e40af;--success:#059669;--warn:#d97706;--danger:#ef4444;--bg:#f8fafc;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif}
+body{background:var(--bg);color:var(--dark);line-height:1.6}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
+.logo{font-weight:800;font-size:1.25rem;color:var(--primary)}
+.logo span{color:var(--gray)}
+.nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);margin-left:1rem;font-size:.95rem}
+.nav-links button.active{color:var(--primary)}
+.btn-emg{background:var(--danger);color:#fff!important;padding:.45rem .9rem;border-radius:6px}
+.container{max-width:900px;margin:1.5rem auto;padding:0 1rem}
+.view{display:none;animation:fadeIn .3s ease}.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:1.25rem;margin-bottom:1.25rem}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;border-bottom:1px solid #f1f5f9;padding-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+h2{color:var(--primary);margin-bottom:.25rem}h3{font-size:1.05rem}
+.sub{color:var(--gray);font-size:.9rem;margin-bottom:1rem}
+.badge{padding:.2rem .6rem;border-radius:20px;font-size:.75rem;font-weight:700}
+.badge-ok{background:#d1fae5;color:#065f46}.badge-warn{background:#fef3c7;color:#92400e}.badge-alert{background:#fee2e2;color:#991b1b}
+.doc-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px dashed #f1f5f9;gap:.75rem;flex-wrap:wrap}
+.doc-row:last-child{border-bottom:none}
+.doc-info h4{font-size:.98rem}.doc-info p{font-size:.85rem;color:var(--gray)}.doc-info small{color:#94a3b8;font-size:.75rem}
+.btn{padding:.6rem 1.1rem;border-radius:6px;border:none;font-weight:600;cursor:pointer;font-size:.9rem}
+.btn-sm{padding:.4rem .8rem;font-size:.8rem}
+.btn-primary{background:var(--primary);color:#fff}.btn-outline{background:#fff;border:1px solid var(--border);color:var(--dark)}
+.btn-success{background:var(--success);color:#fff}.btn-danger{background:var(--danger);color:#fff}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.toggle-row{display:flex;align-items:center;gap:.8rem;padding:.6rem 0}
+.switch{position:relative;width:46px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:34px;cursor:pointer;transition:.3s}
+.slider:before{content:"";position:absolute;width:16px;height:16px;left:4px;bottom:4px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--primary)}input:checked+.slider:before{transform:translateX(22px)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;padding:1.75rem;border-radius:12px;width:100%;max-width:480px}
+.scan-log{background:#0f172a;color:#a7f3d0;font-family:monospace;font-size:.78rem;padding:.75rem;border-radius:6px;margin:.75rem 0;min-height:80px;white-space:pre-wrap}
+.pay-box{background:#f8fafc;border:1px dashed #cbd5e1;padding:.75rem;border-radius:6px;margin:.75rem 0;font-size:.9rem}
+footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">One<span>App</span>.in</div>
+  <div class="nav-links">
+    <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
+    <button id="nav-auto" onclick="showView('autopilot')">🔄 Autopilot</button>
+    <button id="nav-guard" onclick="showView('guardians')">Guardians</button>
+    <button class="btn-emg" onclick="openModal('emergencyModal')">🆘 Emergency</button>
+  </div>
+</nav>
+
+<!-- VAULT -->
+<div id="vault" class="view active container">
+  <h2>My Secure Vault</h2>
+  <p class="sub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
+  <div class="card">
+    <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Synced from Source</span></div>
+    <div class="doc-row"><div class="doc-info"><h4>🪪 Aadhaar Card</h4><p>**** **** 1234 • Source: UIDAI/DigiLocker</p></div><button class="btn btn-outline btn-sm" onclick="alert('Opening secure watermarked viewer...')">View</button></div>
+    <div class="doc-row"><div class="doc-info"><h4>💳 PAN Card</h4><p>ABCDE1234F • Source: Income Tax Dept</p></div><button class="btn btn-outline btn-sm" onclick="alert('Opening secure watermarked viewer...')">View</button></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Assets & Policies</h3><button class="btn btn-outline btn-sm" onclick="openModal('scanModal')">+ Auto-Scan Upload</button></div>
+    <div class="doc-row"><div class="doc-info"><h4>🛡️ LIC Jeevan Anand</h4><p>Policy 123456 • Matures Dec 2045</p></div><span class="badge badge-ok">Active</span></div>
+    <div class="doc-row"><div class="doc-info"><h4>🏠 Property Deed — Pune Flat 402</h4><p>Registered Jan 2020</p></div><span class="badge badge-warn">Check stamp duty</span></div>
+  </div>
+</div>
+
+<!-- AUTOPILOT -->
+<div id="autopilot" class="view container">
+  <h2>🔄 Renewals Autopilot</h2>
+  <p class="sub">Every deadline tracked. Renew in one click. Never stand in a queue unknowingly.</p>
+
+  <div class="card">
+    <div class="card-header"><h3>⚠️ Action Needed</h3><span class="badge badge-alert">2 items</span></div>
+    <div class="doc-row">
+      <div class="doc-info"><h4>🚗 Vehicle Insurance — MH 12 AB 1234</h4><p>HDFC Ergo • Expires in <strong style="color:var(--warn)">12 days</strong> (05 Oct 2026)</p></div>
+      <button id="renewInsBtn" class="btn btn-primary btn-sm" onclick="openModal('renewModal')">⚡ 1-Click Renew</button>
+    </div>
+    <div class="doc-row">
+      <div class="doc-info"><h4>🌫️ PUC Certificate — MH 12 AB 1234</h4><p id="pucStatus">Physical visit required • Last test 40 days ago</p><small>We check the Parivahan portal online for you</small></div>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="checkPUC()">🔄 Check Online</button>
+        <button class="btn btn-success btn-sm" onclick="markPUC()">✅ Mark Renewed</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Auto-Tracked Expiries</h3><button class="btn btn-outline btn-sm" onclick="openModal('scanModal')">+ Add via Auto-Scan</button></div>
+    <div class="doc-row"><div class="doc-info"><h4>🏥 Health Insurance — Star Health</h4><p>Expires in 45 days • Reminder set: 30/15/1 days</p></div><span class="badge badge-ok">On Track</span></div>
+    <div class="doc-row"><div class="doc-info"><h4>🚦 Driving Licence</h4><p>Expires in 8 months</p></div><span class="badge badge-ok">On Track</span></div>
+    <div class="doc-row"><div class="doc-info"><h4>🛂 Passport</h4><p>Expires in 3 years</p></div><span class="badge badge-ok">On Track</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Bills & Challans</h3><span class="badge badge-warn">1 challan pending</span></div>
+    <div class="doc-row"><div class="doc-info"><h4>🚔 Traffic Challan — ₹500</h4><p>Red light violation, Pune • Via Parivahan</p></div><button class="btn btn-danger btn-sm" onclick="payBill('Traffic Challan',500)">Check & Pay</button></div>
+    <div class="doc-row"><div class="doc-info"><h4>⚡ Electricity Bill (MSEDCL) — ₹1,240</h4><p>Due 25 Sep 2026</p></div><button class="btn btn-primary btn-sm" onclick="payBill('MSEDCL Bill',1240)">Pay</button></div>
+    <div class="doc-row"><div class="doc-info"><h4>💳 SBI Credit Card — ₹12,300</h4><p>Due 05 Oct 2026</p></div><button class="btn btn-primary btn-sm" onclick="payBill('SBI Credit Card',12300)">Pay</button></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:.5rem">🔔 Reminder Channels</h3>
+    <div class="toggle-row"><label class="switch"><input type="checkbox" checked><span class="slider"></span></label><div><strong>Email alerts</strong> <span class="badge badge-ok">Free</span></div></div>
+    <div class="toggle-row"><label class="switch"><input type="checkbox" checked><span class="slider"></span></label><div><strong>Phone push notifications</strong> <span class="badge badge-ok">Free</span></div></div>
+    <div class="toggle-row"><label class="switch"><input type="checkbox" disabled><span class="slider" style="background:#cbd5e1"></span></label><div><strong>WhatsApp alerts</strong> <span class="badge badge-warn">Premium — coming with revenue</span></div></div>
+  </div>
+</div>
+
+<!-- GUARDIANS -->
+<div id="guardians" class="view container">
+  <h2>Trusted Guardians</h2>
+  <p class="sub">Who can access your Aadhaar/PAN if you're hospitalized or gone.</p>
+  <div class="card">
+    <div class="doc-row">
+      <div class="doc-info"><h4>Priya Sharma (Wife)</h4><p>+91 98xxxxxxx • Verified</p></div>
+      <label class="switch"><input type="checkbox" checked onchange="toggleGuardian(this,'Priya')"><span class="slider"></span></label>
+    </div>
+    <div class="doc-row">
+      <div class="doc-info"><h4>Rahul Kumar (Son, 16)</h4><p>Age-locked: unlocks at 18</p></div>
+      <label class="switch"><input type="checkbox" disabled><span class="slider" style="background:#cbd5e1"></span></label>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:.75rem" onclick="alert('Add guardian via Aadhaar-linked OTP (demo)')">+ Add Guardian</button>
+  </div>
+  <div class="card" style="background:#fffbeb;border-color:#fcd34d"><p style="font-size:.85rem"><strong>⚠️ Rule:</strong> Guardians get access ONLY after an Emergency Request is verified (OTP + hospital/death proof). All views are watermarked & logged.</p></div>
+</div>
+
+<!-- MODALS -->
+<div id="renewModal" class="modal-overlay"><div class="modal">
+  <h3>⚡ 1-Click Renewal</h3>
+  <p class="sub">Vehicle Insurance • MH 12 AB 1234</p>
+  <div class="pay-box"><strong>Premium: ₹2,450</strong><br>Same IDV & add-ons as last year. No form-filling.</div>
+  <label style="display:block;margin:.4rem 0"><input type="radio" name="pay" checked> UPI — oneapp@upi</label>
+  <label style="display:block;margin:.4rem 0"><input type="radio" name="pay"> Card ending 4521</label>
+  <button class="btn btn-success" style="width:100%;margin-top:.75rem" onclick="payRenewal()">Pay ₹2,450 & Renew</button>
+  <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('renewModal')">Cancel</button>
+</div></div>
+
+<div id="scanModal" class="modal-overlay"><div class="modal">
+  <h3>📄 Auto-Scan Upload</h3>
+  <p class="sub">Free in-browser OCR (Tesseract.js) reads the expiry date automatically. Document never leaves your device unencrypted.</p>
+  <input type="file" style="width:100%;margin:.5rem 0">
+  <div id="scanLog" class="scan-log">Ready to scan...</div>
+  <button class="btn btn-primary" style="width:100%" onclick="runScan()">Scan & Add to Tracker</button>
+  <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('scanModal')">Close</button>
+</div></div>
+
+<div id="emergencyModal" class="modal-overlay"><div class="modal">
+  <h3 style="color:var(--danger)">🆘 Emergency Access</h3>
+  <p class="sub">For guardians of a hospitalized/deceased user.</p>
+  <select style="width:100%;padding:.6rem;margin:.4rem 0"><option>Rajesh Kumar (linked to my Aadhaar)</option></select>
+  <select style="width:100%;padding:.6rem;margin:.4rem 0"><option>Hospitalization (unconscious)</option><option>Demise</option></select>
+  <input type="file" style="width:100%;margin:.4rem 0">
+  <button class="btn btn-danger" style="width:100%" onclick="closeModal('emergencyModal');alert('🔓 Verified (demo): Relationship + incident proof confirmed.\n\nAadhaar.pdf, PAN.pdf & bank details released — watermarked, 24-hour access.')">Verify & Unlock</button>
+  <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('emergencyModal')">Cancel</button>
+</div></div>
+
+<footer>Prototype v4 • Built for ₹0 stack: Vercel + Supabase + Tesseract.js + GitHub Actions + Razorpay<br>© 2026 OneApp.in — DPDP Act & UIDAI compliant by design</footer>
+
+<script>
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const map={vault:'nav-vault',autopilot:'nav-auto',guardians:'nav-guard'};
+  if(map[id])document.getElementById(map[id]).classList.add('active');
+  window.scrollTo(0,0);
+}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show')};
+
+function payRenewal(){
+  closeModal('renewModal');
+  alert('✅ Renewed successfully (simulated UPI).\n\n• New policy PDF saved to Vault\n• Expiry updated: 05 Oct 2027\n• Next reminder: Sep 2027');
+  const b=document.getElementById('renewInsBtn');
+  b.textContent='Renewed ✅';b.disabled=true;b.className='btn btn-success btn-sm';
+}
+function checkPUC(){
+  alert('🔄 Checking Parivahan (Vahan) portal...\n\nChecked: '+new Date().toLocaleString()+'\nResult: NO UPDATE FOUND.\n\nLast PUC test still shows 40 days ago.\nReminder: visit nearest PUC centre (~10 min).\nTap "Mark Renewed" after your visit — we\'ll verify online next sync.');
+}
+function markPUC(){
+  document.getElementById('pucStatus').innerHTML='<span class="badge badge-ok">Valid</span> Renewed today • Next due: 22 Mar 2027 • Certificate auto-saved to Vault';
+  alert('✅ PUC marked renewed.\nCertificate PDF saved to Vault & tracker updated.');
+}
+function payBill(name,amt){
+  if(confirm('Pay ₹'+amt+' for '+name+'? (BBPS simulated)')){
+    alert('✅ Paid ₹'+amt+' — '+name+'\nReceipt saved to Vault → Bills folder.\nNext due date auto-added to Autopilot.');
+  }
+}
+function toggleGuardian(cb,name){
+  alert(cb.checked?'✅ '+name+' can request emergency access (verified flow only).':'❌ '+name+'\'s emergency access revoked.');
+}
+function runScan(){
+  const log=document.getElementById('scanLog');
+  log.textContent='';
+  const steps=['> Encrypting file on device...','> Running OCR (Tesseract.js, free)...','> Detected text: "VALID TILL 23/09/2027"','> Type detected: Fitness Certificate','> ✅ Added to Autopilot tracker (365 days)'];
+  steps.forEach((s,i)=>setTimeout(()=>{log.textContent+=s+'\n';},i*700));
+}
+</script>
+</body>
+</html>
