@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OneApp.in | Vault + Renewals Autopilot</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1e40af">
 <style>
 :root{--primary:#1e40af;--success:#059669;--warn:#d97706;--danger:#ef4444;--bg:#f8fafc;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif}
@@ -14,6 +16,7 @@ nav{background:#fff;border-bottom:1px solid var(--border);padding:1rem 1.5rem;di
 .nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);margin-left:1rem;font-size:.95rem}
 .nav-links button.active{color:var(--primary)}
 .btn-emg{background:var(--danger);color:#fff!important;padding:.45rem .9rem;border-radius:6px}
+.btn-auth{background:var(--primary);color:#fff!important;padding:.45rem .9rem;border-radius:6px}
 .container{max-width:900px;margin:1.5rem auto;padding:0 1rem}
 .view{display:none;animation:fadeIn .3s ease}.view.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -42,6 +45,8 @@ input:checked+.slider{background:var(--primary)}input:checked+.slider:before{tra
 .modal{background:#fff;padding:1.75rem;border-radius:12px;width:100%;max-width:480px}
 .scan-log{background:#0f172a;color:#a7f3d0;font-family:monospace;font-size:.78rem;padding:.75rem;border-radius:6px;margin:.75rem 0;min-height:80px;white-space:pre-wrap}
 .pay-box{background:#f8fafc;border:1px dashed #cbd5e1;padding:.75rem;border-radius:6px;margin:.75rem 0;font-size:.9rem}
+.field{margin:.5rem 0}.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.25rem}
+.field input{width:100%;padding:.6rem;border:1px solid var(--border);border-radius:6px;font-size:.95rem}
 footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 </style>
 </head>
@@ -54,13 +59,14 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button id="nav-auto" onclick="showView('autopilot')">🔄 Autopilot</button>
     <button id="nav-guard" onclick="showView('guardians')">Guardians</button>
     <button class="btn-emg" onclick="openModal('emergencyModal')">🆘 Emergency</button>
+    <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
   </div>
 </nav>
 
 <!-- VAULT -->
 <div id="vault" class="view active container">
   <h2>My Secure Vault</h2>
-  <p class="sub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
+  <p class="sub" id="vaultSub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
   <div class="card">
     <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Synced from Source</span></div>
     <div class="doc-row"><div class="doc-info"><h4>🪪 Aadhaar Card</h4><p>**** **** 1234 • Source: UIDAI/DigiLocker</p></div><button class="btn btn-outline btn-sm" onclick="alert('Opening secure watermarked viewer...')">View</button></div>
@@ -77,7 +83,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <div id="autopilot" class="view container">
   <h2>🔄 Renewals Autopilot</h2>
   <p class="sub">Every deadline tracked. Renew in one click. Never stand in a queue unknowingly.</p>
-
   <div class="card">
     <div class="card-header"><h3>⚠️ Action Needed</h3><span class="badge badge-alert">2 items</span></div>
     <div class="doc-row">
@@ -92,21 +97,18 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
       </div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-header"><h3>Auto-Tracked Expiries</h3><button class="btn btn-outline btn-sm" onclick="openModal('scanModal')">+ Add via Auto-Scan</button></div>
     <div class="doc-row"><div class="doc-info"><h4>🏥 Health Insurance — Star Health</h4><p>Expires in 45 days • Reminder set: 30/15/1 days</p></div><span class="badge badge-ok">On Track</span></div>
     <div class="doc-row"><div class="doc-info"><h4>🚦 Driving Licence</h4><p>Expires in 8 months</p></div><span class="badge badge-ok">On Track</span></div>
     <div class="doc-row"><div class="doc-info"><h4>🛂 Passport</h4><p>Expires in 3 years</p></div><span class="badge badge-ok">On Track</span></div>
   </div>
-
   <div class="card">
     <div class="card-header"><h3>Bills & Challans</h3><span class="badge badge-warn">1 challan pending</span></div>
     <div class="doc-row"><div class="doc-info"><h4>🚔 Traffic Challan — ₹500</h4><p>Red light violation, Pune • Via Parivahan</p></div><button class="btn btn-danger btn-sm" onclick="payBill('Traffic Challan',500)">Check & Pay</button></div>
     <div class="doc-row"><div class="doc-info"><h4>⚡ Electricity Bill (MSEDCL) — ₹1,240</h4><p>Due 25 Sep 2026</p></div><button class="btn btn-primary btn-sm" onclick="payBill('MSEDCL Bill',1240)">Pay</button></div>
     <div class="doc-row"><div class="doc-info"><h4>💳 SBI Credit Card — ₹12,300</h4><p>Due 05 Oct 2026</p></div><button class="btn btn-primary btn-sm" onclick="payBill('SBI Credit Card',12300)">Pay</button></div>
   </div>
-
   <div class="card">
     <h3 style="margin-bottom:.5rem">🔔 Reminder Channels</h3>
     <div class="toggle-row"><label class="switch"><input type="checkbox" checked><span class="slider"></span></label><div><strong>Email alerts</strong> <span class="badge badge-ok">Free</span></div></div>
@@ -133,7 +135,20 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <div class="card" style="background:#fffbeb;border-color:#fcd34d"><p style="font-size:.85rem"><strong>⚠️ Rule:</strong> Guardians get access ONLY after an Emergency Request is verified (OTP + hospital/death proof). All views are watermarked & logged.</p></div>
 </div>
 
-<!-- MODALS -->
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal-overlay"><div class="modal">
+  <h3 id="authTitle">Sign In to OneApp</h3>
+  <p class="sub">Your vault is encrypted and private. Only you (and your approved guardians in emergencies) can access it.</p>
+  <div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.5rem .75rem;border-radius:6px;font-size:.85rem;margin:.5rem 0"></div>
+  <div id="nameField" class="field" style="display:none"><label>Full Name</label><input id="authName" type="text" placeholder="e.g. Rajesh Kumar"></div>
+  <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com"></div>
+  <div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Minimum 6 characters"></div>
+  <button id="authSubmit" class="btn btn-primary" style="width:100%" onclick="submitAuth()">Sign In</button>
+  <p style="text-align:center;margin-top:.75rem;font-size:.85rem"><a href="#" id="authToggle" onclick="toggleAuthMode();return false;">New here? Create a free account</a></p>
+  <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('authModal')">Cancel</button>
+</div></div>
+
+<!-- RENEW MODAL -->
 <div id="renewModal" class="modal-overlay"><div class="modal">
   <h3>⚡ 1-Click Renewal</h3>
   <p class="sub">Vehicle Insurance • MH 12 AB 1234</p>
@@ -144,15 +159,17 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('renewModal')">Cancel</button>
 </div></div>
 
+<!-- SCAN MODAL -->
 <div id="scanModal" class="modal-overlay"><div class="modal">
   <h3>📄 Auto-Scan Upload</h3>
-  <p class="sub">Free in-browser OCR (Tesseract.js) reads the expiry date automatically. Document never leaves your device unencrypted.</p>
+  <p class="sub">Free in-browser OCR (Tesseract.js) reads the expiry date automatically.</p>
   <input type="file" style="width:100%;margin:.5rem 0">
   <div id="scanLog" class="scan-log">Ready to scan...</div>
   <button class="btn btn-primary" style="width:100%" onclick="runScan()">Scan & Add to Tracker</button>
   <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('scanModal')">Close</button>
 </div></div>
 
+<!-- EMERGENCY MODAL -->
 <div id="emergencyModal" class="modal-overlay"><div class="modal">
   <h3 style="color:var(--danger)">🆘 Emergency Access</h3>
   <p class="sub">For guardians of a hospitalized/deceased user.</p>
@@ -163,9 +180,67 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <button class="btn btn-outline" style="width:100%;margin-top:.4rem" onclick="closeModal('emergencyModal')">Cancel</button>
 </div></div>
 
-<footer>Prototype v4 • Built for ₹0 stack: Vercel + Supabase + Tesseract.js + GitHub Actions + Razorpay<br>© 2026 OneApp.in — DPDP Act & UIDAI compliant by design</footer>
+<footer>OneApp.in • Live on Vercel + Supabase (₹0 stack)<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
 
+<!-- Supabase library (free CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// =====================================================
+// YOUR SUPABASE KEYS ARE CONNECTED HERE
+const SUPABASE_URL = 'https://ylxxxmrbsllrncwcpcmb.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
+// =====================================================
+
+let sb = null;
+try {
+  if (SUPABASE_URL.startsWith('https://')) sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch(e) { console.warn('Supabase not configured yet.'); }
+
+// ---------- AUTH LOGIC ----------
+let authMode = 'signin';
+function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
+function hideMsg(){document.getElementById('authMsg').style.display='none';}
+function toggleAuthMode(){
+  authMode = (authMode==='signin') ? 'signup' : 'signin';
+  const up = authMode==='signup';
+  document.getElementById('authTitle').textContent = up ? 'Create your OneApp account' : 'Sign In to OneApp';
+  document.getElementById('nameField').style.display = up ? 'block' : 'none';
+  document.getElementById('authSubmit').textContent = up ? 'Create Account' : 'Sign In';
+  document.getElementById('authToggle').textContent = up ? 'Already have an account? Sign in' : 'New here? Create a free account';
+  hideMsg();
+}
+async function submitAuth(){
+  if(!sb){ showMsg('Backend not connected. Check your Supabase keys.'); return; }
+  const email = document.getElementById('authEmail').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  if(!email || !pass){ showMsg('Please enter email and password.'); return; }
+  if(authMode==='signup'){
+    const name = document.getElementById('authName').value.trim() || email.split('@')[0];
+    const {data,error} = await sb.auth.signUp({ email, password: pass, options:{ data:{ full_name:name } } });
+    if(error){ showMsg(error.message); return; }
+    closeModal('authModal');
+    alert('✅ Account created! Welcome to OneApp, ' + name + '.\nYour vault is now linked to your email.');
+  } else {
+    const {error} = await sb.auth.signInWithPassword({ email, password: pass });
+    if(error){ showMsg(error.message); return; }
+    closeModal('authModal');
+  }
+}
+async function handleAuthClick(){
+  if(!sb){ openModal('authModal'); return; }
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){ if(confirm('Sign out of OneApp?')) await sb.auth.signOut(); }
+  else openModal('authModal');
+}
+if(sb){
+  sb.auth.onAuthStateChange((event, session) => {
+    const btn = document.getElementById('authBtn');
+    if(session){ btn.textContent = '👤 ' + session.user.email; }
+    else { btn.textContent = 'Sign In'; }
+  });
+}
+
+// ---------- EXISTING DEMO LOGIC ----------
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -177,7 +252,6 @@ function showView(id){
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show')};
-
 function payRenewal(){
   closeModal('renewModal');
   alert('✅ Renewed successfully (simulated UPI).\n\n• New policy PDF saved to Vault\n• Expiry updated: 05 Oct 2027\n• Next reminder: Sep 2027');
@@ -185,7 +259,7 @@ function payRenewal(){
   b.textContent='Renewed ✅';b.disabled=true;b.className='btn btn-success btn-sm';
 }
 function checkPUC(){
-  alert('🔄 Checking Parivahan (Vahan) portal...\n\nChecked: '+new Date().toLocaleString()+'\nResult: NO UPDATE FOUND.\n\nLast PUC test still shows 40 days ago.\nReminder: visit nearest PUC centre (~10 min).\nTap "Mark Renewed" after your visit — we\'ll verify online next sync.');
+  alert('🔄 Checking Parivahan (Vahan) portal...\n\nChecked: '+new Date().toLocaleString()+'\nResult: NO UPDATE FOUND.\n\nLast PUC test still shows 40 days ago.\nReminder: visit nearest PUC centre (~10 min).');
 }
 function markPUC(){
   document.getElementById('pucStatus').innerHTML='<span class="badge badge-ok">Valid</span> Renewed today • Next due: 22 Mar 2027 • Certificate auto-saved to Vault';
