@@ -67,6 +67,7 @@ input:checked+.slider{background:var(--primary)}input:checked+.slider:before{tra
 .divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}
 .divider span{padding:0 .75rem}
 .aa-preview{width:100%;border-radius:10px;border:1px solid var(--border);margin:.5rem 0}
+.crop-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.4rem 0}
 footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 </style>
 </head>
@@ -194,6 +195,13 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
   <div id="aaStep3" style="display:none">
     <h3>🪪 Wallet card ready!</h3>
+    <p class="sub">Pick the crop that looks like your card:</p>
+    <div class="crop-row">
+      <button class="btn btn-outline btn-sm" onclick="applyCrop('auto')">Auto</button>
+      <button class="btn btn-outline btn-sm" onclick="applyCrop('top')">Top half</button>
+      <button class="btn btn-outline btn-sm" onclick="applyCrop('bottom')">Bottom half</button>
+      <button class="btn btn-outline btn-sm" onclick="applyCrop('stack')">Front+Back (up-down)</button>
+    </div>
     <img id="aaPreview" class="aa-preview" alt="Aadhaar wallet card">
     <button class="btn btn-success" onclick="aaSave()">🔒 Save to my Vault</button>
     <button class="btn btn-primary" onclick="aaSharePick()">📤 Share</button>
@@ -282,7 +290,7 @@ sb.auth.onAuthStateChange((event, session)=>{
 });
 
 // ---------- AADHAAR WALLET CARD ----------
-let aaCanvas=null, aaLastFile=null;
+let aaCanvas=null, aaFullCanvas=null, aaLastFile=null;
 function showAa(id){ ['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display = (x===id)?'block':'none'); }
 function openAadhaar(){ showAa('aaStep1'); openModal('aadhaarModal'); }
 function openAadhaarView(){ if(!aaCanvas){alert('No card yet — use Download Aadhaar first.');return;} document.getElementById('aaPreview2').src=aaCanvas.toDataURL('image/jpeg',0.92); showAa('aaView'); openModal('aadhaarModal'); }
@@ -299,10 +307,7 @@ function aaDirect(){
   document.getElementById('aaStep2Sub').textContent='Upload your existing e-Aadhaar PDF — it converts into a wallet card on your device. Nothing is uploaded until you tap Save.';
   showAa('aaStep2');
 }
-function aaUnlock(){
-  if(!aaLastFile){alert('Select the PDF file first.');return;}
-  aaOnFile(aaLastFile);
-}
+function aaUnlock(){ if(!aaLastFile){alert('Select the PDF file first.');return;} aaOnFile(aaLastFile); }
 async function aaOnFile(file){
   if(!file)return;
   aaLastFile=file;
@@ -320,10 +325,29 @@ async function aaOnFile(file){
     const vp=page.getViewport({scale:2.2});
     const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
     await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
-    aaCanvas=autoCrop(c);
-    document.getElementById('aaPreview').src=aaCanvas.toDataURL('image/jpeg',0.92);
+    aaFullCanvas=c;
+    applyCrop('auto');
     showAa('aaStep3');
   }catch(e){ st.textContent='❌ Render failed: '+e.message; }
+}
+function halfCanvas(src,y0,y1){ const c=document.createElement('canvas'); c.width=src.width; c.height=y1-y0; c.getContext('2d').drawImage(src,0,y0,src.width,y1-y0,0,0,src.width,y1-y0); return c; }
+function applyCrop(mode){
+  if(!aaFullCanvas)return;
+  const h=aaFullCanvas.height, mid=Math.round(h*0.5);
+  if(mode==='auto') aaCanvas=autoCrop(aaFullCanvas);
+  else if(mode==='top') aaCanvas=autoCrop(halfCanvas(aaFullCanvas,0,mid));
+  else if(mode==='bottom') aaCanvas=autoCrop(halfCanvas(aaFullCanvas,mid,h));
+  else {
+    const a=autoCrop(halfCanvas(aaFullCanvas,0,mid));
+    const b=autoCrop(halfCanvas(aaFullCanvas,mid,h));
+    const gap=Math.round(aaFullCanvas.width*0.02);
+    const c=document.createElement('canvas'); c.width=Math.max(a.width,b.width); c.height=a.height+b.height+gap;
+    const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(a,Math.round((c.width-a.width)/2),0);
+    ctx.drawImage(b,Math.round((c.width-b.width)/2),a.height+gap);
+    aaCanvas=c;
+  }
+  document.getElementById('aaPreview').src=aaCanvas.toDataURL('image/jpeg',0.92);
 }
 function autoCrop(canvas){
   const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
@@ -348,20 +372,25 @@ function aaCardPdf(){
 async function aaSave(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){alert('Sign in first so the card is saved to YOUR private vault.');return;}
-  const jpg=await (await fetch(aaCanvas.toDataURL('image/jpeg',0.92))).blob();
-  const pdf=aaCardPdf().output('blob');
   const uid=session.user.id;
+  const jpg=await (await fetch(aaCanvas.toDataURL('image/jpeg',0.92))).blob();
+  const cardPdf=aaCardPdf().output('blob');
   const u1=await sb.storage.from('vault').upload(uid+'/aadhaar-card.jpg', jpg, {contentType:'image/jpeg', upsert:true});
-  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-card.pdf', pdf, {contentType:'application/pdf', upsert:true});
-  if(u1.error||u2.error){alert('❌ '+(u1.error||u2.error).message);return;}
+  if(u1.error){alert('❌ Storage JPG step: '+u1.error.message);return;}
+  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-card.pdf', cardPdf, {contentType:'application/pdf', upsert:true});
+  if(u2.error){alert('❌ Storage card-PDF step: '+u2.error.message);return;}
+  if(aaLastFile){
+    const u3=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf', aaLastFile, {contentType:'application/pdf', upsert:true});
+    if(u3.error){alert('❌ Storage original-PDF step: '+u3.error.message);return;}
+  }
   const {data:exist}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
   let err;
   if(exist&&exist.length){ ({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-card.jpg', is_critical:true}).eq('id',exist[0].id)); }
   else { ({error:err}=await sb.from('documents').insert({user_id:uid, document_type:'Aadhaar Card (Wallet)', document_name:'aadhaar-card', file_url:uid+'/aadhaar-card.jpg', is_critical:true})); }
-  if(err){alert('❌ '+err.message);return;}
+  if(err){alert('❌ Documents row step: '+err.message);return;}
   setAadhaarSavedUI('Wallet card saved • encrypted private vault');
   closeModal('aadhaarModal');
-  alert('✅ Aadhaar wallet card saved!\nJPG + PDF card stored in your private bucket. A4 original was never uploaded.');
+  alert('✅ Saved! Card JPG + card PDF + original PDF (private backup) are in your vault.');
 }
 function setAadhaarSavedUI(txt){
   document.getElementById('aadhaarGetBtn').style.display='none';
@@ -369,7 +398,7 @@ function setAadhaarSavedUI(txt){
   document.getElementById('aadhaarSub').textContent=txt;
 }
 function resetAadhaarUI(){
-  aaCanvas=null;
+  aaCanvas=null; aaFullCanvas=null;
   document.getElementById('aadhaarGetBtn').style.display='';
   document.getElementById('aadhaarViewBtn').style.display='none';
   document.getElementById('aadhaarSub').textContent='Not in wallet yet';
