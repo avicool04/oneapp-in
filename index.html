@@ -150,7 +150,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <h3 style="text-align:center">Welcome to OneApp</h3>
   <p class="sub" style="text-align:center">Secure your family's future in seconds.</p>
   <button class="btn btn-google" onclick="signInWithGoogle()">
-    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
     Continue with Google
   </button>
   <div class="divider"><span>OR</span></div>
@@ -164,23 +164,31 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- AADHAAR WALLET MODAL -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
   <div id="aaStep1">
-    <h3>⬇️ Download your e-Aadhaar</h3>
+    <h3>⬇️ Get your e-Aadhaar</h3>
     <p class="sub">Step 1 of 3 • We store only the masked number (**** 1234).</p>
     <div class="field"><label>Aadhaar Number (12 digits)</label><input id="aaNumber" inputmode="numeric" maxlength="12" placeholder="XXXX XXXX XXXX"></div>
     <button class="btn btn-primary" onclick="aaGoPortal()">Send OTP on my registered mobile</button>
+    <div class="divider"><span>OR</span></div>
+    <button class="btn btn-outline" onclick="aaDirect()">📂 I already have my e-Aadhaar PDF</button>
     <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button>
   </div>
   <div id="aaStep2" style="display:none">
-    <h3>📲 OTP sent by UIDAI</h3>
-    <p class="sub">Step 2 of 3 • The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.</p>
-    <ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem">
-      <li>Enter the same Aadhaar number → request OTP</li>
-      <li>Enter OTP (arrives on your registered mobile) + captcha → Download PDF</li>
-      <li>PDF password hint: first 4 letters of your name (CAPS) + birth year, e.g. RAES1988</li>
-    </ol>
-    <p style="font-size:.85rem;margin-bottom:.75rem">Portal not opening? Try: <a href="https://myaadhaar.uidai.gov.in/" target="_blank">myAadhaar</a> • <a href="https://uidai.gov.in/" target="_blank">UIDAI home</a> • switch Wi-Fi ↔ mobile data</p>
-    <div class="field"><label>Now select the downloaded PDF here</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div>
-    <div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. RAES1988"></div>
+    <h3>📄 Bring the PDF in</h3>
+    <p class="sub" id="aaStep2Sub">Step 2 of 3 • The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.</p>
+    <div id="aaCoach">
+      <ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem">
+        <li>Enter the same Aadhaar number → request OTP</li>
+        <li>Enter OTP (arrives on your registered mobile) + captcha → Download PDF</li>
+        <li>PDF password hint: first 4 letters of your name (CAPS) + birth year, e.g. RAES1988</li>
+      </ol>
+      <p style="font-size:.85rem;margin-bottom:.75rem">Portal not opening? Try: <a href="https://myaadhaar.uidai.gov.in/" target="_blank">myAadhaar</a> • <a href="https://uidai.gov.in/" target="_blank">UIDAI home</a> • switch Wi-Fi ↔ mobile data</p>
+    </div>
+    <div class="field"><label>Select your e-Aadhaar PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div>
+    <div id="aaPassRow" class="field" style="display:none">
+      <label>PDF password</label>
+      <input id="aaPass" type="text" placeholder="e.g. RAES1988">
+      <button class="btn btn-primary" style="margin-top:.5rem" onclick="aaUnlock()">🔓 Unlock & Convert</button>
+    </div>
     <div id="aaStatus" class="sos-box">Waiting for your PDF… (conversion happens on your device only)</div>
     <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
   </div>
@@ -274,7 +282,7 @@ sb.auth.onAuthStateChange((event, session)=>{
 });
 
 // ---------- AADHAAR WALLET CARD ----------
-let aaCanvas=null;
+let aaCanvas=null, aaLastFile=null;
 function showAa(id){ ['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display = (x===id)?'block':'none'); }
 function openAadhaar(){ showAa('aaStep1'); openModal('aadhaarModal'); }
 function openAadhaarView(){ if(!aaCanvas){alert('No card yet — use Download Aadhaar first.');return;} document.getElementById('aaPreview2').src=aaCanvas.toDataURL('image/jpeg',0.92); showAa('aaView'); openModal('aadhaarModal'); }
@@ -282,17 +290,29 @@ function aaGoPortal(){
   const n=document.getElementById('aaNumber').value.replace(/\D/g,'');
   if(n.length!==12){alert('Enter a valid 12-digit Aadhaar number.');return;}
   window.open('https://myaadhaar.uidai.gov.in/','_blank');
+  document.getElementById('aaCoach').style.display='';
+  document.getElementById('aaStep2Sub').textContent='Step 2 of 3 • The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.';
   showAa('aaStep2');
+}
+function aaDirect(){
+  document.getElementById('aaCoach').style.display='none';
+  document.getElementById('aaStep2Sub').textContent='Upload your existing e-Aadhaar PDF — it converts into a wallet card on your device. Nothing is uploaded until you tap Save.';
+  showAa('aaStep2');
+}
+function aaUnlock(){
+  if(!aaLastFile){alert('Select the PDF file first.');return;}
+  aaOnFile(aaLastFile);
 }
 async function aaOnFile(file){
   if(!file)return;
+  aaLastFile=file;
   const st=document.getElementById('aaStatus');
   st.textContent='📖 Reading PDF on your device…';
   const pw=document.getElementById('aaPass').value||undefined;
   let pdf;
   try{ pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(), password:pw}).promise; }
   catch(err){
-    if(err&&err.name==='PasswordException'){ document.getElementById('aaPassRow').style.display='block'; st.textContent='🔒 Password-protected PDF — enter password (hint: name CAPS 4 letters + birth year) and select the file again.'; return; }
+    if(err&&err.name==='PasswordException'){ document.getElementById('aaPassRow').style.display='block'; st.textContent='🔒 This PDF is password-protected. Type the password above (hint: first 4 letters of name CAPS + birth year) and tap 🔓 Unlock & Convert.'; return; }
     st.textContent='❌ '+err.message; return;
   }
   try{
