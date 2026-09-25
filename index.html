@@ -172,12 +172,13 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
   <div id="aaStep2" style="display:none">
     <h3>📲 OTP sent by UIDAI</h3>
-    <p class="sub">Step 2 of 3 • The official UIDAI portal opened in a new tab. Complete it there:</p>
+    <p class="sub">Step 2 of 3 • The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.</p>
     <ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem">
-      <li>Enter the same Aadhaar number → tap OTP</li>
-      <li>Enter OTP + captcha → Download PDF</li>
+      <li>Enter the same Aadhaar number → request OTP</li>
+      <li>Enter OTP (arrives on your registered mobile) + captcha → Download PDF</li>
       <li>PDF password hint: first 4 letters of your name (CAPS) + birth year, e.g. RAES1988</li>
     </ol>
+    <p style="font-size:.85rem;margin-bottom:.75rem">Portal not opening? Try: <a href="https://myaadhaar.uidai.gov.in/" target="_blank">myAadhaar</a> • <a href="https://uidai.gov.in/" target="_blank">UIDAI home</a> • switch Wi-Fi ↔ mobile data</p>
     <div class="field"><label>Now select the downloaded PDF here</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div>
     <div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. RAES1988"></div>
     <div id="aaStatus" class="sos-box">Waiting for your PDF… (conversion happens on your device only)</div>
@@ -280,7 +281,7 @@ function openAadhaarView(){ if(!aaCanvas){alert('No card yet — use Download Aa
 function aaGoPortal(){
   const n=document.getElementById('aaNumber').value.replace(/\D/g,'');
   if(n.length!==12){alert('Enter a valid 12-digit Aadhaar number.');return;}
-  window.open('https://eaadhaar.uidai.gov.in/','_blank');
+  window.open('https://myaadhaar.uidai.gov.in/','_blank');
   showAa('aaStep2');
 }
 async function aaOnFile(file){
