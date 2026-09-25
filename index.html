@@ -18,6 +18,13 @@ nav{background:#fff;border-bottom:1px solid var(--border);padding:1rem 1.5rem;di
 .nav-links button.active{color:var(--primary)}
 .nav-links .btn-emg{background:var(--danger)!important;color:#fff!important;padding:.45rem .9rem;border-radius:6px}
 .nav-links .btn-auth{background:var(--primary)!important;color:#fff!important;padding:.45rem .9rem;border-radius:6px}
+.user-chip{display:flex;align-items:center;gap:.5rem;background:var(--primary)!important;color:#fff!important;padding:.3rem .9rem .3rem .35rem;border-radius:999px;font-weight:600;font-size:.9rem;border:none;cursor:pointer}
+.avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#fff}
+.avatar-fallback{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+.user-area{position:relative}
+.dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.9rem;min-width:230px;display:none;z-index:300;text-align:left}
+.dropdown.show{display:block}
+.dropdown .email{font-size:.85rem;color:var(--gray);word-break:break-all;margin-bottom:.6rem}
 .container{max-width:900px;margin:1.5rem auto;padding:0 1rem}
 .view{display:none;animation:fadeIn .3s ease}.view.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -69,6 +76,17 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button id="nav-guard" onclick="showView('guardians')">Guardians</button>
     <button class="btn-emg" onclick="openModal('emergencyModal')">🆘 Emergency</button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
+    <div class="user-area" id="userArea" style="display:none">
+      <button class="user-chip" onclick="toggleUserMenu(event)">
+        <img id="userAvatar" class="avatar" alt="" style="display:none">
+        <span id="userAvatarFallback" class="avatar-fallback">U</span>
+        <span id="userName">User</span>
+      </button>
+      <div class="dropdown" id="userDropdown">
+        <div class="email" id="userEmail"></div>
+        <button class="btn btn-outline" style="margin:0" onclick="doSignOut()">Sign Out</button>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -124,7 +142,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </div>
 
-<!-- AUTH MODAL (WITH GOOGLE) -->
+<!-- AUTH MODAL -->
 <div id="authModal" class="modal-overlay"><div class="modal">
   <h3 id="authTitle" style="text-align:center">Welcome to OneApp</h3>
   <p class="sub" style="text-align:center">Secure your family's future in seconds.</p>
@@ -187,15 +205,28 @@ async function submitAuth(){
     closeModal('authModal');
   }
 }
-async function handleAuthClick(){
-  const {data:{session}} = await sb.auth.getSession();
-  if(session){ if(confirm('Sign out of OneApp?')) await sb.auth.signOut(); }
-  else openModal('authModal');
-}
+async function handleAuthClick(){ openModal('authModal'); }
+async function doSignOut(){ await sb.auth.signOut(); }
+function toggleUserMenu(e){ e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); }
+
 sb.auth.onAuthStateChange((event, session) => {
   const btn = document.getElementById('authBtn');
-  if(session){ btn.textContent = '👤 ' + (session.user.email || 'Account'); }
-  else { btn.textContent = 'Sign In'; }
+  const area = document.getElementById('userArea');
+  if(session){
+    const meta = session.user.user_metadata || {};
+    const full = meta.full_name || meta.name || (session.user.email ? session.user.email.split('@')[0] : 'User');
+    document.getElementById('userName').textContent = full;
+    document.getElementById('userEmail').textContent = session.user.email || 'No email on file';
+    const img = document.getElementById('userAvatar');
+    const fb  = document.getElementById('userAvatarFallback');
+    const pic = meta.avatar_url || meta.picture;
+    if(pic){ img.src = pic; img.style.display='block'; fb.style.display='none'; }
+    else   { img.style.display='none'; fb.style.display='flex'; fb.textContent = (full.charAt(0)||'U').toUpperCase(); }
+    btn.style.display='none'; area.style.display='block';
+  } else {
+    btn.style.display=''; area.style.display='none';
+    document.getElementById('userDropdown').classList.remove('show');
+  }
 });
 
 function showView(id){
@@ -208,7 +239,10 @@ function showView(id){
 }
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
-window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show')};
+window.onclick=e=>{
+  if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show');
+  if(!e.target.closest('.user-area')) document.getElementById('userDropdown').classList.remove('show');
+};
 function payRenewal(){closeModal('renewModal');alert('✅ Renewed successfully!');}
 function checkPUC(){alert('🔄 Checking Parivahan... NO UPDATE FOUND.');}
 function markPUC(){alert('✅ PUC marked renewed.');}
