@@ -103,9 +103,11 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
     <div class="doc-row">
       <div class="doc-info"><h4>🪪 Aadhaar Card</h4><p id="aadhaarSub">Not in wallet yet</p></div>
-      <div style="display:flex;gap:.4rem">
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap">
         <button id="aadhaarGetBtn" class="btn btn-primary btn-sm" onclick="openAadhaar()">⬇️ Download Aadhaar</button>
         <button id="aadhaarViewBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaarView()">👁 View</button>
+        <button id="aadhaarUpdBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaar()">🔄 Update</button>
+        <button id="aadhaarDelBtn" class="btn btn-outline btn-sm" style="display:none" onclick="aaDelete()">🗑 Delete</button>
       </div>
     </div>
     <div class="doc-row"><div class="doc-info"><h4>💳 PAN Card</h4><p>ABCDE1234F • Source: Income Tax Dept</p></div><button class="btn btn-outline btn-sm" onclick="alert('PAN wallet card coming next!')">View</button></div>
@@ -165,20 +167,19 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- AADHAAR WALLET MODAL -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
   <div id="aaStep1">
-    <h3>⬇️ Get your e-Aadhaar</h3>
-    <p class="sub">Step 1 of 3 • We store only the masked number (**** 1234).</p>
-    <div class="field"><label>Aadhaar Number (12 digits)</label><input id="aaNumber" inputmode="numeric" maxlength="12" placeholder="XXXX XXXX XXXX"></div>
-    <button class="btn btn-primary" onclick="aaGoPortal()">Send OTP on my registered mobile</button>
-    <div class="divider"><span>OR</span></div>
-    <button class="btn btn-outline" onclick="aaDirect()">📂 I already have my e-Aadhaar PDF</button>
+    <h3>🪪 Aadhaar Wallet Card</h3>
+    <p class="sub">OneApp never asks for your Aadhaar number — only you and UIDAI ever see it.</p>
+    <button class="btn btn-primary" onclick="aaGoPortal()">⬇️ Download fresh from UIDAI (OTP on your mobile)</button>
+    <button class="btn btn-outline" onclick="aaDirect()">📂 Upload new / updated PDF</button>
+    <button class="btn btn-outline" id="aaRecropBtn1" onclick="aaRecrop()" style="display:none">✂️ Re-crop from stored original</button>
     <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button>
   </div>
   <div id="aaStep2" style="display:none">
     <h3>📄 Bring the PDF in</h3>
-    <p class="sub" id="aaStep2Sub">Step 2 of 3 • The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.</p>
+    <p class="sub" id="aaStep2Sub">The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.</p>
     <div id="aaCoach">
       <ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem">
-        <li>Enter the same Aadhaar number → request OTP</li>
+        <li>Enter your Aadhaar number on the UIDAI page (we never see it) → request OTP</li>
         <li>Enter OTP (arrives on your registered mobile) + captcha → Download PDF</li>
         <li>PDF password hint: first 4 letters of your name (CAPS) + birth year, e.g. RAES1988</li>
       </ol>
@@ -211,6 +212,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <h3>🪪 Aadhaar Wallet Card</h3>
     <img id="aaPreview2" class="aa-preview" alt="Aadhaar wallet card">
     <button class="btn btn-primary" onclick="aaSharePick()">📤 Share</button>
+    <button class="btn btn-outline" onclick="aaRecrop()">✂️ Re-crop / fix card</button>
     <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
   </div>
 </div></div>
@@ -290,24 +292,41 @@ sb.auth.onAuthStateChange((event, session)=>{
 });
 
 // ---------- AADHAAR WALLET CARD ----------
-let aaCanvas=null, aaFullCanvas=null, aaLastFile=null;
+let aaCanvas=null, aaFullCanvas=null, aaLastFile=null, aaHasOriginal=false;
 function showAa(id){ ['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display = (x===id)?'block':'none'); }
-function openAadhaar(){ showAa('aaStep1'); openModal('aadhaarModal'); }
-function openAadhaarView(){ if(!aaCanvas){alert('No card yet — use Download Aadhaar first.');return;} document.getElementById('aaPreview2').src=aaCanvas.toDataURL('image/jpeg',0.92); showAa('aaView'); openModal('aadhaarModal'); }
+function openAadhaar(){
+  document.getElementById('aaRecropBtn1').style.display = aaHasOriginal ? '' : 'none';
+  showAa('aaStep1'); openModal('aadhaarModal');
+}
+function openAadhaarView(){
+  if(!aaCanvas){alert('No card yet — use Download Aadhaar first.');return;}
+  document.getElementById('aaPreview2').src=aaCanvas.toDataURL('image/jpeg',0.92);
+  showAa('aaView'); openModal('aadhaarModal');
+}
 function aaGoPortal(){
-  const n=document.getElementById('aaNumber').value.replace(/\D/g,'');
-  if(n.length!==12){alert('Enter a valid 12-digit Aadhaar number.');return;}
   window.open('https://myaadhaar.uidai.gov.in/','_blank');
   document.getElementById('aaCoach').style.display='';
-  document.getElementById('aaStep2Sub').textContent='Step 2 of 3 • The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.';
+  document.getElementById('aaStep2Sub').textContent='The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.';
   showAa('aaStep2');
 }
 function aaDirect(){
   document.getElementById('aaCoach').style.display='none';
-  document.getElementById('aaStep2Sub').textContent='Upload your existing e-Aadhaar PDF — it converts into a wallet card on your device. Nothing is uploaded until you tap Save.';
+  document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — it converts into a wallet card on your device. Nothing is uploaded until you tap Save.';
   showAa('aaStep2');
 }
 function aaUnlock(){ if(!aaLastFile){alert('Select the PDF file first.');return;} aaOnFile(aaLastFile); }
+async function aaRecrop(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){alert('Sign in first.');return;}
+  const {data:blob,error}=await sb.storage.from('vault').download(session.user.id+'/aadhaar-original.pdf');
+  if(error||!blob){alert('No stored original found — use "Upload new / updated PDF" instead.');return;}
+  aaLastFile=new File([blob],'aadhaar-original.pdf',{type:'application/pdf'});
+  document.getElementById('aaCoach').style.display='none';
+  document.getElementById('aaStep2Sub').textContent='Re-cropping your stored original. If it is password-protected, enter the password and tap Unlock & Convert.';
+  document.getElementById('aaStatus').textContent='✂️ Stored original loaded — converting…';
+  showAa('aaStep2');
+  aaOnFile(aaLastFile);
+}
 async function aaOnFile(file){
   if(!file)return;
   aaLastFile=file;
@@ -388,6 +407,7 @@ async function aaSave(){
   if(exist&&exist.length){ ({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-card.jpg', is_critical:true}).eq('id',exist[0].id)); }
   else { ({error:err}=await sb.from('documents').insert({user_id:uid, document_type:'Aadhaar Card (Wallet)', document_name:'aadhaar-card', file_url:uid+'/aadhaar-card.jpg', is_critical:true})); }
   if(err){alert('❌ Documents row step: '+err.message);return;}
+  aaHasOriginal=true;
   setAadhaarSavedUI('Wallet card saved • encrypted private vault');
   closeModal('aadhaarModal');
   alert('✅ Saved! Card JPG + card PDF + original PDF (private backup) are in your vault.');
@@ -395,12 +415,16 @@ async function aaSave(){
 function setAadhaarSavedUI(txt){
   document.getElementById('aadhaarGetBtn').style.display='none';
   document.getElementById('aadhaarViewBtn').style.display='';
+  document.getElementById('aadhaarUpdBtn').style.display='';
+  document.getElementById('aadhaarDelBtn').style.display='';
   document.getElementById('aadhaarSub').textContent=txt;
 }
 function resetAadhaarUI(){
-  aaCanvas=null; aaFullCanvas=null;
+  aaCanvas=null; aaFullCanvas=null; aaHasOriginal=false;
   document.getElementById('aadhaarGetBtn').style.display='';
   document.getElementById('aadhaarViewBtn').style.display='none';
+  document.getElementById('aadhaarUpdBtn').style.display='none';
+  document.getElementById('aadhaarDelBtn').style.display='none';
   document.getElementById('aadhaarSub').textContent='Not in wallet yet';
 }
 async function loadSavedAadhaar(uid){
@@ -411,9 +435,21 @@ async function loadSavedAadhaar(uid){
       const bmp=await createImageBitmap(blob);
       const c=document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height;
       c.getContext('2d').drawImage(bmp,0,0);
-      aaCanvas=c; setAadhaarSavedUI('Wallet card saved • encrypted private vault');
+      aaCanvas=c; aaHasOriginal=true;
+      setAadhaarSavedUI('Wallet card saved • encrypted private vault');
     }
   }
+}
+async function aaDelete(){
+  if(!confirm('Permanently delete your Aadhaar card JPG, card PDF and original backup from your vault?'))return;
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return;
+  const uid=session.user.id;
+  await sb.storage.from('vault').remove([uid+'/aadhaar-card.jpg', uid+'/aadhaar-card.pdf', uid+'/aadhaar-original.pdf']);
+  const {error}=await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
+  if(error){alert('❌ '+error.message);return;}
+  resetAadhaarUI();
+  alert('✅ Deleted permanently from your vault (DPDP right to erasure).');
 }
 function aaSharePick(){ openModal('shareModal'); }
 async function aaShare(kind){
