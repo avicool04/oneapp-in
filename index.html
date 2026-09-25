@@ -55,14 +55,18 @@ h2{color:var(--primary);margin-bottom:.25rem}h3{font-size:1.05rem}
 input:checked+.slider{background:var(--primary)}input:checked+.slider:before{transform:translateX(22px)}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal-overlay.show{display:flex}
-.modal{background:#fff;padding:1.75rem;border-radius:12px;width:100%;max-width:420px}
-.scan-log{background:#0f172a;color:#a7f3d0;font-family:monospace;font-size:.78rem;padding:.75rem;border-radius:6px;margin:.75rem 0;min-height:80px;white-space:pre-wrap}
-.pay-box{background:#f8fafc;border:1px dashed #cbd5e1;padding:.75rem;border-radius:6px;margin:.75rem 0;font-size:.9rem}
+.modal{background:#fff;padding:1.75rem;border-radius:12px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
+.sos-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem;margin:.75rem 0;font-size:.9rem}
+.sos-link{word-break:break-all;color:var(--primary);font-weight:600;display:block;margin-top:.4rem}
+.tab-row{display:flex;gap:.5rem;margin-bottom:.75rem}
+.tab-btn{flex:1;padding:.5rem;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:600;font-size:.85rem}
+.tab-btn.on{background:var(--danger);color:#fff;border-color:var(--danger)}
 .field{margin:.75rem 0}.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.3rem}
 .field input{width:100%;padding:.7rem;border:1px solid var(--border);border-radius:6px;font-size:.95rem}
 .divider{display:flex;align-items:center;margin:1.25rem 0;color:var(--gray);font-size:.85rem}
 .divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}
 .divider span{padding:0 .75rem}
+.aa-preview{width:100%;border-radius:10px;border:1px solid var(--border);margin:.5rem 0}
 footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 </style>
 </head>
@@ -74,7 +78,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
     <button id="nav-auto" onclick="showView('autopilot')">🔄 Autopilot</button>
     <button id="nav-guard" onclick="showView('guardians')">Guardians</button>
-    <button class="btn-emg" onclick="openModal('emergencyModal')">🆘 Emergency</button>
+    <button class="btn-emg" onclick="openSOS()">🆘 Emergency</button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
     <div class="user-area" id="userArea" style="display:none">
       <button class="user-chip" onclick="toggleUserMenu(event)">
@@ -93,14 +97,20 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- VAULT -->
 <div id="vault" class="view active container">
   <h2>My Secure Vault</h2>
-  <p class="sub" id="vaultSub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
+  <p class="sub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
   <div class="card">
-    <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Synced from Source</span></div>
-    <div class="doc-row"><div class="doc-info"><h4>🪪 Aadhaar Card</h4><p>**** **** 1234 • Source: UIDAI/DigiLocker</p></div><button class="btn btn-outline btn-sm" onclick="alert('Opening secure watermarked viewer...')">View</button></div>
-    <div class="doc-row"><div class="doc-info"><h4>💳 PAN Card</h4><p>ABCDE1234F • Source: Income Tax Dept</p></div><button class="btn btn-outline btn-sm" onclick="alert('Opening secure watermarked viewer...')">View</button></div>
+    <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
+    <div class="doc-row">
+      <div class="doc-info"><h4>🪪 Aadhaar Card</h4><p id="aadhaarSub">Not in wallet yet</p></div>
+      <div style="display:flex;gap:.4rem">
+        <button id="aadhaarGetBtn" class="btn btn-primary btn-sm" onclick="openAadhaar()">⬇️ Download Aadhaar</button>
+        <button id="aadhaarViewBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaarView()">👁 View</button>
+      </div>
+    </div>
+    <div class="doc-row"><div class="doc-info"><h4>💳 PAN Card</h4><p>ABCDE1234F • Source: Income Tax Dept</p></div><button class="btn btn-outline btn-sm" onclick="alert('PAN wallet card coming next!')">View</button></div>
   </div>
   <div class="card">
-    <div class="card-header"><h3>Assets & Policies</h3><button class="btn btn-outline btn-sm" onclick="openModal('scanModal')">+ Auto-Scan Upload</button></div>
+    <div class="card-header"><h3>Assets & Policies</h3><span class="badge badge-warn">Demo data</span></div>
     <div class="doc-row"><div class="doc-info"><h4>🛡️ LIC Jeevan Anand</h4><p>Policy 123456 • Matures Dec 2045</p></div><span class="badge badge-ok">Active</span></div>
     <div class="doc-row"><div class="doc-info"><h4>🏠 Property Deed — Pune Flat 402</h4><p>Registered Jan 2020</p></div><span class="badge badge-warn">Check stamp duty</span></div>
   </div>
@@ -109,24 +119,17 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- AUTOPILOT -->
 <div id="autopilot" class="view container">
   <h2>🔄 Renewals Autopilot</h2>
-  <p class="sub">Every deadline tracked. Renew in one click. Never stand in a queue unknowingly.</p>
+  <p class="sub">Every deadline tracked. Renew in one click.</p>
   <div class="card">
     <div class="card-header"><h3>⚠️ Action Needed</h3><span class="badge badge-alert">2 items</span></div>
     <div class="doc-row">
-      <div class="doc-info"><h4>🚗 Vehicle Insurance — MH 12 AB 1234</h4><p>HDFC Ergo • Expires in <strong style="color:var(--warn)">12 days</strong> (05 Oct 2026)</p></div>
-      <button id="renewInsBtn" class="btn btn-primary btn-sm" onclick="openModal('renewModal')">⚡ 1-Click Renew</button>
+      <div class="doc-info"><h4>🚗 Vehicle Insurance — MH 12 AB 1234</h4><p>Expires in <strong style="color:var(--warn)">12 days</strong></p></div>
+      <button class="btn btn-primary btn-sm" onclick="alert('✅ Renewed (demo)')">⚡ 1-Click Renew</button>
     </div>
     <div class="doc-row">
-      <div class="doc-info"><h4>🌫️ PUC Certificate — MH 12 AB 1234</h4><p id="pucStatus">Physical visit required • Last test 40 days ago</p><small>We check the Parivahan portal online for you</small></div>
-      <div style="display:flex;gap:.4rem;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="checkPUC()">🔄 Check Online</button>
-        <button class="btn btn-success btn-sm" onclick="markPUC()">✅ Mark Renewed</button>
-      </div>
+      <div class="doc-info"><h4>🌫️ PUC Certificate</h4><p id="pucStatus">Physical visit required</p></div>
+      <div style="display:flex;gap:.4rem"><button class="btn btn-outline btn-sm" onclick="alert('🔄 Checked Parivahan: no update')">🔄 Check</button><button class="btn btn-success btn-sm" onclick="alert('✅ Marked renewed')">✅ Done</button></div>
     </div>
-  </div>
-  <div class="card">
-    <div class="card-header"><h3>Bills & Challans</h3><span class="badge badge-warn">1 challan pending</span></div>
-    <div class="doc-row"><div class="doc-info"><h4>⚡ Electricity Bill (MSEDCL) — ₹1,240</h4><p>Due 25 Sep 2026</p></div><button class="btn btn-primary btn-sm" onclick="payBill('MSEDCL Bill',1240)">Pay</button></div>
   </div>
 </div>
 
@@ -137,14 +140,14 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <div class="card">
     <div class="doc-row">
       <div class="doc-info"><h4>Priya Sharma (Wife)</h4><p>+91 98xxxxxxx • Verified</p></div>
-      <label class="switch"><input type="checkbox" checked onchange="toggleGuardian(this,'Priya')"><span class="slider"></span></label>
+      <label class="switch"><input type="checkbox" checked onchange="alert('Permission updated')"><span class="slider"></span></label>
     </div>
   </div>
 </div>
 
 <!-- AUTH MODAL -->
 <div id="authModal" class="modal-overlay"><div class="modal">
-  <h3 id="authTitle" style="text-align:center">Welcome to OneApp</h3>
+  <h3 style="text-align:center">Welcome to OneApp</h3>
   <p class="sub" style="text-align:center">Secure your family's future in seconds.</p>
   <button class="btn btn-google" onclick="signInWithGoogle()">
     <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
@@ -152,103 +155,271 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </button>
   <div class="divider"><span>OR</span></div>
   <div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.5rem .75rem;border-radius:6px;font-size:.85rem;margin:.5rem 0;text-align:center"></div>
-  <div id="nameField" class="field" style="display:none"><label>Full Name</label><input id="authName" type="text" placeholder="e.g. Rajesh Kumar"></div>
   <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com"></div>
   <div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Minimum 6 characters"></div>
-  <button id="authSubmit" class="btn btn-primary" onclick="submitAuth()">Sign In</button>
-  <p style="text-align:center;margin-top:.75rem;font-size:.85rem"><a href="#" id="authToggle" onclick="toggleAuthMode();return false;">New here? Create a free account</a></p>
-  <button class="btn btn-outline" style="margin-top:.4rem" onclick="closeModal('authModal')">Cancel</button>
+  <button class="btn btn-primary" onclick="submitAuth()">Sign In</button>
+  <button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button>
 </div></div>
 
-<!-- OTHER MODALS -->
-<div id="renewModal" class="modal-overlay"><div class="modal"><h3>⚡ 1-Click Renewal</h3><p class="sub">Vehicle Insurance</p><button class="btn btn-success" onclick="payRenewal()">Pay ₹2,450 & Renew</button><button class="btn btn-outline" onclick="closeModal('renewModal')">Cancel</button></div></div>
-<div id="scanModal" class="modal-overlay"><div class="modal"><h3>📄 Auto-Scan Upload</h3><button class="btn btn-primary" onclick="runScan()">Scan & Add</button><button class="btn btn-outline" onclick="closeModal('scanModal')">Close</button></div></div>
-<div id="emergencyModal" class="modal-overlay"><div class="modal"><h3 style="color:var(--danger)">🆘 Emergency Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('🔓 Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div>
+<!-- AADHAAR WALLET MODAL -->
+<div id="aadhaarModal" class="modal-overlay"><div class="modal">
+  <div id="aaStep1">
+    <h3>⬇️ Download your e-Aadhaar</h3>
+    <p class="sub">Step 1 of 3 • We store only the masked number (**** 1234).</p>
+    <div class="field"><label>Aadhaar Number (12 digits)</label><input id="aaNumber" inputmode="numeric" maxlength="12" placeholder="XXXX XXXX XXXX"></div>
+    <button class="btn btn-primary" onclick="aaGoPortal()">Send OTP on my registered mobile</button>
+    <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button>
+  </div>
+  <div id="aaStep2" style="display:none">
+    <h3>📲 OTP sent by UIDAI</h3>
+    <p class="sub">Step 2 of 3 • The official UIDAI portal opened in a new tab. Complete it there:</p>
+    <ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem">
+      <li>Enter the same Aadhaar number → tap OTP</li>
+      <li>Enter OTP + captcha → Download PDF</li>
+      <li>PDF password hint: first 4 letters of your name (CAPS) + birth year, e.g. RAES1988</li>
+    </ol>
+    <div class="field"><label>Now select the downloaded PDF here</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div>
+    <div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. RAES1988"></div>
+    <div id="aaStatus" class="sos-box">Waiting for your PDF… (conversion happens on your device only)</div>
+    <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
+  </div>
+  <div id="aaStep3" style="display:none">
+    <h3>🪪 Wallet card ready!</h3>
+    <img id="aaPreview" class="aa-preview" alt="Aadhaar wallet card">
+    <button class="btn btn-success" onclick="aaSave()">🔒 Save to my Vault</button>
+    <button class="btn btn-primary" onclick="aaSharePick()">📤 Share</button>
+    <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
+  </div>
+  <div id="aaView" style="display:none">
+    <h3>🪪 Aadhaar Wallet Card</h3>
+    <img id="aaPreview2" class="aa-preview" alt="Aadhaar wallet card">
+    <button class="btn btn-primary" onclick="aaSharePick()">📤 Share</button>
+    <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
+  </div>
+</div></div>
+
+<!-- SHARE CHOOSER -->
+<div id="shareModal" class="modal-overlay"><div class="modal">
+  <h3>Share as…</h3>
+  <button class="btn btn-primary" onclick="aaShare('jpg')">🖼 JPG image</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf')">📄 PDF card</button>
+  <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
+</div></div>
+
+<!-- SOS MODAL -->
+<div id="emergencyModal" class="modal-overlay"><div class="modal">
+  <div class="tab-row">
+    <button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">🆘 I need help</button>
+    <button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">👪 Family member</button>
+  </div>
+  <div id="sosPanel">
+    <h3 style="color:var(--danger)">SOS Beacon</h3>
+    <div class="sos-box"><div id="sosStatus">📡 Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">🗺️ Open in Google Maps</a></div>
+    <button class="btn btn-success" onclick="shareWhatsApp()">📤 Share on WhatsApp</button>
+    <button class="btn btn-outline" onclick="saveSOS()">🔒 Save last location to Vault</button>
+    <button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button>
+  </div>
+  <div id="guardPanel" style="display:none">
+    <h3 style="color:var(--danger)">👪 Family Member Access</h3>
+    <button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('🔓 Verified: Documents released.')">Verify & Unlock</button>
+    <button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button>
+  </div>
+</div></div>
 
 <footer>OneApp.in • Live on Vercel + Supabase (₹0 stack)<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://ylxxxmrbsllrncwcpcmb.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
 let sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-async function signInWithGoogle() {
-  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+async function signInWithGoogle(){
+  const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
   if (error) showMsg(error.message);
 }
-
-let authMode = 'signin';
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
-function hideMsg(){document.getElementById('authMsg').style.display='none';}
-function toggleAuthMode(){
-  authMode = (authMode==='signin') ? 'signup' : 'signin';
-  const up = authMode==='signup';
-  document.getElementById('authTitle').textContent = up ? 'Create Account' : 'Welcome to OneApp';
-  document.getElementById('nameField').style.display = up ? 'block' : 'none';
-  document.getElementById('authSubmit').textContent = up ? 'Create Account' : 'Sign In';
-  document.getElementById('authToggle').textContent = up ? 'Already have an account? Sign in' : 'New here? Create a free account';
-  hideMsg();
-}
 async function submitAuth(){
-  const email = document.getElementById('authEmail').value.trim();
-  const pass  = document.getElementById('authPass').value;
-  if(!email || !pass){ showMsg('Please enter email and password.'); return; }
-  if(authMode==='signup'){
-    const name = document.getElementById('authName').value.trim() || email.split('@')[0];
-    const {error} = await sb.auth.signUp({ email, password: pass, options:{ data:{ full_name:name } } });
-    if(error){ showMsg(error.message); return; }
-    closeModal('authModal'); alert('✅ Account created!');
-  } else {
-    const {error} = await sb.auth.signInWithPassword({ email, password: pass });
-    if(error){ showMsg(error.message); return; }
-    closeModal('authModal');
-  }
+  const email=document.getElementById('authEmail').value.trim(), pass=document.getElementById('authPass').value;
+  if(!email||!pass){showMsg('Enter email and password.');return;}
+  const {error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error)showMsg(error.message); else closeModal('authModal');
 }
 async function handleAuthClick(){ openModal('authModal'); }
 async function doSignOut(){ await sb.auth.signOut(); }
 function toggleUserMenu(e){ e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); }
 
-sb.auth.onAuthStateChange((event, session) => {
-  const btn = document.getElementById('authBtn');
-  const area = document.getElementById('userArea');
+sb.auth.onAuthStateChange((event, session)=>{
+  const btn=document.getElementById('authBtn'), area=document.getElementById('userArea');
   if(session){
-    const meta = session.user.user_metadata || {};
-    const full = meta.full_name || meta.name || (session.user.email ? session.user.email.split('@')[0] : 'User');
-    document.getElementById('userName').textContent = full;
-    document.getElementById('userEmail').textContent = session.user.email || 'No email on file';
-    const img = document.getElementById('userAvatar');
-    const fb  = document.getElementById('userAvatarFallback');
-    const pic = meta.avatar_url || meta.picture;
-    if(pic){ img.src = pic; img.style.display='block'; fb.style.display='none'; }
-    else   { img.style.display='none'; fb.style.display='flex'; fb.textContent = (full.charAt(0)||'U').toUpperCase(); }
+    const meta=session.user.user_metadata||{};
+    const full=meta.full_name||meta.name||(session.user.email?session.user.email.split('@')[0]:'User');
+    document.getElementById('userName').textContent=full;
+    document.getElementById('userEmail').textContent=session.user.email||'';
+    const img=document.getElementById('userAvatar'), fb=document.getElementById('userAvatarFallback');
+    const pic=meta.avatar_url||meta.picture;
+    if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}
+    else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
     btn.style.display='none'; area.style.display='block';
+    loadSavedAadhaar(session.user.id);
   } else {
     btn.style.display=''; area.style.display='none';
     document.getElementById('userDropdown').classList.remove('show');
+    resetAadhaarUI();
   }
 });
 
+// ---------- AADHAAR WALLET CARD ----------
+let aaCanvas=null;
+function showAa(id){ ['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display = (x===id)?'block':'none'); }
+function openAadhaar(){ showAa('aaStep1'); openModal('aadhaarModal'); }
+function openAadhaarView(){ if(!aaCanvas){alert('No card yet — use Download Aadhaar first.');return;} document.getElementById('aaPreview2').src=aaCanvas.toDataURL('image/jpeg',0.92); showAa('aaView'); openModal('aadhaarModal'); }
+function aaGoPortal(){
+  const n=document.getElementById('aaNumber').value.replace(/\D/g,'');
+  if(n.length!==12){alert('Enter a valid 12-digit Aadhaar number.');return;}
+  window.open('https://eaadhaar.uidai.gov.in/','_blank');
+  showAa('aaStep2');
+}
+async function aaOnFile(file){
+  if(!file)return;
+  const st=document.getElementById('aaStatus');
+  st.textContent='📖 Reading PDF on your device…';
+  const pw=document.getElementById('aaPass').value||undefined;
+  let pdf;
+  try{ pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(), password:pw}).promise; }
+  catch(err){
+    if(err&&err.name==='PasswordException'){ document.getElementById('aaPassRow').style.display='block'; st.textContent='🔒 Password-protected PDF — enter password (hint: name CAPS 4 letters + birth year) and select the file again.'; return; }
+    st.textContent='❌ '+err.message; return;
+  }
+  try{
+    const page=await pdf.getPage(1);
+    const vp=page.getViewport({scale:2.2});
+    const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+    await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+    aaCanvas=autoCrop(c);
+    document.getElementById('aaPreview').src=aaCanvas.toDataURL('image/jpeg',0.92);
+    showAa('aaStep3');
+  }catch(e){ st.textContent='❌ Render failed: '+e.message; }
+}
+function autoCrop(canvas){
+  const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
+  const d=ctx.getImageData(0,0,w,h).data;
+  let top=h,bottom=0,left=w,right=0; const T=245;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){if(y<top)top=y;if(y>bottom)bottom=y;if(x<left)left=x;if(x>right)right=x;}}
+  if(bottom<=top||right<=left)return canvas;
+  const p=Math.round(w*0.01);
+  top=Math.max(0,top-p);left=Math.max(0,left-p);bottom=Math.min(h-1,bottom+p);right=Math.min(w-1,right+p);
+  const c2=document.createElement('canvas'); c2.width=right-left+1; c2.height=bottom-top+1;
+  c2.getContext('2d').drawImage(canvas,left,top,c2.width,c2.height,0,0,c2.width,c2.height);
+  return c2;
+}
+function aaCardPdf(){
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({unit:'mm',format:[85.6,54],orientation:'landscape'});
+  const r=Math.min(85.6/aaCanvas.width,54/aaCanvas.height);
+  const w=aaCanvas.width*r, h=aaCanvas.height*r;
+  pdf.addImage(aaCanvas.toDataURL('image/jpeg',0.92),'JPEG',(85.6-w)/2,(54-h)/2,w,h);
+  return pdf;
+}
+async function aaSave(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){alert('Sign in first so the card is saved to YOUR private vault.');return;}
+  const jpg=await (await fetch(aaCanvas.toDataURL('image/jpeg',0.92))).blob();
+  const pdf=aaCardPdf().output('blob');
+  const uid=session.user.id;
+  const u1=await sb.storage.from('vault').upload(uid+'/aadhaar-card.jpg', jpg, {contentType:'image/jpeg', upsert:true});
+  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-card.pdf', pdf, {contentType:'application/pdf', upsert:true});
+  if(u1.error||u2.error){alert('❌ '+(u1.error||u2.error).message);return;}
+  const {data:exist}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  let err;
+  if(exist&&exist.length){ ({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-card.jpg', is_critical:true}).eq('id',exist[0].id)); }
+  else { ({error:err}=await sb.from('documents').insert({user_id:uid, document_type:'Aadhaar Card (Wallet)', document_name:'aadhaar-card', file_url:uid+'/aadhaar-card.jpg', is_critical:true})); }
+  if(err){alert('❌ '+err.message);return;}
+  setAadhaarSavedUI('Wallet card saved • encrypted private vault');
+  closeModal('aadhaarModal');
+  alert('✅ Aadhaar wallet card saved!\nJPG + PDF card stored in your private bucket. A4 original was never uploaded.');
+}
+function setAadhaarSavedUI(txt){
+  document.getElementById('aadhaarGetBtn').style.display='none';
+  document.getElementById('aadhaarViewBtn').style.display='';
+  document.getElementById('aadhaarSub').textContent=txt;
+}
+function resetAadhaarUI(){
+  aaCanvas=null;
+  document.getElementById('aadhaarGetBtn').style.display='';
+  document.getElementById('aadhaarViewBtn').style.display='none';
+  document.getElementById('aadhaarSub').textContent='Not in wallet yet';
+}
+async function loadSavedAadhaar(uid){
+  const {data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  if(data&&data.length){
+    const {data:blob}=await sb.storage.from('vault').download(data[0].file_url);
+    if(blob){
+      const bmp=await createImageBitmap(blob);
+      const c=document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height;
+      c.getContext('2d').drawImage(bmp,0,0);
+      aaCanvas=c; setAadhaarSavedUI('Wallet card saved • encrypted private vault');
+    }
+  }
+}
+function aaSharePick(){ openModal('shareModal'); }
+async function aaShare(kind){
+  closeModal('shareModal');
+  if(!aaCanvas){alert('No card ready yet.');return;}
+  let blob,name,mime;
+  if(kind==='jpg'){ blob=await (await fetch(aaCanvas.toDataURL('image/jpeg',0.92))).blob(); name='aadhaar-card.jpg'; mime='image/jpeg'; }
+  else { blob=aaCardPdf().output('blob'); name='aadhaar-card.pdf'; mime='application/pdf'; }
+  const f=new File([blob],name,{type:mime});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){
+    try{ await navigator.share({files:[f], title:'My Aadhaar Card'}); }catch(e){}
+  } else {
+    const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=name; a.click();
+    alert('Direct share unsupported in this browser — file downloaded. Attach it in WhatsApp manually.');
+  }
+}
+
+// ---------- SOS ----------
+let lastPos=null;
+function openSOS(){ openModal('emergencyModal'); showSOSPanel('sos'); }
+function showSOSPanel(p){
+  document.getElementById('sosPanel').style.display=(p==='sos')?'block':'none';
+  document.getElementById('guardPanel').style.display=(p==='guard')?'block':'none';
+  document.getElementById('tabSos').classList.toggle('on',p==='sos');
+  document.getElementById('tabGuard').classList.toggle('on',p==='guard');
+  if(p==='sos')startLocate();
+}
+function mapLink(p){return 'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
+function startLocate(){
+  if(!navigator.geolocation){document.getElementById('sosStatus').textContent='❌ Location unsupported.';return;}
+  navigator.geolocation.getCurrentPosition(p=>{lastPos=p;const a=document.getElementById('sosLink');a.href=mapLink(p);a.style.display='block';document.getElementById('sosStatus').textContent='📍 Located • ±'+Math.round(p.coords.accuracy)+'m';},e=>{document.getElementById('sosStatus').textContent='❌ Location error code '+e.code;},{enableHighAccuracy:true,timeout:12000});
+}
+function shareWhatsApp(){ if(!lastPos){alert('Wait for location fix.');return;} window.open('https://wa.me/?text='+encodeURIComponent('🆘 EMERGENCY — my location:\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank'); }
+async function saveSOS(){
+  if(!lastPos){alert('Wait for location fix.');return;}
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){alert('Sign in first.');return;}
+  const {error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});
+  alert(error?'❌ '+error.message:'✅ Last location saved to Family Vault.');
+}
+
+// ---------- MISC ----------
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
-  const map={vault:'nav-vault',autopilot:'nav-auto',guardians:'nav-guard'};
-  if(map[id])document.getElementById(map[id]).classList.add('active');
+  const m={vault:'nav-vault',autopilot:'nav-auto',guardians:'nav-guard'};
+  if(m[id])document.getElementById(m[id]).classList.add('active');
   window.scrollTo(0,0);
 }
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 window.onclick=e=>{
-  if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show');
-  if(!e.target.closest('.user-area')) document.getElementById('userDropdown').classList.remove('show');
+  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
+  if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
 };
-function payRenewal(){closeModal('renewModal');alert('✅ Renewed successfully!');}
-function checkPUC(){alert('🔄 Checking Parivahan... NO UPDATE FOUND.');}
-function markPUC(){alert('✅ PUC marked renewed.');}
-function payBill(n,a){alert('✅ Paid ₹'+a);}
-function toggleGuardian(cb,n){alert('Permission updated for '+n);}
-function runScan(){alert('✅ Document scanned and added!');}
 </script>
 </body>
 </html>
