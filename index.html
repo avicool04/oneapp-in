@@ -196,8 +196,8 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
   </div>
   <div id="aaStep3" style="display:none">
-    <h3>🪪 Your card, detected automatically</h3>
-    <p class="sub" id="aaPickStatus">FRONT (photo) on top/left • BACK (address+QR) below/right — both normalized to real card size.</p>
+    <h3>🪪 Your card, rebuilt like the real one</h3>
+    <p class="sub" id="aaPickStatus">FRONT = QR+number header joined with photo panel • BACK = address+QR panel • instructions removed.</p>
     <img id="aaPreview" class="aa-preview" alt="Aadhaar card preview">
     <button class="btn btn-outline btn-sm" onclick="toggleAdjust()">✂️ Adjust blocks (only if auto is wrong)</button>
     <div id="aaAdjust" style="display:none">
@@ -365,32 +365,61 @@ async function aaOnFile(file){
   }catch(e){ st.textContent='❌ Render failed: '+e.message; }
 }
 function rectCanvas(src,x,y,w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(src,x,y,w,h,0,0,w,h); return c; }
-function findGap(canvas,axis){
+function gapsList(canvas,axis){
   const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
   const d=ctx.getImageData(0,0,w,h).data, T=245;
+  const out=[];
   if(axis==='h'){
-    let best=0,pos=-1,run=0; const min=Math.round(h*0.015);
-    for(let y=0;y<h;y++){
-      let white=true;
-      for(let x=0;x<w;x+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}}
-      if(white){run++; if(run>best&&y>h*0.15&&y<h*0.85){best=run;pos=y-Math.floor(run/2);}} else run=0;
+    let run=0,start=0; const min=Math.round(h*0.012);
+    for(let y=0;y<=h;y++){
+      let white=y<h;
+      if(white){ for(let x=0;x<w;x+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}} }
+      if(white){ if(run===0)start=y; run++; }
+      else { if(run>=min){ const pos=start+Math.floor(run/2); if(pos>h*0.15&&pos<h*0.85) out.push(pos); } run=0; }
     }
-    return best>=min?pos:-1;
   } else {
-    let best=0,pos=-1,run=0; const min=Math.round(w*0.015);
-    for(let x=0;x<w;x++){
-      let white=true;
-      for(let y=0;y<h;y+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}}
-      if(white){run++; if(run>best&&x>w*0.15&&x<w*0.85){best=run;pos=x-Math.floor(run/2);}} else run=0;
+    let run=0,start=0; const min=Math.round(w*0.012);
+    for(let x=0;x<=w;x++){
+      let white=x<w;
+      if(white){ for(let y=0;y<h;y+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}} }
+      if(white){ if(run===0)start=x; run++; }
+      else { if(run>=min){ const pos=start+Math.floor(run/2); if(pos>w*0.15&&pos<w*0.85) out.push(pos); } run=0; }
     }
-    return best>=min?pos:-1;
   }
+  return out;
+}
+function sectionsFrom(src,axis){
+  const gaps=gapsList(src,axis);
+  const out=[]; let start=0;
+  for(const g of gaps){
+    if(axis==='h') out.push(rectCanvas(src,0,start,src.width,g-start));
+    else out.push(rectCanvas(src,start,0,src.width-start,src.height));
+    start=g;
+  }
+  if(axis==='h') out.push(rectCanvas(src,0,start,src.width,src.height-start));
+  else out.push(rectCanvas(src,start,0,src.width-start,src.height));
+  return out;
+}
+function stackSections(list){
+  const w=Math.max.apply(null,list.map(s=>s.width));
+  const gap=8;
+  const h=list.reduce((a,s)=>a+s.height,0)+gap*(list.length-1);
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
+  let y=0;
+  for(const s of list){ ctx.drawImage(s,Math.round((w-s.width)/2),y); y+=s.height+gap; }
+  return c;
 }
 function splitPanels(src){
-  const y=findGap(src,'h');
-  if(y>0) return [autoCrop(rectCanvas(src,0,0,src.width,y)), autoCrop(rectCanvas(src,0,y,src.width,src.height-y))];
-  const x=findGap(src,'v');
-  if(x>0) return [autoCrop(rectCanvas(src,0,0,x,src.height)), autoCrop(rectCanvas(src,x,0,src.width-x,src.height))];
+  let secs=null;
+  if(gapsList(src,'h').length) secs=sectionsFrom(src,'h');
+  else if(gapsList(src,'v').length) secs=sectionsFrom(src,'v');
+  if(secs){
+    secs=secs.map(autoCrop).filter(s=>s.width>40&&s.height>Math.round(src.height*0.08));
+    if(secs.length>=4) return [stackSections([secs[0],secs[1]]), secs[secs.length-1]];
+    if(secs.length===3) return [secs[0], secs[2]];
+    if(secs.length===2) return [secs[0], secs[1]];
+  }
   const mid=Math.round(src.height*0.5);
   return [autoCrop(rectCanvas(src,0,0,src.width,mid)), autoCrop(rectCanvas(src,0,mid,src.width,src.height-mid))];
 }
