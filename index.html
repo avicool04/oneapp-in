@@ -1,3 +1,44 @@
+You're absolutely right — I had the layout completely backwards. Let me restate what I now understand from your image and correction:
+
+### ✅ Corrected understanding
+
+The e-Aadhaar PDF (A4 portrait) has this top-to-bottom structure:
+
+```
+┌─────────────────────────────┐
+│  TOP HALF (above scissors)  │
+│  - Instructions / header    │  ← DISCARD
+│  - Maybe duplicate/back?    │
+├  ─ ─  ─ ─ ─  ─ ─ ─  ─┤  ← SCISSORS LINE (middle of page)
+│                             │
+│  BOTTOM-LEFT = FRONT        │  ← photo, name, DOB, gender,
+│  (your first image)         │     QR right, number, VID, slogan
+│                             │
+│  BOTTOM-RIGHT = BACK        │  ← address columns, QR,
+│  (your second image)        │     number, VID, contact strip
+│                             │
+└─────────────────────────────┘
+```
+
+So:
+- **FRONT** = bottom-left quadrant of the PDF (below the scissors line, left side)
+- **BACK** = bottom-right quadrant of the PDF (below the scissors line, right side)
+- **Top half** (above scissors) = discarded entirely
+- The scissors line is **horizontal across the middle**, splitting top (discard) from bottom (keep)
+- Then the bottom half is split **vertically** into left (FRONT) and right (BACK)
+
+### 🔧 v10.2 fix
+
+1. Detect the **horizontal scissors line** in the middle of the page.
+2. Take everything **below** that line.
+3. Split the bottom half **vertically** down the middle → left = FRONT, right = BACK.
+4. Auto-crop each to remove whitespace, keep the dashed border visible on the cut edges.
+5. No QR lifting. FRONT already has its QR on the right side. BACK already has its QR on the right side.
+6. 5 share options as specified.
+
+GitHub → `index.html` → pencil → **Ctrl+A → Delete → paste → Commit** (message: `v10.2: correct layout - front=bottom-left, back=bottom-right`).
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,8 +237,8 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
   </div>
   <div id="aaStep3" style="display:none">
-    <h3>🪪 Cut along ✂ lines — clean card faces</h3>
-    <p class="sub" id="aaPickStatus">FRONT (photo+QR) on top • BACK (address+QR) below • instructions removed • no scissor artifacts.</p>
+    <h3>🪪 Cut at scissors — FRONT left, BACK right</h3>
+    <p class="sub" id="aaPickStatus">FRONT = bottom-left (photo+QR) • BACK = bottom-right (address+QR) • top half discarded • dashed borders kept.</p>
     <img id="aaPreview" class="aa-preview" alt="Aadhaar card preview (side by side)">
     <button class="btn btn-outline btn-sm" onclick="toggleAdjust()">✂️ Adjust blocks (only if auto-cut is wrong)</button>
     <div id="aaAdjust" style="display:none">
@@ -367,39 +408,36 @@ async function aaOnFile(file){
 }
 function rectCanvas(src,x,y,w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(src,x,y,w,h,0,0,w,h); return c; }
 
-// Detect dashed cut-lines (scissors rows) and split FRONT / BACK
-function detectCutLines(canvas){
+// Detect horizontal scissors line in the middle, then split bottom half vertically
+function detectHorizontalCutLine(canvas){
   const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
   const d=ctx.getImageData(0,0,w,h).data;
   const lines=[];
-  for(let y=0;y<h;y++){
+  // Scan middle 40% of page for dashed line
+  const yStart=Math.round(h*0.3), yEnd=Math.round(h*0.7);
+  for(let y=yStart;y<yEnd;y++){
     let darkCount=0;
     for(let x=0;x<w;x+=2){
       const i=(y*w+x)*4;
-      if(d[i]<100&&d[i+1]<100&&d[i+2]<100) darkCount++;
+      if(d[i]<120&&d[i+1]<120&&d[i+2]<120) darkCount++;
     }
     const ratio=darkCount/(w/2);
-    if(ratio>0.15&&ratio<0.65) lines.push(y);
+    if(ratio>0.08&&ratio<0.70) lines.push(y);
   }
-  // Group consecutive rows into line centers
-  const groups=[];
-  let start=-1;
-  for(let i=0;i<lines.length;i++){
-    if(start<0) start=lines[i];
-    if(i===lines.length-1||lines[i+1]-lines[i]>5){
-      groups.push(Math.round((start+lines[i])/2));
-      start=-1;
-    }
-  }
-  return groups;
+  if(!lines.length) return -1;
+  // Group and find center
+  let start=lines[0], end=lines[lines.length-1];
+  return Math.round((start+end)/2);
 }
 function cutAtScissors(src){
-  const cuts=detectCutLines(src);
-  if(cuts.length>=2){
-    // FRONT = top to first cut (trim a few px inside to remove dashed line)
-    const front=autoCrop(rectCanvas(src, 0, 0, src.width, Math.max(0, cuts[0]-6)));
-    // BACK = second cut to bottom (trim a few px inside)
-    const back=autoCrop(rectCanvas(src, 0, Math.min(src.height, cuts[1]+6), src.width, src.height-cuts[1]-6));
+  const cutY=detectHorizontalCutLine(src);
+  if(cutY>0){
+    // Take bottom half (below scissors)
+    const bottomHalf=rectCanvas(src, 0, cutY, src.width, src.height-cutY);
+    // Split vertically: left = FRONT, right = BACK
+    const midX=Math.round(bottomHalf.width/2);
+    const front=autoCrop(rectCanvas(bottomHalf, 0, 0, midX, bottomHalf.height));
+    const back=autoCrop(rectCanvas(bottomHalf, midX, 0, bottomHalf.width-midX, bottomHalf.height));
     if(front.width>100&&front.height>100&&back.width>100&&back.height>100) return [front, back];
   }
   // Fallback: whitespace gap split
@@ -505,137 +543,4 @@ async function aaSave(){
   const backBlob=await (await fetch(aaBackCanvas.toDataURL('image/jpeg',0.92))).blob();
   const u1=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg', fullBlob, {contentType:'image/jpeg', upsert:true});
   if(u1.error){alert('❌ Storage full-JPG step: '+u1.error.message);return;}
-  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg', frontBlob, {contentType:'image/jpeg', upsert:true});
-  if(u2.error){alert('❌ Storage front-JPG step: '+u2.error.message);return;}
-  const u3=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg', backBlob, {contentType:'image/jpeg', upsert:true});
-  if(u3.error){alert('❌ Storage back-JPG step: '+u3.error.message);return;}
-  if(aaLastFile){
-    const u4=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf', aaLastFile, {contentType:'application/pdf', upsert:true});
-    if(u4.error){alert('❌ Storage original-PDF step: '+u4.error.message);return;}
-  }
-  const {data:exist}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
-  let err;
-  if(exist&&exist.length){ ({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg', is_critical:true}).eq('id',exist[0].id)); }
-  else { ({error:err}=await sb.from('documents').insert({user_id:uid, document_type:'Aadhaar Card (Wallet)', document_name:'aadhaar-card', file_url:uid+'/aadhaar-full.jpg', is_critical:true})); }
-  if(err){alert('❌ Documents row step: '+err.message);return;}
-  aaHasOriginal=true;
-  setAadhaarSavedUI('Wallet card saved • encrypted private vault');
-  closeModal('aadhaarModal');
-  alert('✅ Saved! Full page + front + back + original PDF are in your private vault.');
-}
-function setAadhaarSavedUI(txt){
-  document.getElementById('aadhaarGetBtn').style.display='none';
-  document.getElementById('aadhaarViewBtn').style.display='';
-  document.getElementById('aadhaarUpdBtn').style.display='';
-  document.getElementById('aadhaarDelBtn').style.display='';
-  document.getElementById('aadhaarSub').textContent=txt;
-}
-function resetAadhaarUI(){
-  aaFullCanvas=null; aaFrontCanvas=null; aaBackCanvas=null; aaHasOriginal=false;
-  document.getElementById('aadhaarGetBtn').style.display='';
-  document.getElementById('aadhaarViewBtn').style.display='none';
-  document.getElementById('aadhaarUpdBtn').style.display='none';
-  document.getElementById('aadhaarDelBtn').style.display='none';
-  document.getElementById('aadhaarSub').textContent='Not in wallet yet';
-}
-async function canvasFromBlob(blob){
-  const bmp=await createImageBitmap(blob);
-  const c=document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height;
-  c.getContext('2d').drawImage(bmp,0,0);
-  return c;
-}
-async function loadSavedAadhaar(uid){
-  const {data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
-  if(!data||!data.length)return;
-  const {data:fullBlob}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');
-  const {data:frontBlob}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
-  const {data:backBlob}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');
-  if(fullBlob) aaFullCanvas=await canvasFromBlob(fullBlob);
-  if(frontBlob) aaFrontCanvas=await canvasFromBlob(frontBlob);
-  if(backBlob) aaBackCanvas=await canvasFromBlob(backBlob);
-  aaHasOriginal=true;
-  setAadhaarSavedUI('Wallet card saved • encrypted private vault');
-}
-async function aaDelete(){
-  if(!confirm('Permanently delete full page, front, back and original PDF from your vault?'))return;
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session)return;
-  const uid=session.user.id;
-  await sb.storage.from('vault').remove([uid+'/aadhaar-full.jpg', uid+'/aadhaar-front.jpg', uid+'/aadhaar-back.jpg', uid+'/aadhaar-original.pdf']);
-  const {error}=await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
-  if(error){alert('❌ '+error.message);return;}
-  resetAadhaarUI();
-  alert('✅ Deleted permanently from your vault (DPDP right to erasure).');
-}
-function aaSharePick(){ openModal('shareModal'); }
-async function aaShare(fmt,layout){
-  closeModal('shareModal');
-  // Option 1: A4 original PDF
-  if(fmt==='a4pdf'){
-    if(!aaLastFile){alert('No original PDF available — upload or re-detect first.');return;}
-    const f=aaLastFile;
-    if(navigator.canShare&&navigator.canShare({files:[f]})){
-      try{ await navigator.share({files:[f], title:'My Aadhaar (A4 PDF)'}); }catch(e){}
-    } else {
-      const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download='aadhaar-a4.pdf'; a.click();
-      alert('Direct share unsupported — file downloaded. Attach it in WhatsApp manually.');
-    }
-    return;
-  }
-  // Options 2-5: ID card compositions
-  const c=composeCanvas(layout);
-  if(!c)return;
-  let blob,name,mime;
-  if(fmt==='jpg'){ blob=await (await fetch(c.toDataURL('image/jpeg',0.92))).blob(); name='aadhaar-id-'+layout+'.jpg'; mime='image/jpeg'; }
-  else { blob=makePdfFromCanvas(c).output('blob'); name='aadhaar-id-'+layout+'.pdf'; mime='application/pdf'; }
-  const f=new File([blob],name,{type:mime});
-  if(navigator.canShare&&navigator.canShare({files:[f]})){
-    try{ await navigator.share({files:[f], title:'My Aadhaar Card'}); }catch(e){}
-  } else {
-    const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=name; a.click();
-    alert('Direct share unsupported in this browser — file downloaded. Attach it in WhatsApp manually.');
-  }
-}
-
-// ---------- SOS ----------
-let lastPos=null;
-function openSOS(){ openModal('emergencyModal'); showSOSPanel('sos'); }
-function showSOSPanel(p){
-  document.getElementById('sosPanel').style.display=(p==='sos')?'block':'none';
-  document.getElementById('guardPanel').style.display=(p==='guard')?'block':'none';
-  document.getElementById('tabSos').classList.toggle('on',p==='sos');
-  document.getElementById('tabGuard').classList.toggle('on',p==='guard');
-  if(p==='sos')startLocate();
-}
-function mapLink(p){return 'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
-function startLocate(){
-  if(!navigator.geolocation){document.getElementById('sosStatus').textContent='❌ Location unsupported.';return;}
-  navigator.geolocation.getCurrentPosition(p=>{lastPos=p;const a=document.getElementById('sosLink');a.href=mapLink(p);a.style.display='block';document.getElementById('sosStatus').textContent='📍 Located • ±'+Math.round(p.coords.accuracy)+'m';},e=>{document.getElementById('sosStatus').textContent='❌ Location error code '+e.code;},{enableHighAccuracy:true,timeout:12000});
-}
-function shareWhatsApp(){ if(!lastPos){alert('Wait for location fix.');return;} window.open('https://wa.me/?text='+encodeURIComponent('🆘 EMERGENCY — my location:\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank'); }
-async function saveSOS(){
-  if(!lastPos){alert('Wait for location fix.');return;}
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){alert('Sign in first.');return;}
-  const {error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});
-  alert(error?'❌ '+error.message:'✅ Last location saved to Family Vault.');
-}
-
-// ---------- MISC ----------
-function showView(id){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
-  const m={vault:'nav-vault',autopilot:'nav-auto',guardians:'nav-guard'};
-  if(m[id])document.getElementById(m[id]).classList.add('active');
-  window.scrollTo(0,0);
-}
-function openModal(id){document.getElementById(id).classList.add('show')}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-window.onclick=e=>{
-  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
-  if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
-};
-</script>
-</body>
-</html>
+  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-front
