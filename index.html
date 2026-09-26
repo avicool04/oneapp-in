@@ -196,9 +196,9 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
   </div>
   <div id="aaStep3" style="display:none">
-    <h3>🪪 Your card, rebuilt like the real one</h3>
-    <p class="sub" id="aaPickStatus">FRONT = QR+number header joined with photo panel • BACK = address+QR panel • instructions removed.</p>
-    <img id="aaPreview" class="aa-preview" alt="Aadhaar card preview">
+    <h3>🪪 Real-card look, rebuilt</h3>
+    <p class="sub" id="aaPickStatus">FRONT = photo panel with QR placed right-middle • BACK = address panel with contact strip • instructions removed.</p>
+    <img id="aaPreview" class="aa-preview" alt="Aadhaar card preview (side by side)">
     <button class="btn btn-outline btn-sm" onclick="toggleAdjust()">✂️ Adjust blocks (only if auto is wrong)</button>
     <div id="aaAdjust" style="display:none">
       <div class="crop-row"><span class="pick-label">FRONT (photo block):</span>
@@ -410,13 +410,34 @@ function stackSections(list){
   for(const s of list){ ctx.drawImage(s,Math.round((w-s.width)/2),y); y+=s.height+gap; }
   return c;
 }
+function extractQR(header){
+  const w=header.width, h=header.height;
+  const cand=autoCrop(rectCanvas(header, Math.round(w*0.5), 0, Math.round(w*0.5), Math.round(h*0.6)));
+  if(cand.width>50&&cand.height>50) return cand;
+  return null;
+}
+function composeFront(header, photoPanel){
+  const qr=extractQR(header);
+  if(!qr) return stackSections([header, photoPanel]);
+  const c=document.createElement('canvas'); c.width=photoPanel.width; c.height=photoPanel.height;
+  const ctx=c.getContext('2d');
+  ctx.drawImage(photoPanel,0,0);
+  const qrH=Math.round(c.height*0.42);
+  const qrW=Math.round(qr.width*(qrH/qr.height));
+  const pad=6;
+  const x=c.width-qrW-Math.round(c.width*0.03);
+  const y=Math.round(c.height*0.26);
+  ctx.fillStyle='#ffffff'; ctx.fillRect(x-pad,y-pad,qrW+pad*2,qrH+pad*2);
+  ctx.drawImage(qr,x,y,qrW,qrH);
+  return c;
+}
 function splitPanels(src){
   let secs=null;
   if(gapsList(src,'h').length) secs=sectionsFrom(src,'h');
   else if(gapsList(src,'v').length) secs=sectionsFrom(src,'v');
   if(secs){
     secs=secs.map(autoCrop).filter(s=>s.width>40&&s.height>Math.round(src.height*0.08));
-    if(secs.length>=4) return [stackSections([secs[0],secs[1]]), secs[secs.length-1]];
+    if(secs.length>=4) return [composeFront(secs[0],secs[1]), secs[secs.length-1]];
     if(secs.length===3) return [secs[0], secs[2]];
     if(secs.length===2) return [secs[0], secs[1]];
   }
@@ -452,7 +473,7 @@ function composeCanvas(layout){
   return c;
 }
 function refreshPreview(){
-  const c=composeCanvas('stack');
+  const c=composeCanvas('side');
   if(c) document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);
 }
 function autoCrop(canvas){
