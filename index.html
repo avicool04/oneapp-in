@@ -172,7 +172,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <p class="sub">OneApp never asks for your Aadhaar number — only you and UIDAI ever see it.</p>
     <button class="btn btn-primary" onclick="aaGoPortal()">⬇️ Download fresh from UIDAI (OTP on your mobile)</button>
     <button class="btn btn-outline" onclick="aaDirect()">📂 Upload new / updated PDF</button>
-    <button class="btn btn-outline" id="aaRecropBtn1" onclick="aaRecrop()" style="display:none">✂️ Re-pick blocks from stored original</button>
+    <button class="btn btn-outline" id="aaRecropBtn1" onclick="aaRecrop()" style="display:none">✂️ Re-detect blocks from stored original</button>
     <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button>
   </div>
   <div id="aaStep2" style="display:none">
@@ -196,22 +196,24 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
   </div>
   <div id="aaStep3" style="display:none">
-    <h3>🪪 Pick your card blocks</h3>
-    <p class="sub">Full page shown below. Tap where your FRONT (photo) block is, then where your BACK (address + QR) block is.</p>
-    <img id="aaPreview" class="aa-preview" alt="Full e-Aadhaar page">
-    <div class="crop-row"><span class="pick-label">1) FRONT (photo block):</span>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0,0.5,0.5)">↖ Top-Left</button>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0,1,0.5)">↗ Top-Right</button>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0.5,0.5,1)">↙ Bottom-Left</button>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0.5,1,1)">↘ Bottom-Right</button>
+    <h3>🪪 Your card, detected automatically</h3>
+    <p class="sub" id="aaPickStatus">FRONT (photo) on top/left • BACK (address+QR) below/right — both normalized to real card size.</p>
+    <img id="aaPreview" class="aa-preview" alt="Aadhaar card preview">
+    <button class="btn btn-outline btn-sm" onclick="toggleAdjust()">✂️ Adjust blocks (only if auto is wrong)</button>
+    <div id="aaAdjust" style="display:none">
+      <div class="crop-row"><span class="pick-label">FRONT (photo block):</span>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0,0.5,0.5)">↖ Top-Left</button>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0,1,0.5)">↗ Top-Right</button>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0.5,0.5,1)">↙ Bottom-Left</button>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0.5,1,1)">↘ Bottom-Right</button>
+      </div>
+      <div class="crop-row"><span class="pick-label">BACK (address + QR block):</span>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0,0.5,0.5)">↖ Top-Left</button>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0,1,0.5)">↗ Top-Right</button>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0.5,0.5,1)">↙ Bottom-Left</button>
+        <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0.5,1,1)">↘ Bottom-Right</button>
+      </div>
     </div>
-    <div class="crop-row"><span class="pick-label">2) BACK (address + QR block):</span>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0,0.5,0.5)">↖ Top-Left</button>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0,1,0.5)">↗ Top-Right</button>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0.5,0.5,1)">↙ Bottom-Left</button>
-      <button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0.5,1,1)">↘ Bottom-Right</button>
-    </div>
-    <p id="aaPickStatus" class="sos-box">FRONT: not picked • BACK: not picked</p>
     <button class="btn btn-success" onclick="aaSave()">🔒 Save to my Vault</button>
     <button class="btn btn-primary" onclick="aaSharePick()">📤 Share</button>
     <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
@@ -220,7 +222,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <h3>🪪 Full e-Aadhaar (as stored)</h3>
     <img id="aaPreview2" class="aa-preview" alt="Full e-Aadhaar page">
     <button class="btn btn-primary" onclick="aaSharePick()">📤 Share</button>
-    <button class="btn btn-outline" onclick="aaRecrop()">✂️ Re-pick blocks</button>
+    <button class="btn btn-outline" onclick="aaRecrop()">✂️ Re-detect blocks</button>
     <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
   </div>
 </div></div>
@@ -228,8 +230,8 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- SHARE CHOOSER -->
 <div id="shareModal" class="modal-overlay"><div class="modal">
   <h3>Share as…</h3>
-  <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼 JPG — side by side</button>
-  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼 JPG — up & down</button>
+  <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼 JPG — side by side (front | back)</button>
+  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼 JPG — up & down (front over back)</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','side')">📄 PDF — side by side</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 PDF — up & down</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
@@ -304,14 +306,14 @@ sb.auth.onAuthStateChange((event, session)=>{
 // ---------- AADHAAR WALLET CARD ----------
 let aaFullCanvas=null, aaFrontCanvas=null, aaBackCanvas=null, aaLastFile=null, aaHasOriginal=false;
 function showAa(id){ ['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display = (x===id)?'block':'none'); }
+function toggleAdjust(){ const d=document.getElementById('aaAdjust'); d.style.display = (d.style.display==='none')?'block':'none'; }
 function openAadhaar(){
   document.getElementById('aaRecropBtn1').style.display = aaHasOriginal ? '' : 'none';
   showAa('aaStep1'); openModal('aadhaarModal');
 }
 function openAadhaarView(){
-  const src = aaFullCanvas;
-  if(!src){alert('No card yet — use Download Aadhaar first.');return;}
-  document.getElementById('aaPreview2').src=src.toDataURL('image/jpeg',0.92);
+  if(!aaFullCanvas){alert('No card yet — use Download Aadhaar first.');return;}
+  document.getElementById('aaPreview2').src=aaFullCanvas.toDataURL('image/jpeg',0.92);
   showAa('aaView'); openModal('aadhaarModal');
 }
 function aaGoPortal(){
@@ -333,7 +335,7 @@ async function aaRecrop(){
   if(error||!blob){alert('No stored original found — use "Upload new / updated PDF" instead.');return;}
   aaLastFile=new File([blob],'aadhaar-original.pdf',{type:'application/pdf'});
   document.getElementById('aaCoach').style.display='none';
-  document.getElementById('aaStep2Sub').textContent='Re-picking blocks from your stored original. If it is password-protected, enter the password and tap Unlock & Convert.';
+  document.getElementById('aaStep2Sub').textContent='Re-detecting blocks from your stored original. If password-protected, enter password and tap Unlock & Convert.';
   document.getElementById('aaStatus').textContent='✂️ Stored original loaded — converting…';
   showAa('aaStep2');
   aaOnFile(aaLastFile);
@@ -356,52 +358,73 @@ async function aaOnFile(file){
     const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
     await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
     aaFullCanvas=autoCrop(c);
-    aaFrontCanvas=null; aaBackCanvas=null;
-    document.getElementById('aaPreview').src=aaFullCanvas.toDataURL('image/jpeg',0.92);
-    updatePickStatus();
+    const panels=splitPanels(aaFullCanvas);
+    aaFrontCanvas=panels[0]; aaBackCanvas=panels[1];
+    refreshPreview();
     showAa('aaStep3');
   }catch(e){ st.textContent='❌ Render failed: '+e.message; }
 }
-function quadCanvas(src,fx0,fy0,fx1,fy1){
-  const w=src.width,h=src.height;
-  const x=Math.round(fx0*w), y=Math.round(fy0*h), cw=Math.round((fx1-fx0)*w), ch=Math.round((fy1-fy0)*h);
-  const c=document.createElement('canvas'); c.width=cw; c.height=ch;
-  c.getContext('2d').drawImage(src,x,y,cw,ch,0,0,cw,ch);
-  return c;
+function rectCanvas(src,x,y,w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(src,x,y,w,h,0,0,w,h); return c; }
+function findGap(canvas,axis){
+  const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
+  const d=ctx.getImageData(0,0,w,h).data, T=245;
+  if(axis==='h'){
+    let best=0,pos=-1,run=0; const min=Math.round(h*0.015);
+    for(let y=0;y<h;y++){
+      let white=true;
+      for(let x=0;x<w;x+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}}
+      if(white){run++; if(run>best&&y>h*0.15&&y<h*0.85){best=run;pos=y-Math.floor(run/2);}} else run=0;
+    }
+    return best>=min?pos:-1;
+  } else {
+    let best=0,pos=-1,run=0; const min=Math.round(w*0.015);
+    for(let x=0;x<w;x++){
+      let white=true;
+      for(let y=0;y<h;y+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}}
+      if(white){run++; if(run>best&&x>w*0.15&&x<w*0.85){best=run;pos=x-Math.floor(run/2);}} else run=0;
+    }
+    return best>=min?pos:-1;
+  }
+}
+function splitPanels(src){
+  const y=findGap(src,'h');
+  if(y>0) return [autoCrop(rectCanvas(src,0,0,src.width,y)), autoCrop(rectCanvas(src,0,y,src.width,src.height-y))];
+  const x=findGap(src,'v');
+  if(x>0) return [autoCrop(rectCanvas(src,0,0,x,src.height)), autoCrop(rectCanvas(src,x,0,src.width-x,src.height))];
+  const mid=Math.round(src.height*0.5);
+  return [autoCrop(rectCanvas(src,0,0,src.width,mid)), autoCrop(rectCanvas(src,0,mid,src.width,src.height-mid))];
 }
 function pickQuad(slot,fx0,fy0,fx1,fy1){
   if(!aaFullCanvas){alert('Load a PDF first.');return;}
-  const q=autoCrop(quadCanvas(aaFullCanvas,fx0,fy0,fx1,fy1));
+  const q=autoCrop(rectCanvas(aaFullCanvas,Math.round(fx0*aaFullCanvas.width),Math.round(fy0*aaFullCanvas.height),Math.round((fx1-fx0)*aaFullCanvas.width),Math.round((fy1-fy0)*aaFullCanvas.height)));
   if(slot==='front') aaFrontCanvas=q; else aaBackCanvas=q;
-  updatePickStatus();
+  refreshPreview();
 }
-function updatePickStatus(){
-  const s=document.getElementById('aaPickStatus');
-  s.textContent='FRONT: '+(aaFrontCanvas?'✅ picked':'not picked')+' • BACK: '+(aaBackCanvas?'✅ picked':'not picked');
-  if(aaFrontCanvas&&aaBackCanvas){
-    document.getElementById('aaPreview').src=composeCanvas('stack').toDataURL('image/jpeg',0.92);
-  }
+function cardCanvas(src){
+  const W=1000,H=630;
+  const c=document.createElement('canvas'); c.width=W; c.height=H;
+  const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  const r=Math.min(W/src.width,H/src.height);
+  const w=Math.round(src.width*r), h=Math.round(src.height*r);
+  ctx.drawImage(src,Math.round((W-w)/2),Math.round((H-h)/2),w,h);
+  return c;
 }
 function composeCanvas(layout){
-  const a=aaFrontCanvas, b=aaBackCanvas;
-  if(!a||!b){alert('Pick FRONT and BACK blocks first.');return null;}
-  const gap=Math.round(Math.max(a.width,b.width)*0.03);
+  if(!aaFrontCanvas||!aaBackCanvas){alert('Blocks not ready yet.');return null;}
+  const a=cardCanvas(aaFrontCanvas), b=cardCanvas(aaBackCanvas);
+  const gap=24;
   const c=document.createElement('canvas');
   const ctx=c.getContext('2d');
-  if(layout==='side'){
-    const h=Math.max(a.height,b.height);
-    c.width=a.width+b.width+gap; c.height=h;
-    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,c.width,c.height);
-    ctx.drawImage(a,0,Math.round((h-a.height)/2));
-    ctx.drawImage(b,a.width+gap,Math.round((h-b.height)/2));
-  } else {
-    const w=Math.max(a.width,b.width);
-    c.width=w; c.height=a.height+b.height+gap;
-    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,c.width,c.height);
-    ctx.drawImage(a,Math.round((w-a.width)/2),0);
-    ctx.drawImage(b,Math.round((w-b.width)/2),a.height+gap);
-  }
+  if(layout==='side'){ c.width=a.width+b.width+gap; c.height=a.height; }
+  else { c.width=a.width; c.height=a.height+b.height+gap; }
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,c.width,c.height);
+  if(layout==='side'){ ctx.drawImage(a,0,0); ctx.drawImage(b,a.width+gap,0); }
+  else { ctx.drawImage(a,0,0); ctx.drawImage(b,0,a.height+gap); }
   return c;
+}
+function refreshPreview(){
+  const c=composeCanvas('stack');
+  if(c) document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);
 }
 function autoCrop(canvas){
   const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
@@ -423,7 +446,7 @@ function makePdfFromCanvas(c){
   return pdf;
 }
 async function aaSave(){
-  if(!aaFrontCanvas||!aaBackCanvas){alert('Pick FRONT and BACK blocks first (two taps).');return;}
+  if(!aaFrontCanvas||!aaBackCanvas){alert('Blocks not ready yet.');return;}
   const {data:{session}}=await sb.auth.getSession();
   if(!session){alert('Sign in first so the card is saved to YOUR private vault.');return;}
   const uid=session.user.id;
