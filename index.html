@@ -80,7 +80,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
     <button id="nav-auto" onclick="showView('autopilot')">🔄 Autopilot</button>
     <button id="nav-guard" onclick="showView('guardians')">Guardians</button>
-    <button class="btn-emg" onclick="openSOS()">🆘 Emergency</button>
+    <button class="btn-emg" onclick="openSOS()"> Emergency</button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
     <div class="user-area" id="userArea" style="display:none">
       <button class="user-chip" onclick="toggleUserMenu(event)">
@@ -96,7 +96,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </nav>
 
-<!-- VAULT -->
 <div id="vault" class="view active container">
   <h2>My Secure Vault</h2>
   <p class="sub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
@@ -120,7 +119,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </div>
 
-<!-- AUTOPILOT -->
 <div id="autopilot" class="view container">
   <h2>🔄 Renewals Autopilot</h2>
   <p class="sub">Every deadline tracked. Renew in one click.</p>
@@ -137,7 +135,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </div>
 
-<!-- GUARDIANS -->
 <div id="guardians" class="view container">
   <h2>Trusted Guardians</h2>
   <p class="sub">Who can access your Aadhaar/PAN if you're hospitalized or gone.</p>
@@ -149,7 +146,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </div>
 
-<!-- AUTH MODAL -->
 <div id="authModal" class="modal-overlay"><div class="modal">
   <h3 style="text-align:center">Welcome to OneApp</h3>
   <p class="sub" style="text-align:center">Secure your family's future in seconds.</p>
@@ -165,7 +161,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button>
 </div></div>
 
-<!-- AADHAAR WALLET MODAL -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
   <div id="aaStep1">
     <h3>🪪 Aadhaar Wallet Card</h3>
@@ -197,7 +192,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
   <div id="aaStep3" style="display:none">
     <h3>🪪 Cut at scissors — FRONT left, BACK right</h3>
-    <p class="sub" id="aaPickStatus">FRONT = bottom-left (photo+QR) • BACK = bottom-right (address+QR) • top half discarded • dashed borders kept.</p>
+    <p class="sub" id="aaPickStatus">FRONT = bottom-left (photo+QR) • BACK = bottom-right (address+QR) • top half discarded.</p>
     <img id="aaPreview" class="aa-preview" alt="Aadhaar card preview (side by side)">
     <button class="btn btn-outline btn-sm" onclick="toggleAdjust()">✂️ Adjust blocks (only if auto-cut is wrong)</button>
     <div id="aaAdjust" style="display:none">
@@ -227,7 +222,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </div></div>
 
-<!-- SHARE CHOOSER (5 options) -->
 <div id="shareModal" class="modal-overlay"><div class="modal">
   <h3>Share as…</h3>
   <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF (original)</button>
@@ -238,7 +232,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
 </div></div>
 
-<!-- SOS MODAL -->
 <div id="emergencyModal" class="modal-overlay"><div class="modal">
   <div class="tab-row">
     <button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">🆘 I need help</button>
@@ -264,83 +257,47 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const SUPABASE_URL = 'https://ylxxxmrbsllrncwcpcmb.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
-let sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const SUPABASE_URL='https://ylxxxmrbsllrncwcpcmb.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
+let sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-async function signInWithGoogle(){
-  const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
-  if (error) showMsg(error.message);
-}
+async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
-async function submitAuth(){
-  const email=document.getElementById('authEmail').value.trim(), pass=document.getElementById('authPass').value;
-  if(!email||!pass){showMsg('Enter email and password.');return;}
-  const {error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error)showMsg(error.message); else closeModal('authModal');
-}
-async function handleAuthClick(){ openModal('authModal'); }
-async function doSignOut(){ await sb.auth.signOut(); }
-function toggleUserMenu(e){ e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); }
+async function submitAuth(){const email=document.getElementById('authEmail').value.trim(),pass=document.getElementById('authPass').value;if(!email||!pass){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email,password:pass});if(error)showMsg(error.message);else closeModal('authModal');}
+async function handleAuthClick(){openModal('authModal');}
+async function doSignOut(){await sb.auth.signOut();}
+function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 
-sb.auth.onAuthStateChange((event, session)=>{
-  const btn=document.getElementById('authBtn'), area=document.getElementById('userArea');
+sb.auth.onAuthStateChange((event,session)=>{
+  const btn=document.getElementById('authBtn'),area=document.getElementById('userArea');
   if(session){
     const meta=session.user.user_metadata||{};
     const full=meta.full_name||meta.name||(session.user.email?session.user.email.split('@')[0]:'User');
     document.getElementById('userName').textContent=full;
     document.getElementById('userEmail').textContent=session.user.email||'';
-    const img=document.getElementById('userAvatar'), fb=document.getElementById('userAvatarFallback');
+    const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback');
     const pic=meta.avatar_url||meta.picture;
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}
     else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
-    btn.style.display='none'; area.style.display='block';
+    btn.style.display='none';area.style.display='block';
     loadSavedAadhaar(session.user.id);
-  } else {
-    btn.style.display=''; area.style.display='none';
+  }else{
+    btn.style.display='';area.style.display='none';
     document.getElementById('userDropdown').classList.remove('show');
     resetAadhaarUI();
   }
 });
 
-// ---------- AADHAAR WALLET CARD ----------
-let aaFullCanvas=null, aaFrontCanvas=null, aaBackCanvas=null, aaLastFile=null, aaHasOriginal=false;
-function showAa(id){ ['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display = (x===id)?'block':'none'); }
-function toggleAdjust(){ const d=document.getElementById('aaAdjust'); d.style.display = (d.style.display==='none')?'block':'none'; }
-function openAadhaar(){
-  document.getElementById('aaRecropBtn1').style.display = aaHasOriginal ? '' : 'none';
-  showAa('aaStep1'); openModal('aadhaarModal');
-}
-function openAadhaarView(){
-  if(!aaFullCanvas){alert('No card yet — use Download Aadhaar first.');return;}
-  document.getElementById('aaPreview2').src=aaFullCanvas.toDataURL('image/jpeg',0.92);
-  showAa('aaView'); openModal('aadhaarModal');
-}
-function aaGoPortal(){
-  window.open('https://myaadhaar.uidai.gov.in/','_blank');
-  document.getElementById('aaCoach').style.display='';
-  document.getElementById('aaStep2Sub').textContent='The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.';
-  showAa('aaStep2');
-}
-function aaDirect(){
-  document.getElementById('aaCoach').style.display='none';
-  document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — it converts on your device. Nothing is uploaded until you tap Save.';
-  showAa('aaStep2');
-}
-function aaUnlock(){ if(!aaLastFile){alert('Select the PDF file first.');return;} aaOnFile(aaLastFile); }
-async function aaRecrop(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){alert('Sign in first.');return;}
-  const {data:blob,error}=await sb.storage.from('vault').download(session.user.id+'/aadhaar-original.pdf');
-  if(error||!blob){alert('No stored original found — use "Upload new / updated PDF" instead.');return;}
-  aaLastFile=new File([blob],'aadhaar-original.pdf',{type:'application/pdf'});
-  document.getElementById('aaCoach').style.display='none';
-  document.getElementById('aaStep2Sub').textContent='Re-detecting from your stored original. If password-protected, enter password and tap Unlock & Convert.';
-  document.getElementById('aaStatus').textContent='✂️ Stored original loaded — converting…';
-  showAa('aaStep2');
-  aaOnFile(aaLastFile);
-}
+let aaFullCanvas=null,aaFrontCanvas=null,aaBackCanvas=null,aaLastFile=null,aaHasOriginal=false;
+function showAa(id){['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
+function toggleAdjust(){const d=document.getElementById('aaAdjust');d.style.display=(d.style.display==='none')?'block':'none';}
+function openAadhaar(){document.getElementById('aaRecropBtn1').style.display=aaHasOriginal?'':'none';showAa('aaStep1');openModal('aadhaarModal');}
+function openAadhaarView(){if(!aaFullCanvas){alert('No card yet — use Download Aadhaar first.');return;}document.getElementById('aaPreview2').src=aaFullCanvas.toDataURL('image/jpeg',0.92);showAa('aaView');openModal('aadhaarModal');}
+function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='The official myAadhaar portal opened in a new tab. There: Services → Download e-Aadhaar.';showAa('aaStep2');}
+function aaDirect(){document.getElementById('aaCoach').style.display='none';document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — it converts on your device. Nothing is uploaded until you tap Save.';showAa('aaStep2');}
+function aaUnlock(){if(!aaLastFile){alert('Select the PDF file first.');return;}aaOnFile(aaLastFile);}
+async function aaRecrop(){const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{data:blob,error}=await sb.storage.from('vault').download(session.user.id+'/aadhaar-original.pdf');if(error||!blob){alert('No stored original found — use "Upload new / updated PDF" instead.');return;}aaLastFile=new File([blob],'aadhaar-original.pdf',{type:'application/pdf'});document.getElementById('aaCoach').style.display='none';document.getElementById('aaStep2Sub').textContent='Re-detecting from your stored original. If password-protected, enter password and tap Unlock & Convert.';document.getElementById('aaStatus').textContent='✂️ Stored original loaded — converting…';showAa('aaStep2');aaOnFile(aaLastFile);}
 async function aaOnFile(file){
   if(!file)return;
   aaLastFile=file;
@@ -348,95 +305,85 @@ async function aaOnFile(file){
   st.textContent='📖 Reading PDF on your device…';
   const pw=document.getElementById('aaPass').value||undefined;
   let pdf;
-  try{ pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(), password:pw}).promise; }
+  try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
   catch(err){
-    if(err&&err.name==='PasswordException'){ document.getElementById('aaPassRow').style.display='block'; st.textContent='🔒 This PDF is password-protected. Type the password above (hint: first 4 letters of name CAPS + birth year) and tap 🔓 Unlock & Convert.'; return; }
-    st.textContent='❌ '+err.message; return;
+    if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='🔒 This PDF is password-protected. Type the password above (hint: first 4 letters of name CAPS + birth year) and tap 🔓 Unlock & Convert.';return;}
+    st.textContent='❌ '+err.message;return;
   }
   try{
     const page=await pdf.getPage(1);
     const vp=page.getViewport({scale:2.2});
-    const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
-    await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+    const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
+    await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
     aaFullCanvas=c;
     const panels=cutAtScissors(aaFullCanvas);
-    aaFrontCanvas=panels[0]; aaBackCanvas=panels[1];
+    aaFrontCanvas=panels[0];aaBackCanvas=panels[1];
     refreshPreview();
     showAa('aaStep3');
-  }catch(e){ st.textContent='❌ Render failed: '+e.message; }
+  }catch(e){st.textContent='❌ Render failed: '+e.message;}
 }
-function rectCanvas(src,x,y,w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(src,x,y,w,h,0,0,w,h); return c; }
-
-// Detect horizontal scissors line in the middle, then split bottom half vertically
+function rectCanvas(src,x,y,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(src,x,y,w,h,0,0,w,h);return c;}
 function detectHorizontalCutLine(canvas){
-  const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
   const d=ctx.getImageData(0,0,w,h).data;
   const lines=[];
-  // Scan middle 40% of page for dashed line
-  const yStart=Math.round(h*0.3), yEnd=Math.round(h*0.7);
+  const yStart=Math.round(h*0.3),yEnd=Math.round(h*0.7);
   for(let y=yStart;y<yEnd;y++){
     let darkCount=0;
-    for(let x=0;x<w;x+=2){
-      const i=(y*w+x)*4;
-      if(d[i]<120&&d[i+1]<120&&d[i+2]<120) darkCount++;
-    }
+    for(let x=0;x<w;x+=2){const i=(y*w+x)*4;if(d[i]<120&&d[i+1]<120&&d[i+2]<120)darkCount++;}
     const ratio=darkCount/(w/2);
-    if(ratio>0.08&&ratio<0.70) lines.push(y);
+    if(ratio>0.08&&ratio<0.70)lines.push(y);
   }
-  if(!lines.length) return -1;
-  // Group and find center
-  let start=lines[0], end=lines[lines.length-1];
+  if(!lines.length)return -1;
+  let start=lines[0],end=lines[lines.length-1];
   return Math.round((start+end)/2);
 }
 function cutAtScissors(src){
   const cutY=detectHorizontalCutLine(src);
   if(cutY>0){
-    // Take bottom half (below scissors)
-    const bottomHalf=rectCanvas(src, 0, cutY, src.width, src.height-cutY);
-    // Split vertically: left = FRONT, right = BACK
+    const bottomHalf=rectCanvas(src,0,cutY,src.width,src.height-cutY);
     const midX=Math.round(bottomHalf.width/2);
-    const front=autoCrop(rectCanvas(bottomHalf, 0, 0, midX, bottomHalf.height));
-    const back=autoCrop(rectCanvas(bottomHalf, midX, 0, bottomHalf.width-midX, bottomHalf.height));
-    if(front.width>100&&front.height>100&&back.width>100&&back.height>100) return [front, back];
+    const front=autoCrop(rectCanvas(bottomHalf,0,0,midX,bottomHalf.height));
+    const back=autoCrop(rectCanvas(bottomHalf,midX,0,bottomHalf.width-midX,bottomHalf.height));
+    if(front.width>100&&front.height>100&&back.width>100&&back.height>100)return[front,back];
   }
-  // Fallback: whitespace gap split
   const secs=sectionsFrom(src,'h').map(autoCrop).filter(s=>s.width>40&&s.height>Math.round(src.height*0.08));
-  if(secs.length>=4) return [secs[1], secs[secs.length-1]];
-  if(secs.length>=2) return [secs[0], secs[secs.length-1]];
+  if(secs.length>=4)return[secs[1],secs[secs.length-1]];
+  if(secs.length>=2)return[secs[0],secs[secs.length-1]];
   const mid=Math.round(src.height*0.5);
-  return [autoCrop(rectCanvas(src,0,0,src.width,mid)), autoCrop(rectCanvas(src,0,mid,src.width,src.height-mid))];
+  return[autoCrop(rectCanvas(src,0,0,src.width,mid)),autoCrop(rectCanvas(src,0,mid,src.width,src.height-mid))];
 }
 function sectionsFrom(src,axis){
   const gaps=gapsList(src,axis);
-  const out=[]; let start=0;
+  const out=[];let start=0;
   for(const g of gaps){
-    if(axis==='h') out.push(rectCanvas(src,0,start,src.width,g-start));
+    if(axis==='h')out.push(rectCanvas(src,0,start,src.width,g-start));
     else out.push(rectCanvas(src,start,0,src.width-start,src.height));
     start=g;
   }
-  if(axis==='h') out.push(rectCanvas(src,0,start,src.width,src.height-start));
+  if(axis==='h')out.push(rectCanvas(src,0,start,src.width,src.height-start));
   else out.push(rectCanvas(src,start,0,src.width-start,src.height));
   return out;
 }
 function gapsList(canvas,axis){
-  const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
-  const d=ctx.getImageData(0,0,w,h).data, T=245;
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  const d=ctx.getImageData(0,0,w,h).data,T=245;
   const out=[];
   if(axis==='h'){
-    let run=0,start=0; const min=Math.round(h*0.012);
+    let run=0,start=0;const min=Math.round(h*0.012);
     for(let y=0;y<=h;y++){
       let white=y<h;
-      if(white){ for(let x=0;x<w;x+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}} }
-      if(white){ if(run===0)start=y; run++; }
-      else { if(run>=min){ const pos=start+Math.floor(run/2); if(pos>h*0.15&&pos<h*0.85) out.push(pos); } run=0; }
+      if(white){for(let x=0;x<w;x+=4){const i=(y*w+x)*4;if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}}}
+      if(white){if(run===0)start=y;run++;}
+      else{if(run>=min){const pos=start+Math.floor(run/2);if(pos>h*0.15&&pos<h*0.85)out.push(pos);}run=0;}
     }
-  } else {
-    let run=0,start=0; const min=Math.round(w*0.012);
+  }else{
+    let run=0,start=0;const min=Math.round(w*0.012);
     for(let x=0;x<=w;x++){
       let white=x<w;
-      if(white){ for(let y=0;y<h;y+=4){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}} }
-      if(white){ if(run===0)start=x; run++; }
-      else { if(run>=min){ const pos=start+Math.floor(run/2); if(pos>w*0.15&&pos<w*0.85) out.push(pos); } run=0; }
+      if(white){for(let y=0;y<h;y+=4){const i=(y*w+x)*4;if(d[i]<T||d[i+1]<T||d[i+2]<T){white=false;break;}}}
+      if(white){if(run===0)start=x;run++;}
+      else{if(run>=min){const pos=start+Math.floor(run/2);if(pos>w*0.15&&pos<w*0.85)out.push(pos);}run=0;}
     }
   }
   return out;
@@ -444,62 +391,175 @@ function gapsList(canvas,axis){
 function pickQuad(slot,fx0,fy0,fx1,fy1){
   if(!aaFullCanvas){alert('Load a PDF first.');return;}
   const q=autoCrop(rectCanvas(aaFullCanvas,Math.round(fx0*aaFullCanvas.width),Math.round(fy0*aaFullCanvas.height),Math.round((fx1-fx0)*aaFullCanvas.width),Math.round((fy1-fy0)*aaFullCanvas.height)));
-  if(slot==='front') aaFrontCanvas=q; else aaBackCanvas=q;
+  if(slot==='front')aaFrontCanvas=q;else aaBackCanvas=q;
   refreshPreview();
 }
 function cardCanvas(src){
   const W=1000,H=630;
-  const c=document.createElement('canvas'); c.width=W; c.height=H;
-  const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
   const r=Math.min(W/src.width,H/src.height);
-  const w=Math.round(src.width*r), h=Math.round(src.height*r);
+  const w=Math.round(src.width*r),h=Math.round(src.height*r);
   ctx.drawImage(src,Math.round((W-w)/2),Math.round((H-h)/2),w,h);
   return c;
 }
 function composeCanvas(layout){
   if(!aaFrontCanvas||!aaBackCanvas){alert('Blocks not ready yet.');return null;}
-  const a=cardCanvas(aaFrontCanvas), b=cardCanvas(aaBackCanvas);
+  const a=cardCanvas(aaFrontCanvas),b=cardCanvas(aaBackCanvas);
   const gap=24;
   const c=document.createElement('canvas');
   const ctx=c.getContext('2d');
-  if(layout==='side'){ c.width=a.width+b.width+gap; c.height=a.height; }
-  else { c.width=a.width; c.height=a.height+b.height+gap; }
-  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,c.width,c.height);
-  if(layout==='side'){ ctx.drawImage(a,0,0); ctx.drawImage(b,a.width+gap,0); }
-  else { ctx.drawImage(a,0,0); ctx.drawImage(b,0,a.height+gap); }
+  if(layout==='side'){c.width=a.width+b.width+gap;c.height=a.height;}
+  else{c.width=a.width;c.height=a.height+b.height+gap;}
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);
+  if(layout==='side'){ctx.drawImage(a,0,0);ctx.drawImage(b,a.width+gap,0);}
+  else{ctx.drawImage(a,0,0);ctx.drawImage(b,0,a.height+gap);}
   return c;
 }
-function refreshPreview(){
-  const c=composeCanvas('side');
-  if(c) document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);
-}
+function refreshPreview(){const c=composeCanvas('side');if(c)document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);}
 function autoCrop(canvas){
-  const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
   const d=ctx.getImageData(0,0,w,h).data;
-  let top=h,bottom=0,left=w,right=0; const T=245;
-  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4; if(d[i]<T||d[i+1]<T||d[i+2]<T){if(y<top)top=y;if(y>bottom)bottom=y;if(x<left)left=x;if(x>right)right=x;}}
+  let top=h,bottom=0,left=w,right=0;const T=245;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;if(d[i]<T||d[i+1]<T||d[i+2]<T){if(y<top)top=y;if(y>bottom)bottom=y;if(x<left)left=x;if(x>right)right=x;}}
   if(bottom<=top||right<=left)return canvas;
   const p=Math.round(w*0.01);
   top=Math.max(0,top-p);left=Math.max(0,left-p);bottom=Math.min(h-1,bottom+p);right=Math.min(w-1,right+p);
-  const c2=document.createElement('canvas'); c2.width=right-left+1; c2.height=bottom-top+1;
+  const c2=document.createElement('canvas');c2.width=right-left+1;c2.height=bottom-top+1;
   c2.getContext('2d').drawImage(canvas,left,top,c2.width,c2.height,0,0,c2.width,c2.height);
   return c2;
 }
 function makePdfFromCanvas(c){
-  const {jsPDF}=window.jspdf;
-  const wmm=180, hmm=180*c.height/c.width;
-  const pdf = (wmm>=hmm) ? new jsPDF({unit:'mm',format:[hmm,wmm],orientation:'landscape'}) : new jsPDF({unit:'mm',format:[wmm,hmm],orientation:'portrait'});
+  const{jsPDF}=window.jspdf;
+  const wmm=180,hmm=180*c.height/c.width;
+  const pdf=(wmm>=hmm)?new jsPDF({unit:'mm',format:[hmm,wmm],orientation:'landscape'}):new jsPDF({unit:'mm',format:[wmm,hmm],orientation:'portrait'});
   pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,wmm,hmm);
   return pdf;
 }
 async function aaSave(){
   if(!aaFrontCanvas||!aaBackCanvas){alert('Blocks not ready yet.');return;}
-  const {data:{session}}=await sb.auth.getSession();
+  const{data:{session}}=await sb.auth.getSession();
   if(!session){alert('Sign in first so the card is saved to YOUR private vault.');return;}
   const uid=session.user.id;
-  const fullBlob=await (await fetch(aaFullCanvas.toDataURL('image/jpeg',0.92))).blob();
-  const frontBlob=await (await fetch(aaFrontCanvas.toDataURL('image/jpeg',0.92))).blob();
-  const backBlob=await (await fetch(aaBackCanvas.toDataURL('image/jpeg',0.92))).blob();
-  const u1=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg', fullBlob, {contentType:'image/jpeg', upsert:true});
+  const fullBlob=await(await fetch(aaFullCanvas.toDataURL('image/jpeg',0.92))).blob();
+  const frontBlob=await(await fetch(aaFrontCanvas.toDataURL('image/jpeg',0.92))).blob();
+  const backBlob=await(await fetch(aaBackCanvas.toDataURL('image/jpeg',0.92))).blob();
+  const u1=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',fullBlob,{contentType:'image/jpeg',upsert:true});
   if(u1.error){alert('❌ Storage full-JPG step: '+u1.error.message);return;}
-  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-front
+  const u2=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',frontBlob,{contentType:'image/jpeg',upsert:true});
+  if(u2.error){alert('❌ Storage front-JPG step: '+u2.error.message);return;}
+  const u3=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',backBlob,{contentType:'image/jpeg',upsert:true});
+  if(u3.error){alert('❌ Storage back-JPG step: '+u3.error.message);return;}
+  if(aaLastFile){
+    const u4=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',aaLastFile,{contentType:'application/pdf',upsert:true});
+    if(u4.error){alert('❌ Storage original-PDF step: '+u4.error.message);return;}
+  }
+  const{data:exist}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  let err;
+  if(exist&&exist.length){({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true}).eq('id',exist[0].id));}
+  else{({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true}));}
+  if(err){alert('❌ Documents row step: '+err.message);return;}
+  aaHasOriginal=true;
+  setAadhaarSavedUI('Wallet card saved • encrypted private vault');
+  closeModal('aadhaarModal');
+  alert('✅ Saved! Full page + front + back + original PDF are in your private vault.');
+}
+function setAadhaarSavedUI(txt){
+  document.getElementById('aadhaarGetBtn').style.display='none';
+  document.getElementById('aadhaarViewBtn').style.display='';
+  document.getElementById('aadhaarUpdBtn').style.display='';
+  document.getElementById('aadhaarDelBtn').style.display='';
+  document.getElementById('aadhaarSub').textContent=txt;
+}
+function resetAadhaarUI(){
+  aaFullCanvas=null;aaFrontCanvas=null;aaBackCanvas=null;aaHasOriginal=false;
+  document.getElementById('aadhaarGetBtn').style.display='';
+  document.getElementById('aadhaarViewBtn').style.display='none';
+  document.getElementById('aadhaarUpdBtn').style.display='none';
+  document.getElementById('aadhaarDelBtn').style.display='none';
+  document.getElementById('aadhaarSub').textContent='Not in wallet yet';
+}
+async function canvasFromBlob(blob){const bmp=await createImageBitmap(blob);const c=document.createElement('canvas');c.width=bmp.width;c.height=bmp.height;c.getContext('2d').drawImage(bmp,0,0);return c;}
+async function loadSavedAadhaar(uid){
+  const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  if(!data||!data.length)return;
+  const{data:fullBlob}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');
+  const{data:frontBlob}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
+  const{data:backBlob}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');
+  if(fullBlob)aaFullCanvas=await canvasFromBlob(fullBlob);
+  if(frontBlob)aaFrontCanvas=await canvasFromBlob(frontBlob);
+  if(backBlob)aaBackCanvas=await canvasFromBlob(backBlob);
+  aaHasOriginal=true;
+  setAadhaarSavedUI('Wallet card saved • encrypted private vault');
+}
+async function aaDelete(){
+  if(!confirm('Permanently delete full page, front, back and original PDF from your vault?'))return;
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session)return;
+  const uid=session.user.id;
+  await sb.storage.from('vault').remove([uid+'/aadhaar-full.jpg',uid+'/aadhaar-front.jpg',uid+'/aadhaar-back.jpg',uid+'/aadhaar-original.pdf']);
+  const{error}=await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
+  if(error){alert('❌ '+error.message);return;}
+  resetAadhaarUI();
+  alert('✅ Deleted permanently from your vault (DPDP right to erasure).');
+}
+function aaSharePick(){openModal('shareModal');}
+async function aaShare(fmt,layout){
+  closeModal('shareModal');
+  if(fmt==='a4pdf'){
+    if(!aaLastFile){alert('No original PDF available — upload or re-detect first.');return;}
+    const f=aaLastFile;
+    if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'My Aadhaar (A4 PDF)'});}catch(e){}}
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download='aadhaar-a4.pdf';a.click();alert('Direct share unsupported — file downloaded. Attach it in WhatsApp manually.');}
+    return;
+  }
+  const c=composeCanvas(layout);
+  if(!c)return;
+  let blob,name,mime;
+  if(fmt==='jpg'){blob=await(await fetch(c.toDataURL('image/jpeg',0.92))).blob();name='aadhaar-id-'+layout+'.jpg';mime='image/jpeg';}
+  else{blob=makePdfFromCanvas(c).output('blob');name='aadhaar-id-'+layout+'.pdf';mime='application/pdf';}
+  const f=new File([blob],name,{type:mime});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'My Aadhaar Card'});}catch(e){}}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=name;a.click();alert('Direct share unsupported in this browser — file downloaded. Attach it in WhatsApp manually.');}
+}
+
+let lastPos=null;
+function openSOS(){openModal('emergencyModal');showSOSPanel('sos');}
+function showSOSPanel(p){
+  document.getElementById('sosPanel').style.display=(p==='sos')?'block':'none';
+  document.getElementById('guardPanel').style.display=(p==='guard')?'block':'none';
+  document.getElementById('tabSos').classList.toggle('on',p==='sos');
+  document.getElementById('tabGuard').classList.toggle('on',p==='guard');
+  if(p==='sos')startLocate();
+}
+function mapLink(p){return'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
+function startLocate(){
+  if(!navigator.geolocation){document.getElementById('sosStatus').textContent='❌ Location unsupported.';return;}
+  navigator.geolocation.getCurrentPosition(p=>{lastPos=p;const a=document.getElementById('sosLink');a.href=mapLink(p);a.style.display='block';document.getElementById('sosStatus').textContent='📍 Located • ±'+Math.round(p.coords.accuracy)+'m';},e=>{document.getElementById('sosStatus').textContent='❌ Location error code '+e.code;},{enableHighAccuracy:true,timeout:12000});
+}
+function shareWhatsApp(){if(!lastPos){alert('Wait for location fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('🆘 EMERGENCY — my location:\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
+async function saveSOS(){
+  if(!lastPos){alert('Wait for location fix.');return;}
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){alert('Sign in first.');return;}
+  const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});
+  alert(error?'❌ '+error.message:'✅ Last location saved to Family Vault.');
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const m={vault:'nav-vault',autopilot:'nav-auto',guardians:'nav-guard'};
+  if(m[id])document.getElementById(m[id]).classList.add('active');
+  window.scrollTo(0,0);
+}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+window.onclick=e=>{
+  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
+  if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
+};
+</script>
+</body>
+</html>
