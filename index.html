@@ -86,7 +86,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <div id="vault" class="view active container">
   <h2>My Secure Vault</h2>
   <p class="sub">Encrypted mirrors of your official documents. Family access only via your rules.</p>
-
   <div class="card">
     <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
     <div class="icon-grid">
@@ -105,7 +104,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
       </div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-header"><h3>Insurance</h3></div>
     <div class="icon-grid">
@@ -115,7 +113,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
       <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#ccfbf1"/><path d="M32 8 L52 30 Q52 50 32 56 Q12 50 12 30 Z" fill="#14b8a6"/><path d="M32 8 L52 30 Q52 50 32 56" fill="#0d9488"/><path d="M28 32 L32 38 L42 26" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><span>Life</span></div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-header"><h3>Assets & Policies</h3><span class="badge badge-warn">Demo</span></div>
     <div class="doc-row"><div class="doc-info"><h4>LIC Jeevan Anand</h4><p>Policy 123456 • Matures Dec 2045</p></div><span class="badge badge-ok">Active</span></div>
@@ -123,38 +120,16 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   </div>
 </div>
 
-<div id="autopilot" class="view container">
-  <h2>Renewals Autopilot</h2>
-  <p class="sub">Every deadline tracked. Renew in one click.</p>
-  <div class="card">
-    <div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div>
-    <div class="doc-row"><div class="doc-info"><h4>Vehicle Insurance — MH 12 AB 1234</h4><p>Expires in <strong style="color:var(--warn)">12 days</strong></p></div><button class="btn btn-primary btn-sm" onclick="alert('Renewed (demo)')">1-Click Renew</button></div>
-    <div class="doc-row"><div class="doc-info"><h4>PUC Certificate</h4><p>Physical visit required</p></div><div style="display:flex;gap:.4rem"><button class="btn btn-outline btn-sm" onclick="alert('Checked: no update')">Check</button><button class="btn btn-success btn-sm" onclick="alert('Marked renewed')">Done</button></div></div>
-  </div>
-</div>
+<div id="autopilot" class="view container"><h2>Renewals Autopilot</h2><p class="sub">Every deadline tracked. Renew in one click.</p><div class="card"><div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div><div class="doc-row"><div class="doc-info"><h4>Vehicle Insurance — MH 12 AB 1234</h4><p>Expires in <strong style="color:var(--warn)">12 days</strong></p></div><button class="btn btn-primary btn-sm" onclick="alert('Renewed (demo)')">1-Click Renew</button></div><div class="doc-row"><div class="doc-info"><h4>PUC Certificate</h4><p>Physical visit required</p></div><div style="display:flex;gap:.4rem"><button class="btn btn-outline btn-sm" onclick="alert('Checked: no update')">Check</button><button class="btn btn-success btn-sm" onclick="alert('Marked renewed')">Done</button></div></div></div></div>
 
-<div id="guardians" class="view container">
-  <h2>Trusted Guardians</h2>
-  <p class="sub">Who can access your documents if you're hospitalized or gone.</p>
-  <div class="card"><div class="doc-row"><div class="doc-info"><h4>Priya Sharma (Wife)</h4><p>+91 98xxxxxxx • Verified</p></div><label class="switch"><input type="checkbox" checked onchange="alert('Permission updated')"><span class="slider"></span></label></div></div>
-</div>
+<div id="guardians" class="view container"><h2>Trusted Guardians</h2><p class="sub">Who can access your documents if you're hospitalized or gone.</p><div class="card"><div class="doc-row"><div class="doc-info"><h4>Priya Sharma (Wife)</h4><p>+91 98xxxxxxx • Verified</p></div><label class="switch"><input type="checkbox" checked onchange="alert('Permission updated')"><span class="slider"></span></label></div></div></div>
 
-<div id="authModal" class="modal-overlay"><div class="modal">
-  <h3 style="text-align:center">Welcome to OneApp</h3>
-  <p class="sub" style="text-align:center">Secure your family's future in seconds.</p>
-  <button class="btn btn-google" onclick="signInWithGoogle()"><svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>Continue with Google</button>
-  <div class="divider"><span>OR</span></div>
-  <div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.5rem .75rem;border-radius:6px;font-size:.85rem;margin:.5rem 0;text-align:center"></div>
-  <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com"></div>
-  <div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Minimum 6 characters"></div>
-  <button class="btn btn-primary" onclick="submitAuth()">Sign In</button>
-  <button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button>
-</div></div>
+<div id="authModal" class="modal-overlay"><div class="modal"><h3 style="text-align:center">Welcome to OneApp</h3><p class="sub" style="text-align:center">Secure your family's future in seconds.</p><button class="btn btn-google" onclick="signInWithGoogle()"><svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>Continue with Google</button><div class="divider"><span>OR</span></div><div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.5rem .75rem;border-radius:6px;font-size:.85rem;margin:.5rem 0;text-align:center"></div><div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com"></div><div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Minimum 6 characters"></div><button class="btn btn-primary" onclick="submitAuth()">Sign In</button><button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button></div></div>
 
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
   <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number — only you and UIDAI ever see it.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI (OTP on your mobile)</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" id="aaRecropBtn1" onclick="aaRecrop()" style="display:none">Re-detect from stored original</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
   <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened. Services → Download e-Aadhaar.</p><div id="aaCoach"><ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem"><li>Enter Aadhaar number on UIDAI page → request OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: first 4 letters of name (CAPS) + birth year, e.g. ABHI1989</li></ol><p style="font-size:.85rem;margin-bottom:.75rem">Not opening? <a href="https://myaadhaar.uidai.gov.in/" target="_blank">myAadhaar</a> • <a href="https://uidai.gov.in/" target="_blank">UIDAI home</a> • switch Wi-Fi ↔ data</p></div><div class="field"><label>Select your e-Aadhaar PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.5rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting for your PDF…</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
-  <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right — cut at 57%</h3><p class="sub">Bottom strip = side-by-side output. Split at center for individual faces.</p><img id="aaPreview" class="aa-preview" alt="preview"><button class="btn btn-outline btn-sm" onclick="toggleAdjust()">Adjust (if wrong)</button><div id="aaAdjust" style="display:none"><div class="crop-row"><span class="pick-label">FRONT:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0.5,1,1)">BR</button></div><div class="crop-row"><span class="pick-label">BACK:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0.5,1,1)">BR</button></div></div><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
+  <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right — cut at ✂ line</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="aa-preview" alt="preview"><button class="btn btn-outline btn-sm" onclick="toggleAdjust()">Adjust (if wrong)</button><div id="aaAdjust" style="display:none"><div class="crop-row"><span class="pick-label">FRONT:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0.5,1,1)">BR</button></div><div class="crop-row"><span class="pick-label">BACK:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0.5,1,1)">BR</button></div></div><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
   <div id="aaView" style="display:none"><h3>Full e-Aadhaar (as stored)</h3><img id="aaPreview2" class="aa-preview" alt="full page"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="aaRecrop()">Re-detect</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 </div></div>
 
@@ -203,14 +178,51 @@ async function aaOnFile(file){
   catch(e){st.textContent='❌ '+e.message;}
 }
 function rc(s,x,y,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(s,x,y,w,h,0,0,w,h);return c;}
+
+// Find the ✂ scissors dashed line by detecting short uniform dark segments (dashes)
+// spread across the row width. Text has long irregular blocks; dashes have many short runs.
+function findScissorsRow(canvas){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  const d=ctx.getImageData(0,0,w,h).data;
+  let bestY=-1,bestScore=0;
+  const y0=Math.round(h*0.40),y1=Math.round(h*0.80);
+  for(let y=y0;y<y1;y++){
+    const runs=[];let inRun=false,runStart=0;
+    for(let x=0;x<w;x++){
+      const i=(y*w+x)*4;const dark=d[i]<100&&d[i+1]<100&&d[i+2]<100;
+      if(dark&&!inRun){inRun=true;runStart=x;}
+      if(!dark&&inRun){inRun=false;runs.push({s:runStart,l:x-runStart});}
+    }
+    if(inRun)runs.push({s:runStart,l:w-runStart});
+    const shortRuns=runs.filter(r=>r.l>=2&&r.l<=25);
+    if(shortRuns.length<4)continue;
+    const span=shortRuns[shortRuns.length-1].s+shortRuns[shortRuns.length-1].l-shortRuns[0].s;
+    if(span<w*0.4)continue;
+    const score=shortRuns.length*(span/w);
+    if(score>bestScore){bestScore=score;bestY=y;}
+  }
+  return bestY;
+}
+
 function extractCards(src){
-  const cutY=Math.round(src.height*0.57);
-  const strip=rc(src,0,cutY,src.width,src.height-cutY);
-  aaSide=autoCrop(strip);
+  const cutY=findScissorsRow(src);
+  const info=document.getElementById('aaCutInfo');
+  if(cutY>0){
+    const pct=Math.round(cutY/src.height*100);
+    info.textContent='✂ Scissors line found at '+pct+'% — cut below it.';
+    const strip=rc(src,0,cutY+2,src.width,src.height-cutY-2);
+    aaSide=autoCrop(strip);
+  }else{
+    info.textContent='✂ Scissors line not detected — using 68% fallback.';
+    const cutFallback=Math.round(src.height*0.68);
+    const strip=rc(src,0,cutFallback,src.width,src.height-cutFallback);
+    aaSide=autoCrop(strip);
+  }
   const midX=Math.round(aaSide.width/2);
   aaFront=autoCrop(rc(aaSide,0,0,midX,aaSide.height));
   aaBack=autoCrop(rc(aaSide,midX,0,aaSide.width-midX,aaSide.height));
 }
+
 function pickQuad(slot,fx0,fy0,fx1,fy1){if(!aaFull){alert('Load PDF first.');return;}const q=autoCrop(rc(aaFull,Math.round(fx0*aaFull.width),Math.round(fy0*aaFull.height),Math.round((fx1-fx0)*aaFull.width),Math.round((fy1-fy0)*aaFull.height)));if(slot==='front')aaFront=q;else aaBack=q;aaSide=composeRaw();refreshPreview();}
 function composeRaw(){if(!aaFront||!aaBack)return null;const a=aaFront,b=aaBack,c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=a.width+b.width;c.height=Math.max(a.height,b.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,Math.round((c.height-a.height)/2));ctx.drawImage(b,a.width,Math.round((c.height-b.height)/2));return c;}
 function cardCanvas(s){const W=1000,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const r=Math.min(W/s.width,H/s.height),w=Math.round(s.width*r),h=Math.round(s.height*r);ctx.drawImage(s,Math.round((W-w)/2),Math.round((H-h)/2),w,h);return c;}
@@ -248,10 +260,8 @@ function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;docu
 async function cfb(blob){const b=await createImageBitmap(blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}
 async function loadSavedAadhaar(uid){
   const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);if(!data||!data.length)return;
-  const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');
-  const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
-  const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');
-  const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
+  const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
+  const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
   if(a)aaFull=await cfb(a);if(b)aaFront=await cfb(b);if(c)aaBack=await cfb(c);if(d)aaSide=await cfb(d);
   aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');
 }
