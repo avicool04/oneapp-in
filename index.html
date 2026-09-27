@@ -1,49 +1,3 @@
-You are absolutely right. I apologize for the confusion and the broken experience.
-
-Here is what went wrong:
-1.  **Markdown Leakage:** My previous response accidentally pasted the *explanation text* (the "Changes Implemented..." part) directly into your `index.html` file instead of just giving you the clean code block. That's why it looks like a wall of text on mobile—it's literally reading my instructions as website content.
-2.  **Broken Upload Logic:** The buttons were calling `alert()` or dummy functions instead of actually opening the scanner/file picker.
-3.  **Invitation Failure:** The invite function likely failed silently due to missing database columns (`display_name`) or RLS policies blocking inserts.
-
----
-
-### ✅ Immediate Fix Plan
-
-I will provide a **clean, working single-file HTML** that:
-1.  **Removes all markdown/text leakage.** Pure code only.
-2.  **Fixes Mobile Layout:** Ensures modals and grids scroll properly on small screens.
-3.  **Implements Real Child Space:** Clicking a child’s name opens a dedicated "Child Vault" view (similar to Home) with functional upload tiles for Aadhaar/Birth Cert/Vaccine.
-4.  **Connects Invites Properly:** Uses Supabase correctly to save invites and handles errors visibly.
-5.  **Restores Original Icons:** No changes to Identity/Insurance SVGs.
-
----
-
-### 🛠️ Prerequisite SQL (Run this FIRST in Supabase)
-
-This ensures the database accepts names and permissions without crashing.
-
-```sql
--- Add display_name column if missing
-ALTER TABLE public.family_links 
-ADD COLUMN IF NOT EXISTS display_name TEXT;
-
--- Ensure can_manage_minors flag exists
-ALTER TABLE public.family_links 
-ADD COLUMN IF NOT EXISTS can_manage_minors BOOLEAN DEFAULT FALSE;
-
--- Update RLS to allow owners to insert/update family links freely
-DROP POLICY IF EXISTS "Users manage own family links" ON public.family_links;
-CREATE POLICY "Users manage own family links" ON public.family_links
-FOR ALL USING (auth.uid() = owner_id) WITH CHECK (auth.uid() = owner_id);
-```
-
----
-
-### 💻 Clean Code (v17 - Fixed & Working)
-
-Replace your entire `index.html` with this. It includes proper error handling, real file inputs for children, and mobile-responsive CSS.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -660,4 +614,3 @@ window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.clas
 </script>
 </body>
 </html>
-```
