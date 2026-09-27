@@ -1,375 +1,791 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Identity Card Processing Portal</title>
-  
-  <!-- PDF.js Library for Client-Side Decryption & Rendering -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    // Initialize PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  </script>
-
-  <style>
-    :root {
-      --primary: #2563eb;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #0f172a;
-      --border: #e2e8f0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 24px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 800px;
-      background: var(--card-bg);
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    .section {
-      margin-bottom: 24px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    select, input[type="file"], input[type="text"], button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      margin-bottom: 12px;
-      box-sizing: border-box;
-    }
-
-    button {
-      background-color: var(--primary);
-      color: white;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #1d4ed8;
-    }
-
-    .preview-box {
-      margin-top: 16px;
-      text-align: center;
-    }
-
-    canvas, img {
-      max-width: 100%;
-      height: auto;
-      border: 1px dashed var(--border);
-      border-radius: 6px;
-      margin-top: 8px;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      background-color: #e0e7ff;
-      color: #3730a3;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OneApp.in | Vault + Family</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1e40af">
+<style>
+:root{--primary:#1e40af;--success:#059669;--warn:#d97706;--danger:#ef4444;--bg:#f8fafc;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b;--tile:#f1f3f5}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--dark);line-height:1.6;overflow-x:hidden}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
+.logo{font-weight:800;font-size:1.1rem;color:var(--primary)}.logo span{color:var(--gray)}
+.nav-links{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);font-size:.85rem;padding:.3rem .5rem;border-radius:6px}
+.nav-links button.active{color:var(--primary);background:rgba(30,64,175,.06)}
+.btn-emg{background:var(--danger)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
+.btn-auth{background:var(--primary)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
+.user-chip{display:flex;align-items:center;gap:.4rem;background:var(--primary)!important;color:#fff!important;padding:.25rem .7rem .25rem .3rem;border-radius:999px;font-weight:600;font-size:.8rem;border:none;cursor:pointer}
+.avatar{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#fff}
+.avatar-fallback{width:24px;height:24px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem}
+.user-area{position:relative}
+.dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.75rem;min-width:200px;display:none;z-index:300;text-align:left}
+.dropdown.show{display:block}.dropdown .email{font-size:.75rem;color:var(--gray);word-break:break-all;margin-bottom:.5rem}
+.container{max-width:900px;margin:1rem auto;padding:0 .75rem}
+.view{display:none;animation:fadeIn .3s ease}.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:1rem;margin-bottom:1rem}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;border-bottom:1px solid #f1f5f9;padding-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95rem}
+.sub{color:var(--gray);font-size:.8rem;margin-bottom:.75rem}
+.badge{padding:.15rem .5rem;border-radius:20px;font-size:.7rem;font-weight:700}
+.badge-ok{background:#d1fae5;color:#065f46}.badge-warn{background:#fef3c7;color:#92400e}.badge-alert{background:#fee2e2;color:#991b1b}
+.doc-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px dashed #f1f5f9;gap:.5rem;flex-wrap:wrap}
+.doc-row:last-child{border-bottom:none}
+.doc-info h4{font-size:.9rem}.doc-info p{font-size:.75rem;color:var(--gray)}
+.btn{padding:.6rem 1rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.85rem;width:100%;margin-bottom:.4rem;transition:all .2s}
+.btn:hover{opacity:.9}.btn-sm{padding:.35rem .7rem;font-size:.75rem;width:auto;margin:0}
+.btn-primary{background:var(--primary);color:#fff}.btn-outline{background:#fff;border:1px solid var(--border);color:var(--dark)}
+.btn-success{background:var(--success);color:#fff}.btn-danger{background:var(--danger);color:#fff}
+.btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0}.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:34px;cursor:pointer;transition:.3s}
+.slider:before{content:"";position:absolute;width:14px;height:14px;left:4px;bottom:4px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--primary)}input:checked+.slider:before{transform:translateX(18px)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;padding:1.25rem;border-radius:12px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
+.sos-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.6rem;margin:.5rem 0;font-size:.8rem}
+.tab-row{display:flex;gap:.4rem;margin-bottom:.5rem}
+.tab-btn{flex:1;padding:.4rem;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:600;font-size:.75rem}
+.tab-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.field{margin:.5rem 0}.field label{display:block;font-size:.75rem;font-weight:600;margin-bottom:.2rem}
+.field input,.field select{width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem}
+.divider{display:flex;align-items:center;margin:.75rem 0;color:var(--gray);font-size:.75rem}
+.divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}.divider span{padding:0 .5rem}
+.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem}
+.icon-tile{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
+.icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.icon-box svg{width:32px;height:32px}
+.icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
+.invite-tabs{display:flex;gap:.3rem;margin-bottom:.75rem}
+.invite-tab{flex:1;text-align:center;padding:.4rem;background:#f1f5f9;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--gray)}
+.invite-tab.active{background:var(--primary);color:#fff}
+.family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border)}
+.family-list-item:last-child{border-bottom:none}
+.family-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;margin-right:.5rem}
+footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
+@media(max-width:480px){
+  .icon-grid{grid-template-columns:repeat(3,1fr)}
+  .modal{padding:1rem;max-width:100%}
+  nav{padding:.5rem .75rem}
+}
+</style>
 </head>
 <body>
-
-<div class="container">
-  <h2>Identity Document Processing & Sharing</h2>
-
-  <!-- 1. Profile Context Selector -->
-  <div class="section">
-    <label for="profileSelect">Active Account Context:</label>
-    <select id="profileSelect" onchange="handleProfileSwitch(this.value)">
-      <option value="ADULT_PRIMARY">Primary Adult Account</option>
-      <option value="MINOR_DEPENDENT_1">Minor Dependent 1 (Child Profile)</option>
-      <option value="MINOR_DEPENDENT_2">Minor Dependent 2 (Child Profile)</option>
-    </select>
-    <p>Active Role: <span id="accountRoleBadge" class="status-badge">Adult Profile</span></p>
+<nav>
+  <div class="logo">One<span>App</span>.in</div>
+  <div class="nav-links">
+    <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
+    <button id="nav-auto" onclick="showView('autopilot')">Autopilot</button>
+    <button class="btn-emg" onclick="openSOS()">Emergency</button>
+    <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
+    <div class="user-area" id="userArea" style="display:none">
+      <button class="user-chip" onclick="toggleUserMenu(event)">
+        <img id="userAvatar" class="avatar" alt="" style="display:none">
+        <span id="userAvatarFallback" class="avatar-fallback">U</span>
+        <span id="userName">User</span>
+      </button>
+      <div class="dropdown" id="userDropdown">
+        <div class="email" id="userEmail"></div>
+        <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
+        <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
+      </div>
+    </div>
   </div>
+</nav>
 
-  <!-- 2. File Upload Interface -->
-  <div class="section">
-    <label for="fileInput">Upload Identity Document (PDF or JPG/PNG Image):</label>
-    <input type="file" id="fileInput" accept="application/pdf, image/jpeg, image/png" onchange="processUploadedFile()">
-  </div>
-
-  <!-- 3. Document Cropping & Processing Controls -->
-  <div class="section">
-    <button onclick="cropAndExtractCard()">Cut Document into ID Card Portion (JPG)</button>
-    
-    <div class="preview-box">
-      <h4>Extracted ID Card JPG Preview:</h4>
-      <img id="cardPreview" alt="Cropped Card Output Will Appear Here">
+<div id="vault" class="view active container">
+  <h2>My Secure Vault</h2>
+  <p class="sub">Encrypted mirrors of your official documents.</p>
+  
+  <!-- IDENTITY DOCUMENTS -->
+  <div class="card">
+    <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
+    <div class="icon-grid">
+      <div class="icon-tile" onclick="openAadhaar()"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#93c5fd"/></svg></div><span>Aadhaar</span></div>
+      <div class="icon-tile" onclick="alert('PAN Card — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/></svg></div><span>PAN Card</span></div>
+      <div class="icon-tile" onclick="alert('Driving License — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/></svg></div><span>License</span></div>
+      <div class="icon-tile" onclick="alert('Passport — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/></svg></div><span>Passport</span></div>
+    </div>
+    <div class="doc-row">
+      <div class="doc-info"><h4>Aadhaar Card</h4><p id="aadhaarSub">Not in wallet yet</p></div>
+      <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+        <button id="aadhaarGetBtn" class="btn btn-primary btn-sm" onclick="openAadhaar()">Download</button>
+        <button id="aadhaarViewBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaarView()">View</button>
+        <button id="aadhaarUpdBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaar()">Update</button>
+        <button id="aadhaarDelBtn" class="btn btn-outline btn-sm" style="display:none" onclick="aaDelete()">Delete</button>
+      </div>
     </div>
   </div>
 
-  <!-- 4. Watermarking & Export Pipeline -->
-  <div class="section">
-    <label for="watermarkText">Custom Watermark Overlay (Optional):</label>
-    <input type="text" id="watermarkText" placeholder="e.g., For Verification Purposes Only - Bank Name">
-    
-    <button onclick="executeSharingPipeline()">Generate Final Share Package</button>
+  <!-- INSURANCE -->
+  <div class="card">
+    <div class="card-header"><h3>Insurance</h3></div>
+    <div class="icon-grid">
+      <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="18" ry="4" fill="#e0d4f5"/><circle cx="18" cy="44" r="8" fill="#7c3aed"/><circle cx="46" cy="44" r="8" fill="#7c3aed"/></svg></div><span>Bike</span></div>
+      <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="20" ry="4" fill="#dbeafe"/><rect x="10" y="30" width="44" height="16" rx="8" fill="#3b82f6"/></svg></div><span>Car</span></div>
+      <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#fee2e2"/><rect x="14" y="16" width="36" height="34" rx="6" fill="#ef4444"/></svg></div><span>Health</span></div>
+      <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#ccfbf1"/><path d="M32 8 L52 30 Q52 50 32 56 Q12 50 12 30 Z" fill="#14b8a6"/></svg></div><span>Life</span></div>
+    </div>
   </div>
 </div>
 
-<script>
-  /**
-   * System State Management
-   */
-  const AppState = {
-    currentUser: { id: "USER_ADULT_101", name: "Primary Account Holder" },
-    activeProfile: { id: "USER_ADULT_101", isMinor: false },
-    linkedMinors: [
-      { id: "MINOR_DEPENDENT_1", name: "Minor Child 1" },
-      { id: "MINOR_DEPENDENT_2", name: "Minor Child 2" }
-    ],
-    loadedCanvas: null,
-    croppedCardJpgDataUrl: null
-  };
+<!-- AUTOPILOT -->
+<div id="autopilot" class="view container">
+  <h2>Renewals Autopilot</h2>
+  <p class="sub">Every deadline tracked.</p>
+  <div class="card">
+    <div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div>
+    <div class="doc-row">
+      <div class="doc-info"><h4>Vehicle Insurance</h4><p>Expires in 12 days</p></div>
+      <button class="btn btn-primary btn-sm">Renew</button>
+    </div>
+  </div>
+</div>
 
-  /**
-   * 1. Profile Switcher Logic
-   */
-  function handleProfileSwitch(selectedId) {
-    if (selectedId === "ADULT_PRIMARY") {
-      AppState.activeProfile = { id: AppState.currentUser.id, isMinor: false };
-      document.getElementById("accountRoleBadge").innerText = "Adult Profile";
-      document.getElementById("accountRoleBadge").style.backgroundColor = "#e0e7ff";
-      document.getElementById("accountRoleBadge").style.color = "#3730a3";
-    } else {
-      AppState.activeProfile = { id: selectedId, isMinor: true };
-      document.getElementById("accountRoleBadge").innerText = "Minor Profile (Linked Account)";
-      document.getElementById("accountRoleBadge").style.backgroundColor = "#fef3c7";
-      document.getElementById("accountRoleBadge").style.color = "#92400e";
-    }
-    console.log("Account Context Switched:", AppState.activeProfile);
-  }
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal-overlay"><div class="modal">
+  <h3>Welcome to OneApp</h3>
+  <button class="btn btn-google" onclick="signInWithGoogle()" style="margin-top:.5rem">
+    <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Continue with Google
+  </button>
+  <div class="divider"><span>OR</span></div>
+  <div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.4rem;border-radius:6px;font-size:.75rem;margin:.4rem 0;text-align:center"></div>
+  <div class="field"><label>Email</label><input id="authEmail" type="email"></div>
+  <div class="field"><label>Password</label><input id="authPass" type="password"></div>
+  <button class="btn btn-primary" onclick="submitAuth()">Sign In</button>
+  <button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button>
+</div></div>
 
-  /**
-   * 2. Upload Handler (PDF / Image Routing)
-   */
-  async function processUploadedFile() {
-    const fileInput = document.getElementById("fileInput");
-    const file = fileInput.files[0];
-    if (!file) return;
+<!-- AADHAAR MODAL -->
+<div id="aadhaarModal" class="modal-overlay"><div class="modal">
+  <div id="aaStep1">
+    <h3>Aadhaar Wallet Card</h3>
+    <p class="sub">OneApp never stores or shares raw digits.</p>
+    <button id="aaRecropBtn1" class="btn btn-outline" style="display:none;margin-bottom:.4rem" onclick="aaRecrop()">Re-detect from stored original</button>
+    <button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button>
+    <button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button>
+    <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button>
+  </div>
+  <div id="aaStep2" style="display:none">
+    <h3>Bring the PDF in</h3>
+    <p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p>
+    <div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter details → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password: First 4 letters CAPS + Birth Year</li></ol></div>
+    <div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div>
+    <div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div>
+    <div id="aaStatus" class="sos-box">Waiting...</div>
+    <button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button>
+  </div>
+  <div id="aaStep3" style="display:none">
+    <h3>FRONT left · BACK right</h3>
+    <p class="sub" id="aaCutInfo">Detecting scissors line…</p>
+    <img id="aaPreview" class="aa-preview" alt="preview" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0">
+    <button class="btn btn-success" onclick="aaSave()">Save to my Vault</button>
+    <button class="btn btn-primary" onclick="aaSharePick()">Share</button>
+    <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
+  </div>
+  <div id="aaView" style="display:none">
+    <h3>Full e-Aadhaar</h3>
+    <img id="aaPreview2" class="aa-preview" alt="full page" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0">
+    <button class="btn btn-primary" onclick="aaSharePick()">Share</button>
+    <button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button>
+  </div>
+</div></div>
 
-    if (file.type === "application/pdf") {
-      await renderPdfToCanvas(file);
-    } else if (file.type.startsWith("image/")) {
-      await renderImageToCanvas(file);
-    } else {
-      alert("Please upload a valid PDF or Image file.");
-    }
-  }
+<!-- SHARE CHOOSER -->
+<div id="shareModal" class="modal-overlay"><div class="modal">
+  <h3>Share as…</h3>
+  <button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF</button>
+  <button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button>
+  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button>
+  <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
+</div></div>
 
-  /**
-   * 3. PDF Handling Engine
-   */
-  async function renderPdfToCanvas(file) {
-    const arrayBuffer = await file.arrayBuffer();
+<!-- SOS MODAL -->
+<div id="emergencyModal" class="modal-overlay"><div class="modal">
+  <div class="tab-row">
+    <button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button>
+    <button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button>
+  </div>
+  <div id="sosPanel">
+    <h3 style="color:var(--danger)">SOS Beacon</h3>
+    <div class="sos-box">
+      <div id="sosStatus">Locating… allow location when asked.</div>
+      <a id="sosLink" href="#" target="_blank" style="display:none;font-weight:600;color:var(--primary);margin-top:.3rem">Open in Google Maps</a>
+    </div>
+    <button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button>
+    <button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button>
+    <button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button>
+  </div>
+  <div id="guardPanel" style="display:none">
+    <h3 style="color:var(--danger)">Family Member Access</h3>
+    <button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Emergency access granted.')">Verify & Unlock</button>
+    <button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button>
+  </div>
+</div></div>
 
-    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-    loadingTask.onPassword = (updatePassword, reason) => {
-      if (reason === pdfjsLib.PasswordResponses.NEED_PASSWORD) {
-        const password = prompt("Enter the PDF password (e.g., First 4 letters of name in UPPERCASE + Birth Year YYYY):");
-        updatePassword(password);
-      }
-    };
+<!-- MANAGE FAMILY MODAL -->
+<div id="familyManagerModal" class="modal-overlay"><div class="modal">
+  <h3>👨‍👩‍👧 Manage Family</h3>
+  <p class="sub">Connected members and permission settings.</p>
+  <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+  </div>
+  <div id="familyListContainer" style="margin-bottom:.75rem"></div>
+  <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
+</div></div>
 
-    try {
-      const pdfDoc = await loadingTask.promise;
-      const page = await pdfDoc.getPage(1);
+<!-- INVITE MODAL -->
+<div id="inviteModal" class="modal-overlay"><div class="modal">
+  <h3>Invite Family Member</h3>
+  <div class="invite-tabs">
+    <div class="invite-tab active" onclick="setInviteTab(event,'email')">📧 Email</div>
+    <div class="invite-tab" onclick="setInviteTab(event,'whatsapp')">💬 WhatsApp</div>
+    <div class="invite-tab" onclick="setInviteTab(event,'sms')">📱 SMS</div>
+  </div>
+  <div id="inviteContent-email">
+    <div class="field"><label>Name</label><input id="inviteName" type="text" placeholder="e.g. Priya Sharma"></div>
+    <div class="field"><label>Email Address</label><input id="inviteEmail" type="email"></div>
+    <div class="field"><label>Relation</label><select id="inviteRelation"><option value="spouse">Spouse</option><option value="parent">Parent</option><option value="sibling">Sibling</option></select></div>
+    <button class="btn btn-primary" onclick="sendInviteEmail()">Send Email Invite</button>
+  </div>
+  <div id="inviteContent-whatsapp" style="display:none">
+    <div class="field"><label>Name</label><input id="inviteNameWa" type="text"></div>
+    <div class="field"><label>Phone Number</label><input id="invitePhoneWa" type="tel" placeholder="e.g. 919876543210"></div>
+    <div class="field"><label>Relation</label><select id="inviteRelationWa"><option value="spouse">Spouse</option><option value="child">Child</option></select></div>
+    <button class="btn btn-success" onclick="sendInviteWhatsApp()">Open WhatsApp</button>
+  </div>
+  <div id="inviteContent-sms" style="display:none">
+    <div class="field"><label>Name</label><input id="inviteNameSms" type="text"></div>
+    <div class="field"><label>Phone Number</label><input id="invitePhoneSms" type="tel"></div>
+    <div class="field"><label>Relation</label><select id="inviteRelationSms"><option value="spouse">Spouse</option><option value="child">Child</option></select></div>
+    <button class="btn btn-primary" onclick="sendInviteSMS()">Open SMS App</button>
+  </div>
+  <button class="btn btn-outline" onclick="closeModal('inviteModal')" style="margin-top:.5rem">Cancel</button>
+</div></div>
 
-      // High-DPI Canvas Rendering
-      const viewport = page.getViewport({ scale: 2.0 });
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+<!-- ADD MINOR MODAL -->
+<div id="minorModal" class="modal-overlay"><div class="modal">
+  <h3>Add Minor Child</h3>
+  <div class="field"><label>Child Name</label><input id="minorName" type="text"></div>
+  <div class="field"><label>Date of Birth</label><input id="minorDob" type="date"></div>
+  <button class="btn btn-primary" onclick="addMinor()">Create Profile</button>
+  <button class="btn btn-outline" onclick="closeModal('minorModal')">Cancel</button>
+</div></div>
 
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      AppState.loadedCanvas = canvas;
-      alert("PDF loaded and rendered successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to process PDF. Check the password or file format.");
-    }
-  }
-
-  /**
-   * 4. Image Handling Engine
-   */
-  function renderImageToCanvas(file) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-
-          AppState.loadedCanvas = canvas;
-          alert("Image document loaded successfully!");
-          resolve();
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  /**
-   * 5. Cut Document into ID Card Portion (Cropping Engine)
-   */
-  function cropAndExtractCard() {
-    if (!AppState.loadedCanvas) {
-      alert("Please upload a document first.");
-      return;
-    }
-
-    const srcCanvas = AppState.loadedCanvas;
-
-    // Standard positioning coordinates for standard Aadhaar bottom section
-    const cropX = 0;
-    const cropY = Math.floor(srcCanvas.height * 0.58); // Target bottom card region
-    const cropWidth = srcCanvas.width;
-    const cropHeight = Math.floor(srcCanvas.height * 0.40);
-
-    const cardCanvas = document.createElement("canvas");
-    cardCanvas.width = cropWidth;
-    cardCanvas.height = cropHeight;
-
-    const ctx = cardCanvas.getContext("2d");
-    ctx.drawImage(
-      srcCanvas,
-      cropX, cropY, cropWidth, cropHeight,
-      0, 0, cropWidth, cropHeight
-    );
-
-    AppState.croppedCardJpgDataUrl = cardCanvas.toDataURL("image/jpeg", 0.92);
+<!-- CHILD VAULT VIEW -->
+<div id="childVaultView" class="view container">
+  <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+    <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
+    <h2 id="cvTitle" style="margin:0">Child Vault</h2>
+  </div>
+  <p class="sub">Upload documents for <strong id="cvNameDisplay"></strong>.</p>
+  
+  <div class="card">
+    <div class="card-header"><h3>Documents</h3></div>
+    <div class="icon-grid">
+      <div class="icon-tile" onclick="triggerChildUpload('aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg></div><span>Birth Cert</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
+    </div>
     
-    // Output preview to user interface
-    const previewImg = document.getElementById("cardPreview");
-    previewImg.src = AppState.croppedCardJpgDataUrl;
-  }
+    <div id="childDocList" style="margin-top:1rem">
+      <p class="sub">No documents uploaded yet.</p>
+    </div>
+  </div>
+</div>
 
-  /**
-   * 6. Sharing & Export Pipeline
-   */
-  async function executeSharingPipeline() {
-    if (!AppState.croppedCardJpgDataUrl) {
-      alert("Please extract the ID card portion first.");
+<footer>OneApp.in • Live on Vercel + Supabase<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const SUPABASE_URL='https://ylxxxmrbsllrncwcpcmb.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
+let sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let currentUser=null;
+let familyMembers=[]; 
+let currentChildId=null;
+let currentChildName="";
+
+async function signInWithGoogle(){
+  const{error}=await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.origin+window.location.pathname}
+  });
+  if(error)showMsg(error.message);
+}
+function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
+async function submitAuth(){
+  const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;
+  if(!e||!p){showMsg('Enter email and password.');return;}
+  const{error}=await sb.auth.signInWithPassword({email:e,password:p});
+  if(error)showMsg(error.message);else closeModal('authModal');
+}
+function handleAuthClick(){openModal('authModal');}
+async function doSignOut(){await sb.auth.signOut();}
+function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
+
+sb.auth.onAuthStateChange((ev,s)=>{
+  const btn=document.getElementById('authBtn'),area=document.getElementById('userArea');
+  if(s){
+    currentUser=s.user;
+    const m=s.user.user_metadata||{},full=m.full_name||m.name||(s.user.email?s.user.email.split('@')[0]:'User');
+    document.getElementById('userName').textContent=full;
+    document.getElementById('userEmail').textContent=s.user.email||'';
+    const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback'),pic=m.avatar_url||m.picture;
+    if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}
+    else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
+    btn.style.display='none';area.style.display='block';
+    loadSavedAadhaar(s.user.id);
+    loadFamilyMembers(); 
+  }else{
+    currentUser=null;familyMembers=[];
+    btn.style.display='';area.style.display='none';
+    document.getElementById('userDropdown').classList.remove('show');
+    resetAadhaarUI();
+  }
+});
+
+async function loadFamilyMembers(){
+  if(!currentUser)return;
+  const{data,error}=await sb.from('family_links')
+    .select('id, owner_id, member_user_id, status, display_name, relation_type, is_minor, permissions')
+    .or(`owner_id.eq.${currentUser.id},member_user_id.eq.${currentUser.id}`)
+    .eq('status','accepted');
+  
+  if(error){console.error('Family load error:',error);return;}
+  familyMembers=data||[];
+  renderFamilyList();
+}
+
+function renderFamilyList(){
+  const cont=document.getElementById('familyListContainer');
+  if(!cont)return;
+  if(familyMembers.length===0){cont.innerHTML='<p class="sub">No family members linked yet.</p>';return;}
+  cont.innerHTML='';
+  
+  familyMembers.forEach(fm=>{
+    const name=fm.display_name || fm.permissions?.name || fm.member_email?.split('@')[0] || 'Member';
+    const initials=name.substring(0,2).toUpperCase();
+    const isMinor = fm.is_minor;
+    
+    const div=document.createElement('div');
+    div.className='family-list-item';
+    const safeName=encodeURIComponent(name);
+    
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;cursor:pointer" onclick="${isMinor ? `openChildVault('${fm.id}','${safeName}')` : `alert('Adult profile management coming soon')`}">
+        <div class="family-avatar-sm">${initials}</div>
+        <div>
+          <strong>${escapeHtml(name)}</strong><br>
+          <small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()} ${isMinor?'• Minor':''}</small>
+        </div>
+      </div>
+      <div style="display:flex;gap:.3rem">
+        <button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑</button>
+      </div>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function openFamilyManager(){
+  if(!currentUser){alert('Sign in first.');return;}
+  loadFamilyMembers(); 
+  openModal('familyManagerModal');
+}
+
+function deleteMember(id){
+  if(!confirm('Remove this member?')) return;
+  sb.from('family_links').delete().eq('id', id).then(({error})=>{
+    if(error) alert('❌ '+error.message);
+    else { alert('✅ Removed.'); loadFamilyMembers(); }
+  });
+}
+
+function openChildVault(id, encodedName){
+  currentChildId=id;
+  currentChildName=decodeURIComponent(encodedName);
+  document.getElementById('cvTitle').textContent=currentChildName+"'s Vault";
+  document.getElementById('cvNameDisplay').textContent=currentChildName;
+  closeModal('familyManagerModal');
+  showView('childVaultView');
+  loadChildDocs(id);
+}
+
+async function loadChildDocs(childLinkId){
+  const list=document.getElementById('childDocList');
+  if(!list)return;
+  list.innerHTML='<p class="sub">Loading documents...</p>';
+  
+  const {data, error}=await sb.from('documents')
+    .select('id, document_name, created_at, file_url')
+    .eq('user_id', currentUser.id);
+
+  if(error || !data || data.length === 0){
+    list.innerHTML='<p class="sub">No documents uploaded for this profile yet.</p>';
+    return;
+  }
+  
+  list.innerHTML='';
+  data.forEach(doc=>{
+    const d=document.createElement('div');
+    d.className='doc-row';
+    d.innerHTML=`<div class="doc-info"><h4>${escapeHtml(doc.document_name)}</h4><p>Uploaded ${new Date(doc.created_at).toLocaleDateString()}</p></div>`;
+    list.appendChild(d);
+  });
+}
+
+function triggerChildUpload(type){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='image/*,application/pdf';
+  input.onchange=async(e)=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    
+    const status=document.createElement('div');
+    status.className='sos-box';
+    status.textContent=`Uploading ${type.replace('_',' ').toUpperCase()}...`;
+    document.getElementById('childDocList').prepend(status);
+    
+    try{
+      const fileExt = file.name.split('.').pop();
+      const path=`${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${fileExt}`;
+      const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type, upsert: true});
+      if(error)throw error;
+      
+      const{error:dbErr}=await sb.from('documents').insert({
+        user_id: currentUser.id,
+        doc_category: 'identity',
+        document_name: `${type.replace('_',' ').toUpperCase()} (${currentChildName})`,
+        file_url: path,
+        is_critical: true
+      });
+      if(dbErr)throw dbErr;
+      
+      status.textContent=`✅ Uploaded successfully.`;
+      setTimeout(()=>status.remove(), 2000);
+      loadChildDocs(currentChildId);
+    }catch(err){
+      status.textContent=`❌ Error: ${err.message}`;
+      console.error(err);
+    }
+  };
+  input.click();
+}
+
+function setInviteTab(evt, tab){
+  ['email','whatsapp','sms'].forEach(t=>{
+    const content = document.getElementById('inviteContent-'+t);
+    if(content) content.style.display = t===tab ? 'block':'none';
+  });
+  document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));
+  if(evt && evt.target) evt.target.classList.add('active');
+}
+
+async function sendInviteEmail(){
+  const name=document.getElementById('inviteName').value.trim();
+  const email=document.getElementById('inviteEmail').value.trim();
+  const rel=document.getElementById('inviteRelation').value;
+  if(!name||!email)return alert('Enter Name and Email');
+  
+  try{
+    const{error}=await sb.from('family_links').insert({
+      owner_id: currentUser.id, 
+      member_email: email, 
+      relation_type: rel, 
+      status: 'pending', 
+      display_name: name
+    });
+    if(error)throw error;
+    
+    alert(`✅ Invitation recorded for ${name}.\n\nShare link manually:\n${window.location.origin}?invite=${encodeURIComponent(email)}`);
+    closeModal('inviteModal');
+    loadFamilyMembers();
+  }catch(err){
+    alert('❌ Failed: '+err.message);
+  }
+}
+
+function sendInviteWhatsApp(){
+  const name=document.getElementById('inviteNameWa').value.trim();
+  const phone=document.getElementById('invitePhoneWa').value.replace(/[^0-9]/g,'');
+  if(!phone)return alert('Enter valid phone number');
+  const msg=`Hi ${name}! Join me on OneApp: ${window.location.origin}?invite=${phone}`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  closeModal('inviteModal');
+}
+
+function sendInviteSMS(){
+  const name=document.getElementById('inviteNameSms').value.trim();
+  const phone=document.getElementById('invitePhoneSms').value;
+  if(!phone)return alert('Enter valid phone number');
+  const msg=`Join OneApp ${name}: ${window.location.origin}?invite=${phone}`;
+  window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`, '_blank');
+  closeModal('inviteModal');
+}
+
+async function addMinor(){
+  const name=document.getElementById('minorName').value.trim();
+  const dob=document.getElementById('minorDob').value;
+  if(!name||!dob)return alert('Fill all fields');
+  
+  try{
+    const syntheticEmail=`minor_${Date.now()}@internal`;
+    const{error}=await sb.from('family_links').insert({
+      owner_id: currentUser.id, 
+      member_email: syntheticEmail, 
+      relation_type: 'child', 
+      is_minor: true, 
+      status: 'accepted', 
+      display_name: name,
+      permissions: { name: name, dob: dob }
+    });
+    if(error)throw error;
+    
+    alert(`✅ ${name}'s profile created.`);
+    closeModal('minorModal');
+    loadFamilyMembers();
+  }catch(err){
+    alert('❌ Failed: '+err.message);
+  }
+}
+
+function openAddMinorModal(){if(!currentUser){alert('Sign in first.');return;}openModal('minorModal');}
+function openInviteModal(){if(!currentUser){alert('Sign in first.');return;}openModal('inviteModal');}
+
+let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false;
+function showAa(id){['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
+function openAadhaar(){document.getElementById('aaRecropBtn1').style.display=aaHasOrig?'':'none';showAa('aaStep1');openModal('aadhaarModal');}
+function openAadhaarView(){if(!aaFull){alert('No card loaded.');return;}document.getElementById('aaPreview2').src=aaFull.toDataURL('image/jpeg',0.92);showAa('aaView');openModal('aadhaarModal');}
+function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='myAadhaar portal opened. Select Download e-Aadhaar.';showAa('aaStep2');}
+function aaDirect(){document.getElementById('aaCoach').style.display='none';document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — processed directly on device.';showAa('aaStep2');}
+function aaUnlock(){if(!aaFile){alert('Select PDF first.');return;}aaOnFile(aaFile);}
+
+async function aaRecrop(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){alert('Sign in first.');return;}
+  const{data:blob,error}=await sb.storage.from('vault').download(session.user.id+'/aadhaar-original.pdf');
+  if(error||!blob){alert('No stored original PDF found.');return;}
+  aaFile=new File([blob],'aadhaar-original.pdf',{type:'application/pdf'});
+  document.getElementById('aaCoach').style.display='none';
+  document.getElementById('aaStep2Sub').textContent='Processing stored original PDF.';
+  document.getElementById('aaStatus').textContent='Converting…';
+  showAa('aaStep2');
+  aaOnFile(aaFile);
+}
+
+async function aaOnFile(file){
+  if(!file)return;aaFile=file;const st=document.getElementById('aaStatus');st.textContent='Reading PDF…';
+  const pw=document.getElementById('aaPass').value||undefined;let pdf;
+  try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
+  catch(err){
+    if(err&&err.name==='PasswordException'){
+      document.getElementById('aaPassRow').style.display='block';
+      st.textContent='Password required — enter first 4 letters of name (CAPS) + birth year.';
       return;
     }
+    st.textContent='❌ '+err.message;return;
+  }
+  try{
+    const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');
+    c.width=vp.width;c.height=vp.height;
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    aaFull=c;extractCards(aaFull);refreshPreview();showAa('aaStep3');
+  }catch(e){st.textContent='❌ '+e.message;}
+}
 
-    const watermarkText = document.getElementById("watermarkText").value;
-    const finalDataUrl = await applyWatermark(AppState.croppedCardJpgDataUrl, watermarkText);
-
-    const blob = dataURItoBlob(finalDataUrl);
-    const fileName = `ID_Card_${AppState.activeProfile.id}.jpg`;
-
-    // Web Share API integration with download fallback
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/jpeg' })] })) {
-      try {
-        await navigator.share({
-          title: 'Identity Document Export',
-          text: `Exported ID Card for Profile: ${AppState.activeProfile.id}`,
-          files: [new File([blob], fileName, { type: 'image/jpeg' })]
-        });
-        console.log("Shared successfully!");
-      } catch (err) {
-        console.warn("Native sharing cancelled or failed, falling back to download.", err);
-        triggerDownload(finalDataUrl, fileName);
-      }
-    } else {
-      triggerDownload(finalDataUrl, fileName);
+function rc(s,x,y,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(s,x,y,w,h,0,0,w,h);return c;}
+function findScissorsRow(canvas){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  const data=ctx.getImageData(0,0,w,h).data;
+  let bestY=-1,bestScore=0;
+  const y0=Math.round(h*0.4),y1=Math.round(h*0.8);
+  for(let y=y0;y<y1;y++){
+    const runs=[];let inRun=false,runStart=0;
+    for(let x=0;x<w;x++){
+      const i=(y*w+x)*4;const dark=data[i]<120&&data[i+1]<120&&data[i+2]<120;
+      if(dark&&!inRun){inRun=true;runStart=x;}
+      if(!dark&&inRun){inRun=false;runs.push({s:runStart,l:x-runStart});}
     }
+    if(inRun)runs.push({s:runStart,l:w-runStart});
+    const shortRuns=runs.filter(r=>r.l>=2&&r.l<=25);
+    if(shortRuns.length<4)continue;
+    const span=shortRuns[shortRuns.length-1].s+shortRuns[shortRuns.length-1].l-shortRuns[0].s;
+    if(span<w*0.4)continue;
+    const score=shortRuns.length*(span/w);
+    if(score>bestScore){bestScore=score;bestY=y;}
   }
+  return bestY;
+}
 
-  /**
-   * Helper: Apply Watermark Overlay
-   */
-  function applyWatermark(dataUrl, text) {
-    return new Promise((resolve) => {
-      if (!text) {
-        resolve(dataUrl);
-        return;
-      }
-
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-
-        ctx.drawImage(img, 0, 0);
-
-        // Watermark styling
-        ctx.font = "bold 28px sans-serif";
-        ctx.fillStyle = "rgba(128, 128, 128, 0.45)";
-        ctx.textAlign = "center";
-        ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-
-        resolve(canvas.toDataURL("image/jpeg", 0.92));
-      };
-      img.src = dataUrl;
-    });
+function extractCards(src){
+  const cutY=findScissorsRow(src);
+  const info=document.getElementById('aaCutInfo');
+  if(cutY>0){
+    const pct=Math.round(cutY/src.height*100);
+    info.textContent='✂ Scissors line found at '+pct+'% — extracted card area.';
+    const strip=rc(src,0,cutY+2,src.width,src.height-cutY-2);
+    aaSide=autoCrop(strip);
+  }else{
+    info.textContent='✂ Scissors line not detected — using standard alignment fallback.';
+    const cutFallback=Math.round(src.height*0.68);
+    const strip=rc(src,0,cutFallback,src.width,src.height-cutFallback);
+    aaSide=autoCrop(strip);
   }
+  const midX=Math.round(aaSide.width/2);
+  aaFront=autoCrop(rc(aaSide,0,0,midX,aaSide.height));
+  aaBack=autoCrop(rc(aaSide,midX,0,aaSide.width-midX,aaSide.height));
+}
 
-  /**
-   * Helper Utilities
-   */
-  function dataURItoBlob(dataURI) {
-    const byteString = atob(dataURI.split(',')[1]);
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
+function cardCanvas(s){const W=1000,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const r=Math.min(W/s.width,H/s.height),w=Math.round(s.width*r),h=Math.round(s.height*r);ctx.drawImage(s,Math.round((W-w)/2),Math.round((H-h)/2),w,h);return c;}
+function composeCanvas(layout){
+  if(!aaFront||!aaBack){alert('Document processing in progress...');return null;}
+  if(layout==='side'&&aaSide)return aaSide;
+  const a=cardCanvas(aaFront),b=cardCanvas(aaBack),c=document.createElement('canvas'),ctx=c.getContext('2d');
+  if(layout==='stack'){c.width=a.width;c.height=a.height+b.height+24;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,0);ctx.drawImage(b,0,a.height+24);}
+  else{c.width=a.width+b.width+24;c.height=a.height;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,0);ctx.drawImage(b,a.width+24,0);}
+  return c;
+}
+
+function refreshPreview(){const c=aaSide||composeCanvas('side');if(c)document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);}
+function autoCrop(cv){const ctx=cv.getContext('2d'),w=cv.width,h=cv.height,d=ctx.getImageData(0,0,w,h).data;let t=h,b=0,l=w,r=0;for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;if(d[i]<240||d[i+1]<240||d[i+2]<240){if(y<t)t=y;if(y>b)b=y;if(x<l)l=x;if(x>r)r=x;}}if(b<=t||r<=l)return cv;const p=Math.round(w*0.005);t=Math.max(0,t-p);l=Math.max(0,l-p);b=Math.min(h-1,b+p);r=Math.min(w-1,r+p);const c2=document.createElement('canvas');c2.width=r-l+1;c2.height=b-t+1;c2.getContext('2d').drawImage(cv,l,t,c2.width,c2.height,0,0,c2.width,c2.height);return c2;}
+function makePdf(c){const{jsPDF}=window.jspdf,wm=180,hm=180*c.height/c.width,p=(wm>=hm)?new jsPDF({unit:'mm',format:[hm,wm],orientation:'landscape'}):new jsPDF({unit:'mm',format:[wm,hm],orientation:'portrait'});p.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,wm,hm);return p;}
+
+async function aaSave(){
+  if(!aaFront||!aaBack){alert('Not ready.');return;}
+  const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}
+  const uid=session.user.id;
+  const fb=await(await fetch(aaFull.toDataURL('image/jpeg',0.92))).blob();
+  const frb=await(await fetch(aaFront.toDataURL('image/jpeg',0.92))).blob();
+  const bkb=await(await fetch(aaBack.toDataURL('image/jpeg',0.92))).blob();
+  const sb2=aaSide?await(await fetch(aaSide.toDataURL('image/jpeg',0.92))).blob():frb;
+  let e;
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',fb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',frb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',bkb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',sb2,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  if(aaFile){(e=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',aaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
+  
+  const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  let err;
+  if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true}).eq('id',ex[0].id));
+  else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true}));
+  
+  if(err){alert('❌ '+err.message);return;}
+  aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');closeModal('aadhaarModal');alert('✅ Saved!');
+}
+
+function setSaved(t){document.getElementById('aadhaarGetBtn').style.display='none';document.getElementById('aadhaarViewBtn').style.display='';document.getElementById('aadhaarUpdBtn').style.display='';document.getElementById('aadhaarDelBtn').style.display='';document.getElementById('aadhaarSub').textContent=t;}
+function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;document.getElementById('aadhaarGetBtn').style.display='';document.getElementById('aadhaarViewBtn').style.display='none';document.getElementById('aadhaarUpdBtn').style.display='none';document.getElementById('aadhaarDelBtn').style.display='none';document.getElementById('aadhaarSub').textContent='Not in wallet yet';}
+async function cfb(blob){const b=await createImageBitmap(blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}
+
+async function loadSavedAadhaar(uid){
+  const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);if(!data||!data.length)return;
+  const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
+  const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
+  if(a)aaFull=await cfb(a);if(b)aaFront=await cfb(b);if(c)aaBack=await cfb(c);if(d)aaSide=await cfb(d);
+  aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');
+}
+
+async function aaDelete(){
+  if(!confirm('Delete all Aadhaar files permanently?'))return;
+  const{data:{session}}=await sb.auth.getSession();if(!session)return;
+  const uid=session.user.id;
+  await sb.storage.from('vault').remove([uid+'/aadhaar-full.jpg',uid+'/aadhaar-front.jpg',uid+'/aadhaar-back.jpg',uid+'/aadhaar-side.jpg',uid+'/aadhaar-original.pdf']);
+  await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
+  resetAadhaarUI();alert('✅ Deleted.');
+}
+
+function aaSharePick(){openModal('shareModal');}
+async function aaShare(fmt,layout){
+  closeModal('shareModal');
+  if(fmt==='a4pdf'){
+    if(!aaFile){alert('No original PDF found.');return;}
+    const f=aaFile;
+    if(navigator.canShare&&navigator.canShare({files:[f]})){
+      try{await navigator.share({files:[f],title:'Aadhaar A4 PDF'});}catch(e){}
+    }else{
+      const url=URL.createObjectURL(f);
+      const a=document.createElement('a');a.href=url;a.download='aadhaar-a4.pdf';a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 10000);
     }
-    return new Blob([ab], { type: mimeString });
+    return;
   }
+  const c=composeCanvas(layout);if(!c)return;let blob,name,mime;
+  if(fmt==='jpg'){blob=await(await fetch(c.toDataURL('image/jpeg',0.92))).blob();name='aadhaar-'+layout+'.jpg';mime='image/jpeg';}
+  else{blob=makePdf(c).output('blob');name='aadhaar-'+layout+'.pdf';mime='application/pdf';}
+  const f=new File([blob],name,{type:mime});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){
+    try{await navigator.share({files:[f],title:'Aadhaar Card'});}catch(e){}
+  }else{
+    const url=URL.createObjectURL(f);
+    const a=document.createElement('a');a.href=url;a.download=name;a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 10000);
+  }
+}
 
-  function triggerDownload(dataUrl, filename) {
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
+let lastPos=null;
+function openSOS(){openModal('emergencyModal');showSOSPanel('sos');}
+function showSOSPanel(p){
+  document.getElementById('sosPanel').style.display=p==='sos'?'block':'none';
+  document.getElementById('guardPanel').style.display=p==='guard'?'block':'none';
+  document.getElementById('tabSos').classList.toggle('on',p==='sos');
+  document.getElementById('tabGuard').classList.toggle('on',p==='guard');
+  if(p==='sos')startLocate();
+}
+function mapLink(p){return'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
+function startLocate(){
+  if(!navigator.geolocation){document.getElementById('sosStatus').textContent='Location unsupported.';return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    lastPos=p;
+    const a=document.getElementById('sosLink');
+    a.href=mapLink(p);a.style.display='block';
+    document.getElementById('sosStatus').textContent='Located ±'+Math.round(p.coords.accuracy)+'m';
+  },e=>{document.getElementById('sosStatus').textContent='Location error '+e.code;},{enableHighAccuracy:true,timeout:12000});
+}
+function shareWhatsApp(){if(!lastPos){alert('Locating in progress...');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
+async function saveSOS(){
+  if(!lastPos){alert('Locating in progress...');return;}
+  const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}
+  const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});
+  alert(error?'❌ '+error.message:'✅ Saved to vault.');
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const m={vault:'nav-vault',autopilot:'nav-auto'};
+  if(m[id])document.getElementById(m[id])?.classList.add('active');
+  window.scrollTo(0,0);
+}
+function openModal(id){document.getElementById(id)?.classList.add('show');}
+function closeModal(id){document.getElementById(id)?.classList.remove('show');}
+
+window.onclick=e=>{
+  if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show');
+  if(!e.target.closest('.user-area')) document.getElementById('userDropdown')?.classList.remove('show');
+};
 </script>
-
 </body>
 </html>
