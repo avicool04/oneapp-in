@@ -65,6 +65,9 @@ input:checked+.slider{background:var(--primary)}input:checked+.slider:before{tra
 .family-list-item:last-child{border-bottom:none}
 .family-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;margin-right:.5rem}
 .perm-toggle{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--gray)}
+.invite-tabs{display:flex;gap:.4rem;margin-bottom:.75rem}
+.invite-tab{flex:1;text-align:center;padding:.4rem;border:1px solid var(--border);border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer}
+.invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 @media(max-width:480px){
   .icon-grid{grid-template-columns:repeat(3,1fr)}
@@ -90,7 +93,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍‍👧 Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -142,7 +145,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 
 <!-- AADHAAR MODAL -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
-  <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
+  <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button id="aaRecropBtn1" class="btn btn-outline" style="display:none" onclick="aaRecrop()">Re-crop from saved original</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
   <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
   <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="aa-preview" alt="preview" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0"><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
   <div id="aaView" style="display:none"><h3>Full e-Aadhaar</h3><img id="aaPreview2" class="aa-preview" alt="full page" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
@@ -175,9 +178,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="inviteModal" class="modal-overlay"><div class="modal">
   <h3>Invite Family Member</h3>
   <div class="invite-tabs">
-    <div class="invite-tab active" onclick="setInviteTab('email')">📧 Email</div>
-    <div class="invite-tab" onclick="setInviteTab('whatsapp')">💬 WhatsApp</div>
-    <div class="invite-tab" onclick="setInviteTab('sms')">📱 SMS</div>
+    <div class="invite-tab active" onclick="setInviteTab('email', event)">📧 Email</div>
+    <div class="invite-tab" onclick="setInviteTab('whatsapp', event)">💬 WhatsApp</div>
+    <div class="invite-tab" onclick="setInviteTab('sms', event)">📱 SMS</div>
   </div>
   <div id="inviteContent-email">
     <div class="field"><label>Name</label><input id="inviteName" type="text" placeholder="e.g. Priya Sharma"></div>
@@ -209,7 +212,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="closeModal('minorModal')">Cancel</button>
 </div></div>
 
-<!-- CHILD VAULT VIEW (NEW) -->
+<!-- CHILD VAULT VIEW -->
 <div id="childVaultView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
@@ -227,7 +230,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     </div>
     
     <div id="childDocList" style="margin-top:1rem">
-      <!-- Uploaded docs listed here -->
       <p class="sub">No documents uploaded yet.</p>
     </div>
   </div>
@@ -341,18 +343,13 @@ function openChildVault(id, name){
   document.getElementById('cvNameDisplay').textContent=name;
   closeModal('familyManagerModal');
   showView('childVaultView');
-  // Load existing docs for this child if any
   loadChildDocs(id);
 }
 
 async function loadChildDocs(childLinkId){
-  // Query documents where user_id matches the synthetic minor ID or linked via permissions
-  // For MVP, we assume child docs are stored under owner_id but tagged with child_link_id in metadata
-  // Since we haven't implemented full tagging yet, we'll just show empty state or mock data
   const list=document.getElementById('childDocList');
   list.innerHTML='<p class="sub">Loading documents...</p>';
   
-  // Simulate loading (real impl would query DB)
   setTimeout(()=>{
     list.innerHTML=`
       <div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p>Uploaded Today</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Share</button></div></div>
@@ -362,7 +359,6 @@ async function loadChildDocs(childLinkId){
 }
 
 function triggerChildUpload(type){
-  // Open file picker
   const input=document.createElement('input');
   input.type='file';
   input.accept='image/*,application/pdf';
@@ -370,34 +366,31 @@ function triggerChildUpload(type){
     const file=e.target.files[0];
     if(!file)return;
     
-    // Show progress
     const status=document.createElement('div');
     status.className='sos-box';
     status.textContent=`Uploading ${type.toUpperCase()}...`;
     document.getElementById('childDocList').prepend(status);
     
     try{
-      // Upload to storage under child's folder structure
       const path=`${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${file.name.split('.').pop()}`;
       const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
       
       if(error)throw error;
       
-      // Save record to documents table
       const{error:dbErr}=await sb.from('documents').insert({
-        user_id: currentUser.id, // Owner uploads for child
-        doc_category: 'identity', // Or dynamic based on type
+        user_id: currentUser.id,
+        doc_category: 'identity',
         document_name: `${type.replace('_',' ').toUpperCase()} (${currentChildName})`,
         file_url: path,
         is_critical: true,
-        permissions: { [currentChildId]: { view:true, edit:true, download:true } } // Tag for child
+        permissions: { [currentChildId]: { view:true, edit:true, download:true } }
       });
       
       if(dbErr)throw dbErr;
       
       status.textContent=`✅ ${type.toUpperCase()} uploaded successfully.`;
       setTimeout(()=>status.remove(), 2000);
-      loadChildDocs(currentChildId); // Refresh list
+      loadChildDocs(currentChildId);
       
     }catch(err){
       status.textContent=`❌ Error: ${err.message}`;
@@ -408,13 +401,19 @@ function triggerChildUpload(type){
 }
 
 // --- INVITE LOGIC ---
-function setInviteTab(tab){
+function setInviteTab(tab, ev){
   ['email','whatsapp','sms'].forEach(t=>{
     document.getElementById('inviteContent-'+t).style.display = t===tab ? 'block':'none';
-    document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));
-    event.target.classList.add('active');
   });
+  document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));
+  if(ev && ev.target) ev.target.classList.add('active');
 }
+
+function openInviteModal(){
+  if(!currentUser){alert('Sign in first.');return;}
+  openModal('inviteModal');
+}
+
 async function sendInviteEmail(){
   const name=document.getElementById('inviteName').value.trim();
   const email=document.getElementById('inviteEmail').value.trim();
@@ -439,6 +438,7 @@ async function sendInviteEmail(){
     console.error(err);
   }
 }
+
 function sendInviteWhatsApp(){
   const name=document.getElementById('inviteNameWa').value.trim();
   const phone=document.getElementById('invitePhoneWa').value.replace(/[^0-9]/g,'');
@@ -447,6 +447,7 @@ function sendInviteWhatsApp(){
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
   closeModal('inviteModal');
 }
+
 function sendInviteSMS(){
   const name=document.getElementById('inviteNameSms').value.trim();
   const phone=document.getElementById('invitePhoneSms').value;
@@ -455,6 +456,7 @@ function sendInviteSMS(){
   window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`, '_blank');
   closeModal('inviteModal');
 }
+
 async function addMinor(){
   const name=document.getElementById('minorName').value.trim();
   const dob=document.getElementById('minorDob').value;
@@ -481,9 +483,10 @@ async function addMinor(){
     console.error(err);
   }
 }
+
 function openAddMinorModal(){if(!currentUser){alert('Sign in first.');return;}openModal('minorModal');}
 
-// --- AADHAAR LOGIC (UNCHANGED CORE) ---
+// --- AADHAAR LOGIC ---
 let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false;
 function showAa(id){['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
 function toggleAdjust(){const d=document.getElementById('aaAdjust');d.style.display=d.style.display==='none'?'block':'none';}
@@ -610,7 +613,7 @@ async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto',childVaultView:''};if(m[id])document.getElementById(m[id])?.classList.add('active');window.scrollTo(0,0);}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
-window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');};
+window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');if(!e.target.closest('.user-area'))document.getElementById('userDropdown')?.classList.remove('show');};
 </script>
 </body>
 </html>
