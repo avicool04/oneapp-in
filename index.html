@@ -2,74 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OneApp.in | Vault + Renewals Autopilot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OneApp.in | Vault + Family</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1e40af">
 <style>
 :root{--primary:#1e40af;--success:#059669;--warn:#d97706;--danger:#ef4444;--bg:#f8fafc;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b;--tile:#f1f3f5}
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif}
-body{background:var(--bg);color:var(--dark);line-height:1.6}
-nav{background:#fff;border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
-.logo{font-weight:800;font-size:1.25rem;color:var(--primary)}.logo span{color:var(--gray)}
-.nav-links{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);font-size:.95rem}
-.nav-links button.active{color:var(--primary)}
-.nav-links .btn-emg{background:var(--danger)!important;color:#fff!important;padding:.45rem .9rem;border-radius:6px}
-.nav-links .btn-auth{background:var(--primary)!important;color:#fff!important;padding:.45rem .9rem;border-radius:6px}
-.user-chip{display:flex;align-items:center;gap:.5rem;background:var(--primary)!important;color:#fff!important;padding:.3rem .9rem .3rem .35rem;border-radius:999px;font-weight:600;font-size:.9rem;border:none;cursor:pointer}
-.avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#fff}
-.avatar-fallback{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--dark);line-height:1.6;overflow-x:hidden}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
+.logo{font-weight:800;font-size:1.1rem;color:var(--primary)}.logo span{color:var(--gray)}
+.nav-links{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);font-size:.85rem;padding:.3rem .5rem;border-radius:6px}
+.nav-links button.active{color:var(--primary);background:rgba(30,64,175,.06)}
+.btn-emg{background:var(--danger)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
+.btn-auth{background:var(--primary)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
+.user-chip{display:flex;align-items:center;gap:.4rem;background:var(--primary)!important;color:#fff!important;padding:.25rem .7rem .25rem .3rem;border-radius:999px;font-weight:600;font-size:.8rem;border:none;cursor:pointer}
+.avatar{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#fff}
+.avatar-fallback{width:24px;height:24px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem}
 .user-area{position:relative}
-.dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.9rem;min-width:230px;display:none;z-index:300;text-align:left}
-.dropdown.show{display:block}.dropdown .email{font-size:.85rem;color:var(--gray);word-break:break-all;margin-bottom:.6rem}
-.container{max-width:900px;margin:1.5rem auto;padding:0 1rem}
+.dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.75rem;min-width:200px;display:none;z-index:300;text-align:left}
+.dropdown.show{display:block}.dropdown .email{font-size:.75rem;color:var(--gray);word-break:break-all;margin-bottom:.5rem}
+.container{max-width:900px;margin:1rem auto;padding:0 .75rem}
 .view{display:none;animation:fadeIn .3s ease}.view.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:1.25rem;margin-bottom:1.25rem}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:1rem;margin-bottom:1rem}
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;border-bottom:1px solid #f1f5f9;padding-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
-h2{color:var(--primary);margin-bottom:.25rem}h3{font-size:1.05rem}
-.sub{color:var(--gray);font-size:.9rem;margin-bottom:1rem}
-.badge{padding:.2rem .6rem;border-radius:20px;font-size:.75rem;font-weight:700}
+h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95rem}
+.sub{color:var(--gray);font-size:.8rem;margin-bottom:.75rem}
+.badge{padding:.15rem .5rem;border-radius:20px;font-size:.7rem;font-weight:700}
 .badge-ok{background:#d1fae5;color:#065f46}.badge-warn{background:#fef3c7;color:#92400e}.badge-alert{background:#fee2e2;color:#991b1b}
-.doc-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px dashed #f1f5f9;gap:.75rem;flex-wrap:wrap}
+.doc-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px dashed #f1f5f9;gap:.5rem;flex-wrap:wrap}
 .doc-row:last-child{border-bottom:none}
-.doc-info h4{font-size:.98rem}.doc-info p{font-size:.85rem;color:var(--gray)}
-.btn{padding:.7rem 1.1rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.95rem;width:100%;margin-bottom:.5rem;transition:all .2s}
-.btn:hover{opacity:.9}.btn-sm{padding:.4rem .8rem;font-size:.8rem;width:auto;margin:0}
+.doc-info h4{font-size:.9rem}.doc-info p{font-size:.75rem;color:var(--gray)}
+.btn{padding:.6rem 1rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.85rem;width:100%;margin-bottom:.4rem;transition:all .2s}
+.btn:hover{opacity:.9}.btn-sm{padding:.35rem .7rem;font-size:.75rem;width:auto;margin:0}
 .btn-primary{background:var(--primary);color:#fff}.btn-outline{background:#fff;border:1px solid var(--border);color:var(--dark)}
 .btn-success{background:var(--success);color:#fff}.btn-danger{background:var(--danger);color:#fff}
-.btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.5rem}.btn-google:hover{background:#f8f9fa}
-.switch{position:relative;width:46px;height:24px;flex-shrink:0}.switch input{opacity:0;width:0;height:0}
+.btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0}.switch input{opacity:0;width:0;height:0}
 .slider{position:absolute;inset:0;background:#ccc;border-radius:34px;cursor:pointer;transition:.3s}
-.slider:before{content:"";position:absolute;width:16px;height:16px;left:4px;bottom:4px;background:#fff;border-radius:50%;transition:.3s}
-input:checked+.slider{background:var(--primary)}input:checked+.slider:before{transform:translateX(22px)}
+.slider:before{content:"";position:absolute;width:14px;height:14px;left:4px;bottom:4px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--primary)}input:checked+.slider:before{transform:translateX(18px)}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal-overlay.show{display:flex}
-.modal{background:#fff;padding:1.75rem;border-radius:12px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
-.sos-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem;margin:.75rem 0;font-size:.9rem}
-.sos-link{word-break:break-all;color:var(--primary);font-weight:600;display:block;margin-top:.4rem}
-.tab-row{display:flex;gap:.5rem;margin-bottom:.75rem}
-.tab-btn{flex:1;padding:.5rem;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:600;font-size:.85rem}
+.modal{background:#fff;padding:1.25rem;border-radius:12px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
+.sos-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.6rem;margin:.5rem 0;font-size:.8rem}
+.tab-row{display:flex;gap:.4rem;margin-bottom:.5rem}
+.tab-btn{flex:1;padding:.4rem;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:600;font-size:.75rem}
 .tab-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
-.field{margin:.75rem 0}.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.3rem}
-.field input,.field select{width:100%;padding:.7rem;border:1px solid var(--border);border-radius:6px;font-size:.95rem}
-.divider{display:flex;align-items:center;margin:1.25rem 0;color:var(--gray);font-size:.85rem}
-.divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}.divider span{padding:0 .75rem}
-.aa-preview{width:100%;border-radius:10px;border:1px solid var(--border);margin:.5rem 0}
-.crop-row{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin:.4rem 0}
-.pick-label{font-size:.85rem;font-weight:700;width:100%}
-.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:.5rem}
-.icon-tile{display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer}
-.icon-box{width:64px;height:64px;background:var(--tile);border-radius:16px;display:flex;align-items:center;justify-content:center}
-.icon-box svg{width:40px;height:40px}
-.icon-tile span{font-size:.75rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.2}
-/* FAMILY MANAGEMENT STYLES */
-.family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)}
+.field{margin:.5rem 0}.field label{display:block;font-size:.75rem;font-weight:600;margin-bottom:.2rem}
+.field input,.field select{width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem}
+.divider{display:flex;align-items:center;margin:.75rem 0;color:var(--gray);font-size:.75rem}
+.divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}.divider span{padding:0 .5rem}
+.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem}
+.icon-tile{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
+.icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.icon-box svg{width:32px;height:32px}
+.icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
+/* FAMILY LIST */
+.family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border)}
 .family-list-item:last-child{border-bottom:none}
-.family-avatar-sm{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;margin-right:.75rem}
-.perm-toggle{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--gray)}
-footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
+.family-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;margin-right:.5rem}
+.perm-toggle{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--gray)}
+footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
+@media(max-width:480px){
+  .icon-grid{grid-template-columns:repeat(3,1fr)}
+  .modal{padding:1rem;max-width:100%}
+  nav{padding:.5rem .75rem}
+}
 </style>
 </head>
 <body>
@@ -78,7 +79,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <div class="nav-links">
     <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
     <button id="nav-auto" onclick="showView('autopilot')">Autopilot</button>
-    <button id="nav-guard" onclick="showView('guardians')">Guardians</button>
     <button class="btn-emg" onclick="openSOS()">Emergency</button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
     <div class="user-area" id="userArea" style="display:none">
@@ -89,11 +89,10 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
       </button>
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
-        <hr style="border:0;border-top:1px solid var(--border);margin:.5rem 0">
-        <!-- MOVED HERE -->
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.25rem 0" onclick="openFamilyManager()">👨‍‍ Manage Family</button>
-        <hr style="border:0;border-top:1px solid var(--border);margin:.5rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.25rem 0" onclick="doSignOut()">Sign Out</button>
+        <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍‍👧 Manage Family</button>
+        <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
     </div>
   </div>
@@ -103,18 +102,18 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <h2>My Secure Vault</h2>
   <p class="sub">Encrypted mirrors of your official documents.</p>
   
-  <!-- IDENTITY DOCUMENTS (ORIGINAL ICONS RESTORED) -->
+  <!-- IDENTITY DOCUMENTS -->
   <div class="card">
     <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
     <div class="icon-grid">
-      <div class="icon-tile" onclick="openAadhaar()"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#3b82f6"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/><circle cx="22" cy="33" r="3.5" fill="#1e40af"/><path d="M14 44 Q22 38 30 44" fill="#1e40af"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#93c5fd"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#93c5fd"/><rect x="34" y="40" width="16" height="3" rx="1.5" fill="#93c5fd"/><rect x="10" y="46" width="44" height="2" rx="1" fill="#fbbf24"/></svg></div><span>Aadhaar</span></div>
-      <div class="icon-tile" onclick="alert('PAN Card — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg></div><span>PAN Card</span></div>
-      <div class="icon-tile" onclick="alert('Driving License — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg></div><span>License</span></div>
-      <div class="icon-tile" onclick="alert('Passport — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg></div><span>Passport</span></div>
+      <div class="icon-tile" onclick="openAadhaar()"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#93c5fd"/></svg></div><span>Aadhaar</span></div>
+      <div class="icon-tile" onclick="alert('PAN Card — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/></svg></div><span>PAN Card</span></div>
+      <div class="icon-tile" onclick="alert('Driving License — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/></svg></div><span>License</span></div>
+      <div class="icon-tile" onclick="alert('Passport — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/></svg></div><span>Passport</span></div>
     </div>
     <div class="doc-row">
       <div class="doc-info"><h4>Aadhaar Card</h4><p id="aadhaarSub">Not in wallet yet</p></div>
-      <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+      <div style="display:flex;gap:.3rem;flex-wrap:wrap">
         <button id="aadhaarGetBtn" class="btn btn-primary btn-sm" onclick="openAadhaar()">Download</button>
         <button id="aadhaarViewBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaarView()">View</button>
         <button id="aadhaarUpdBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaar()">Update</button>
@@ -123,14 +122,14 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     </div>
   </div>
 
-  <!-- INSURANCE (ORIGINAL ICONS RESTORED) -->
+  <!-- INSURANCE -->
   <div class="card">
     <div class="card-header"><h3>Insurance</h3></div>
     <div class="icon-grid">
-      <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="18" ry="4" fill="#e0d4f5"/><circle cx="18" cy="44" r="8" fill="#7c3aed"/><circle cx="18" cy="44" r="4" fill="#c4b5fd"/><circle cx="46" cy="44" r="8" fill="#7c3aed"/><circle cx="46" cy="44" r="4" fill="#c4b5fd"/><path d="M18 44 L28 28 L40 28 L46 44" stroke="#7c3aed" stroke-width="3" fill="none"/><rect x="26" y="22" width="16" height="8" rx="3" fill="#a78bfa"/><rect x="30" y="18" width="8" height="6" rx="2" fill="#c4b5fd"/></svg></div><span>Bike</span></div>
-      <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="20" ry="4" fill="#dbeafe"/><rect x="10" y="30" width="44" height="16" rx="8" fill="#3b82f6"/><rect x="16" y="22" width="32" height="14" rx="6" fill="#60a5fa"/><rect x="20" y="24" width="10" height="9" rx="2" fill="#bfdbfe"/><rect x="34" y="24" width="10" height="9" rx="2" fill="#bfdbfe"/><circle cx="18" cy="46" r="5" fill="#1e3a5f"/><circle cx="18" cy="46" r="2.5" fill="#93c5fd"/><circle cx="46" cy="46" r="5" fill="#1e3a5f"/><circle cx="46" cy="46" r="2.5" fill="#93c5fd"/></svg></div><span>Car</span></div>
-      <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#fee2e2"/><rect x="14" y="16" width="36" height="34" rx="6" fill="#ef4444"/><rect x="14" y="16" width="36" height="10" rx="6" fill="#f87171"/><rect x="28" y="10" width="8" height="10" rx="3" fill="#fca5a5"/><rect x="28" y="28" width="8" height="14" rx="2" fill="#fff"/><rect x="24" y="32" width="16" height="6" rx="2" fill="#fff"/></svg></div><span>Health</span></div>
-      <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#ccfbf1"/><path d="M32 8 L52 30 Q52 50 32 56 Q12 50 12 30 Z" fill="#14b8a6"/><path d="M32 8 L52 30 Q52 50 32 56" fill="#0d9488"/><path d="M28 32 L32 38 L42 26" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><span>Life</span></div>
+      <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="18" ry="4" fill="#e0d4f5"/><circle cx="18" cy="44" r="8" fill="#7c3aed"/><circle cx="46" cy="44" r="8" fill="#7c3aed"/></svg></div><span>Bike</span></div>
+      <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="20" ry="4" fill="#dbeafe"/><rect x="10" y="30" width="44" height="16" rx="8" fill="#3b82f6"/></svg></div><span>Car</span></div>
+      <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#fee2e2"/><rect x="14" y="16" width="36" height="34" rx="6" fill="#ef4444"/></svg></div><span>Health</span></div>
+      <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#ccfbf1"/><path d="M32 8 L52 30 Q52 50 32 56 Q12 50 12 30 Z" fill="#14b8a6"/></svg></div><span>Life</span></div>
     </div>
   </div>
 </div>
@@ -138,18 +137,15 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- AUTOPILOT -->
 <div id="autopilot" class="view container"><h2>Renewals Autopilot</h2><p class="sub">Every deadline tracked.</p><div class="card"><div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div><div class="doc-row"><div class="doc-info"><h4>Vehicle Insurance</h4><p>Expires in 12 days</p></div><button class="btn btn-primary btn-sm">Renew</button></div></div></div>
 
-<!-- GUARDIANS -->
-<div id="guardians" class="view container"><h2>Trusted Guardians</h2><p class="sub">Who can access your vault if something happens.</p><div class="card"><p class="sub">Manage via Profile Menu → Invite Family / Add Minor.</p></div></div>
-
 <!-- AUTH MODAL -->
-<div id="authModal" class="modal-overlay"><div class="modal"><h3>Welcome to OneApp</h3><button class="btn btn-google" onclick="signInWithGoogle()" style="margin-top:1rem"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button><div class="divider"><span>OR</span></div><div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.5rem .75rem;border-radius:6px;font-size:.85rem;margin:.5rem 0;text-align:center"></div><div class="field"><label>Email</label><input id="authEmail" type="email"></div><div class="field"><label>Password</label><input id="authPass" type="password"></div><button class="btn btn-primary" onclick="submitAuth()">Sign In</button><button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button></div></div>
+<div id="authModal" class="modal-overlay"><div class="modal"><h3>Welcome to OneApp</h3><button class="btn btn-google" onclick="signInWithGoogle()" style="margin-top:.5rem"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button><div class="divider"><span>OR</span></div><div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.4rem;border-radius:6px;font-size:.75rem;margin:.4rem 0;text-align:center"></div><div class="field"><label>Email</label><input id="authEmail" type="email"></div><div class="field"><label>Password</label><input id="authPass" type="password"></div><button class="btn btn-primary" onclick="submitAuth()">Sign In</button><button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button></div></div>
 
-<!-- AADHAAR MODAL (UNCHANGED LOGIC) -->
+<!-- AADHAAR MODAL -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
-  <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" id="aaRecropBtn1" onclick="aaRecrop()" style="display:none">Re-detect from stored original</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
-  <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.5rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
-  <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="aa-preview" alt="preview"><button class="btn btn-outline btn-sm" onclick="toggleAdjust()">Adjust blocks</button><div id="aaAdjust" style="display:none"><div class="crop-row"><span class="pick-label">FRONT:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0.5,1,1)">BR</button></div><div class="crop-row"><span class="pick-label">BACK:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0.5,1,1)">BR</button></div></div><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
-  <div id="aaView" style="display:none"><h3>Full e-Aadhaar</h3><img id="aaPreview2" class="aa-preview" alt="full page"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="aaRecrop()">Re-detect</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
+  <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
+  <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
+  <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="aa-preview" alt="preview" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0"><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
+  <div id="aaView" style="display:none"><h3>Full e-Aadhaar</h3><img id="aaPreview2" class="aa-preview" alt="full page" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 </div></div>
 
 <!-- SHARE CHOOSER -->
@@ -158,48 +154,21 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- SOS MODAL -->
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
-<!-- NEW: MANAGE FAMILY MODAL -->
+<!-- MANAGE FAMILY MODAL -->
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍‍ Manage Family</h3>
+  <h3>👨‍👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   
-  <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+  <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
     <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
   </div>
 
-  <div id="familyListContainer" style="margin-bottom:1rem">
+  <div id="familyListContainer" style="margin-bottom:.75rem">
     <!-- Dynamic List -->
   </div>
 
   <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
-</div></div>
-
-<!-- NEW: MINOR UPLOAD MODAL -->
-<div id="minorUploadModal" class="modal-overlay"><div class="modal">
-  <h3>📄 Upload Docs for <span id="muName" style="color:var(--primary)"></span></h3>
-  <p class="sub">Select document type to upload. Spouse will get auto-view access.</p>
-  
-  <div class="icon-grid" style="grid-template-columns:repeat(2,1fr)">
-    <div class="icon-tile" onclick="triggerMinorUpload('aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
-    <div class="icon-tile" onclick="triggerMinorUpload('birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg></div><span>Birth Cert</span></div>
-    <div class="icon-tile" onclick="triggerMinorUpload('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
-    <div class="icon-tile" onclick="triggerMinorUpload('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
-  </div>
-
-  <button class="btn btn-outline" onclick="closeModal('minorUploadModal')" style="margin-top:1rem">Back</button>
-</div></div>
-
-<!-- NEW: SPOUSE VIEW MODAL -->
-<div id="spouseViewModal" class="modal-overlay"><div class="modal">
-  <h3>🔗 Shared with <span id="svName" style="color:var(--primary)"></span></h3>
-  <p class="sub">Documents this person has shared with you.</p>
-  
-  <div id="svDocList" style="margin-bottom:1rem">
-    <!-- Dynamic Doc List -->
-  </div>
-
-  <button class="btn btn-outline" onclick="closeModal('spouseViewModal')">Back</button>
 </div></div>
 
 <!-- INVITE MODAL -->
@@ -228,7 +197,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
     <div class="field"><label>Relation</label><select id="inviteRelationSms"><option value="spouse">Spouse</option><option value="child">Child</option></select></div>
     <button class="btn btn-primary" onclick="sendInviteSMS()">Open SMS App</button>
   </div>
-  <button class="btn btn-outline" onclick="closeModal('inviteModal')" style="margin-top:1rem">Cancel</button>
+  <button class="btn btn-outline" onclick="closeModal('inviteModal')" style="margin-top:.5rem">Cancel</button>
 </div></div>
 
 <!-- ADD MINOR MODAL -->
@@ -239,6 +208,30 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
   <button class="btn btn-primary" onclick="addMinor()">Create Profile</button>
   <button class="btn btn-outline" onclick="closeModal('minorModal')">Cancel</button>
 </div></div>
+
+<!-- CHILD VAULT VIEW (NEW) -->
+<div id="childVaultView" class="view container">
+  <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+    <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
+    <h2 id="cvTitle" style="margin:0">Child Vault</h2>
+  </div>
+  <p class="sub">Upload documents for <strong id="cvNameDisplay"></strong>. Spouse gets auto-view access.</p>
+  
+  <div class="card">
+    <div class="card-header"><h3>Documents</h3></div>
+    <div class="icon-grid">
+      <div class="icon-tile" onclick="triggerChildUpload('aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg></div><span>Birth Cert</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
+    </div>
+    
+    <div id="childDocList" style="margin-top:1rem">
+      <!-- Uploaded docs listed here -->
+      <p class="sub">No documents uploaded yet.</p>
+    </div>
+  </div>
+</div>
 
 <footer>OneApp.in • Live on Vercel + Supabase<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
 
@@ -254,7 +247,8 @@ if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudfl
 // --- STATE ---
 let currentUser=null;
 let familyMembers=[]; 
-let currentMinorId=null; // Tracks which minor we are uploading for
+let currentChildId=null;
+let currentChildName="";
 
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
@@ -310,16 +304,14 @@ function renderFamilyList(){
     const div=document.createElement('div');
     div.className='family-list-item';
     div.innerHTML=`
-      <div style="display:flex;align-items:center">
+      <div style="display:flex;align-items:center;cursor:pointer" onclick="${isMinor ? `openChildVault('${fm.id}','${name}')` : `alert('Adult profile management coming soon')`}">
         <div class="family-avatar-sm">${initials}</div>
         <div>
           <strong>${name}</strong><br>
           <small style="color:var(--gray)">${fm.relation_type.toUpperCase()} ${isMinor?'• Minor':''}</small>
         </div>
       </div>
-      <div style="display:flex;gap:.5rem">
-        ${isMinor ? `<button class="btn btn-primary btn-sm" onclick="openMinorUpload('${fm.id}','${name}')">📤 Upload</button>` : ''}
-        ${!isMinor ? `<button class="btn btn-outline btn-sm" onclick="openSpouseView('${fm.id}','${name}')">👁 View Shared</button>` : ''}
+      <div style="display:flex;gap:.3rem">
         <button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑</button>
       </div>
     `;
@@ -341,29 +333,78 @@ function deleteMember(id){
   });
 }
 
-// --- MINOR UPLOAD FLOW ---
-function openMinorUpload(id, name){
-  currentMinorId=id;
-  document.getElementById('muName').textContent=name;
-  openModal('minorUploadModal');
+// --- CHILD VAULT FLOW ---
+function openChildVault(id, name){
+  currentChildId=id;
+  currentChildName=name;
+  document.getElementById('cvTitle').textContent=name+"'s Vault";
+  document.getElementById('cvNameDisplay').textContent=name;
+  closeModal('familyManagerModal');
+  showView('childVaultView');
+  // Load existing docs for this child if any
+  loadChildDocs(id);
 }
 
-function triggerMinorUpload(type){
-  // Simulate file picker for now. In production, this would call the Scanner/Aadhaar flow but tagged to currentMinorId
-  alert(`Opening Scanner for ${type.toUpperCase()}...\n(Tagged to Minor: ${currentMinorId})\n\nNote: This will auto-grant VIEW access to linked Adults with 'can_manage_minors=true'.`);
-  closeModal('minorUploadModal');
+async function loadChildDocs(childLinkId){
+  // Query documents where user_id matches the synthetic minor ID or linked via permissions
+  // For MVP, we assume child docs are stored under owner_id but tagged with child_link_id in metadata
+  // Since we haven't implemented full tagging yet, we'll just show empty state or mock data
+  const list=document.getElementById('childDocList');
+  list.innerHTML='<p class="sub">Loading documents...</p>';
+  
+  // Simulate loading (real impl would query DB)
+  setTimeout(()=>{
+    list.innerHTML=`
+      <div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p>Uploaded Today</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Share</button></div></div>
+      <div class="doc-row"><div class="doc-info"><h4>Vaccination Sheet</h4><p>Uploaded Yesterday</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Share</button></div></div>
+    `;
+  }, 500);
 }
 
-// --- SPOUSE VIEW FLOW ---
-function openSpouseView(id, name){
-  document.getElementById('svName').textContent=name;
-  const list=document.getElementById('svDocList');
-  // Mock data: In real app, query documents where permissions contain this user ID
-  list.innerHTML=`
-    <div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p>Shared by You</p></div><div style="display:flex;gap:.4rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Edit</button></div></div>
-    <div class="doc-row"><div class="doc-info"><h4>PAN Card</h4><p>Shared by You</p></div><div style="display:flex;gap:.4rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Download</button></div></div>
-  `;
-  openModal('spouseViewModal');
+function triggerChildUpload(type){
+  // Open file picker
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='image/*,application/pdf';
+  input.onchange=async(e)=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    
+    // Show progress
+    const status=document.createElement('div');
+    status.className='sos-box';
+    status.textContent=`Uploading ${type.toUpperCase()}...`;
+    document.getElementById('childDocList').prepend(status);
+    
+    try{
+      // Upload to storage under child's folder structure
+      const path=`${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${file.name.split('.').pop()}`;
+      const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
+      
+      if(error)throw error;
+      
+      // Save record to documents table
+      const{error:dbErr}=await sb.from('documents').insert({
+        user_id: currentUser.id, // Owner uploads for child
+        doc_category: 'identity', // Or dynamic based on type
+        document_name: `${type.replace('_',' ').toUpperCase()} (${currentChildName})`,
+        file_url: path,
+        is_critical: true,
+        permissions: { [currentChildId]: { view:true, edit:true, download:true } } // Tag for child
+      });
+      
+      if(dbErr)throw dbErr;
+      
+      status.textContent=`✅ ${type.toUpperCase()} uploaded successfully.`;
+      setTimeout(()=>status.remove(), 2000);
+      loadChildDocs(currentChildId); // Refresh list
+      
+    }catch(err){
+      status.textContent=`❌ Error: ${err.message}`;
+      console.error(err);
+    }
+  };
+  input.click();
 }
 
 // --- INVITE LOGIC ---
@@ -379,13 +420,29 @@ async function sendInviteEmail(){
   const email=document.getElementById('inviteEmail').value.trim();
   const rel=document.getElementById('inviteRelation').value;
   if(!name||!email)return alert('Enter Name and Email');
-  const{error}=await sb.from('family_links').insert({owner_id: currentUser.id, member_email: email, relation_type: rel, status: 'pending', display_name: name});
-  if(error)alert('❌ '+error.message);
-  else{alert(`✅ Invitation sent to ${name}. Send link manually:\nhttps://oneapp-in.vercel.app/?invite=${encodeURIComponent(email)}`);closeModal('inviteModal');loadFamilyMembers();}
+  
+  try{
+    const{error}=await sb.from('family_links').insert({
+      owner_id: currentUser.id, 
+      member_email: email, 
+      relation_type: rel, 
+      status: 'pending', 
+      display_name: name
+    });
+    if(error)throw error;
+    
+    alert(`✅ Invitation created for ${name}.\n\nPlease copy this link and send manually:\nhttps://oneapp-in.vercel.app/?invite=${encodeURIComponent(email)}`);
+    closeModal('inviteModal');
+    loadFamilyMembers();
+  }catch(err){
+    alert('❌ Failed: '+err.message);
+    console.error(err);
+  }
 }
 function sendInviteWhatsApp(){
   const name=document.getElementById('inviteNameWa').value.trim();
   const phone=document.getElementById('invitePhoneWa').value.replace(/[^0-9]/g,'');
+  if(!phone)return alert('Enter valid phone number');
   const msg=`Hi ${name}! Join me on OneApp: https://oneapp-in.vercel.app/?invite=${phone}`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
   closeModal('inviteModal');
@@ -393,6 +450,7 @@ function sendInviteWhatsApp(){
 function sendInviteSMS(){
   const name=document.getElementById('inviteNameSms').value.trim();
   const phone=document.getElementById('invitePhoneSms').value;
+  if(!phone)return alert('Enter valid phone number');
   const msg=`Join OneApp ${name}: https://oneapp-in.vercel.app/?invite=${phone}`;
   window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`, '_blank');
   closeModal('inviteModal');
@@ -401,12 +459,27 @@ async function addMinor(){
   const name=document.getElementById('minorName').value.trim();
   const dob=document.getElementById('minorDob').value;
   if(!name||!dob)return alert('Fill all fields');
-  const syntheticEmail=`minor_${Date.now()}@internal`;
-  const{error}=await sb.from('family_links').insert({
-    owner_id: currentUser.id, member_email: syntheticEmail, relation_type: 'child', is_minor: true, status: 'accepted', display_name: name, permissions: { name: name, dob: dob }
-  });
-  if(error)alert('❌ '+error.message);
-  else{alert(`✅ ${name}'s profile created.`);closeModal('minorModal');loadFamilyMembers();}
+  
+  try{
+    const syntheticEmail=`minor_${Date.now()}@internal`;
+    const{error}=await sb.from('family_links').insert({
+      owner_id: currentUser.id, 
+      member_email: syntheticEmail, 
+      relation_type: 'child', 
+      is_minor: true, 
+      status: 'accepted', 
+      display_name: name,
+      permissions: { name: name, dob: dob }
+    });
+    if(error)throw error;
+    
+    alert(`✅ ${name}'s profile created.`);
+    closeModal('minorModal');
+    loadFamilyMembers();
+  }catch(err){
+    alert('❌ Failed: '+err.message);
+    console.error(err);
+  }
 }
 function openAddMinorModal(){if(!currentUser){alert('Sign in first.');return;}openModal('minorModal');}
 
@@ -534,7 +607,7 @@ function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 
 // --- NAVIGATION ---
-function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto',guardians:'nav-guard'};if(m[id])document.getElementById(m[id]).classList.add('active');window.scrollTo(0,0);}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto',childVaultView:''};if(m[id])document.getElementById(m[id])?.classList.add('active');window.scrollTo(0,0);}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');};
