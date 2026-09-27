@@ -60,7 +60,6 @@ input:checked+.slider{background:var(--primary)}input:checked+.slider:before{tra
 .icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
 .icon-box svg{width:32px;height:32px}
 .icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
-/* FAMILY LIST */
 .family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border)}
 .family-list-item:last-child{border-bottom:none}
 .family-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;margin-right:.5rem}
@@ -101,8 +100,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="vault" class="view active container">
   <h2>My Secure Vault</h2>
   <p class="sub">Encrypted mirrors of your official documents.</p>
-  
-  <!-- IDENTITY DOCUMENTS -->
   <div class="card">
     <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
     <div class="icon-grid">
@@ -121,8 +118,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       </div>
     </div>
   </div>
-
-  <!-- INSURANCE -->
   <div class="card">
     <div class="card-header"><h3>Insurance</h3></div>
     <div class="icon-grid">
@@ -134,13 +129,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   </div>
 </div>
 
-<!-- AUTOPILOT -->
 <div id="autopilot" class="view container"><h2>Renewals Autopilot</h2><p class="sub">Every deadline tracked.</p><div class="card"><div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div><div class="doc-row"><div class="doc-info"><h4>Vehicle Insurance</h4><p>Expires in 12 days</p></div><button class="btn btn-primary btn-sm">Renew</button></div></div></div>
 
-<!-- AUTH MODAL -->
 <div id="authModal" class="modal-overlay"><div class="modal"><h3>Welcome to OneApp</h3><button class="btn btn-google" onclick="signInWithGoogle()" style="margin-top:.5rem"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button><div class="divider"><span>OR</span></div><div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.4rem;border-radius:6px;font-size:.75rem;margin:.4rem 0;text-align:center"></div><div class="field"><label>Email</label><input id="authEmail" type="email"></div><div class="field"><label>Password</label><input id="authPass" type="password"></div><button class="btn btn-primary" onclick="submitAuth()">Sign In</button><button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button></div></div>
 
-<!-- AADHAAR MODAL -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
   <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
   <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
@@ -148,30 +140,21 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="aaView" style="display:none"><h3>Full e-Aadhaar</h3><img id="aaPreview2" class="aa-preview" alt="full page" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 </div></div>
 
-<!-- SHARE CHOOSER -->
 <div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
 
-<!-- SOS MODAL -->
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
-<!-- MANAGE FAMILY MODAL -->
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
   <h3>👨‍👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
-  
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
     <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
   </div>
-
-  <div id="familyListContainer" style="margin-bottom:.75rem">
-    <!-- Dynamic List -->
-  </div>
-
+  <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
 </div></div>
 
-<!-- INVITE MODAL -->
 <div id="inviteModal" class="modal-overlay"><div class="modal">
   <h3>Invite Family Member</h3>
   <div class="invite-tabs">
@@ -200,7 +183,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="closeModal('inviteModal')" style="margin-top:.5rem">Cancel</button>
 </div></div>
 
-<!-- ADD MINOR MODAL -->
 <div id="minorModal" class="modal-overlay"><div class="modal">
   <h3>Add Minor Child</h3>
   <div class="field"><label>Child Name</label><input id="minorName" type="text"></div>
@@ -209,35 +191,38 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="closeModal('minorModal')">Cancel</button>
 </div></div>
 
-<!-- CHILD VAULT VIEW (NEW) -->
+<!-- CHILD DOC VIEW MODAL -->
+<div id="childDocViewModal" class="modal-overlay"><div class="modal">
+  <h3 id="childDocViewTitle">Document</h3>
+  <div id="childDocViewStatus" class="sos-box" style="display:none"></div>
+  <img id="childDocViewImg" alt="document" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0">
+  <button class="btn btn-outline" onclick="closeModal('childDocViewModal')">Close</button>
+</div></div>
+
+<!-- CHILD SHARE MODAL -->
+<div id="childShareModal" class="modal-overlay"><div class="modal">
+  <h3>Share as…</h3>
+  <button class="btn btn-outline" onclick="shareChildDocExport('a4pdf')">A4 PDF</button>
+  <button class="btn btn-primary" onclick="shareChildDocExport('jpg')">JPG Image</button>
+  <button class="btn btn-primary" onclick="shareChildDocExport('cardpdf')">Card PDF</button>
+  <button class="btn btn-outline" onclick="closeModal('childShareModal')">Cancel</button>
+</div></div>
+
 <div id="childVaultView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
     <h2 id="cvTitle" style="margin:0">Child Vault</h2>
   </div>
   <p class="sub">Upload documents for <strong id="cvNameDisplay"></strong>. Spouse gets auto-view access.</p>
-  
   <div class="card">
     <div class="card-header"><h3>Documents</h3></div>
     <div class="icon-grid">
-      <div class="icon-tile" onclick="openAadhaar(currentChildId,currentChildName)"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
+      <div class="icon-tile" onclick="triggerChildUpload('aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
       <div class="icon-tile" onclick="triggerChildUpload('birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg></div><span>Birth Cert</span></div>
       <div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
       <div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
     </div>
-
-    <div class="doc-row">
-      <div class="doc-info"><h4>Aadhaar Card</h4><p id="cvAadhaarSub">Not in wallet yet</p></div>
-      <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-        <button id="cvAadhaarGetBtn" class="btn btn-primary btn-sm" onclick="openAadhaar(currentChildId,currentChildName)">Download</button>
-        <button id="cvAadhaarViewBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaarView()">View</button>
-        <button id="cvAadhaarUpdBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaar(currentChildId,currentChildName)">Update</button>
-        <button id="cvAadhaarDelBtn" class="btn btn-outline btn-sm" style="display:none" onclick="aaDelete()">Delete</button>
-      </div>
-    </div>
-
     <div id="childDocList" style="margin-top:1rem">
-      <!-- Uploaded docs listed here -->
       <p class="sub">No documents uploaded yet.</p>
     </div>
   </div>
@@ -259,6 +244,8 @@ let currentUser=null;
 let familyMembers=[]; 
 let currentChildId=null;
 let currentChildName="";
+let childDocs=[];
+let currentShareDocId=null;
 
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
@@ -278,7 +265,7 @@ sb.auth.onAuthStateChange((ev,s)=>{
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}
     else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
     btn.style.display='none';area.style.display='block';
-    loadSavedAadhaar(null);
+    loadSavedAadhaar(s.user.id);
     loadFamilyMembers(); 
   }else{
     currentUser=null;familyMembers=[];
@@ -295,7 +282,6 @@ async function loadFamilyMembers(){
     .select('*')
     .or(`owner_id.eq.${currentUser.id},member_user_id.eq.${currentUser.id}`)
     .eq('status','accepted');
-  
   if(error){console.error('Family load error:',error);return;}
   familyMembers=data||[];
   renderFamilyList();
@@ -305,12 +291,10 @@ function renderFamilyList(){
   const cont=document.getElementById('familyListContainer');
   if(familyMembers.length===0){cont.innerHTML='<p class="sub">No family members linked yet.</p>';return;}
   cont.innerHTML='';
-  
   familyMembers.forEach(fm=>{
     const name=fm.display_name || fm.permissions?.name || fm.member_email?.split('@')[0] || 'Member';
     const initials=name.substring(0,2).toUpperCase();
     const isMinor = fm.is_minor;
-    
     const div=document.createElement('div');
     div.className='family-list-item';
     div.innerHTML=`
@@ -351,70 +335,263 @@ function openChildVault(id, name){
   document.getElementById('cvNameDisplay').textContent=name;
   closeModal('familyManagerModal');
   showView('childVaultView');
-  // Load existing docs for this child if any
   loadChildDocs(id);
-  loadSavedAadhaar(id,name);
 }
 
 async function loadChildDocs(childLinkId){
-  // Query documents where user_id matches the synthetic minor ID or linked via permissions
-  // For MVP, we assume child docs are stored under owner_id but tagged with child_link_id in metadata
-  // Since we haven't implemented full tagging yet, we'll just show empty state or mock data
   const list=document.getElementById('childDocList');
   list.innerHTML='<p class="sub">Loading documents...</p>';
-  
-  // Simulate loading (real impl would query DB)
-  setTimeout(()=>{
-    list.innerHTML=`
-      <div class="doc-row"><div class="doc-info"><h4>Vaccination Sheet</h4><p>Uploaded Yesterday</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Share</button></div></div>
+  const{data,error}=await sb.from('documents')
+    .select('*')
+    .eq('user_id',currentUser.id)
+    .like('file_url','%/children/'+childLinkId+'/%')
+    .order('created_at',{ascending:false});
+  if(error){list.innerHTML='<p class="sub">Error loading documents.</p>';console.error(error);return;}
+  childDocs=data||[];
+  if(childDocs.length===0){list.innerHTML='<p class="sub">No documents uploaded yet.</p>';return;}
+  list.innerHTML='';
+  childDocs.forEach(doc=>{
+    const div=document.createElement('div');
+    div.className='doc-row';
+    div.innerHTML=`
+      <div class="doc-info"><h4>${doc.document_name}</h4><p>${new Date(doc.created_at).toLocaleDateString()}</p></div>
+      <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="openChildDocView('${doc.id}')">View</button>
+        <button class="btn btn-primary btn-sm" onclick="shareChildDoc('${doc.id}')">Share</button>
+        <button class="btn btn-outline btn-sm" onclick="updateChildDoc('${doc.id}')">Update</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteChildDoc('${doc.id}')">Delete</button>
+      </div>
     `;
-  }, 500);
+    list.appendChild(div);
+  });
 }
 
-function triggerChildUpload(type){
-  // Open file picker
+function triggerChildUpload(type,existingDocId){
   const input=document.createElement('input');
   input.type='file';
   input.accept='image/*,application/pdf';
   input.onchange=async(e)=>{
     const file=e.target.files[0];
     if(!file)return;
-    
-    // Show progress
     const status=document.createElement('div');
     status.className='sos-box';
-    status.textContent=`Uploading ${type.toUpperCase()}...`;
+    status.innerHTML=`<div id="childUploadStatus">Uploading ${type.toUpperCase()}...</div><div id="childPwRow" style="display:none;margin-top:.5rem"><label style="font-size:.75rem;font-weight:600">PDF Password</label><input id="childPwInput" type="text" placeholder="Enter password" style="width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem"><button class="btn btn-primary btn-sm" style="margin-top:.3rem" onclick="childPwSubmit()">Unlock & Upload</button></div>`;
     document.getElementById('childDocList').prepend(status);
-    
-    try{
-      // Upload to storage under child's folder structure
-      const path=`${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${file.name.split('.').pop()}`;
-      const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
-      
-      if(error)throw error;
-      
-      // Save record to documents table
-      const{error:dbErr}=await sb.from('documents').insert({
-        user_id: currentUser.id, // Owner uploads for child
-        doc_category: 'identity', // Or dynamic based on type
-        document_name: `${type.replace('_',' ').toUpperCase()} (${currentChildName})`,
-        file_url: path,
-        is_critical: true,
-        permissions: { [currentChildId]: { view:true, edit:true, download:true } } // Tag for child
-      });
-      
-      if(dbErr)throw dbErr;
-      
-      status.textContent=`✅ ${type.toUpperCase()} uploaded successfully.`;
-      setTimeout(()=>status.remove(), 2000);
-      loadChildDocs(currentChildId); // Refresh list
-      
-    }catch(err){
-      status.textContent=`❌ Error: ${err.message}`;
-      console.error(err);
+    const path=`${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${file.name.split('.').pop()}`;
+    if(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf')){
+      const savedPw=getChildDocPassword(currentChildId,type);
+      try{
+        await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:savedPw||undefined}).promise;
+      }catch(err){
+        if(err&&err.name==='PasswordException'){
+          document.getElementById('childUploadStatus').textContent='Password-protected PDF.';
+          document.getElementById('childPwRow').style.display='block';
+          window._childPendingFile=file;
+          window._childPendingPath=path;
+          window._childPendingType=type;
+          window._childPendingDocId=existingDocId;
+          window._childPendingStatus=status;
+          return;
+        }else{
+          document.getElementById('childUploadStatus').textContent='❌ '+err.message;
+          return;
+        }
+      }
     }
+    await doChildUpload(file,path,type,existingDocId,status);
   };
   input.click();
+}
+
+async function childPwSubmit(){
+  const pw=document.getElementById('childPwInput').value;
+  if(!pw)return alert('Enter password');
+  const file=window._childPendingFile;
+  const path=window._childPendingPath;
+  const type=window._childPendingType;
+  const existingDocId=window._childPendingDocId;
+  const status=window._childPendingStatus;
+  try{
+    await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;
+  }catch(e){
+    alert('Wrong password: '+e.message);
+    return;
+  }
+  setChildDocPassword(currentChildId,type,pw);
+  document.getElementById('childPwRow').style.display='none';
+  document.getElementById('childUploadStatus').textContent='Password verified. Uploading...';
+  await doChildUpload(file,path,type,existingDocId,status);
+}
+
+async function doChildUpload(file,path,type,existingDocId,status){
+  try{
+    const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
+    if(error)throw error;
+    if(existingDocId){
+      const oldDoc=childDocs.find(d=>d.id===existingDocId);
+      if(oldDoc&&oldDoc.file_url!==path)sb.storage.from('vault').remove([oldDoc.file_url]);
+      const{error:dbErr}=await sb.from('documents').update({
+        file_url:path,
+        document_name:`${type.replace('_',' ').toUpperCase()} (${currentChildName})`
+      }).eq('id',existingDocId);
+      if(dbErr)throw dbErr;
+    }else{
+      const{error:dbErr}=await sb.from('documents').insert({
+        user_id:currentUser.id,
+        doc_category:type,
+        document_name:`${type.replace('_',' ').toUpperCase()} (${currentChildName})`,
+        file_url:path,
+        is_critical:true,
+        permissions:{[currentChildId]:{view:true,edit:true,download:true}}
+      });
+      if(dbErr)throw dbErr;
+    }
+    status.innerHTML='✅ Uploaded successfully.';
+    setTimeout(()=>status.remove(),2000);
+    loadChildDocs(currentChildId);
+  }catch(err){
+    status.innerHTML='❌ Error: '+err.message;
+    console.error(err);
+  }
+}
+
+function getChildDocPassword(childId,docType){
+  return localStorage.getItem('childDocPw_'+childId+'_'+docType)||'';
+}
+
+function setChildDocPassword(childId,docType,password){
+  if(password)localStorage.setItem('childDocPw_'+childId+'_'+docType,password);
+  else localStorage.removeItem('childDocPw_'+childId+'_'+docType);
+}
+
+async function openChildDocView(docId){
+  const doc=childDocs.find(d=>d.id===docId);
+  if(!doc)return;
+  document.getElementById('childDocViewTitle').textContent=doc.document_name;
+  const img=document.getElementById('childDocViewImg');
+  const status=document.getElementById('childDocViewStatus');
+  img.style.display='none';
+  status.style.display='block';
+  status.textContent='Loading document...';
+  openModal('childDocViewModal');
+  try{
+    const{data:blob,error}=await sb.storage.from('vault').download(doc.file_url);
+    if(error)throw error;
+    const ext=doc.file_url.split('.').pop().toLowerCase();
+    if(ext==='pdf'){
+      const pw=getChildDocPassword(currentChildId,doc.doc_category);
+      const pdf=await pdfjsLib.getDocument({data:await blob.arrayBuffer(),password:pw||undefined}).promise;
+      const page=await pdf.getPage(1);
+      const viewport=page.getViewport({scale:2});
+      const canvas=document.createElement('canvas');
+      canvas.width=viewport.width;
+      canvas.height=viewport.height;
+      await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;
+      img.src=canvas.toDataURL('image/jpeg',0.92);
+    }else{
+      img.src=URL.createObjectURL(blob);
+    }
+    img.style.display='block';
+    status.style.display='none';
+  }catch(e){
+    if(e.name==='PasswordException')status.textContent='Password required. Please update the document with password.';
+    else status.textContent='Error: '+e.message;
+  }
+}
+
+function shareChildDoc(docId){
+  const doc=childDocs.find(d=>d.id===docId);
+  if(!doc)return;
+  currentShareDocId=docId;
+  openModal('childShareModal');
+}
+
+async function shareChildDocExport(fmt){
+  closeModal('childShareModal');
+  const doc=childDocs.find(d=>d.id===currentShareDocId);
+  if(!doc)return;
+  try{
+    const{data:blob,error}=await sb.storage.from('vault').download(doc.file_url);
+    if(error)throw error;
+    const ext=doc.file_url.split('.').pop().toLowerCase();
+    const pw=getChildDocPassword(currentChildId,doc.doc_category);
+    let canvas;
+    if(ext==='pdf'){
+      const pdf=await pdfjsLib.getDocument({data:await blob.arrayBuffer(),password:pw||undefined}).promise;
+      const page=await pdf.getPage(1);
+      const viewport=page.getViewport({scale:2.2});
+      canvas=document.createElement('canvas');
+      canvas.width=viewport.width;
+      canvas.height=viewport.height;
+      await page.render({canvasContext:canvas.getContext('2d'),viewport:viewport}).promise;
+    }else{
+      const bmp=await createImageBitmap(blob);
+      canvas=document.createElement('canvas');
+      canvas.width=bmp.width;
+      canvas.height=bmp.height;
+      canvas.getContext('2d').drawImage(bmp,0,0);
+    }
+    let exportBlob,name,mime;
+    const{jsPDF}=window.jspdf;
+    if(fmt==='a4pdf'){
+      const pdfDoc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+      const w=210,h=297;
+      const imgH=canvas.height*w/canvas.width;
+      pdfDoc.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,w,Math.min(imgH,h));
+      exportBlob=pdfDoc.output('blob');
+      name='document-a4.pdf';
+      mime='application/pdf';
+    }else if(fmt==='jpg'){
+      exportBlob=await(await fetch(canvas.toDataURL('image/jpeg',0.92))).blob();
+      name='document.jpg';
+      mime='image/jpeg';
+    }else{
+      const cardW=1000,cardH=630;
+      const cardCanvas=document.createElement('canvas');
+      cardCanvas.width=cardW;
+      cardCanvas.height=cardH;
+      const ctx=cardCanvas.getContext('2d');
+      ctx.fillStyle='#fff';
+      ctx.fillRect(0,0,cardW,cardH);
+      const r=Math.min(cardW/canvas.width,cardH/canvas.height);
+      const w=Math.round(canvas.width*r);
+      const h=Math.round(canvas.height*r);
+      ctx.drawImage(canvas,Math.round((cardW-w)/2),Math.round((cardH-h)/2),w,h);
+      const pdfDoc=new jsPDF({unit:'mm',format:[180,180*cardH/cardW],orientation:'landscape'});
+      pdfDoc.addImage(cardCanvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,180,180*cardH/cardW);
+      exportBlob=pdfDoc.output('blob');
+      name='document-card.pdf';
+      mime='application/pdf';
+    }
+    const file=new File([exportBlob],name,{type:mime});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:'Document'});}catch(e){}
+    }else{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(file);
+      a.download=name;
+      a.click();
+      alert('Downloaded — attach manually.');
+    }
+  }catch(e){
+    alert('Error: '+e.message);
+  }
+}
+
+function updateChildDoc(docId){
+  const doc=childDocs.find(d=>d.id===docId);
+  if(!doc)return;
+  triggerChildUpload(doc.doc_category,docId);
+}
+
+async function deleteChildDoc(docId){
+  if(!confirm('Delete this document permanently?'))return;
+  const doc=childDocs.find(d=>d.id===docId);
+  if(!doc)return;
+  sb.storage.from('vault').remove([doc.file_url]);
+  const{error}=await sb.from('documents').delete().eq('id',docId);
+  if(error)alert('❌ '+error.message);
+  else{alert('✅ Deleted.');loadChildDocs(currentChildId);}
 }
 
 // --- INVITE LOGIC ---
@@ -430,7 +607,6 @@ async function sendInviteEmail(){
   const email=document.getElementById('inviteEmail').value.trim();
   const rel=document.getElementById('inviteRelation').value;
   if(!name||!email)return alert('Enter Name and Email');
-  
   try{
     const{error}=await sb.from('family_links').insert({
       owner_id: currentUser.id, 
@@ -440,7 +616,6 @@ async function sendInviteEmail(){
       display_name: name
     });
     if(error)throw error;
-    
     alert(`✅ Invitation created for ${name}.\n\nPlease copy this link and send manually:\nhttps://oneapp-in.vercel.app/?invite=${encodeURIComponent(email)}`);
     closeModal('inviteModal');
     loadFamilyMembers();
@@ -469,7 +644,6 @@ async function addMinor(){
   const name=document.getElementById('minorName').value.trim();
   const dob=document.getElementById('minorDob').value;
   if(!name||!dob)return alert('Fill all fields');
-  
   try{
     const syntheticEmail=`minor_${Date.now()}@internal`;
     const{error}=await sb.from('family_links').insert({
@@ -482,7 +656,6 @@ async function addMinor(){
       permissions: { name: name, dob: dob }
     });
     if(error)throw error;
-    
     alert(`✅ ${name}'s profile created.`);
     closeModal('minorModal');
     loadFamilyMembers();
@@ -495,18 +668,9 @@ function openAddMinorModal(){if(!currentUser){alert('Sign in first.');return;}op
 
 // --- AADHAAR LOGIC (UNCHANGED CORE) ---
 let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false;
-let aaScopeChildId=null,aaScopeChildName='';
-function aaStoragePrefix(){return currentUser.id+(aaScopeChildId?('/children/'+aaScopeChildId):'');}
-function aaDocType(){return 'Aadhaar Card (Wallet)'+(aaScopeChildId?(':'+aaScopeChildId):'');}
-function aaBtnIds(){return aaScopeChildId?{get:'cvAadhaarGetBtn',view:'cvAadhaarViewBtn',upd:'cvAadhaarUpdBtn',del:'cvAadhaarDelBtn',sub:'cvAadhaarSub'}:{get:'aadhaarGetBtn',view:'aadhaarViewBtn',upd:'aadhaarUpdBtn',del:'aadhaarDelBtn',sub:'aadhaarSub'};}
 function showAa(id){['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
 function toggleAdjust(){const d=document.getElementById('aaAdjust');d.style.display=d.style.display==='none'?'block':'none';}
-async function openAadhaar(childId,childName){
-  if(!currentUser){alert('Sign in first.');return;}
-  await loadSavedAadhaar(childId||null,childName||'');
-  const rb=document.getElementById('aaRecropBtn1');if(rb)rb.style.display=aaHasOrig?'':'none';
-  showAa('aaStep1');openModal('aadhaarModal');
-}
+function openAadhaar(){document.getElementById('aaRecropBtn1').style.display=aaHasOrig?'':'none';showAa('aaStep1');openModal('aadhaarModal');}
 function openAadhaarView(){if(!aaFull){alert('No card yet.');return;}document.getElementById('aaPreview2').src=aaFull.toDataURL('image/jpeg',0.92);showAa('aaView');openModal('aadhaarModal');}
 function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='myAadhaar portal opened. Services → Download e-Aadhaar.';showAa('aaStep2');}
 function aaDirect(){document.getElementById('aaCoach').style.display='none';document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — converts on your device.';showAa('aaStep2');}
@@ -579,38 +743,31 @@ async function aaSave(){
   if(!aaFront||!aaBack){alert('Not ready.');return;}
   const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}
   const uid=session.user.id;
-  const prefix=aaStoragePrefix(),dtype=aaDocType();
-  const dname='aadhaar-card'+(aaScopeChildId?(' ('+aaScopeChildName+')'):'');
   const fb=await(await fetch(aaFull.toDataURL('image/jpeg',0.92))).blob();
   const frb=await(await fetch(aaFront.toDataURL('image/jpeg',0.92))).blob();
   const bkb=await(await fetch(aaBack.toDataURL('image/jpeg',0.92))).blob();
   const sb2=aaSide?await(await fetch(aaSide.toDataURL('image/jpeg',0.92))).blob():frb;
-  let e;(e=await sb.storage.from('vault').upload(prefix+'/aadhaar-full.jpg',fb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  (e=await sb.storage.from('vault').upload(prefix+'/aadhaar-front.jpg',frb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  (e=await sb.storage.from('vault').upload(prefix+'/aadhaar-back.jpg',bkb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  (e=await sb.storage.from('vault').upload(prefix+'/aadhaar-side.jpg',sb2,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  if(aaFile){(e=await sb.storage.from('vault').upload(prefix+'/aadhaar-original.pdf',aaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
-  const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type',dtype).limit(1);
-  let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:prefix+'/aadhaar-full.jpg',is_critical:true}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:dtype,document_name:dname,file_url:prefix+'/aadhaar-full.jpg',is_critical:true}));
+  let e;(e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',fb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',frb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',bkb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',sb2,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  if(aaFile){(e=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',aaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
+  const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true}));
   if(err){alert('❌ '+err.message);return;}
   aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');closeModal('aadhaarModal');alert('✅ Saved!');
-  if(aaScopeChildId)loadChildDocs(aaScopeChildId);
 }
-function setSaved(t){const ids=aaBtnIds();document.getElementById(ids.get).style.display='none';document.getElementById(ids.view).style.display='';document.getElementById(ids.upd).style.display='';document.getElementById(ids.del).style.display='';document.getElementById(ids.sub).textContent=t;}
-function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;const ids=aaBtnIds();document.getElementById(ids.get).style.display='';document.getElementById(ids.view).style.display='none';document.getElementById(ids.upd).style.display='none';document.getElementById(ids.del).style.display='none';document.getElementById(ids.sub).textContent='Not in wallet yet';}
+function setSaved(t){document.getElementById('aadhaarGetBtn').style.display='none';document.getElementById('aadhaarViewBtn').style.display='';document.getElementById('aadhaarUpdBtn').style.display='';document.getElementById('aadhaarDelBtn').style.display='';document.getElementById('aadhaarSub').textContent=t;}
+function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;document.getElementById('aadhaarGetBtn').style.display='';document.getElementById('aadhaarViewBtn').style.display='none';document.getElementById('aadhaarUpdBtn').style.display='none';document.getElementById('aadhaarDelBtn').style.display='none';document.getElementById('aadhaarSub').textContent='Not in wallet yet';}
 async function cfb(blob){const b=await createImageBitmap(blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}
-async function loadSavedAadhaar(childId,childName){
-  if(!currentUser)return;
-  aaScopeChildId=childId||null;aaScopeChildName=childName||aaScopeChildName;
-  const uid=currentUser.id,prefix=aaStoragePrefix(),dtype=aaDocType();
-  const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type',dtype).limit(1);
-  if(!data||!data.length){resetAadhaarUI();return;}
-  const{data:a}=await sb.storage.from('vault').download(prefix+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(prefix+'/aadhaar-front.jpg');
-  const{data:c}=await sb.storage.from('vault').download(prefix+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(prefix+'/aadhaar-side.jpg');
+async function loadSavedAadhaar(uid){
+  const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);if(!data||!data.length)return;
+  const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
+  const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
   if(a)aaFull=await cfb(a);if(b)aaFront=await cfb(b);if(c)aaBack=await cfb(c);if(d)aaSide=await cfb(d);
   aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');
 }
-async function aaDelete(){if(!confirm('Delete all Aadhaar files permanently?'))return;const{data:{session}}=await sb.auth.getSession();if(!session)return;const uid=session.user.id;const prefix=aaStoragePrefix(),dtype=aaDocType();await sb.storage.from('vault').remove([prefix+'/aadhaar-full.jpg',prefix+'/aadhaar-front.jpg',prefix+'/aadhaar-back.jpg',prefix+'/aadhaar-side.jpg',prefix+'/aadhaar-original.pdf']);await sb.from('documents').delete().eq('user_id',uid).eq('document_type',dtype);resetAadhaarUI();alert('✅ Deleted.');if(aaScopeChildId)loadChildDocs(aaScopeChildId);}
+async function aaDelete(){if(!confirm('Delete all Aadhaar files permanently?'))return;const{data:{session}}=await sb.auth.getSession();if(!session)return;const uid=session.user.id;await sb.storage.from('vault').remove([uid+'/aadhaar-full.jpg',uid+'/aadhaar-front.jpg',uid+'/aadhaar-back.jpg',uid+'/aadhaar-side.jpg',uid+'/aadhaar-original.pdf']);await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');resetAadhaarUI();alert('✅ Deleted.');}
 function aaSharePick(){openModal('shareModal');}
 async function aaShare(fmt,layout){
   closeModal('shareModal');
@@ -633,7 +790,7 @@ function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 
 // --- NAVIGATION ---
-function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto',childVaultView:''};if(m[id])document.getElementById(m[id])?.classList.add('active');window.scrollTo(0,0);if(id==='vault'&&currentUser)loadSavedAadhaar(null);}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto',childVaultView:''};if(m[id])document.getElementById(m[id])?.classList.add('active');window.scrollTo(0,0);}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');};
