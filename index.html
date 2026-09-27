@@ -28,7 +28,10 @@ h2{color:var(--primary);margin-bottom:.25rem}h3{font-size:1.05rem}.sub{color:var
 .field{margin:.75rem 0}.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.3rem}.field input,.field select{width:100%;padding:.7rem;border:1px solid var(--border);border-radius:6px;font-size:.95rem}
 .divider{display:flex;align-items:center;margin:1.25rem 0;color:var(--gray);font-size:.85rem}.divider:before,.divider:after{content:"";flex:1;border-bottom:1px solid var(--border)}.divider span{padding:0 .75rem}
 .aa-preview{width:100%;border-radius:10px;border:1px solid var(--border);margin:.5rem 0}.crop-row{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin:.4rem 0}.pick-label{font-size:.85rem;font-weight:700;width:100%}
-.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:.5rem}.icon-tile{display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer}.icon-box{width:64px;height:64px;background:var(--tile);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem}.icon-tile span{font-size:.75rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.2}
+.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:.5rem}.icon-tile{display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;position:relative}.icon-box{width:64px;height:64px;background:var(--tile);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem}.icon-tile span{font-size:.75rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.2}
+.icon-tile .tick{position:absolute;left:2px;bottom:18px;width:20px;height:20px;border-radius:50%;background:var(--success);color:#fff;font-size:12px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 3px #0003;line-height:1}
+.icon-tile.has-doc .tick{display:flex}
+.icon-tile.locked{opacity:.55}
 .family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border);gap:.5rem}.family-list-item:last-child{border-bottom:0}.family-avatar-sm{width:36px;height:36px;flex:0 0 36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;margin-right:.75rem}
 .invite-tabs{display:flex;gap:.4rem;margin:0 0 1rem}.invite-tab{flex:1;text-align:center;padding:.55rem;border:1px solid var(--border);border-radius:7px;cursor:pointer;font-weight:600;font-size:.85rem}.invite-tab.active{background:var(--primary);color:#fff}
 .status{padding:.6rem .75rem;border-radius:7px;background:#f1f5f9;font-size:.85rem;margin:.5rem 0}.status.ok{background:#d1fae5;color:#065f46}.status.err{background:#fee2e2;color:#991b1b}
@@ -54,10 +57,10 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <h2>My Secure Vault</h2><p class="sub">Private storage for your important documents.</p>
 <div class="card"><div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
 <div class="icon-grid">
-<div class="icon-tile" onclick="openAadhaar()"><div class="icon-box">🪪</div><span>Aadhaar</span></div>
-<div class="icon-tile" onclick="comingSoon('PAN Card')"><div class="icon-box">💳</div><span>PAN Card</span></div>
-<div class="icon-tile" onclick="comingSoon('Driving License')"><div class="icon-box">🚘</div><span>License</span></div>
-<div class="icon-tile" onclick="comingSoon('Passport')"><div class="icon-box">🛂</div><span>Passport</span></div>
+<div class="icon-tile" id="tile-aadhaar" onclick="openAadhaar()"><div class="icon-box">🪪</div><span>Aadhaar</span><div class="tick">✓</div></div>
+<div class="icon-tile" id="tile-pan" onclick="comingSoon('PAN Card')"><div class="icon-box">💳</div><span>PAN Card</span><div class="tick">✓</div></div>
+<div class="icon-tile" id="tile-license" onclick="comingSoon('Driving License')"><div class="icon-box">🚘</div><span>License</span><div class="tick">✓</div></div>
+<div class="icon-tile" id="tile-passport" onclick="comingSoon('Passport')"><div class="icon-box">📘</div><span>Passport</span><div class="tick">✓</div></div>
 </div>
 <div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p id="aadhaarSub">Not in wallet yet</p></div><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button id="aadhaarGetBtn" class="btn btn-primary btn-sm" onclick="openAadhaar()">Add</button><button id="aadhaarViewBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaarView()">View</button><button id="aadhaarUpdBtn" class="btn btn-outline btn-sm" style="display:none" onclick="openAadhaar()">Update</button><button id="aadhaarDelBtn" class="btn btn-outline btn-sm" style="display:none" onclick="aaDelete()">Delete</button></div></div>
 </div>
@@ -76,6 +79,16 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">Select your e-Aadhaar PDF.</p><div id="aaCoach"><ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem"><li>Download e-Aadhaar from the official UIDAI portal.</li><li>Select the downloaded PDF below.</li><li>If protected, enter the PDF password.</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="PDF password"><button class="btn btn-primary" style="margin-top:.5rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="status">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
 <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="aa-preview" alt="preview"><button class="btn btn-outline btn-sm" onclick="toggleAdjust()">Adjust blocks</button><div id="aaAdjust" style="display:none"><div class="crop-row"><span class="pick-label">FRONT:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('front',0.5,0.5,1,1)">BR</button></div><div class="crop-row"><span class="pick-label">BACK:</span><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0,0.5,0.5)">TL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0,1,0.5)">TR</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0,0.5,0.5,1)">BL</button><button class="btn btn-outline btn-sm" onclick="pickQuad('back',0.5,0.5,1,1)">BR</button></div></div><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 <div id="aaView" style="display:none"><h3>Full e-Aadhaar</h3><img id="aaPreview2" class="aa-preview" alt="full page"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="aaRecrop()">Re-detect</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
+</div></div>
+
+<!-- TILE ACTION MENU -->
+<div id="tileActionModal" class="modal-overlay"><div class="modal">
+<h3 id="tileActionTitle">Aadhaar Card</h3>
+<p class="sub">What would you like to do?</p>
+<button class="btn btn-primary" onclick="tileAction('view')">👁 View</button>
+<button class="btn btn-outline" onclick="tileAction('update')">✏️ Update</button>
+<button class="btn btn-danger" onclick="tileAction('delete')">🗑 Delete</button>
+<button class="btn btn-outline" onclick="closeModal('tileActionModal')">Cancel</button>
 </div></div>
 
 <div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
@@ -112,6 +125,7 @@ if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudfl
 
 let currentUser=null,familyMembers=[],currentMinorId=null,currentMinorName='',pendingMinorType=null;
 let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false,lastPos=null;
+let currentTileType=null;
 
 const $=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
@@ -246,7 +260,32 @@ function openAddMinorModal(){if(!currentUser){openModal('authModal');return}open
 
 function showAa(id){['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>$(x).style.display=x===id?'block':'none')}
 function toggleAdjust(){const d=$('aaAdjust');d.style.display=d.style.display==='none'?'block':'none'}
-function openAadhaar(){if(!currentUser){openModal('authModal');return}$('aaRecropBtn1').style.display=aaHasOrig?'':'none';showAa('aaStep1');openModal('aadhaarModal')}
+
+/* ---- Aadhaar entry: routes to action menu if already saved ---- */
+function openAadhaar(){
+  if(!currentUser){openModal('authModal');return}
+  if(aaHasOrig){
+    currentTileType='aadhaar';
+    $('tileActionTitle').textContent='Aadhaar Card';
+    openModal('tileActionModal');
+    return;
+  }
+  $('aaRecropBtn1').style.display='none';
+  showAa('aaStep1');
+  openModal('aadhaarModal');
+}
+function tileAction(action){
+  closeModal('tileActionModal');
+  if(currentTileType==='aadhaar'){
+    if(action==='view'){openAadhaarView();return}
+    if(action==='update'){$('aaRecropBtn1').style.display=aaHasOrig?'':'none';showAa('aaStep1');openModal('aadhaarModal');return}
+    if(action==='delete'){aaDelete();return}
+  }
+  if(action==='view')comingSoon(currentTileType+' view');
+  if(action==='update')comingSoon(currentTileType+' update');
+  if(action==='delete')comingSoon(currentTileType+' delete');
+}
+
 function openAadhaarView(){if(!aaFull)return alert('No card yet.');$('aaPreview2').src=aaFull.toDataURL('image/jpeg',.92);showAa('aaView');openModal('aadhaarModal')}
 function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');$('aaCoach').style.display='';$('aaStep2Sub').textContent='UIDAI portal opened. Select your downloaded e-Aadhaar PDF below.';showAa('aaStep2')}
 function aaDirect(){$('aaCoach').style.display='none';$('aaStep2Sub').textContent='Upload your e-Aadhaar PDF.';showAa('aaStep2')}
@@ -284,8 +323,24 @@ async function aaSave(){
   const q=ex?.length?await sb.from('documents').update(payload).eq('id',ex[0].id):await sb.from('documents').insert(payload);
   if(q.error)return alert('❌ '+q.error.message);aaHasOrig=true;setSaved('Wallet card saved');closeModal('aadhaarModal');alert('✅ Saved!')
 }
-function setSaved(t){$('aadhaarGetBtn').style.display='none';$('aadhaarViewBtn').style.display='';$('aadhaarUpdBtn').style.display='';$('aadhaarDelBtn').style.display='';$('aadhaarSub').textContent=t}
-function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=aaFile=null;aaHasOrig=false;if(!$('aadhaarGetBtn'))return;$('aadhaarGetBtn').style.display='';$('aadhaarViewBtn').style.display='none';$('aadhaarUpdBtn').style.display='none';$('aadhaarDelBtn').style.display='none';$('aadhaarSub').textContent='Not in wallet yet'}
+function setSaved(t){
+  $('aadhaarGetBtn').style.display='none';
+  $('aadhaarViewBtn').style.display='';
+  $('aadhaarUpdBtn').style.display='';
+  $('aadhaarDelBtn').style.display='';
+  $('aadhaarSub').textContent=t;
+  $('tile-aadhaar')?.classList.add('has-doc');
+}
+function resetAadhaarUI(){
+  aaFull=aaFront=aaBack=aaSide=aaFile=null;aaHasOrig=false;
+  if(!$('aadhaarGetBtn'))return;
+  $('aadhaarGetBtn').style.display='';
+  $('aadhaarViewBtn').style.display='none';
+  $('aadhaarUpdBtn').style.display='none';
+  $('aadhaarDelBtn').style.display='none';
+  $('aadhaarSub').textContent='Not in wallet yet';
+  $('tile-aadhaar')?.classList.remove('has-doc');
+}
 async function cfb(blob){const b=await createImageBitmap(blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c}
 async function loadSavedAadhaar(uid){const{data}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);if(!data?.length)return;const out=await Promise.all(['aadhaar-full.jpg','aadhaar-front.jpg','aadhaar-back.jpg','aadhaar-side.jpg'].map(f=>sb.storage.from('vault').download(uid+'/'+f)));if(out[0].data)aaFull=await cfb(out[0].data);if(out[1].data)aaFront=await cfb(out[1].data);if(out[2].data)aaBack=await cfb(out[2].data);if(out[3].data)aaSide=await cfb(out[3].data);aaHasOrig=true;setSaved('Wallet card saved')}
 async function aaDelete(){if(!confirm('Delete all Aadhaar files permanently?'))return;if(!currentUser)return;const uid=currentUser.id;const{error}=await sb.storage.from('vault').remove(['aadhaar-full.jpg','aadhaar-front.jpg','aadhaar-back.jpg','aadhaar-side.jpg','aadhaar-original.pdf'].map(x=>uid+'/'+x));if(error)return alert('❌ '+error.message);const q=await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');if(q.error)return alert('❌ '+q.error.message);resetAadhaarUI();alert('✅ Deleted.')}
