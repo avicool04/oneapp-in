@@ -1,15 +1,3 @@
-Here is the **complete, single-file code (v18)**.
-
-### 🛠️ What Changed & Fixed:
-1.  **Real Database Fetch for Child Docs:** The `loadChildDocs` function now queries Supabase directly using the child's ID in the file path. You will see your uploaded Aadhaar/Birth Cert immediately after upload.
-2.  **PDF Password Memory:** Added a local browser storage mechanism (`localStorage`). When you enter the password for an Aadhaar PDF (for yourself or your child), it remembers that specific document's password. Next time you try to view/share it, it auto-unlocks without asking again.
-3.  **Unified Upload Logic:** Both "My Vault" and "Child Vault" use the same robust scanner logic.
-4.  **Mobile Responsive:** Ensured grids and modals fit perfectly on small screens.
-5.  **No Partial Code:** This is the full replacement file. Copy-paste this entire block into `index.html`.
-
-GitHub → `index.html` → pencil → **Ctrl+A → Delete → paste → Commit** (message: `v18: Real Child Doc Loading + PDF Password Memory`)
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -735,4 +723,3 @@ window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.clas
 </script>
 </body>
 </html>
-```
