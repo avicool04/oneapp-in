@@ -63,10 +63,10 @@ input:checked+.slider{background:var(--primary)}input:checked+.slider:before{tra
 .family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border)}
 .family-list-item:last-child{border-bottom:none}
 .family-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;margin-right:.5rem}
-.perm-toggle{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--gray)}
 .invite-tabs{display:flex;gap:.4rem;margin-bottom:.75rem}
 .invite-tab{flex:1;text-align:center;padding:.4rem;border:1px solid var(--border);border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer}
 .invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.viewer-modal-content{background:#fff;padding:1rem;border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:.5rem}
 footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 @media(max-width:480px){
   .icon-grid{grid-template-columns:repeat(3,1fr)}
@@ -150,8 +150,30 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="aaView" style="display:none"><h3>Full e-Aadhaar</h3><img id="aaPreview2" class="aa-preview" alt="full page" style="width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0"><button class="btn btn-primary" onclick="aaSharePick()">Share</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 </div></div>
 
-<!-- SHARE CHOOSER -->
-<div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
+<!-- SHARE CHOOSER MODAL -->
+<div id="shareModal" class="modal-overlay"><div class="modal">
+  <h3>Share Document</h3>
+  <p class="sub" id="shareDocTitle">Select share option</p>
+  <button class="btn btn-primary" onclick="executeShare('native')">📲 Native Share Window</button>
+  <button class="btn btn-success" onclick="executeShare('whatsapp')">💬 Share via WhatsApp</button>
+  <button class="btn btn-outline" onclick="executeShare('email')">📧 Share via Email</button>
+  <button class="btn btn-outline" onclick="executeShare('copy')">🔗 Copy Link to Clipboard</button>
+  <button class="btn btn-outline" onclick="executeShare('download')">⬇️ Download File</button>
+  <button class="btn btn-outline" onclick="closeModal('shareModal')" style="margin-top:.5rem">Cancel</button>
+</div></div>
+
+<!-- IN-APP VIEWER MODAL -->
+<div id="inAppViewerModal" class="modal-overlay">
+  <div class="viewer-modal-content">
+    <div style="display:flex;justify-content:space-between;width:100%;align-items:center;border-bottom:1px solid var(--border);padding-bottom:.5rem">
+      <h3 id="viewerTitle">Document Preview</h3>
+      <button class="btn btn-outline btn-sm" onclick="closeModal('inAppViewerModal')">✕ Close</button>
+    </div>
+    <div id="viewerLoading" class="sub" style="display:none">Loading file content...</div>
+    <img id="viewerImage" style="max-width:100%;max-height:70vh;display:none;border-radius:8px;border:1px solid var(--border)">
+    <canvas id="viewerCanvas" style="max-width:100%;max-height:70vh;display:none;border-radius:8px;border:1px solid var(--border)"></canvas>
+  </div>
+</div>
 
 <!-- SOS MODAL -->
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
@@ -248,6 +270,7 @@ let currentUser=null;
 let familyMembers=[]; 
 let currentChildId=null;
 let currentChildName="";
+let activeShareDoc=null;
 
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
@@ -359,7 +382,6 @@ async function loadChildDocs(childLinkId){
     return;
   }
 
-  // Filter documents belonging to current child link
   const childDocs = data.filter(doc => doc.permissions && doc.permissions[childLinkId]);
 
   if(childDocs.length === 0){
@@ -371,14 +393,16 @@ async function loadChildDocs(childLinkId){
   childDocs.forEach(doc => {
     const row = document.createElement('div');
     row.className = 'doc-row';
+    const jsonStr = JSON.stringify(doc).replace(/'/g, "&apos;");
     row.innerHTML = `
       <div class="doc-info">
         <h4>${doc.document_name}</h4>
         <p>Uploaded ${new Date(doc.created_at || Date.now()).toLocaleDateString()}</p>
       </div>
       <div style="display:flex;gap:.3rem">
-        <button class="btn btn-outline btn-sm" onclick="viewChildDoc('${doc.file_url}')">View</button>
-        <button class="btn btn-primary btn-sm" onclick="shareChildDoc('${doc.file_url}', '${doc.document_name}')">Share</button>
+        <button class="btn btn-outline btn-sm" onclick="viewChildDocInApp('${doc.file_url}', '${doc.document_name}')">View</button>
+        <button class="btn btn-primary btn-sm" onclick='openShareModal(${jsonStr})'>Share</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteChildDoc('${doc.id}', '${doc.file_url}')">Delete</button>
       </div>
     `;
     list.appendChild(row);
@@ -391,22 +415,52 @@ function triggerChildUpload(type){
   input.accept = 'image/*,application/pdf';
   
   input.onchange = async (e) => {
-    const file = e.target.files[0];
+    let file = e.target.files[0];
     if(!file) return;
 
-    // Password Detection for PDFs
+    // Check PDF Password & Prompt Once Before Upload
     if(file.type === 'application/pdf'){
       try {
         const buffer = await file.arrayBuffer();
         await pdfjsLib.getDocument({ data: buffer }).promise;
       } catch(err) {
         if(err && err.name === 'PasswordException'){
-          const pass = prompt(`"${file.name}" is password protected. Enter password to unlock:`);
+          const pass = prompt(`"${file.name}" is password protected. Enter password:`);
           if(!pass) return alert('Upload cancelled. Password required.');
           
           try {
             const buffer = await file.arrayBuffer();
-            await pdfjsLib.getDocument({ data: buffer, password: pass }).promise;
+            const pdfDoc = await pdfjsLib.getDocument({ data: buffer, password: pass }).promise;
+            
+            // Re-render unlocked pages to an unencrypted PDF blob so it never prompts again
+            const { jsPDF } = window.jspdf;
+            let newPdf = null;
+
+            for(let i=1; i<=pdfDoc.numPages; i++){
+              const page = await pdfDoc.getPage(i);
+              const vp = page.getViewport({ scale: 2 });
+              const c = document.createElement('canvas');
+              c.width = vp.width;
+              c.height = vp.height;
+              await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+
+              const imgData = c.toDataURL('image/jpeg', 0.92);
+              if(i === 1){
+                newPdf = new jsPDF({
+                  orientation: c.width > c.height ? 'landscape' : 'portrait',
+                  unit: 'px',
+                  format: [c.width, c.height]
+                });
+                newPdf.addImage(imgData, 'JPEG', 0, 0, c.width, c.height);
+              } else {
+                newPdf.addPage([c.width, c.height], c.width > c.height ? 'landscape' : 'portrait');
+                newPdf.addImage(imgData, 'JPEG', 0, 0, c.width, c.height);
+              }
+            }
+
+            const unencryptedBlob = newPdf.output('blob');
+            file = new File([unencryptedBlob], file.name, { type: 'application/pdf' });
+
           } catch(unlockErr) {
             return alert('❌ Incorrect password. Upload failed.');
           }
@@ -450,26 +504,132 @@ function triggerChildUpload(type){
   input.click();
 }
 
-async function viewChildDoc(path){
-  const { data, error } = await sb.storage.from('vault').createSignedUrl(path, 60);
-  if(error) return alert('❌ ' + error.message);
-  window.open(data.signedUrl, '_blank');
+async function deleteChildDoc(docId, path){
+  if(!confirm('Are you sure you want to delete this document?')) return;
+
+  try {
+    const { error: storageError } = await sb.storage.from('vault').remove([path]);
+    if(storageError) console.warn('Storage delete warning:', storageError);
+
+    const { error: dbError } = await sb.from('documents').delete().eq('id', docId);
+    if(dbError) throw dbError;
+
+    alert('✅ Document deleted.');
+    loadChildDocs(currentChildId);
+  } catch(err) {
+    alert('❌ Delete failed: ' + err.message);
+  }
 }
 
-async function shareChildDoc(path, name){
-  const { data, error } = await sb.storage.from('vault').download(path);
-  if(error) return alert('❌ ' + error.message);
-  
-  const file = new File([data], name + '.' + path.split('.').pop(), { type: data.type });
-  if(navigator.canShare && navigator.canShare({ files: [file] })){
+// IN-APP VIEWER
+async function viewChildDocInApp(path, name){
+  const imgEl = document.getElementById('viewerImage');
+  const canvasEl = document.getElementById('viewerCanvas');
+  const loadingEl = document.getElementById('viewerLoading');
+  document.getElementById('viewerTitle').textContent = name;
+
+  imgEl.style.display = 'none';
+  canvasEl.style.display = 'none';
+  loadingEl.style.display = 'block';
+  openModal('inAppViewerModal');
+
+  const { data, error } = await sb.storage.from('vault').createSignedUrl(path, 120);
+  if(error) {
+    loadingEl.textContent = '❌ Failed to load file.';
+    return;
+  }
+
+  const fileExt = path.split('.').pop().toLowerCase();
+
+  if(fileExt === 'pdf'){
     try {
-      await navigator.share({ files: [file], title: name });
-    } catch(e){}
+      const loadingTask = pdfjsLib.getDocument(data.signedUrl);
+      const pdf = await loadingTask.promise;
+      const page = await pdf.getPage(1);
+
+      const viewport = page.getViewport({ scale: 1.5 });
+      const context = canvasEl.getContext('2d');
+      canvasEl.height = viewport.height;
+      canvasEl.width = viewport.width;
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      loadingEl.style.display = 'none';
+      canvasEl.style.display = 'block';
+    } catch(err) {
+      loadingEl.textContent = '❌ Error rendering PDF: ' + err.message;
+    }
   } else {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(data);
-    a.download = name;
-    a.click();
+    imgEl.src = data.signedUrl;
+    imgEl.onload = () => {
+      loadingEl.style.display = 'none';
+      imgEl.style.display = 'block';
+    };
+  }
+}
+
+// MULTI-OPTION SHARE LOGIC
+function openShareModal(doc){
+  activeShareDoc = doc;
+  document.getElementById('shareDocTitle').textContent = doc.document_name || 'Selected Document';
+  openModal('shareModal');
+}
+
+async function executeShare(method){
+  if(!activeShareDoc && !aaSide) return alert('No document selected');
+  closeModal('shareModal');
+
+  let shareUrl = '', docName = '', filePath = '';
+  
+  if(activeShareDoc){
+    filePath = activeShareDoc.file_url;
+    docName = activeShareDoc.document_name;
+    const { data } = await sb.storage.from('vault').createSignedUrl(filePath, 300);
+    shareUrl = data?.signedUrl || '';
+  }
+
+  const shareText = `Document: ${docName}`;
+
+  switch(method){
+    case 'native':
+      if(activeShareDoc){
+        const { data } = await sb.storage.from('vault').download(filePath);
+        if(data){
+          const file = new File([data], docName + '.' + filePath.split('.').pop(), { type: data.type });
+          if(navigator.canShare && navigator.canShare({ files: [file] })){
+            try { await navigator.share({ files: [file], title: docName }); } catch(e){}
+            break;
+          }
+        }
+      }
+      alert('Native sharing not supported, fallback link copied.');
+      navigator.clipboard.writeText(shareUrl);
+      break;
+
+    case 'whatsapp':
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`, '_blank');
+      break;
+
+    case 'email':
+      window.location.href = `mailto:?subject=${encodeURIComponent(docName)}&body=${encodeURIComponent(`${shareText}\n\nLink:${shareUrl}`)}`;
+      break;
+
+    case 'copy':
+      await navigator.clipboard.writeText(shareUrl);
+      alert('✅ Link copied to clipboard!');
+      break;
+
+    case 'download':
+      if(activeShareDoc){
+        const { data } = await sb.storage.from('vault').download(filePath);
+        if(data){
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(data);
+          a.download = docName + '.' + filePath.split('.').pop();
+          a.click();
+        }
+      }
+      break;
   }
 }
 
@@ -562,7 +722,6 @@ function openAddMinorModal(){if(!currentUser){alert('Sign in first.');return;}op
 // --- AADHAAR LOGIC ---
 let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false;
 function showAa(id){['aaStep1','aaStep2','aaStep3','aaView'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
-function toggleAdjust(){const d=document.getElementById('aaAdjust');d.style.display=d.style.display==='none'?'block':'none';}
 function openAadhaar(){document.getElementById('aaRecropBtn1').style.display=aaHasOrig?'':'none';showAa('aaStep1');openModal('aadhaarModal');}
 function openAadhaarView(){if(!aaFull){alert('No card yet.');return;}document.getElementById('aaPreview2').src=aaFull.toDataURL('image/jpeg',0.92);showAa('aaView');openModal('aadhaarModal');}
 function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='myAadhaar portal opened. Services → Download e-Aadhaar.';showAa('aaStep2');}
@@ -618,8 +777,6 @@ function extractCards(src){
   aaFront=autoCrop(rc(aaSide,0,0,midX,aaSide.height));
   aaBack=autoCrop(rc(aaSide,midX,0,aaSide.width-midX,aaSide.height));
 }
-function pickQuad(slot,fx0,fy0,fx1,fy1){if(!aaFull){alert('Load PDF first.');return;}const q=autoCrop(rc(aaFull,Math.round(fx0*aaFull.width),Math.round(fy0*aaFull.height),Math.round((fx1-fx0)*aaFull.width),Math.round((fy1-fy0)*aaFull.height)));if(slot==='front')aaFront=q;else aaBack=q;aaSide=composeRaw();refreshPreview();}
-function composeRaw(){if(!aaFront||!aaBack)return null;const a=aaFront,b=aaBack,c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=a.width+b.width;c.height=Math.max(a.height,b.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,Math.round((c.height-a.height)/2));ctx.drawImage(b,a.width,Math.round((c.height-b.height)/2));return c;}
 function cardCanvas(s){const W=1000,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const r=Math.min(W/s.width,H/s.height),w=Math.round(s.width*r),h=Math.round(s.height*r);ctx.drawImage(s,Math.round((W-w)/2),Math.round((H-h)/2),w,h);return c;}
 function composeCanvas(layout){
   if(!aaFront||!aaBack){alert('Not ready.');return null;}
@@ -631,7 +788,6 @@ function composeCanvas(layout){
 }
 function refreshPreview(){const c=aaSide||composeCanvas('side');if(c)document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);}
 function autoCrop(cv){const ctx=cv.getContext('2d'),w=cv.width,h=cv.height,d=ctx.getImageData(0,0,w,h).data;let t=h,b=0,l=w,r=0;for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;if(d[i]<240||d[i+1]<240||d[i+2]<240){if(y<t)t=y;if(y>b)b=y;if(x<l)l=x;if(x>r)r=x;}}if(b<=t||r<=l)return cv;const p=Math.round(w*0.005);t=Math.max(0,t-p);l=Math.max(0,l-p);b=Math.min(h-1,b+p);r=Math.min(w-1,r+p);const c2=document.createElement('canvas');c2.width=r-l+1;c2.height=b-t+1;c2.getContext('2d').drawImage(cv,l,t,c2.width,c2.height,0,0,c2.width,c2.height);return c2;}
-function makePdf(c){const{jsPDF}=window.jspdf,wm=180,hm=180*c.height/c.width,p=(wm>=hm)?new jsPDF({unit:'mm',format:[hm,wm],orientation:'landscape'}):new jsPDF({unit:'mm',format:[wm,hm],orientation:'portrait'});p.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,wm,hm);return p;}
 async function aaSave(){
   if(!aaFront||!aaBack){alert('Not ready.');return;}
   const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}
@@ -645,8 +801,8 @@ async function aaSave(){
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',bkb,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',sb2,{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   if(aaFile){(e=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',aaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
-  const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
-  let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true}));
+  const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('doc_category','identity').eq('document_name','aadhaar-card').limit(1);
+  let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,doc_category:'identity',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true}));
   if(err){alert('❌ '+err.message);return;}
   aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');closeModal('aadhaarModal');alert('✅ Saved!');
 }
@@ -654,24 +810,14 @@ function setSaved(t){document.getElementById('aadhaarGetBtn').style.display='non
 function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;document.getElementById('aadhaarGetBtn').style.display='';document.getElementById('aadhaarViewBtn').style.display='none';document.getElementById('aadhaarUpdBtn').style.display='none';document.getElementById('aadhaarDelBtn').style.display='none';document.getElementById('aadhaarSub').textContent='Not in wallet yet';}
 async function cfb(blob){const b=await createImageBitmap(blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}
 async function loadSavedAadhaar(uid){
-  const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);if(!data||!data.length)return;
+  const{data}=await sb.from('documents').select('file_url').eq('user_id',uid).eq('doc_category','identity').eq('document_name','aadhaar-card').limit(1);if(!data||!data.length)return;
   const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');
   const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
   if(a)aaFull=await cfb(a);if(b)aaFront=await cfb(b);if(c)aaBack=await cfb(c);if(d)aaSide=await cfb(d);
   aaHasOrig=true;setSaved('Wallet card saved • encrypted vault');
 }
-async function aaDelete(){if(!confirm('Delete all Aadhaar files permanently?'))return;const{data:{session}}=await sb.auth.getSession();if(!session)return;const uid=session.user.id;await sb.storage.from('vault').remove([uid+'/aadhaar-full.jpg',uid+'/aadhaar-front.jpg',uid+'/aadhaar-back.jpg',uid+'/aadhaar-side.jpg',uid+'/aadhaar-original.pdf']);await sb.from('documents').delete().eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');resetAadhaarUI();alert('✅ Deleted.');}
-function aaSharePick(){openModal('shareModal');}
-async function aaShare(fmt,layout){
-  closeModal('shareModal');
-  if(fmt==='a4pdf'){if(!aaFile){alert('No original PDF.');return;}const f=aaFile;if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Aadhaar A4 PDF'});}catch(e){}}else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download='aadhaar-a4.pdf';a.click();alert('Downloaded — attach manually.');}return;}
-  const c=composeCanvas(layout);if(!c)return;let blob,name,mime;
-  if(fmt==='jpg'){blob=await(await fetch(c.toDataURL('image/jpeg',0.92))).blob();name='aadhaar-'+layout+'.jpg';mime='image/jpeg';}
-  else{blob=makePdf(c).output('blob');name='aadhaar-'+layout+'.pdf';mime='application/pdf';}
-  const f=new File([blob],name,{type:mime});
-  if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Aadhaar Card'});}catch(e){}}
-  else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=name;a.click();alert('Downloaded — attach manually.');}
-}
+async function aaDelete(){if(!confirm('Delete all Aadhaar files permanently?'))return;const{data:{session}}=await sb.auth.getSession();if(!session)return;const uid=session.user.id;await sb.storage.from('vault').remove([uid+'/aadhaar-full.jpg',uid+'/aadhaar-front.jpg',uid+'/aadhaar-back.jpg',uid+'/aadhaar-side.jpg',uid+'/aadhaar-original.pdf']);await sb.from('documents').delete().eq('user_id',uid).eq('doc_category','identity').eq('document_name','aadhaar-card');resetAadhaarUI();alert('✅ Deleted.');}
+function aaSharePick(){activeShareDoc=null;openModal('shareModal');}
 
 // --- SOS LOGIC ---
 let lastPos=null;
