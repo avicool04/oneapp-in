@@ -175,4 +175,84 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 
 <div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
 
-<div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline
+<div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
+
+<div id="familyManagerModal" class="modal-overlay"><div class="modal">
+  <h3>👨‍‍ Manage Family</h3>
+  <p class="sub">Connected members and permission settings.</p>
+  <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+  </div>
+  <div id="familyListContainer" style="margin-bottom:1rem"></div>
+  <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
+</div></div>
+
+<div id="childUploadModal" class="modal-overlay"><div class="modal">
+  <h3 id="cuTitle">Upload Document</h3>
+  <p class="sub" id="cuSub">Select a file. Password-protected PDFs will be unlocked here.</p>
+  <div class="field"><label>Select file</label><input id="childFileInput" type="file" accept="image/*,application/pdf" onchange="childOnFile(this.files[0])"></div>
+  <div id="childPassRow" class="field" style="display:none">
+    <label>PDF password</label>
+    <input id="childPass" type="text" placeholder="PDF password">
+    <button class="btn btn-primary" style="margin-top:.5rem" onclick="childUnlock()">Unlock</button>
+  </div>
+  <div id="childUploadStatus" class="sos-box" style="display:none"></div>
+  <div id="childPreviewWrap" style="display:none"><img id="childPreview" class="aa-preview" alt="preview"></div>
+  <button class="btn btn-success" id="childSaveBtn" style="display:none" onclick="childSave()">Save to Vault</button>
+  <button class="btn btn-outline" onclick="closeModal('childUploadModal')">Cancel</button>
+</div></div>
+
+<div id="childViewModal" class="modal-overlay"><div class="modal">
+  <h3 id="cvTitle2">Document</h3>
+  <div id="cvPreviewWrap"><p class="sub">Loading…</p></div>
+  <button class="btn btn-danger" id="cvDeleteBtn" style="display:none" onclick="childDeleteCurrent()">Delete</button>
+  <button class="btn btn-outline" onclick="closeModal('childViewModal')">Close</button>
+</div></div>
+
+<div id="spouseViewModal" class="modal-overlay"><div class="modal">
+  <h3>🔗 Shared with <span id="svName" style="color:var(--primary)"></span></h3>
+  <p class="sub">Documents this person has shared with you.</p>
+  <div id="svDocList" style="margin-bottom:1rem"></div>
+  <button class="btn btn-outline" onclick="closeModal('spouseViewModal')">Back</button>
+</div></div>
+
+<div id="inviteModal" class="modal-overlay"><div class="modal">
+  <h3>Invite Family Member</h3>
+  <div class="invite-tabs">
+    <div class="invite-tab active" onclick="setInviteTab('email')">📧 Email</div>
+    <div class="invite-tab" onclick="setInviteTab('whatsapp')">💬 WhatsApp</div>
+    <div class="invite-tab" onclick="setInviteTab('sms')">📱 SMS</div>
+  </div>
+  <div id="inviteContent-email">
+    <div class="field"><label>Name</label><input id="inviteName" type="text" placeholder="e.g. Priya Sharma"></div>
+    <div class="field"><label>Email Address</label><input id="inviteEmail" type="email"></div>
+    <div class="field"><label>Relation</label><select id="inviteRelation"><option value="spouse">Spouse</option><option value="parent">Parent</option><option value="sibling">Sibling</option></select></div>
+    <button class="btn btn-primary" onclick="sendInviteEmail()">Send Email Invite</button>
+  </div>
+  <div id="inviteContent-whatsapp" style="display:none">
+    <div class="field"><label>Name</label><input id="inviteNameWa" type="text"></div>
+    <div class="field"><label>Phone Number</label><input id="invitePhoneWa" type="tel"></div>
+    <div class="field"><label>Relation</label><select id="inviteRelationWa"><option value="spouse">Spouse</option><option value="child">Child</option></select></div>
+    <button class="btn btn-success" onclick="sendInviteWhatsApp()">Open WhatsApp</button>
+  </div>
+  <div id="inviteContent-sms" style="display:none">
+    <div class="field"><label>Name</label><input id="inviteNameSms" type="text"></div>
+    <div class="field"><label>Phone Number</label><input id="invitePhoneSms" type="tel"></div>
+    <div class="field"><label>Relation</label><select id="inviteRelationSms"><option value="spouse">Spouse</option><option value="child">Child</option></select></div>
+    <button class="btn btn-primary" onclick="sendInviteSMS()">Open SMS App</button>
+  </div>
+  <button class="btn btn-outline" onclick="closeModal('inviteModal')" style="margin-top:1rem">Cancel</button>
+</div></div>
+
+<div id="minorModal" class="modal-overlay"><div class="modal">
+  <h3>Add Minor Child</h3>
+  <div class="field"><label>Child Name</label><input id="minorName" type="text"></div>
+  <div class="field"><label>Date of Birth</label><input id="minorDob" type="date"></div>
+  <button class="btn btn-primary" onclick="addMinor()">Create Profile</button>
+  <button class="btn btn-outline" onclick="closeModal('minorModal')">Cancel</button>
+</div></div>
+
+<footer>OneApp.in • Live on Vercel + Supabase<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
+
+<!-- CONTINUE -->
