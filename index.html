@@ -53,7 +53,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <div class="dropdown" id="userDropdown"><div class="email" id="userEmail"></div><hr style="border:0;border-top:1px solid var(--border);margin:.5rem 0"><button class="btn btn-outline btn-sm" style="width:100%;margin:.25rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button><hr style="border:0;border-top:1px solid var(--border);margin:.5rem 0"><button class="btn btn-outline btn-sm" style="width:100%;margin:.25rem 0" onclick="doSignOut()">Sign Out</button></div>
 </div></div></nav>
 
-<!-- ============ MAIN VAULT (self) ============ -->
+<!-- ============ MAIN VAULT ============ -->
 <div id="vault" class="view active container">
 <h2>My Secure Vault</h2><p class="sub">Private storage for your important documents.</p>
 <div class="card"><div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
@@ -67,15 +67,13 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 </div>
 <div class="card"><div class="card-header"><h3>Insurance</h3></div><div class="icon-grid"><div class="icon-tile" onclick="comingSoon('Bike Insurance')"><div class="icon-box">🏍️</div><span>Bike</span></div><div class="icon-tile" onclick="comingSoon('Car Insurance')"><div class="icon-box">🚗</div><span>Car</span></div><div class="icon-tile" onclick="comingSoon('Health Insurance')"><div class="icon-box">🏥</div><span>Health</span></div><div class="icon-tile" onclick="comingSoon('Life Insurance')"><div class="icon-box">🛡️</div><span>Life</span></div></div></div>
 
-<!-- Family Vault card -->
 <div class="card" id="familyVaultCard" style="display:none">
   <div class="card-header"><h3>Family Vault</h3><span class="badge badge-ok">Minor profiles</span></div>
   <div class="icon-grid" id="familyVaultGrid"></div>
-  <p class="sub" id="familyVaultEmpty" style="display:none;margin:0">No children added yet. Use “Manage Family → Add Minor” to create a profile.</p>
 </div>
 </div>
 
-<!-- ============ CHILD VAULT (per-child) ============ -->
+<!-- ============ CHILD VAULT PAGE ============ -->
 <div id="childVault" class="view container">
   <h2 id="cvTitle">Child Vault</h2>
   <p class="sub" id="cvSub">Documents for this child.</p>
@@ -92,7 +90,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <!-- AUTH -->
 <div id="authModal" class="modal-overlay"><div class="modal"><h3>Welcome to OneApp</h3><button class="btn btn-google" onclick="signInWithGoogle()" style="margin-top:1rem">🔵 Continue with Google</button><div class="divider"><span>OR</span></div><div id="authMsg" class="status err" style="display:none"></div><div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email"></div><div class="field"><label>Password</label><input id="authPass" type="password" autocomplete="current-password"></div><button class="btn btn-primary" onclick="submitAuth()">Sign In</button><button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button></div></div>
 
-<!-- AADHAAR -->
+<!-- AADHAAR (self) -->
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
 <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp does not ask for your Aadhaar number inside the app.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" id="aaRecropBtn1" onclick="aaRecrop()" style="display:none">Re-detect from stored original</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
 <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">Select your e-Aadhaar PDF.</p><div id="aaCoach"><ol style="margin:0 0 .75rem 1.2rem;font-size:.9rem"><li>Download e-Aadhaar from the official UIDAI portal.</li><li>Select the downloaded PDF below.</li><li>If protected, enter the PDF password.</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="PDF password"><button class="btn btn-primary" style="margin-top:.5rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="status">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
@@ -110,7 +108,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--gray);font-size:.8rem}
 <button class="btn btn-outline" onclick="closeModal('tileActionModal')">Cancel</button>
 </div></div>
 
-<!-- CHILD DOC UPLOAD (with password detection for PDFs) -->
+<!-- CHILD DOC UPLOAD -->
 <div id="childUploadModal" class="modal-overlay"><div class="modal">
   <h3 id="cuTitle">Upload Document</h3>
   <p class="sub" id="cuSub">Select a file. Password-protected PDFs will be unlocked here.</p>
@@ -163,8 +161,8 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 let currentUser=null,familyMembers=[],currentMinorId=null,currentMinorName='';
-let currentChildDocType=null,currentChildFile=null,currentChildBlob=null,currentChildPreviewUrl=null;
-let currentChildDocRow=null; // for view/delete
+let currentChildDocType=null,currentChildFile=null,currentChildBlob=null;
+let currentChildDocRow=null;
 let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false,lastPos=null;
 let currentTileType=null;
 
@@ -231,11 +229,11 @@ function renderFamilyList(){
   });
 }
 function renderFamilyVault(){
-  const card=$('familyVaultCard'),grid=$('familyVaultGrid'),empty=$('familyVaultEmpty');
-  if(!currentUser){card.style.display='none';return}
+  const card=$('familyVaultCard'),grid=$('familyVaultGrid');
+  if(!currentUser||!card||!grid){return}
   const minors=familyMembers.filter(f=>f.is_minor&&f.owner_id===currentUser.id);
   if(!minors.length){card.style.display='none';return}
-  card.style.display='';empty.style.display='none';
+  card.style.display='';
   grid.innerHTML='';
   minors.forEach(fm=>{
     const name=fm.display_name||'Child';
@@ -247,7 +245,6 @@ function renderFamilyVault(){
 }
 function openFamilyManager(){if(!currentUser){openModal('authModal');return}loadFamilyMembers();openModal('familyManagerModal')}
 async function deleteMember(id){if(!confirm('Remove this family link and all its documents?'))return;
-  // delete child docs from storage first
   const{data:docs}=await sb.from('documents').select('file_url').eq('family_link_id',id);
   if(docs?.length){await sb.storage.from('vault').remove(docs.map(d=>d.file_url).filter(Boolean))}
   await sb.from('documents').delete().eq('family_link_id',id);
@@ -288,10 +285,11 @@ async function renderChildGrid(){
 
 /* ---------------- CHILD UPLOAD ---------------- */
 function openChildUpload(type){
-  currentChildDocType=type;currentChildFile=null;currentChildBlob=null;currentChildPreviewUrl=null;
+  currentChildDocType=type;currentChildFile=null;currentChildBlob=null;
   const def=CHILD_DOCS.find(d=>d.type===type);
   $('cuTitle').textContent='Upload '+(def?def.label:type);
   $('childFileInput').value='';
+  $('childPass').value='';
   $('childPassRow').style.display='none';
   $('childPreviewWrap').style.display='none';
   $('childSaveBtn').style.display='none';
@@ -326,7 +324,6 @@ async function childOnFile(file){
       st.className='status err';st.textContent='❌ '+e.message;
     }
   }else{
-    // image
     currentChildBlob=file;
     $('childPreview').src=URL.createObjectURL(file);
     $('childPreviewWrap').style.display='block';
@@ -344,9 +341,8 @@ async function childSave(){
   const up=await sb.storage.from('vault').upload(path,currentChildBlob,{contentType:currentChildBlob.type||'image/jpeg',upsert:false});
   if(up.error){st.className='status err';st.textContent='❌ '+up.error.message;return}
   const row={user_id:currentUser.id,family_link_id:currentMinorId,doc_category:'identity',document_type:currentChildDocType,document_name:currentChildFile.name,file_url:path,is_critical:true,permissions:{}};
-  const ins=await sb.from('documents').insert(row).select().single();
+  const ins=await sb.from('documents').insert(row);
   if(ins.error){await sb.storage.from('vault').remove([path]);st.className='status err';st.textContent='❌ '+ins.error.message;return}
-  // also store original PDF if password protected and user provided pw
   if(isPdf && $('childPass').value){
     const origPath=`${currentUser.id}/children/${currentMinorId}/${currentChildDocType}-${Date.now()}-original.pdf`;
     await sb.storage.from('vault').upload(origPath,currentChildFile,{contentType:'application/pdf',upsert:false});
@@ -508,4 +504,6 @@ async function shareOrDownload(file,name,title){if(navigator.canShare?.({files:[
 /* ---------------- SOS ---------------- */
 function openSOS(){openModal('emergencyModal');showSOSPanel('sos')}
 function showSOSPanel(p){$('sosPanel').style.display=p==='sos'?'block':'none';$('guardPanel').style.display=p==='guard'?'block':'none';$('tabSos').classList.toggle('on',p==='sos');$('tabGuard').classList.toggle('on',p==='guard');if(p==='sos')startLocate()}
-function mapLink(p){return'https://maps.google.com/?q='+p.co
+function mapLink(p){return'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6)}
+function startLocate(){if(!navigator.geolocation){$('sosStatus').textContent='Location unsupported.';return}navigator.geolocation.getCurrentPosition(p=>{lastPos=p;$('sosLink').href=mapLink(p);$('sosLink').style.display='block';$('sosStatus').textContent='Located ±'+Math.round(p.coords.accuracy)+'m'},e=>$('sosStatus').textContent='Location error '+e.code,{enableHighAccuracy:true,timeout:12000})}
+function shareWhatsApp(){if(!lastPos)return
