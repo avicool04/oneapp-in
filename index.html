@@ -1,3 +1,18 @@
+Here is the complete, fully integrated, and updated `index.html` file.
+
+### What Was Updated:
+
+1. **Real Document Retrieval:** The `loadChildDocs()` function now queries the `documents` table in Supabase instead of showing static mock data.
+
+
+2. **Password PDF Interception:** `triggerChildUpload()` now parses PDF files using `pdfjsLib` before uploading. If the PDF is encrypted, it prompts you for the password and verifies it prior to uploading.
+
+
+3. **View & Share Support:** Added `viewChildDoc()` and `shareChildDoc()` so you can open or natively share uploaded child documents via Web Share API or download links.
+
+
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,7 +75,6 @@ input:checked+.slider{background:var(--primary)}input:checked+.slider:before{tra
 .icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center}
 .icon-box svg{width:32px;height:32px}
 .icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
-/* FAMILY LIST */
 .family-list-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border)}
 .family-list-item:last-child{border-bottom:none}
 .family-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;margin-right:.5rem}
@@ -167,9 +181,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
   </div>
 
-  <div id="familyListContainer" style="margin-bottom:.75rem">
-    <!-- Dynamic List -->
-  </div>
+  <div id="familyListContainer" style="margin-bottom:.75rem"></div>
 
   <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
 </div></div>
@@ -347,57 +359,133 @@ function openChildVault(id, name){
 }
 
 async function loadChildDocs(childLinkId){
-  const list=document.getElementById('childDocList');
-  list.innerHTML='<p class="sub">Loading documents...</p>';
-  
-  setTimeout(()=>{
-    list.innerHTML=`
-      <div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p>Uploaded Today</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Share</button></div></div>
-      <div class="doc-row"><div class="doc-info"><h4>Vaccination Sheet</h4><p>Uploaded Yesterday</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-primary btn-sm">Share</button></div></div>
+  const list = document.getElementById('childDocList');
+  list.innerHTML = '<p class="sub">Loading documents...</p>';
+
+  if(!currentUser) return;
+
+  const { data, error } = await sb
+    .from('documents')
+    .select('*')
+    .eq('user_id', currentUser.id);
+
+  if(error || !data || data.length === 0){
+    list.innerHTML = '<p class="sub">No documents uploaded yet.</p>';
+    return;
+  }
+
+  // Filter documents belonging to current child link
+  const childDocs = data.filter(doc => doc.permissions && doc.permissions[childLinkId]);
+
+  if(childDocs.length === 0){
+    list.innerHTML = '<p class="sub">No documents uploaded yet.</p>';
+    return;
+  }
+
+  list.innerHTML = '';
+  childDocs.forEach(doc => {
+    const row = document.createElement('div');
+    row.className = 'doc-row';
+    row.innerHTML = `
+      <div class="doc-info">
+        <h4>${doc.document_name}</h4>
+        <p>Uploaded ${new Date(doc.created_at || Date.now()).toLocaleDateString()}</p>
+      </div>
+      <div style="display:flex;gap:.3rem">
+        <button class="btn btn-outline btn-sm" onclick="viewChildDoc('${doc.file_url}')">View</button>
+        <button class="btn btn-primary btn-sm" onclick="shareChildDoc('${doc.file_url}', '${doc.document_name}')">Share</button>
+      </div>
     `;
-  }, 500);
+    list.appendChild(row);
+  });
 }
 
 function triggerChildUpload(type){
-  const input=document.createElement('input');
-  input.type='file';
-  input.accept='image/*,application/pdf';
-  input.onchange=async(e)=>{
-    const file=e.target.files[0];
-    if(!file)return;
-    
-    const status=document.createElement('div');
-    status.className='sos-box';
-    status.textContent=`Uploading ${type.toUpperCase()}...`;
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*,application/pdf';
+  
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    // Password Detection for PDFs
+    if(file.type === 'application/pdf'){
+      try {
+        const buffer = await file.arrayBuffer();
+        await pdfjsLib.getDocument({ data: buffer }).promise;
+      } catch(err) {
+        if(err && err.name === 'PasswordException'){
+          const pass = prompt(`"${file.name}" is password protected. Enter password to unlock:`);
+          if(!pass) return alert('Upload cancelled. Password required.');
+          
+          try {
+            const buffer = await file.arrayBuffer();
+            await pdfjsLib.getDocument({ data: buffer, password: pass }).promise;
+          } catch(unlockErr) {
+            return alert('❌ Incorrect password. Upload failed.');
+          }
+        }
+      }
+    }
+
+    const status = document.createElement('div');
+    status.className = 'sos-box';
+    status.textContent = `Uploading ${type.toUpperCase()}...`;
     document.getElementById('childDocList').prepend(status);
-    
-    try{
-      const path=`${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${file.name.split('.').pop()}`;
-      const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
-      
-      if(error)throw error;
-      
-      const{error:dbErr}=await sb.from('documents').insert({
+
+    try {
+      const path = `${currentUser.id}/children/${currentChildId}/${type}-${Date.now()}.${file.name.split('.').pop()}`;
+      const { error } = await sb.storage.from('vault').upload(path, file, { contentType: file.type });
+      if(error) throw error;
+
+      const permObj = {};
+      permObj[currentChildId] = { view: true, edit: true, download: true };
+
+      const { error: dbErr } = await sb.from('documents').insert({
         user_id: currentUser.id,
         doc_category: 'identity',
         document_name: `${type.replace('_',' ').toUpperCase()} (${currentChildName})`,
         file_url: path,
         is_critical: true,
-        permissions: { [currentChildId]: { view:true, edit:true, download:true } }
+        permissions: permObj
       });
-      
-      if(dbErr)throw dbErr;
-      
-      status.textContent=`✅ ${type.toUpperCase()} uploaded successfully.`;
-      setTimeout(()=>status.remove(), 2000);
+
+      if(dbErr) throw dbErr;
+
+      status.textContent = `✅ Uploaded successfully.`;
+      setTimeout(() => status.remove(), 2000);
       loadChildDocs(currentChildId);
-      
-    }catch(err){
-      status.textContent=`❌ Error: ${err.message}`;
-      console.error(err);
+
+    } catch(err) {
+      status.textContent = `❌ Error: ${err.message}`;
     }
   };
+  
   input.click();
+}
+
+async function viewChildDoc(path){
+  const { data, error } = await sb.storage.from('vault').createSignedUrl(path, 60);
+  if(error) return alert('❌ ' + error.message);
+  window.open(data.signedUrl, '_blank');
+}
+
+async function shareChildDoc(path, name){
+  const { data, error } = await sb.storage.from('vault').download(path);
+  if(error) return alert('❌ ' + error.message);
+  
+  const file = new File([data], name + '.' + path.split('.').pop(), { type: data.type });
+  if(navigator.canShare && navigator.canShare({ files: [file] })){
+    try {
+      await navigator.share({ files: [file], title: name });
+    } catch(e){}
+  } else {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(data);
+    a.download = name;
+    a.click();
+  }
 }
 
 // --- INVITE LOGIC ---
@@ -617,3 +705,5 @@ window.onclick=e=>{if(e.target.classList.contains('modal-overlay'))e.target.clas
 </script>
 </body>
 </html>
+
+```
