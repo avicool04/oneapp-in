@@ -95,7 +95,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👩‍ Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👩‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -151,7 +151,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+  </div>
+  <!-- Added Refresh Button -->
+  <div style="text-align:right;margin-bottom:.5rem">
+    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
@@ -306,8 +310,70 @@ function pwKey(uid,tag){return 'oneapp_pdf_pw_'+uid+'_'+tag;}
 function savePdfPassword(uid,tag,pw){try{localStorage.setItem(pwKey(uid,tag),pw);}catch(e){}}
 function getSavedPdfPassword(uid,tag){try{return localStorage.getItem(pwKey(uid,tag));}catch(e){return null;}}
 
-async function loadFamilyMembers(){if(!currentUser)return;const{data,error}=await sb.from('family_links').select('*').or(`owner_id.eq.${currentUser.id},member_user_id.eq.${currentUser.id}`).eq('status','accepted');if(error){console.error(error);return;}familyMembers=data||[];renderFamilyList();}
-function renderFamilyList(){const cont=document.getElementById('familyListContainer');if(!familyMembers.length){cont.innerHTML='<p class="sub">No family members linked yet.</p>';return;}cont.innerHTML='';familyMembers.forEach(fm=>{const name=fm.display_name||fm.permissions?.name||fm.member_email.split('@')[0]||'Member';const initials=name.substring(0,2).toUpperCase();const div=document.createElement('div');div.className='family-list-item';div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')`:`alert('Shared docs view coming soon')`}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong><br><small style="color:var(--gray)">${fm.relation_type.toUpperCase()}${fm.is_minor?' • Minor':''}</small></div></div><button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')"></button>`;cont.appendChild(div);});}
+// --- FIXED FAMILY LOADING LOGIC ---
+async function loadFamilyMembers(){
+  if(!currentUser)return;
+  const uid = currentUser.id;
+  
+  // Query 1: People I invited (Owner = Me)
+  // Query 2: People who invited me (Member = Me)
+  // We combine both results
+  const { data: outgoing, error: err1 } = await sb.from('family_links')
+    .select('*')
+    .eq('owner_id', uid)
+    .in('status', ['accepted', 'pending']); // Show pending too
+
+  const { data: incoming, error: err2 } = await sb.from('family_links')
+    .select('*')
+    .eq('member_user_id', uid)
+    .in('status', ['accepted', 'pending']);
+
+  if(err1 || err2) {
+    console.error(err1, err2);
+    return;
+  }
+
+  // Combine arrays
+  familyMembers = [...(outgoing || []), ...(incoming || [])];
+  
+  // Remove duplicates if any (based on ID)
+  familyMembers = familyMembers.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i);
+  
+  renderFamilyList();
+}
+
+function renderFamilyList(){
+  const cont=document.getElementById('familyListContainer');
+  if(!familyMembers.length){
+    cont.innerHTML='<p class="sub">No family members linked yet. Invite someone!</p>';
+    return;
+  }
+  cont.innerHTML='';
+  familyMembers.forEach(fm=>{
+    // Determine display name: Use display_name first, then permissions.name, then email part
+    const name = fm.display_name || (fm.permissions && fm.permissions.name) || (fm.member_email ? fm.member_email.split('@')[0] : 'Member');
+    const initials=name.substring(0,2).toUpperCase();
+    const isMe = fm.member_user_id === currentUser.id; // If I am the member, this is an incoming invite
+    
+    // Logic: If I am the owner, I can delete. If I am the member, I can't delete (owner manages).
+    const deleteBtn = !isMe ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑</button>` : '';
+    
+    const div=document.createElement('div');
+    div.className='family-list-item';
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;cursor:pointer" onclick="${fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')`:`alert('Shared docs view coming soon for ${name}')`}">
+        <div class="family-avatar-sm">${initials}</div>
+        <div>
+          <strong>${name}</strong> ${isMe?'<span class="badge badge-ok">(Invited You)</span>':''}
+          <br><small style="color:var(--gray)">${fm.relation_type.toUpperCase()}${fm.is_minor?' • Minor':''} • ${fm.status}</small>
+        </div>
+      </div>
+      <div style="display:flex;gap:.3rem">${deleteBtn}</div>
+    `;
+    cont.appendChild(div);
+  });
+}
+
 function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}loadFamilyMembers();openModal('familyManagerModal');}
 function deleteMember(id){if(!confirm('Remove this member?'))return;sb.from('family_links').delete().eq('id',id).then(({error})=>{if(error)alert('❌ '+error.message);else{alert('✅ Removed.');loadFamilyMembers();}});}
 function setInviteTab(tab){['email','whatsapp','sms'].forEach(t=>{document.getElementById('inviteContent-'+t).style.display=t===tab?'block':'none';});document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));event.target.classList.add('active');}
@@ -465,7 +531,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent='❌ '+err.message;}
+    }catch(err){status.textContent=' '+err.message;}
   };
   input.click();
 }
@@ -506,7 +572,7 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent='✂ '+r.msg;
+    st.textContent=' '+r.msg;
   }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
