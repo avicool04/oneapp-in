@@ -1,49 +1,3 @@
-You are absolutely right. The current system is broken because it relies on a "magic link" that automatically adds people without their explicit consent, and it fails to show them if the status isn't perfectly synced.
-
-We need to change the logic to a **Request → Accept/Reject** flow.
-
-### ️ The New Logic (How it will work now):
-1.  **You Send Invite:** You enter your wife's email/name. The system saves a request with `status: 'pending'`.
-2.  **She Clicks Link:** She clicks the link. Instead of auto-adding her, the app detects the pending invite.
-3.  **The Prompt:** A popup appears: *"Abhishek wants to add you to his Family Group. Allow or Reject?"*
-4.  **She Clicks "Allow":** The database updates to `status: 'accepted'`.
-5.  **Real-Time Update:** Because we added the "Refresh" button and real-time listener, her name instantly appears in your list, and yours appears in hers.
-
-### ⚠️ Critical Step Before Coding
-For this to work, your database needs to handle the "Accept" action.
-**Please run this SQL in your Supabase SQL Editor first** (it adds the logic to accept/reject invites):
-
-```sql
--- Create a function to accept an invite
-CREATE OR REPLACE FUNCTION public.accept_invite(invite_id uuid)
-RETURNS void AS $$
-BEGIN
-  UPDATE public.family_links
-  SET status = 'accepted', member_user_id = auth.uid()
-  WHERE id = invite_id AND status = 'pending';
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Create a function to reject an invite
-CREATE OR REPLACE FUNCTION public.reject_invite(invite_id uuid)
-RETURNS void AS $$
-BEGIN
-  DELETE FROM public.family_links
-  WHERE id = invite_id AND status = 'pending';
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-```
-
----
-
-### ✅ The Complete Code (v23 - Request/Accept Flow)
-Once you run that SQL, copy this entire code block. It includes:
-1.  **Invite Detection:** Checks URL for `?invite=...`.
-2.  **Consent Modal:** Shows "Abhishek wants to join..." with **Allow/Reject** buttons.
-3.  **Bidirectional List:** Shows people you invited AND people who invited you.
-4.  **Manual Refresh Button:** Added to the Family Modal just in case.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -833,4 +787,3 @@ window.onclick=e=>{
 </script>
 </body>
 </html>
-```
