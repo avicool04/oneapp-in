@@ -89,7 +89,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -142,7 +142,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍‍ Manage Family</h3>
+  <h3>👨👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
@@ -227,10 +227,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="fileViewerModal" class="modal-overlay"><div class="modal">
   <div class="viewer-head">
     <h3 id="fileViewerTitle">Document</h3>
-    <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
+    <button class="vdots" onclick="toggleViewerMenu(event)"></button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
-      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
+      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')"> Share</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
@@ -265,12 +265,10 @@ sb.auth.onAuthStateChange((ev,s)=>{
   else{currentUser=null;familyMembers=[];btn.style.display='';area.style.display='none';document.getElementById('userDropdown').classList.remove('show');resetAadhaarUI();}
 });
 
-// ---------- PASSWORD MEMORY (ask once, never again) ----------
 function pwKey(uid,tag){return 'oneapp_pdf_pw_'+uid+'_'+tag;}
 function savePdfPassword(uid,tag,pw){try{localStorage.setItem(pwKey(uid,tag),pw);}catch(e){}}
 function getSavedPdfPassword(uid,tag){try{return localStorage.getItem(pwKey(uid,tag));}catch(e){return null;}}
 
-// ---------- FAMILY ----------
 async function loadFamilyMembers(){if(!currentUser)return;const{data,error}=await sb.from('family_links').select('*').or(`owner_id.eq.${currentUser.id},member_user_id.eq.${currentUser.id}`).eq('status','accepted');if(error){console.error(error);return;}familyMembers=data||[];renderFamilyList();}
 function renderFamilyList(){const cont=document.getElementById('familyListContainer');if(!familyMembers.length){cont.innerHTML='<p class="sub">No family members linked yet.</p>';return;}cont.innerHTML='';familyMembers.forEach(fm=>{const name=fm.display_name||fm.permissions?.name||fm.member_email.split('@')[0]||'Member';const initials=name.substring(0,2).toUpperCase();const div=document.createElement('div');div.className='family-list-item';div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')`:`alert('Adult shared-docs view coming next')`}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong><br><small style="color:var(--gray)">${fm.relation_type.toUpperCase()}${fm.is_minor?' • Minor':''}</small></div></div><button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑</button>`;cont.appendChild(div);});}
 function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}loadFamilyMembers();openModal('familyManagerModal');}
@@ -281,9 +279,8 @@ async function sendInviteEmail(){const name=document.getElementById('inviteName'
 function sendInviteWhatsApp(){const name=document.getElementById('inviteNameWa').value.trim(),phone=document.getElementById('invitePhoneWa').value.replace(/[^0-9]/g,'');if(!phone)return alert('Enter phone');window.open('https://wa.me/'+phone+'?text='+encodeURIComponent('Hi '+name+'! Join me on OneApp: https://oneapp-in.vercel.app/?invite='+phone),'_blank');closeModal('inviteModal');}
 function sendInviteSMS(){const name=document.getElementById('inviteNameSms').value.trim(),phone=document.getElementById('invitePhoneSms').value;if(!phone)return alert('Enter phone');window.open('sms:'+phone+'?body='+encodeURIComponent('Join OneApp '+name+': https://oneapp-in.vercel.app/?invite='+phone),'_blank');closeModal('inviteModal');}
 function openAddMinorModal(){openModal('minorModal');}
-async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert('❌ '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}}
+async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert(' '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}}
 
-// ---------- VIEWER WITH ⋮ MENU ----------
 function toggleViewerMenu(e){e.stopPropagation();document.getElementById('viewerMenu').classList.toggle('show');}
 function viewerAction(act){
   document.getElementById('viewerMenu').classList.remove('show');
@@ -310,7 +307,6 @@ function openViewerPersonal(){
   openModal('fileViewerModal');
 }
 
-// ---------- CHILD VAULT ----------
 let childDocs=[],childAaCache={side:null,front:null,back:null,full:null},childAaRow=null,childAaFile=null;
 const TYPE_LABELS={aadhaar:'Aadhaar Card',birth_cert:'Birth Certificate',vaccine:'Vaccination Sheet',other:'Other Document'};
 function parseTypeFromUrl(url){const seg=url.split('/').pop()||'';return seg.split('-')[0]||'other';}
@@ -441,10 +437,9 @@ async function deleteChildOther(id,path){
   if(!confirm('Delete this file permanently?'))return;
   await sb.storage.from('vault').remove([path]);
   const{error}=await sb.from('documents').delete().eq('id',id);
-  if(error)alert('❌ '+error.message);else loadChildDocs();
+  if(error)alert(' '+error.message);else loadChildDocs();
 }
 
-// ---------- CHILD AADHAAR PIPELINE ----------
 function openChildAaModal(mode){
   document.getElementById('childAaTitle').textContent=(mode==='update'?'Update':'Upload')+' Aadhaar — '+currentChildName;
   document.getElementById('childAaFile').value='';
@@ -475,7 +470,7 @@ async function childAaOnFile(file){
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
     st.textContent='✂ '+r.msg;
-  }catch(e){st.textContent='❌ '+e.message;}
+  }catch(e){st.textContent=' '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
@@ -492,7 +487,7 @@ async function childAaSave(){
     if(error)alert('❌ '+error.message);
   }else{
     const{error}=await sb.from('documents').insert({user_id:uid,doc_category:'identity',document_type:'child_'+currentChildId+'_aadhaar',document_name:'Aadhaar Card ('+currentChildName+')',file_url:base+'side.jpg',is_critical:true,permissions:{[currentChildId]:{view:true,edit:true,download:true}}});
-    if(error)alert('❌ '+error.message);
+    if(error)alert(' '+error.message);
   }
   closeModal('childAaModal');
   alert('✅ Saved to '+currentChildName+"'s vault.");
@@ -508,7 +503,6 @@ async function deleteChildAadhaar(){
   loadChildDocs();
 }
 
-// ---------- PERSONAL AADHAAR ----------
 let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false;
 function showAa(id){['aaStep1','aaStep2','aaStep3'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
 function openAadhaar(){showAa('aaStep1');openModal('aadhaarModal');}
@@ -627,7 +621,6 @@ async function aaShare(fmt,layout){
   sendFile(new File([blob],name,{type:mime}));
 }
 
-// ---------- SOS ----------
 let lastPos=null;
 function openSOS(){openModal('emergencyModal');showSOSPanel('sos');}
 function showSOSPanel(p){document.getElementById('sosPanel').style.display=p==='sos'?'block':'none';document.getElementById('guardPanel').style.display=p==='guard'?'block':'none';document.getElementById('tabSos').classList.toggle('on',p==='sos');document.getElementById('tabGuard').classList.toggle('on',p==='guard');if(p==='sos')startLocate();}
@@ -636,7 +629,6 @@ function startLocate(){if(!navigator.geolocation){document.getElementById('sosSt
 function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 
-// ---------- NAV ----------
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto'};if(m[id])document.getElementById(m[id]).classList.add('active');window.scrollTo(0,0);}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
