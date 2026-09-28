@@ -98,7 +98,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍ Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -266,10 +266,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="fileViewerModal" class="modal-overlay"><div class="modal">
   <div class="viewer-head">
     <h3 id="fileViewerTitle">Document</h3>
-    <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
+    <button class="vdots" onclick="toggleViewerMenu(event)"></button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
-      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
+      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')"> Share</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
@@ -395,7 +395,7 @@ async function processConsent(allow){
   } else {
     const { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
     if(error) alert('❌ Error rejecting: ' + error.message);
-    else alert('️ Invite rejected.');
+    else alert('❌ Invite rejected.');
   }
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
@@ -483,66 +483,85 @@ async function sendInviteEmail(){
   const rel=document.getElementById('inviteRelation').value;
   if(!name||!email)return alert('Enter Name and Email');
   
-  const{error}=await sb.from('family_links').insert({
+  const{data, error}=await sb.from('family_links').insert({
     owner_id:currentUser.id,
     member_email:email,
     member_phone:null,
     relation_type:rel,
     status:'pending',
     display_name:name
-  });
-  if(error)alert('❌ '+error.message);
-  else{alert('✅ Invite sent to '+name+'. Ask them to log in to OneApp to accept.');closeModal('inviteModal');}
+  }).select(); // Select to get the ID
+  
+  if(error){
+    alert('❌ Database Error: ' + error.message + '\n\nPlease run the SQL command to add the missing column.');
+  } else {
+    const inviteId = data[0].id;
+    const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
+    alert(`✅ Invite sent to ${name}!\n\nLink: ${link}\n\n(Copy and send this link manually)`);
+    closeModal('inviteModal');
+  }
 }
 
-// FIXED WHATSAPP FUNCTION - IGNORES DB ERRORS
-function sendInviteWhatsApp(){
+// FIXED WHATSAPP FUNCTION - GENERATES UNIQUE LINK
+async function sendInviteWhatsApp(){
   const name=document.getElementById('inviteNameWa').value.trim();
   const phone=document.getElementById('invitePhoneWa').value.trim();
   if(!phone)return alert('Enter Phone Number');
   
   const rel=document.getElementById('inviteRelationWa').value;
 
-  // Try to save to DB, but IGNORE errors so WhatsApp still opens
-  sb.from('family_links').insert({
+  // 1. Save to DB to get an ID
+  const {data, error} = await sb.from('family_links').insert({
     owner_id:currentUser.id,
     member_email:null,
     member_phone:phone,
     relation_type:rel,
     status:'pending',
     display_name:name
-  }).then(({error})=>{
-    // We intentionally ignore the error here so the app doesn't crash
-    if(error) console.log("DB Save failed (expected if column missing), but continuing to WhatsApp...");
-    
-    // Open WhatsApp with generic link
-    const msg = `Hi ${name}! Please join my family on OneApp. Login here: https://oneapp-in.vercel.app`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
-    closeModal('inviteModal');
-  });
+  }).select();
+
+  if(error){
+    // 2. If error (likely missing column), alert user
+    alert('❌ Could not create unique link.\n\nError: ' + error.message + '\n\nPLEASE RUN THIS SQL IN SUPABASE:\nALTER TABLE public.family_links ADD COLUMN IF NOT EXISTS member_phone TEXT;');
+    return; 
+  }
+
+  // 3. Success! Get the ID and open WhatsApp
+  const inviteId = data[0].id;
+  const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
+  const msg = `Hi ${name}! ${currentUser.user_metadata?.full_name || 'Someone'} invited you to join their family on OneApp. Click here to accept: ${link}`;
+  
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+  closeModal('inviteModal');
 }
 
-function sendInviteSMS(){
+async function sendInviteSMS(){
   const name=document.getElementById('inviteNameSms').value.trim();
   const phone=document.getElementById('invitePhoneSms').value.trim();
   if(!phone)return alert('Enter Phone Number');
   
   const rel=document.getElementById('inviteRelationSms').value;
 
-  sb.from('family_links').insert({
+  const {data, error} = await sb.from('family_links').insert({
     owner_id:currentUser.id,
     member_email:null,
     member_phone:phone,
     relation_type:rel,
     status:'pending',
     display_name:name
-  }).then(({error})=>{
-    if(error && !error.message.includes('member_phone')) alert('️ DB Error: '+error.message);
-    
-    const msg = `Join my family on OneApp: https://oneapp-in.vercel.app`;
-    window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`,'_blank');
-    closeModal('inviteModal');
-  });
+  }).select();
+
+  if(error){
+    alert('❌ Could not create unique link.\n\nError: ' + error.message + '\n\nPLEASE RUN THE SQL COMMAND TO ADD member_phone COLUMN.');
+    return;
+  }
+
+  const inviteId = data[0].id;
+  const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
+  const msg = `Join my family on OneApp: ${link}`;
+  
+  window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`,'_blank');
+  closeModal('inviteModal');
 }
 
 function openAddMinorModal(){openModal('minorModal');}
@@ -695,7 +714,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent='❌ '+err.message;}
+    }catch(err){status.textContent=' '+err.message;}
   };
   input.click();
 }
@@ -726,7 +745,7 @@ async function childAaOnFile(file){
   const pw=document.getElementById('childAaPass').value||getSavedPdfPassword(uid,'child_'+currentChildId)||undefined;
   let pdf;
   try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
-  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent='❌ '+err.message;return;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent=' '+err.message;return;}
   try{
     const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -737,7 +756,7 @@ async function childAaOnFile(file){
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
     st.textContent='✂ '+r.msg;
-  }catch(e){st.textContent='❌ '+e.message;}
+  }catch(e){st.textContent=' '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
@@ -841,7 +860,7 @@ async function aaSave(){
   const uid=session.user.id;
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
