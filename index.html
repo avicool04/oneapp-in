@@ -42,7 +42,6 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal-overlay.show{display:flex}
-/* Z-INDEX FIX: Share modal must be highest */
 #shareModal{z-index:350}
 #fileViewerModal{z-index:250}
 #aadhaarModal{z-index:250}
@@ -61,7 +60,6 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative}
 .icon-box svg{width:32px;height:32px}
 .icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
-/* STATUS BADGE INSIDE ICON BOX */
 .status-badge{position:absolute;bottom:0;left:0;width:16px;height:16px;background:var(--success);border-radius:50%;border:2px solid #fff;display:none;align-items:center;justify-content:center;z-index:2}
 .status-badge.show{display:flex}
 .status-badge svg{width:10px;height:10px;fill:#fff}
@@ -97,7 +95,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">‍ Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👩‍ Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -111,7 +109,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="card">
     <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
     <div class="icon-grid">
-      <!-- Aadhaar Icon with Status Badge INSIDE Icon Box -->
       <div class="icon-tile" onclick="openAadhaarSmart()">
         <div class="icon-box">
           <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#3b82f6"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/><circle cx="22" cy="33" r="3.5" fill="#1e40af"/><path d="M14 44 Q22 38 30 44" fill="#1e40af"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#93c5fd"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#93c5fd"/><rect x="34" y="40" width="16" height="3" rx="1.5" fill="#93c5fd"/><rect x="10" y="46" width="44" height="2" rx="1" fill="#fbbf24"/></svg>
@@ -119,11 +116,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         </div>
         <span>Aadhaar</span>
       </div>
-      <!-- PAN Icon -->
       <div class="icon-tile" onclick="alert('PAN Card — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg></div><span>PAN Card</span></div>
-      <!-- License Icon -->
       <div class="icon-tile" onclick="alert('Driving License — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg></div><span>License</span></div>
-      <!-- Passport Icon -->
       <div class="icon-tile" onclick="alert('Passport — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg></div><span>Passport</span></div>
     </div>
   </div>
@@ -153,10 +147,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍‍ Manage Family</h3>
+  <h3>👨👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
-    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()"> Invite Adult</button>
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
     <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
@@ -166,9 +160,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="inviteModal" class="modal-overlay"><div class="modal">
   <h3>Invite Family Member</h3>
   <div class="invite-tabs">
-    <div class="invite-tab active" onclick="setInviteTab('email')"> Email</div>
-    <div class="invite-tab" onclick="setInviteTab('whatsapp')"> WhatsApp</div>
-    <div class="invite-tab" onclick="setInviteTab('sms')"> SMS</div>
+    <div class="invite-tab active" onclick="setInviteTab('email')">📧 Email</div>
+    <div class="invite-tab" onclick="setInviteTab('whatsapp')">💬 WhatsApp</div>
+    <div class="invite-tab" onclick="setInviteTab('sms')">📱 SMS</div>
   </div>
   <div id="inviteContent-email">
     <div class="field"><label>Name</label><input id="inviteName" type="text" placeholder="e.g. Priya Sharma"></div>
@@ -262,13 +256,12 @@ if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudfl
 
 let currentUser=null,familyMembers=[],currentChildId=null,currentChildName='';
 let shareContext=null,viewerCtx=null;
-let familyChannel = null; // For real-time updates
+let familyChannel = null;
 
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 async function handleAuthClick(){openModal('authModal');}
-// REVERTED: Removed unauthorized channel cleanup
 async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 
@@ -283,29 +276,24 @@ sb.auth.onAuthStateChange((ev,s)=>{
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
     btn.style.display='none';area.style.display='block';
     loadSavedAadhaar(s.user.id);
-    setupRealTimeFamily(); // Setup listener
+    setupRealTimeFamily();
     loadFamilyMembers();
   }
   else{
     currentUser=null;familyMembers=[];
-    // REMOVED: Unauthorized channel cleanup
     btn.style.display='';area.style.display='none';
     document.getElementById('userDropdown').classList.remove('show');
     resetAadhaarUI();
   }
 });
 
-// --- REAL-TIME FAMILY LISTENER ---
 function setupRealTimeFamily(){
   if(!currentUser) return;
-  // Remove existing channel if any
   if(familyChannel) sb.removeChannel(familyChannel);
-  
   familyChannel = sb.channel('family_changes')
     .on('postgres_changes', 
       { event: '*', schema: 'public', table: 'family_links', filter: `owner_id=eq.${currentUser.id}` }, 
       () => {
-        // Reload list whenever a change happens (insert/update/delete)
         if(document.getElementById('familyManagerModal').classList.contains('show')){
           loadFamilyMembers();
         }
@@ -319,16 +307,16 @@ function savePdfPassword(uid,tag,pw){try{localStorage.setItem(pwKey(uid,tag),pw)
 function getSavedPdfPassword(uid,tag){try{return localStorage.getItem(pwKey(uid,tag));}catch(e){return null;}}
 
 async function loadFamilyMembers(){if(!currentUser)return;const{data,error}=await sb.from('family_links').select('*').or(`owner_id.eq.${currentUser.id},member_user_id.eq.${currentUser.id}`).eq('status','accepted');if(error){console.error(error);return;}familyMembers=data||[];renderFamilyList();}
-function renderFamilyList(){const cont=document.getElementById('familyListContainer');if(!familyMembers.length){cont.innerHTML='<p class="sub">No family members linked yet.</p>';return;}cont.innerHTML='';familyMembers.forEach(fm=>{const name=fm.display_name||fm.permissions?.name||fm.member_email.split('@')[0]||'Member';const initials=name.substring(0,2).toUpperCase();const div=document.createElement('div');div.className='family-list-item';div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')`:`alert('Shared docs view coming soon')`}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong><br><small style="color:var(--gray)">${fm.relation_type.toUpperCase()}${fm.is_minor?' • Minor':''}</small></div></div><button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑</button>`;cont.appendChild(div);});}
+function renderFamilyList(){const cont=document.getElementById('familyListContainer');if(!familyMembers.length){cont.innerHTML='<p class="sub">No family members linked yet.</p>';return;}cont.innerHTML='';familyMembers.forEach(fm=>{const name=fm.display_name||fm.permissions?.name||fm.member_email.split('@')[0]||'Member';const initials=name.substring(0,2).toUpperCase();const div=document.createElement('div');div.className='family-list-item';div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')`:`alert('Shared docs view coming soon')`}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong><br><small style="color:var(--gray)">${fm.relation_type.toUpperCase()}${fm.is_minor?' • Minor':''}</small></div></div><button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')"></button>`;cont.appendChild(div);});}
 function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}loadFamilyMembers();openModal('familyManagerModal');}
-function deleteMember(id){if(!confirm('Remove this member?'))return;sb.from('family_links').delete().eq('id',id).then(({error})=>{if(error)alert(' '+error.message);else{alert('✅ Removed.');loadFamilyMembers();}});}
+function deleteMember(id){if(!confirm('Remove this member?'))return;sb.from('family_links').delete().eq('id',id).then(({error})=>{if(error)alert('❌ '+error.message);else{alert('✅ Removed.');loadFamilyMembers();}});}
 function setInviteTab(tab){['email','whatsapp','sms'].forEach(t=>{document.getElementById('inviteContent-'+t).style.display=t===tab?'block':'none';});document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));event.target.classList.add('active');}
 function openInviteModal(){openModal('inviteModal');}
-async function sendInviteEmail(){const name=document.getElementById('inviteName').value.trim(),email=document.getElementById('inviteEmail').value.trim(),rel=document.getElementById('inviteRelation').value;if(!name||!email)return alert('Enter Name and Email');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:email,relation_type:rel,status:'pending',display_name:name});if(error)alert(' '+error.message);else{alert('✅ Invite sent to '+name+'. Once they sign up, their name will appear in your Family list.');closeModal('inviteModal');// No need to reload here, listener will catch it}}
+async function sendInviteEmail(){const name=document.getElementById('inviteName').value.trim(),email=document.getElementById('inviteEmail').value.trim(),rel=document.getElementById('inviteRelation').value;if(!name||!email)return alert('Enter Name and Email');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:email,relation_type:rel,status:'pending',display_name:name});if(error)alert('❌ '+error.message);else{alert('✅ Invite sent to '+name+'. Once they sign up, their name will appear in your Family list.');closeModal('inviteModal');}}
 function sendInviteWhatsApp(){const name=document.getElementById('inviteNameWa').value.trim(),phone=document.getElementById('invitePhoneWa').value.replace(/[^0-9]/g,'');if(!phone)return alert('Enter phone');window.open('https://wa.me/'+phone+'?text='+encodeURIComponent('Hi '+name+'! Join me on OneApp: https://oneapp-in.vercel.app/?invite='+phone),'_blank');closeModal('inviteModal');}
 function sendInviteSMS(){const name=document.getElementById('inviteNameSms').value.trim(),phone=document.getElementById('invitePhoneSms').value;if(!phone)return alert('Enter phone');window.open('sms:'+phone+'?body='+encodeURIComponent('Join OneApp '+name+': https://oneapp-in.vercel.app/?invite='+phone),'_blank');closeModal('inviteModal');}
 function openAddMinorModal(){openModal('minorModal');}
-async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert('❌ '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');// Listener will catch the insert}}
+async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert('❌ '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');}}
 
 function toggleViewerMenu(e){e.stopPropagation();document.getElementById('viewerMenu').classList.toggle('show');}
 function viewerAction(act){
@@ -369,7 +357,7 @@ async function loadChildDocs(){
   childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
   if(!currentUser||!currentChildId)return;
   const{data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
-  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)"> '+error.message+'</p>';return;}
+  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+error.message+'</p>';return;}
   childDocs=data||[];
   await renderChildDocs();
 }
@@ -477,7 +465,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent=' '+err.message;}
+    }catch(err){status.textContent='❌ '+err.message;}
   };
   input.click();
 }
@@ -518,8 +506,8 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent=' '+r.msg;
-  }catch(e){st.textContent=' '+e.message;}
+    st.textContent='✂ '+r.msg;
+  }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
@@ -530,7 +518,7 @@ async function childAaSave(){
   (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert(' '+e.error.message);}
+  if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
   if(childAaRow){
     const{error}=await sb.from('documents').update({file_url:base+'side.jpg',document_name:'Aadhaar Card ('+currentChildName+')'}).eq('id',childAaRow.id);
     if(error)alert('❌ '+error.message);
@@ -556,13 +544,12 @@ let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false
 function showAa(id){['aaStep1','aaStep2','aaStep3'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
 function openAadhaar(){showAa('aaStep1');openModal('aadhaarModal');}
 function openAadhaarSmart(){if(aaFull){openViewerPersonal();}else{openAadhaar();}}
-// FIXED: Update Flow now shows Step 1 (Choice Menu) instead of jumping to Step 2
 function aaUpdateFlow(){
   document.getElementById('aaCoach').style.display='none';
   document.getElementById('aaStep2Sub').textContent='Upload a fresh e-Aadhaar PDF. Saved password is used automatically.';
   document.getElementById('aaPassRow').style.display='none';
   document.getElementById('aaStatus').textContent='Waiting for PDF…';
-  showAa('aaStep1'); // Show Step 1 (Choice Menu) instead of Step 2
+  showAa('aaStep1');
   openModal('aadhaarModal');
 }
 function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='myAadhaar portal opened. Services → Download e-Aadhaar.';showAa('aaStep2');}
