@@ -97,7 +97,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👩‍ Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">‍ Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -153,7 +153,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍‍👧 Manage Family</h3>
+  <h3>👨‍‍ Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()"> Invite Adult</button>
@@ -268,10 +268,8 @@ async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({pr
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 async function handleAuthClick(){openModal('authModal');}
-async function doSignOut(){
-  if(familyChannel) sb.removeChannel(familyChannel);
-  await sb.auth.signOut();
-}
+// REVERTED: Removed unauthorized channel cleanup
+async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 
 sb.auth.onAuthStateChange((ev,s)=>{
@@ -290,7 +288,7 @@ sb.auth.onAuthStateChange((ev,s)=>{
   }
   else{
     currentUser=null;familyMembers=[];
-    if(familyChannel) sb.removeChannel(familyChannel);
+    // REMOVED: Unauthorized channel cleanup
     btn.style.display='';area.style.display='none';
     document.getElementById('userDropdown').classList.remove('show');
     resetAadhaarUI();
@@ -371,7 +369,7 @@ async function loadChildDocs(){
   childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
   if(!currentUser||!currentChildId)return;
   const{data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
-  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+error.message+'</p>';return;}
+  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)"> '+error.message+'</p>';return;}
   childDocs=data||[];
   await renderChildDocs();
 }
@@ -520,7 +518,7 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent='✂ '+r.msg;
+    st.textContent=' '+r.msg;
   }catch(e){st.textContent=' '+e.message;}
 }
 async function childAaSave(){
@@ -532,7 +530,7 @@ async function childAaSave(){
   (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
+  if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert(' '+e.error.message);}
   if(childAaRow){
     const{error}=await sb.from('documents').update({file_url:base+'side.jpg',document_name:'Aadhaar Card ('+currentChildName+')'}).eq('id',childAaRow.id);
     if(error)alert('❌ '+error.message);
