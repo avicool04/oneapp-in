@@ -98,7 +98,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👧 Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -127,13 +127,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="card">
     <div class="card-header"><h3>Insurance</h3></div>
     <div class="icon-grid">
-      <!-- RESTORED ORIGINAL BIKE ICON -->
       <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="18" ry="4" fill="#e0d4f5"/><circle cx="18" cy="44" r="8" fill="#7c3aed"/><circle cx="18" cy="44" r="4" fill="#c4b5fd"/><circle cx="46" cy="44" r="8" fill="#7c3aed"/><circle cx="46" cy="44" r="4" fill="#c4b5fd"/><path d="M18 44 L28 28 L40 28 L46 44" stroke="#7c3aed" stroke-width="3" fill="none"/><rect x="26" y="22" width="16" height="8" rx="3" fill="#a78bfa"/><rect x="30" y="18" width="8" height="6" rx="2" fill="#c4b5fd"/></svg></div><span>Bike</span></div>
-      <!-- RESTORED ORIGINAL CAR ICON -->
       <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="20" ry="4" fill="#dbeafe"/><rect x="10" y="30" width="44" height="16" rx="8" fill="#3b82f6"/><rect x="16" y="22" width="32" height="14" rx="6" fill="#60a5fa"/><rect x="20" y="24" width="10" height="9" rx="2" fill="#bfdbfe"/><rect x="34" y="24" width="10" height="9" rx="2" fill="#bfdbfe"/><circle cx="18" cy="46" r="5" fill="#1e3a5f"/><circle cx="18" cy="46" r="2.5" fill="#93c5fd"/><circle cx="46" cy="46" r="5" fill="#1e3a5f"/><circle cx="46" cy="46" r="2.5" fill="#93c5fd"/></svg></div><span>Car</span></div>
-      <!-- RESTORED ORIGINAL HEALTH ICON -->
       <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#fee2e2"/><rect x="14" y="16" width="36" height="34" rx="6" fill="#ef4444"/><rect x="14" y="16" width="36" height="10" rx="6" fill="#f87171"/><rect x="28" y="10" width="8" height="10" rx="3" fill="#fca5a5"/><rect x="28" y="28" width="8" height="14" rx="2" fill="#fff"/><rect x="24" y="32" width="16" height="6" rx="2" fill="#fff"/></svg></div><span>Health</span></div>
-      <!-- RESTORED ORIGINAL LIFE ICON -->
       <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#ccfbf1"/><path d="M32 8 L52 30 Q52 50 32 56 Q12 50 12 30 Z" fill="#14b8a6"/><path d="M32 8 L52 30 Q52 50 32 56" fill="#0d9488"/><path d="M28 32 L32 38 L42 26" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><span>Life</span></div>
     </div>
   </div>
@@ -163,7 +159,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Display Name</label><input id="profileName" type="text"></div>
   <div class="field"><label>Email Address</label><input id="profileEmail" type="email"></div>
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
-  <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
+  <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
@@ -178,10 +174,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨👧 Manage Family</h3>
+  <h3>👨‍👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
-    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()"> Invite Adult</button>
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
     <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
@@ -266,10 +262,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="fileViewerModal" class="modal-overlay"><div class="modal">
   <div class="viewer-head">
     <h3 id="fileViewerTitle">Document</h3>
-    <button class="vdots" onclick="toggleViewerMenu(event)"></button>
+    <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
-      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')"> Share</button>
+      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
@@ -353,9 +349,26 @@ async function saveProfile(){
   }
 }
 
-// --- ROBUST INVITE CHECK (Email OR Phone) ---
+// --- ROBUST INVITE CHECK (URL param + Email/Phone) ---
 async function checkForInvite(){
   if(!currentUser) return;
+
+  // 1. First check URL ?invite=xxxx
+  const params = new URLSearchParams(window.location.search);
+  const inviteFromUrl = params.get('invite');
+  if(inviteFromUrl){
+    const { data, error } = await sb.from('family_links')
+      .select('*')
+      .eq('id', inviteFromUrl)
+      .eq('status', 'pending')
+      .maybeSingle();
+    if(data){
+      showConsentModal(data);
+      return;
+    }
+  }
+
+  // 2. Fallback: match by email or phone
   const userPhone = currentUser.user_metadata?.phone || '';
   const userEmail = currentUser.email || '';
   
@@ -367,9 +380,11 @@ async function checkForInvite(){
      query = query.eq('member_email', userEmail);
   } else if (userPhone) {
      query = query.eq('member_phone', userPhone);
+  } else {
+    return;
   }
   
-  const { data: found, error } = await query.limit(1);
+  const { data: found } = await query.limit(1);
   if(found && found.length > 0) {
     showConsentModal(found[0]);
   }
@@ -377,26 +392,49 @@ async function checkForInvite(){
 
 function showConsentModal(data){
   pendingInviteId = data.id;
-  const inviterName = data.display_name || 'Someone';
+  const inviterName = data.inviter_name || data.display_name || 'Someone';
   document.getElementById('consentText').textContent = `${inviterName} wants to add you to their Family Group on OneApp. Do you allow this?`;
   document.getElementById('consentActions').style.display = 'flex';
   openModal('consentModal');
 }
 
 async function processConsent(allow){
-  if(!pendingInviteId) return;
+  if(!pendingInviteId || !currentUser) return;
+
   if(allow){
-    const { error } = await sb.rpc('accept_invite', { invite_id: pendingInviteId });
-    if(error) alert('❌ Error accepting: ' + error.message);
-    else {
+    // Try RPC first
+    let { error } = await sb.rpc('accept_invite', { invite_id: pendingInviteId });
+
+    // Fallback: direct update (works if RLS allows)
+    if(error){
+      const { error: upErr } = await sb.from('family_links')
+        .update({
+          status: 'accepted',
+          member_user_id: currentUser.id
+        })
+        .eq('id', pendingInviteId)
+        .eq('status', 'pending');
+      error = upErr;
+    }
+
+    if(error){
+      alert('❌ Error accepting: ' + error.message);
+    } else {
       alert('✅ You have joined the family group!');
       loadFamilyMembers();
     }
   } else {
-    const { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
+    let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
+    if(error){
+      const { error: upErr } = await sb.from('family_links')
+        .update({ status: 'rejected' })
+        .eq('id', pendingInviteId);
+      error = upErr;
+    }
     if(error) alert('❌ Error rejecting: ' + error.message);
-    else alert('❌ Invite rejected.');
+    else alert('Invite rejected.');
   }
+
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
   pendingInviteId = null;
@@ -410,6 +448,10 @@ function setupRealTimeFamily(){
       { event: '*', schema: 'public', table: 'family_links', filter: `owner_id=eq.${currentUser.id}` }, 
       () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); }
     )
+    .on('postgres_changes', 
+      { event: '*', schema: 'public', table: 'family_links', filter: `member_user_id=eq.${currentUser.id}` }, 
+      () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); }
+    )
     .subscribe();
 }
 
@@ -421,20 +463,19 @@ async function loadFamilyMembers(){
   if(!currentUser)return;
   const uid = currentUser.id;
   
-  const { data: outgoing, error: err1 } = await sb.from('family_links')
+  const { data: outgoing } = await sb.from('family_links')
     .select('*')
     .eq('owner_id', uid)
     .in('status', ['accepted', 'pending']);
 
-  const { data: incoming, error: err2 } = await sb.from('family_links')
+  const { data: incoming } = await sb.from('family_links')
     .select('*')
     .eq('member_user_id', uid)
     .in('status', ['accepted', 'pending']);
 
-  if(err1 || err2) { console.error(err1, err2); return; }
-
   familyMembers = [...(outgoing || []), ...(incoming || [])];
-  familyMembers = familyMembers.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i);
+  // dedupe
+  familyMembers = familyMembers.filter((v,i,a)=>a.findIndex(t=>t.id === v.id)===i);
   
   renderFamilyList();
 }
@@ -447,24 +488,41 @@ function renderFamilyList(){
   }
   cont.innerHTML='';
   familyMembers.forEach(fm=>{
-    const name = fm.display_name || (fm.permissions && fm.permissions.name) || (fm.member_email ? fm.member_email.split('@')[0] : 'Member');
-    const initials=name.substring(0,2).toUpperCase();
-    const isMe = fm.member_user_id === currentUser.id; 
+    const isOwner = fm.owner_id === currentUser.id;
+    const isMe = fm.member_user_id === currentUser.id;
+
+    // Decide which name to show
+    let name;
+    if(isOwner){
+      // I invited them → show their name
+      name = fm.display_name || (fm.member_email ? fm.member_email.split('@')[0] : 'Member');
+    } else {
+      // They invited me → show inviter name
+      name = fm.inviter_name || 'Family Member';
+    }
+
+    const initials = name.substring(0,2).toUpperCase();
     
     let statusBadge = '';
     if(fm.status === 'pending') statusBadge = '<span class="badge badge-warn">Pending</span>';
     else if(fm.status === 'accepted') statusBadge = '<span class="badge badge-ok">Connected</span>';
 
-    const deleteBtn = (!isMe && fm.status === 'pending') ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑 Cancel</button>` : '';
-    
+    const deleteBtn = (isOwner && fm.status === 'pending') 
+      ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑 Cancel</button>` 
+      : '';
+
+    const clickAction = fm.is_minor 
+      ? `openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')` 
+      : `alert('Shared docs view coming soon for ${name}')`;
+
     const div=document.createElement('div');
     div.className='family-list-item';
     div.innerHTML=`
-      <div style="display:flex;align-items:center;cursor:pointer" onclick="${fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')`:`alert('Shared docs view coming soon for ${name}')`}">
+      <div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">
         <div class="family-avatar-sm">${initials}</div>
         <div>
-          <strong>${name}</strong> ${isMe?'<span class="badge badge-ok">(Invited You)</span>':''}
-          <br><small style="color:var(--gray)">${fm.relation_type.toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small>
+          <strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}
+          <br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small>
         </div>
       </div>
       <div style="display:flex;gap:.3rem">${deleteBtn}</div>
@@ -477,62 +535,66 @@ function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}lo
 function deleteMember(id){if(!confirm('Cancel this request?'))return;sb.from('family_links').delete().eq('id',id).then(({error})=>{if(error)alert('❌ '+error.message);else{alert('✅ Cancelled.');loadFamilyMembers();}});}
 function setInviteTab(tab){['email','whatsapp','sms'].forEach(t=>{document.getElementById('inviteContent-'+t).style.display=t===tab?'block':'none';});document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));event.target.classList.add('active');}
 function openInviteModal(){openModal('inviteModal');}
+
 async function sendInviteEmail(){
   const name=document.getElementById('inviteName').value.trim();
   const email=document.getElementById('inviteEmail').value.trim();
   const rel=document.getElementById('inviteRelation').value;
   if(!name||!email)return alert('Enter Name and Email');
   
+  const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
+
   const{data, error}=await sb.from('family_links').insert({
     owner_id:currentUser.id,
     member_email:email,
     member_phone:null,
     relation_type:rel,
     status:'pending',
-    display_name:name
-  }).select(); // Select to get the ID
+    display_name:name,
+    inviter_name: inviterName
+  }).select();
   
   if(error){
-    alert('❌ Database Error: ' + error.message + '\n\nPlease run the SQL command to add the missing column.');
+    alert('❌ Database Error: ' + error.message);
   } else {
     const inviteId = data[0].id;
     const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
-    alert(`✅ Invite sent to ${name}!\n\nLink: ${link}\n\n(Copy and send this link manually)`);
+    alert(`✅ Invite created for ${name}!\n\nLink: ${link}\n\n(Copy and send this link)`);
     closeModal('inviteModal');
+    loadFamilyMembers();
   }
 }
 
-// FIXED WHATSAPP FUNCTION - GENERATES UNIQUE LINK
 async function sendInviteWhatsApp(){
   const name=document.getElementById('inviteNameWa').value.trim();
   const phone=document.getElementById('invitePhoneWa').value.trim();
   if(!phone)return alert('Enter Phone Number');
   
   const rel=document.getElementById('inviteRelationWa').value;
+  const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
 
-  // 1. Save to DB to get an ID
   const {data, error} = await sb.from('family_links').insert({
     owner_id:currentUser.id,
     member_email:null,
     member_phone:phone,
     relation_type:rel,
     status:'pending',
-    display_name:name
+    display_name:name,
+    inviter_name: inviterName
   }).select();
 
   if(error){
-    // 2. If error (likely missing column), alert user
-    alert('❌ Could not create unique link.\n\nError: ' + error.message + '\n\nPLEASE RUN THIS SQL IN SUPABASE:\nALTER TABLE public.family_links ADD COLUMN IF NOT EXISTS member_phone TEXT;');
+    alert('❌ Could not create unique link.\n\nError: ' + error.message);
     return; 
   }
 
-  // 3. Success! Get the ID and open WhatsApp
   const inviteId = data[0].id;
   const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
-  const msg = `Hi ${name}! ${currentUser.user_metadata?.full_name || 'Someone'} invited you to join their family on OneApp. Click here to accept: ${link}`;
+  const msg = `Hi ${name}! ${inviterName} invited you to join their family on OneApp. Click here to accept: ${link}`;
   
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+  window.open(`https://wa.me/${phone.replace(/\s+/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
   closeModal('inviteModal');
+  loadFamilyMembers();
 }
 
 async function sendInviteSMS(){
@@ -541,6 +603,7 @@ async function sendInviteSMS(){
   if(!phone)return alert('Enter Phone Number');
   
   const rel=document.getElementById('inviteRelationSms').value;
+  const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
 
   const {data, error} = await sb.from('family_links').insert({
     owner_id:currentUser.id,
@@ -548,11 +611,12 @@ async function sendInviteSMS(){
     member_phone:phone,
     relation_type:rel,
     status:'pending',
-    display_name:name
+    display_name:name,
+    inviter_name: inviterName
   }).select();
 
   if(error){
-    alert('❌ Could not create unique link.\n\nError: ' + error.message + '\n\nPLEASE RUN THE SQL COMMAND TO ADD member_phone COLUMN.');
+    alert('❌ Could not create unique link.\n\nError: ' + error.message);
     return;
   }
 
@@ -562,10 +626,27 @@ async function sendInviteSMS(){
   
   window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`,'_blank');
   closeModal('inviteModal');
+  loadFamilyMembers();
 }
 
 function openAddMinorModal(){openModal('minorModal');}
-async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert('❌ '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');}}
+async function addMinor(){
+  const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;
+  if(!name||!dob)return alert('Fill all fields');
+  const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || 'Parent';
+  const{error}=await sb.from('family_links').insert({
+    owner_id:currentUser.id,
+    member_email:'minor_'+Date.now()+'@internal',
+    relation_type:'child',
+    is_minor:true,
+    status:'accepted',
+    display_name:name,
+    inviter_name: inviterName,
+    permissions:{name:name,dob:dob}
+  });
+  if(error)alert('❌ '+error.message);
+  else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
+}
 
 function toggleViewerMenu(e){e.stopPropagation();document.getElementById('viewerMenu').classList.toggle('show');}
 function viewerAction(act){
@@ -714,7 +795,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent=' '+err.message;}
+    }catch(err){status.textContent='❌ '+err.message;}
   };
   input.click();
 }
@@ -745,7 +826,7 @@ async function childAaOnFile(file){
   const pw=document.getElementById('childAaPass').value||getSavedPdfPassword(uid,'child_'+currentChildId)||undefined;
   let pdf;
   try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
-  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent=' '+err.message;return;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent='❌ '+err.message;return;}
   try{
     const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -756,7 +837,7 @@ async function childAaOnFile(file){
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
     st.textContent='✂ '+r.msg;
-  }catch(e){st.textContent=' '+e.message;}
+  }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
@@ -860,7 +941,7 @@ async function aaSave(){
   const uid=session.user.id;
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
