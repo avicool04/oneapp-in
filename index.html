@@ -127,9 +127,13 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="card">
     <div class="card-header"><h3>Insurance</h3></div>
     <div class="icon-grid">
+      <!-- RESTORED ORIGINAL BIKE ICON -->
       <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="18" ry="4" fill="#e0d4f5"/><circle cx="18" cy="44" r="8" fill="#7c3aed"/><circle cx="18" cy="44" r="4" fill="#c4b5fd"/><circle cx="46" cy="44" r="8" fill="#7c3aed"/><circle cx="46" cy="44" r="4" fill="#c4b5fd"/><path d="M18 44 L28 28 L40 28 L46 44" stroke="#7c3aed" stroke-width="3" fill="none"/><rect x="26" y="22" width="16" height="8" rx="3" fill="#a78bfa"/><rect x="30" y="18" width="8" height="6" rx="2" fill="#c4b5fd"/></svg></div><span>Bike</span></div>
+      <!-- RESTORED ORIGINAL CAR ICON -->
       <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="52" rx="20" ry="4" fill="#dbeafe"/><rect x="10" y="30" width="44" height="16" rx="8" fill="#3b82f6"/><rect x="16" y="22" width="32" height="14" rx="6" fill="#60a5fa"/><rect x="20" y="24" width="10" height="9" rx="2" fill="#bfdbfe"/><rect x="34" y="24" width="10" height="9" rx="2" fill="#bfdbfe"/><circle cx="18" cy="46" r="5" fill="#1e3a5f"/><circle cx="18" cy="46" r="2.5" fill="#93c5fd"/><circle cx="46" cy="46" r="5" fill="#1e3a5f"/><circle cx="46" cy="46" r="2.5" fill="#93c5fd"/></svg></div><span>Car</span></div>
+      <!-- RESTORED ORIGINAL HEALTH ICON -->
       <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#fee2e2"/><rect x="14" y="16" width="36" height="34" rx="6" fill="#ef4444"/><rect x="14" y="16" width="36" height="10" rx="6" fill="#f87171"/><rect x="28" y="10" width="8" height="10" rx="3" fill="#fca5a5"/><rect x="28" y="28" width="8" height="14" rx="2" fill="#fff"/><rect x="24" y="32" width="16" height="6" rx="2" fill="#fff"/></svg></div><span>Health</span></div>
+      <!-- RESTORED ORIGINAL LIFE ICON -->
       <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="54" rx="16" ry="3" fill="#ccfbf1"/><path d="M32 8 L52 30 Q52 50 32 56 Q12 50 12 30 Z" fill="#14b8a6"/><path d="M32 8 L52 30 Q52 50 32 56" fill="#0d9488"/><path d="M28 32 L32 38 L42 26" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><span>Life</span></div>
     </div>
   </div>
@@ -159,7 +163,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Display Name</label><input id="profileName" type="text"></div>
   <div class="field"><label>Email Address</label><input id="profileEmail" type="email"></div>
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
-  <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+  <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
@@ -174,7 +178,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👧 Manage Family</h3>
+  <h3>‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
@@ -262,7 +266,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="fileViewerModal" class="modal-overlay"><div class="modal">
   <div class="viewer-head">
     <h3 id="fileViewerTitle">Document</h3>
-    <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
+    <button class="vdots" onclick="toggleViewerMenu(event)"></button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
@@ -351,39 +355,23 @@ async function saveProfile(){
 
 // --- ROBUST INVITE CHECK (Email OR Phone) ---
 async function checkForInvite(){
-  const params = new URLSearchParams(window.location.search);
-  const inviteId = params.get('invite');
-  
   if(!currentUser) return;
-
-  let data = null;
-
-  if(inviteId){
-    const res = await sb.from('family_links').select('*').eq('id', inviteId).single();
-    if(res.data) data = res.data;
+  const userPhone = currentUser.user_metadata?.phone || '';
+  const userEmail = currentUser.email || '';
+  
+  let query = sb.from('family_links').select('*').eq('status', 'pending');
+  
+  if(userEmail && userPhone) {
+     query = query.or(`member_email.eq.${userEmail},member_phone.eq.${userPhone}`);
+  } else if (userEmail) {
+     query = query.eq('member_email', userEmail);
+  } else if (userPhone) {
+     query = query.eq('member_phone', userPhone);
   }
-
-  if(!data || data.status !== 'pending'){
-     const userPhone = currentUser.user_metadata?.phone || '';
-     const userEmail = currentUser.email || '';
-     
-     let query = sb.from('family_links').select('*').eq('status', 'pending');
-     
-     if(userEmail && userPhone) {
-        query = query.or(`member_email.eq.${userEmail},member_phone.eq.${userPhone}`);
-     } else if (userEmail) {
-        query = query.eq('member_email', userEmail);
-     } else if (userPhone) {
-        query = query.eq('member_phone', userPhone);
-     }
-     
-     const { data: found, error } = await query.limit(1);
-     if(found && found.length > 0) data = found[0];
-  }
-
-  if(data && data.status === 'pending'){
-    showConsentModal(data);
-    if(inviteId) window.history.pushState({},'',window.location.pathname);
+  
+  const { data: found, error } = await query.limit(1);
+  if(found && found.length > 0) {
+    showConsentModal(found[0]);
   }
 }
 
@@ -504,10 +492,10 @@ async function sendInviteEmail(){
     display_name:name
   });
   if(error)alert('❌ '+error.message);
-  else{alert('✅ Invite sent to '+name+'.');closeModal('inviteModal');}
+  else{alert('✅ Invite sent to '+name+'. Ask them to log in to OneApp to accept.');closeModal('inviteModal');}
 }
 
-// FIXED WHATSAPP FUNCTION (Safe if column missing)
+// FIXED WHATSAPP FUNCTION
 function sendInviteWhatsApp(){
   const name=document.getElementById('inviteNameWa').value.trim();
   const phone=document.getElementById('invitePhoneWa').value.trim();
@@ -515,7 +503,7 @@ function sendInviteWhatsApp(){
   
   const rel=document.getElementById('inviteRelationWa').value;
 
-  // Try to save to DB, but don't block if it fails (e.g. column missing)
+  // Try to save to DB (ignore errors if column missing)
   sb.from('family_links').insert({
     owner_id:currentUser.id,
     member_email:null,
@@ -524,16 +512,11 @@ function sendInviteWhatsApp(){
     status:'pending',
     display_name:name
   }).then(({error})=>{
-    if(error) {
-       // If error is about column, we still open WhatsApp but warn user
-       if(error.message.includes('member_phone')) {
-         console.warn('DB column missing, skipping DB save but opening WhatsApp.');
-       } else {
-         alert('️ Could not save invite to DB, but opening WhatsApp anyway. ('+error.message+')');
-       }
-    } 
-    // Open WhatsApp regardless of DB success/failure
-    const msg = `Hi ${name}! Join my family on OneApp: https://oneapp-in.vercel.app/`;
+    if(error && !error.message.includes('member_phone')) {
+       alert('⚠️ DB Error: '+error.message);
+    }
+    // Open WhatsApp with generic link
+    const msg = `Hi ${name}! Please join my family on OneApp. Login here: https://oneapp-in.vercel.app`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
     closeModal('inviteModal');
   });
@@ -554,17 +537,16 @@ function sendInviteSMS(){
     status:'pending',
     display_name:name
   }).then(({error})=>{
-    if(error) {
-       if(!error.message.includes('member_phone')) alert('⚠️ DB Error: '+error.message);
-    }
-    const msg = `Join my family on OneApp: https://oneapp-in.vercel.app/`;
+    if(error && !error.message.includes('member_phone')) alert('⚠️ DB Error: '+error.message);
+    
+    const msg = `Join my family on OneApp: https://oneapp-in.vercel.app`;
     window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`,'_blank');
     closeModal('inviteModal');
   });
 }
 
 function openAddMinorModal(){openModal('minorModal');}
-async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert(' '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');}}
+async function addMinor(){const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;if(!name||!dob)return alert('Fill all fields');const{error}=await sb.from('family_links').insert({owner_id:currentUser.id,member_email:'minor_'+Date.now()+'@internal',relation_type:'child',is_minor:true,status:'accepted',display_name:name,permissions:{name:name,dob:dob}});if(error)alert('❌ '+error.message);else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');}}
 
 function toggleViewerMenu(e){e.stopPropagation();document.getElementById('viewerMenu').classList.toggle('show');}
 function viewerAction(act){
@@ -713,7 +695,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent=' '+err.message;}
+    }catch(err){status.textContent='❌ '+err.message;}
   };
   input.click();
 }
@@ -744,7 +726,7 @@ async function childAaOnFile(file){
   const pw=document.getElementById('childAaPass').value||getSavedPdfPassword(uid,'child_'+currentChildId)||undefined;
   let pdf;
   try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
-  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent=' '+err.message;return;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent='❌ '+err.message;return;}
   try{
     const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -755,7 +737,7 @@ async function childAaOnFile(file){
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
     st.textContent='✂ '+r.msg;
-  }catch(e){st.textContent=' '+e.message;}
+  }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
