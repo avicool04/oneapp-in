@@ -111,7 +111,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍ Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -132,11 +132,35 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         </div>
         <span>Aadhaar</span>
       </div>
-      <div class="icon-tile" onclick="openGenericUpload('PAN Card')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg></div><span>PAN Card</span></div>
-      <div class="icon-tile" onclick="openGenericUpload('Driving License')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg></div><span>License</span></div>
-      <div class="icon-tile" onclick="openGenericUpload('Passport')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg></div><span>Passport</span></div>
+      <div class="icon-tile" onclick="handleGenericIconClick('PAN Card')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg>
+          <div id="panIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>PAN Card</span>
+      </div>
+      <div class="icon-tile" onclick="handleGenericIconClick('Driving License')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg>
+          <div id="licenseIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>License</span>
+      </div>
+      <div class="icon-tile" onclick="handleGenericIconClick('Passport')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg>
+          <div id="passportIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>Passport</span>
+      </div>
       <!-- NEW: Other Documents Icon -->
-      <div class="icon-tile" onclick="openGenericUpload('Other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div><span>Other Docs</span></div>
+      <div class="icon-tile" onclick="showView('otherDocsView')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
+          <div id="otherIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>Other Docs</span>
+      </div>
     </div>
   </div>
   <div class="card">
@@ -161,7 +185,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="consentActions" style="display:none;flex-direction:column;gap:.5rem;margin-top:1rem">
     <div style="display:flex;gap:.5rem">
       <button class="btn btn-success" style="flex:1" onclick="processConsent(true)">✅ Allow</button>
-      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)">❌ Reject</button>
+      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)"> Reject</button>
     </div>
   </div>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('consentModal');window.history.pushState({},'',window.location.pathname);">Cancel</button>
@@ -182,7 +206,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="uploadMethodModal" class="modal-overlay"><div class="modal">
   <h3>Add Document</h3>
   <p class="sub" id="uploadMethodDocType">Document Type</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()"> Take Photo</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()">📷 Take Photo</button>
   <button class="btn btn-outline" onclick="triggerFileUpload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('uploadMethodModal')">Cancel</button>
   <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
@@ -215,7 +239,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF (opens without password)</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>‍👩‍👧 Share with Family</h3>
+  <h3>👨👩‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -309,7 +333,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   </div>
   <p class="sub">Custom documents saved by you.</p>
   <div class="card">
-    <div class="card-header"><h3>Saved Files</h3><span class="badge badge-ok">Private bucket</span></div>
+    <div class="card-header">
+      <h3>Saved Files</h3>
+      <span class="badge badge-ok">Private bucket</span>
+      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')">➕ Add New</button>
+    </div>
     <div id="otherDocsContainer"><p class="sub">Loading…</p></div>
   </div>
 </div>
@@ -353,7 +381,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="fileViewerModal" class="modal-overlay"><div class="modal">
   <div class="viewer-head">
     <h3 id="fileViewerTitle">Document</h3>
-    <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
+    <button class="vdots" onclick="toggleViewerMenu(event)"></button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
@@ -387,6 +415,9 @@ let tempUploadType = null;
 let tempFile = null;
 let tempExpiryDate = null;
 
+// Store saved document info for generic docs
+let savedGenericDocs = {};
+
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
@@ -405,6 +436,7 @@ sb.auth.onAuthStateChange((ev,s)=>{
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
     btn.style.display='none';area.style.display='block';
     loadSavedAadhaar(s.user.id);
+    loadGenericDocsStatus(); // Load status for PAN, License, etc.
     setupRealTimeFamily();
     checkForInvite(); 
     loadFamilyMembers();
@@ -500,39 +532,24 @@ async function processConsent(allow){
   if(!pendingInviteId || !currentUser) return;
 
   if(allow){
-    // Try RPC first
     let { error } = await sb.rpc('accept_invite', { invite_id: pendingInviteId });
-
-    // Fallback: direct update (works if RLS allows)
     if(error){
       const { error: upErr } = await sb.from('family_links')
-        .update({
-          status: 'accepted',
-          member_user_id: currentUser.id
-        })
-        .eq('id', pendingInviteId)
-        .eq('status', 'pending');
+        .update({ status: 'accepted', member_user_id: currentUser.id })
+        .eq('id', pendingInviteId).eq('status', 'pending');
       error = upErr;
     }
-
-    if(error){
-      alert('❌ Error accepting: ' + error.message);
-    } else {
-      alert('✅ You have joined the family group!');
-      loadFamilyMembers();
-    }
+    if(error){ alert('❌ Error accepting: ' + error.message); } 
+    else { alert('✅ You have joined the family group!'); loadFamilyMembers(); }
   } else {
     let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
     if(error){
-      const { error: upErr } = await sb.from('family_links')
-        .update({ status: 'rejected' })
-        .eq('id', pendingInviteId);
+      const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId);
       error = upErr;
     }
     if(error) alert('❌ Error rejecting: ' + error.message);
     else alert('❌ Invite rejected.');
   }
-
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
   pendingInviteId = null;
@@ -542,18 +559,9 @@ function setupRealTimeFamily(){
   if(!currentUser) return;
   if(familyChannel) sb.removeChannel(familyChannel);
   familyChannel = sb.channel('family_changes')
-    .on('postgres_changes', 
-      { event: '*', schema: 'public', table: 'family_links', filter: `owner_id=eq.${currentUser.id}` }, 
-      () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); }
-    )
-    .on('postgres_changes', 
-      { event: '*', schema: 'public', table: 'family_links', filter: `member_user_id=eq.${currentUser.id}` }, 
-      () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); }
-    )
-    .on('postgres_changes',
-      { event: '*', schema: 'public', table: 'document_shares', filter: `recipient_user_id=eq.${currentUser.id}` },
-      () => { if(sharedVaultContext) loadSharedVault(); }
-    )
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'family_links', filter: `owner_id=eq.${currentUser.id}` }, () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'family_links', filter: `member_user_id=eq.${currentUser.id}` }, () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'document_shares', filter: `recipient_user_id=eq.${currentUser.id}` }, () => { if(sharedVaultContext) loadSharedVault(); })
     .subscribe();
 }
 
@@ -564,71 +572,28 @@ function getSavedPdfPassword(uid,tag){try{return localStorage.getItem(pwKey(uid,
 async function loadFamilyMembers(){
   if(!currentUser)return;
   const uid = currentUser.id;
-  
-  const { data: outgoing } = await sb.from('family_links')
-    .select('*')
-    .eq('owner_id', uid)
-    .in('status', ['accepted', 'pending']);
-
-  const { data: incoming } = await sb.from('family_links')
-    .select('*')
-    .eq('member_user_id', uid)
-    .in('status', ['accepted', 'pending']);
-
+  const { data: outgoing } = await sb.from('family_links').select('*').eq('owner_id', uid).in('status', ['accepted', 'pending']);
+  const { data: incoming } = await sb.from('family_links').select('*').eq('member_user_id', uid).in('status', ['accepted', 'pending']);
   familyMembers = [...(outgoing || []), ...(incoming || [])];
-  // dedupe
   familyMembers = familyMembers.filter((v,i,a)=>a.findIndex(t=>t.id === v.id)===i);
-  
   renderFamilyList();
 }
 
 function renderFamilyList(){
   const cont=document.getElementById('familyListContainer');
-  if(!familyMembers.length){
-    cont.innerHTML='<p class="sub">No family members linked yet. Invite someone!</p>';
-    return;
-  }
+  if(!familyMembers.length){ cont.innerHTML='<p class="sub">No family members linked yet. Invite someone!</p>'; return; }
   cont.innerHTML='';
   familyMembers.forEach(fm=>{
     const isOwner = fm.owner_id === currentUser.id;
     const isMe = fm.member_user_id === currentUser.id;
-
-    // Decide which name to show
-    let name;
-    if(isOwner){
-      // I invited them → show their name
-      name = fm.display_name || (fm.member_email ? fm.member_email.split('@')[0] : 'Member');
-    } else {
-      // They invited me → show inviter name
-      name = fm.inviter_name || 'Family Member';
-    }
-
+    let name = isOwner ? (fm.display_name || (fm.member_email ? fm.member_email.split('@')[0] : 'Member')) : (fm.inviter_name || 'Family Member');
     const initials = name.substring(0,2).toUpperCase();
-    
-    let statusBadge = '';
-    if(fm.status === 'pending') statusBadge = '<span class="badge badge-warn">Pending</span>';
-    else if(fm.status === 'accepted') statusBadge = '<span class="badge badge-ok">Connected</span>';
-
-    const deleteBtn = (isOwner && fm.status === 'pending') 
-      ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑 Cancel</button>` 
-      : '';
-
-    const clickAction = fm.is_minor 
-      ? `openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')` 
-      : `alert('Shared docs view coming soon for ${name}')`;
-
+    let statusBadge = fm.status === 'pending' ? '<span class="badge badge-warn">Pending</span>' : (fm.status === 'accepted' ? '<span class="badge badge-ok">Connected</span>' : '');
+    const deleteBtn = (isOwner && fm.status === 'pending') ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑 Cancel</button>` : '';
+    const clickAction = fm.is_minor ? `openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')` : `alert('Shared docs view coming soon for ${name}')`;
     const div=document.createElement('div');
     div.className='family-list-item';
-    div.innerHTML=`
-      <div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">
-        <div class="family-avatar-sm">${initials}</div>
-        <div>
-          <strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}
-          <br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small>
-        </div>
-      </div>
-      <div style="display:flex;gap:.3rem">${deleteBtn}</div>
-    `;
+    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}<br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
     cont.appendChild(div);
   });
 }
@@ -643,27 +608,14 @@ async function sendInviteEmail(){
   const email=document.getElementById('inviteEmail').value.trim();
   const rel=document.getElementById('inviteRelation').value;
   if(!name||!email)return alert('Enter Name and Email');
-  
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
-
-  const{data, error}=await sb.from('family_links').insert({
-    owner_id:currentUser.id,
-    member_email:email,
-    member_phone:null,
-    relation_type:rel,
-    status:'pending',
-    display_name:name,
-    inviter_name: inviterName
-  }).select();
-  
-  if(error){
-    alert('❌ Database Error: ' + error.message);
-  } else {
+  const{data, error}=await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:email, member_phone:null, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
+  if(error){ alert('❌ Database Error: ' + error.message); } 
+  else {
     const inviteId = data[0].id;
     const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
     alert(`✅ Invite created for ${name}!\n\nLink: ${link}\n\n(Copy and send this link)`);
-    closeModal('inviteModal');
-    loadFamilyMembers();
+    closeModal('inviteModal'); loadFamilyMembers();
   }
 }
 
@@ -671,64 +623,30 @@ async function sendInviteWhatsApp(){
   const name=document.getElementById('inviteNameWa').value.trim();
   const phone=document.getElementById('invitePhoneWa').value.trim();
   if(!phone)return alert('Enter Phone Number');
-  
   const rel=document.getElementById('inviteRelationWa').value;
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
-
-  const {data, error} = await sb.from('family_links').insert({
-    owner_id:currentUser.id,
-    member_email:null,
-    member_phone:phone,
-    relation_type:rel,
-    status:'pending',
-    display_name:name,
-    inviter_name: inviterName
-  }).select();
-
-  if(error){
-    alert('❌ Could not create unique link.\n\nError: ' + error.message);
-    return; 
-  }
-
+  const {data, error} = await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:null, member_phone:phone, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
+  if(error){ alert('❌ Could not create unique link.\n\nError: ' + error.message); return; }
   const inviteId = data[0].id;
   const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
   const msg = `Hi ${name}! ${inviterName} invited you to join their family on OneApp. Click here to accept: ${link}`;
-  
   window.open(`https://wa.me/${phone.replace(/\s+/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
-  closeModal('inviteModal');
-  loadFamilyMembers();
+  closeModal('inviteModal'); loadFamilyMembers();
 }
 
 async function sendInviteSMS(){
   const name=document.getElementById('inviteNameSms').value.trim();
   const phone=document.getElementById('invitePhoneSms').value.trim();
   if(!phone)return alert('Enter Phone Number');
-  
   const rel=document.getElementById('inviteRelationSms').value;
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
-
-  const {data, error} = await sb.from('family_links').insert({
-    owner_id:currentUser.id,
-    member_email:null,
-    member_phone:phone,
-    relation_type:rel,
-    status:'pending',
-    display_name:name,
-    inviter_name: inviterName
-  }).select();
-
-  if(error){
-    alert('❌ Could not create unique link.\n\nError: ' + error.message);
-    return;
-  }
-
+  const {data, error} = await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:null, member_phone:phone, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
+  if(error){ alert('❌ Could not create unique link.\n\nError: ' + error.message); return; }
   const inviteId = data[0].id;
   const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
   const msg = `Join my family on OneApp: ${link}`;
-  
   window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`,'_blank');
-  closeModal('inviteModal');
-  loadFamilyMembers();
+  closeModal('inviteModal'); loadFamilyMembers();
 }
 
 function openAddMinorModal(){openModal('minorModal');}
@@ -736,25 +654,61 @@ async function addMinor(){
   const name=document.getElementById('minorName').value.trim(),dob=document.getElementById('minorDob').value;
   if(!name||!dob)return alert('Fill all fields');
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || 'Parent';
-  const{error}=await sb.from('family_links').insert({
-    owner_id:currentUser.id,
-    member_email:'minor_'+Date.now()+'@internal',
-    relation_type:'child',
-    is_minor:true,
-    status:'accepted',
-    display_name:name,
-    inviter_name: inviterName,
-    permissions:{name:name,dob:dob}
-  });
-  if(error)alert('❌ '+error.message);
-  else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
+  const{error}=await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:'minor_'+Date.now()+'@internal', relation_type:'child', is_minor:true, status:'accepted', display_name:name, inviter_name: inviterName, permissions:{name:name,dob:dob} });
+  if(error)alert('❌ '+error.message); else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
 }
 
 // --- PHASE 1: GENERIC UPLOAD FUNCTIONS ---
+
+// Load saved status for PAN, License, Passport, Other
+async function loadGenericDocsStatus(){
+  if(!currentUser) return;
+  const { data, error } = await sb.from('documents').select('document_type, id, file_url, document_name').eq('user_id', currentUser.id).is('deleted_at', null);
+  if(error || !data) return;
+  
+  savedGenericDocs = {};
+  data.forEach(d => {
+    if(d.document_type === 'PAN Card') savedGenericDocs['PAN Card'] = d;
+    else if(d.document_type === 'Driving License') savedGenericDocs['Driving License'] = d;
+    else if(d.document_type === 'Passport') savedGenericDocs['Passport'] = d;
+    else if(d.document_type === 'Other') {
+      if(!savedGenericDocs['Other']) savedGenericDocs['Other'] = [];
+      savedGenericDocs['Other'].push(d);
+    }
+  });
+  
+  // Update badges
+  document.getElementById('panIndicator').classList.toggle('show', !!savedGenericDocs['PAN Card']);
+  document.getElementById('licenseIndicator').classList.toggle('show', !!savedGenericDocs['Driving License']);
+  document.getElementById('passportIndicator').classList.toggle('show', !!savedGenericDocs['Passport']);
+  document.getElementById('otherIndicator').classList.toggle('show', !!(savedGenericDocs['Other'] && savedGenericDocs['Other'].length > 0));
+}
+
+// Smart click handler: View if exists, Upload if not
+async function handleGenericIconClick(type){
+  if(!currentUser){ alert('Please sign in first.'); return; }
+  
+  // Reload status to ensure fresh data
+  await loadGenericDocsStatus();
+  
+  if(type === 'Other'){
+    showView('otherDocsView');
+    return;
+  }
+  
+  const doc = savedGenericDocs[type];
+  if(doc){
+    // Document exists - open viewer
+    viewGenericDoc(doc.id, doc.file_url, doc.document_name || type);
+  } else {
+    // No document - show upload options
+    openGenericUpload(type);
+  }
+}
+
 function openGenericUpload(type){
-  if(!currentUser){alert('Please sign in first.');return;}
   tempUploadType = type;
-  document.getElementById('uploadMethodDocType').textContent = type === 'Other' ? 'Other Documents' : type;
+  document.getElementById('uploadMethodDocType').textContent = type;
   openModal('uploadMethodModal');
 }
 
@@ -782,7 +736,6 @@ async function handleGenericFileSelect(file){
   } else if (tempUploadType === 'Driving License' || tempUploadType === 'Passport') {
     openModal('expiryDateModal');
   } else {
-    // PAN Card or others without expiry
     await saveGenericDocument(null);
   }
 }
@@ -791,7 +744,6 @@ function confirmCustomName(){
   const name = document.getElementById('customDocName').value.trim();
   if(!name) return alert('Please enter a document name');
   closeModal('customNameModal');
-  // For Other docs, we don't ask expiry in Phase 1, but we could later
   saveGenericDocument(null, name);
 }
 
@@ -816,52 +768,29 @@ async function saveGenericDocument(expiryDate, customName = null){
   let docType = tempUploadType;
   let docName = customName || docType;
 
-  // Determine path and type
-  if(docType === 'PAN Card'){
-    path = `${uid}/pan_card_${timestamp}.${ext}`;
-    docType = 'PAN Card';
-  } else if (docType === 'Driving License') {
-    path = `${uid}/driving_license_${timestamp}.${ext}`;
-    docType = 'Driving License';
-  } else if (docType === 'Passport') {
-    path = `${uid}/passport_${timestamp}.${ext}`;
-    docType = 'Passport';
-  } else {
-    path = `${uid}/other/${docName.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.${ext}`;
-    docType = 'Other';
-  }
-
-  // Show loading alert (simple feedback)
-  const loadingMsg = alert('⏳ Uploading...'); // Blocks execution briefly
+  if(docType === 'PAN Card'){ path = `${uid}/pan_card_${timestamp}.${ext}`; } 
+  else if (docType === 'Driving License') { path = `${uid}/driving_license_${timestamp}.${ext}`; } 
+  else if (docType === 'Passport') { path = `${uid}/passport_${timestamp}.${ext}`; } 
+  else { path = `${uid}/other/${docName.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.${ext}`; docType = 'Other'; }
 
   try {
-    // Upload to Storage
     const { error: uploadError } = await sb.storage.from('vault').upload(path, tempFile, { contentType: tempFile.type });
     if(uploadError) throw uploadError;
 
-    // Save to Database
     const { error: dbError } = await sb.from('documents').insert({
-      user_id: uid,
-      document_type: docType,
-      document_name: docName,
-      file_url: path,
-      valid_until: expiryDate,
-      is_critical: false,
-      deleted_at: null
+      user_id: uid, document_type: docType, document_name: docName, file_url: path, valid_until: expiryDate, is_critical: false, deleted_at: null
     });
-
     if(dbError) throw dbError;
 
     alert('✅ Document saved successfully!');
-    if(docType === 'Other') loadOtherDocs(); // Refresh view if open
-    else showView('vault'); // Return to vault
+    loadGenericDocsStatus(); // Refresh badges
+    if(docType === 'Other') loadOtherDocs();
+    else showView('vault');
 
   } catch (err) {
-    alert(' Error saving: ' + err.message);
+    alert('❌ Error saving: ' + err.message);
   } finally {
-    // Reset
-    tempFile = null;
-    tempUploadType = null;
+    tempFile = null; tempUploadType = null;
     document.getElementById('genericFileInput').value = '';
     document.getElementById('customDocName').value = '';
     document.getElementById('docExpiryDate').value = '';
@@ -873,62 +802,42 @@ async function loadOtherDocs(){
   list.innerHTML = '<p class="sub">Loading…</p>';
   if(!currentUser) return;
   
-  const { data, error } = await sb.from('documents')
-    .select('*')
-    .eq('user_id', currentUser.id)
-    .eq('document_type', 'Other')
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false });
-    
-  if(error){
-    list.innerHTML = `<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`;
-    return;
-  }
-  
-  if(!data || data.length === 0){
-    list.innerHTML = '<p class="sub">No custom documents yet. Click "Other Docs" to add one.</p>';
-    return;
-  }
+  const { data, error } = await sb.from('documents').select('*').eq('user_id', currentUser.id).eq('document_type', 'Other').is('deleted_at', null).order('created_at', { ascending: false });
+  if(error){ list.innerHTML = `<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`; return; }
+  if(!data || data.length === 0){ list.innerHTML = '<p class="sub">No custom documents yet. Click "Add New" to add one.</p>'; return; }
   
   list.innerHTML = data.map(d => `
     <div class="doc-row">
-      <div class="doc-info">
-        <h4>${escHtml(d.document_name)}</h4>
-        <p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p>
-      </div>
+      <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
       <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}')">View</button>
+        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}')">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
       </div>
     </div>
   `).join('');
 }
 
-async function viewGenericDoc(id, path){
+async function viewGenericDoc(id, path, name){
   try{
     const { data, error } = await sb.storage.from('vault').createSignedUrl(path, 300);
     if(error) throw error;
-    
     const ext = path.split('.').pop().toLowerCase();
-    if(['jpg','jpeg','png','webp'].includes(ext)){
-       viewerCtx = { kind: 'generic', id: id, path: path };
-       document.getElementById('fileViewerTitle').textContent = path.split('/').pop();
-       document.getElementById('fileViewerImg').src = data.signedUrl;
-       openModal('fileViewerModal');
-    } else {
-       window.open(data.signedUrl, '_blank');
-    }
-  } catch(err){
-    alert('Failed: '+err.message);
-  }
+    viewerCtx = { kind: 'generic', id: id, path: path, label: name };
+    document.getElementById('fileViewerTitle').textContent = name;
+    document.getElementById('fileViewerImg').src = data.signedUrl;
+    document.getElementById('fileViewerImg').style.display = ['jpg','jpeg','png','webp'].includes(ext) ? 'block' : 'none';
+    if(document.getElementById('fileViewerImg').style.display === 'none') window.open(data.signedUrl, '_blank');
+    else openModal('fileViewerModal');
+  } catch(err){ alert('Failed: '+err.message); }
 }
 
 async function deleteGenericDoc(id){
   if(!confirm('Move to Bin?')) return;
   const { error } = await sb.from('documents').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-  if(error) alert(' '+error.message);
+  if(error) alert('❌ '+error.message);
   else {
     alert('✅ Moved to Bin');
+    loadGenericDocsStatus();
     loadOtherDocs();
   }
 }
@@ -962,6 +871,7 @@ function viewerAction(act){
     if(act==='delete'){if(p.delete===false)alert('Delete permission is not granted.');else deleteSharedDocument(c);}
   }else if(c.kind==='generic'){
     if(act==='delete'){closeModal('fileViewerModal');deleteGenericDoc(c.id);}
+    else if(act==='update'){closeModal('fileViewerModal');openGenericUpload(tempUploadType || 'Other');}
     else alert('Action not available for this document type yet.');
   }
 }
@@ -1094,7 +1004,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent='❌ '+err.message;}
+    }catch(err){status.textContent=' '+err.message;}
   };
   input.click();
 }
@@ -1141,10 +1051,10 @@ async function childAaSave(){
   const uid=currentUser.id,base=uid+'/children/'+currentChildId+'/aadhaar-';
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(base+'full.jpg',await jb(childAaCache.full),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
-  (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'full.jpg',await jb(childAaCache.full),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
   if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
   if(childAaRow){
     const{error}=await sb.from('documents').update({file_url:base+'side.jpg',document_name:'Aadhaar Card ('+currentChildName+')',deleted_at:null}).eq('id',childAaRow.id);
@@ -1186,7 +1096,7 @@ async function aaOnFile(file){
   const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadhaar')||undefined;
   let pdf;
   try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
-  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent='❌ '+err.message;return;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent=' '+err.message;return;}
   try{
     const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -1259,7 +1169,7 @@ async function aaDelete(){
   const{data:{session}}=await sb.auth.getSession();if(!session)return;
   const uid=session.user.id;
   const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
-  if(error){alert(' '+error.message);return;}
+  if(error){alert('❌ '+error.message);return;}
   resetAadhaarUI();closeModal('fileViewerModal');alert('✅ Moved to Bin for 30 days.');
 }
 function aaSharePick(){shareContext=null;openModal('shareModal');}
@@ -1396,9 +1306,7 @@ async function saveFamilyShares(){
       const el=document.querySelector(`.right-${r}[data-doc-id="${d.id}"]`);
       permissions[r]=child?true:!!el?.checked;
     });
-    const {error}=await sb.from('document_shares').upsert({
-      document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString()
-    },{onConflict:'document_id,recipient_user_id'});
+    const {error}=await sb.from('document_shares').upsert({ document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString() },{onConflict:'document_id,recipient_user_id'});
     if(!error)ok++; else alert('❌ '+error.message);
   }
   alert(`✅ Family access updated for ${ok} document(s).`);
@@ -1427,7 +1335,7 @@ async function loadSharedVault(){
   if(!currentUser||!sharedVaultContext)return;
   let q=sb.from('document_shares').select('*,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
   const {data,error}=await q;
-  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)"> '+escHtml(error.message)+'</p>';return;}
   let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
   if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
   else rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
@@ -1486,7 +1394,7 @@ async function updateSharedDocument(c){
     const ext=(file.name.split('.').pop()||'bin').toLowerCase();
     const path=`${c.document.user_id}/shared-${c.document.id}-${Date.now()}.${ext}`;
     const {error:up}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
-    if(up){alert('❌ '+up.message);return;}
+    if(up){alert(' '+up.message);return;}
     const {error}=await sb.from('documents').update({file_url:path,deleted_at:null}).eq('id',c.document.id);
     if(error){alert('❌ '+error.message);return;}
     closeModal('fileViewerModal');alert('✅ New version uploaded.');loadSharedVault();
@@ -1494,14 +1402,9 @@ async function updateSharedDocument(c){
   input.click();
 }
 
-
 async function loadSharedAaCache(path){
   const base=path.replace(/[^/]+$/,'');
-  const get=async n=>{
-    const {data}=await sb.storage.from('vault').download(base+n);
-    if(!data)return null;
-    try{const b=await createImageBitmap(data),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;}
-  };
+  const get=async n=>{ const {data}=await sb.storage.from('vault').download(base+n); if(!data)return null; try{const b=await createImageBitmap(data),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;} };
   sharedAaCache={side:await get('aadhaar-side.jpg'),front:await get('aadhaar-front.jpg'),back:await get('aadhaar-back.jpg'),full:await get('aadhaar-full.jpg')};
   return !!sharedAaCache.side||!!sharedAaCache.full;
 }
@@ -1541,7 +1444,7 @@ async function openBinView(){
   showView('binView');
   const box=document.getElementById('binDocsContainer');box.innerHTML='<p class="sub">Loading…</p>';
   const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).not('deleted_at','is',null).order('deleted_at',{ascending:false});
-  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)"> '+escHtml(error.message)+'</p>';return;}
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
   const active=(data||[]).filter(d=>new Date(d.deleted_at).getTime()>Date.now()-30*24*60*60*1000);
   if(!active.length){box.innerHTML='<p class="sub">Bin is empty.</p>';return;}
   box.innerHTML=active.map(d=>`<div class="bin-row"><div><strong>${escHtml(docLabel(d))}</strong><br><small style="color:var(--gray)">Deleted ${new Date(d.deleted_at).toLocaleString()}</small></div><button class="btn btn-success btn-sm" onclick="restoreDocument('${d.id}')">↩ Restore</button></div>`).join('');
