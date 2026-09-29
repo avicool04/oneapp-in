@@ -74,11 +74,14 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .invite-tabs{display:flex;gap:.4rem;margin-bottom:.75rem}
 .invite-tab{flex:1;padding:.4rem;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:.75rem;font-weight:600;text-align:center}
 .invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.viewer-img{width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc}
+.viewer-img{width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;transition:transform .3s ease}
 .viewer-head{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:.25rem}
-.vdots{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;line-height:1}
+.vdots{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
 .viewer-menu{position:absolute;right:0;top:115%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);padding:.4rem;display:none;z-index:60;min-width:150px;text-align:left}
 .viewer-menu.show{display:block}
+/* Rotation Controls */
+.rotate-controls{display:flex;gap:.3rem;justify-content:center;margin:.5rem 0}
+.rotate-controls button{padding:.3rem .6rem;font-size:.75rem}
 footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 @media(max-width:480px){.icon-grid{grid-template-columns:repeat(3,1fr)}.modal{padding:1rem;max-width:100%}nav{padding:.5rem .75rem}}
 
@@ -110,8 +113,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍ Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">️ Profile Settings</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -153,7 +156,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         </div>
         <span>Passport</span>
       </div>
-      <!-- NEW: Other Documents Icon -->
       <div class="icon-tile" onclick="showView('otherDocsView')">
         <div class="icon-box">
           <svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
@@ -185,7 +187,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="consentActions" style="display:none;flex-direction:column;gap:.5rem;margin-top:1rem">
     <div style="display:flex;gap:.5rem">
       <button class="btn btn-success" style="flex:1" onclick="processConsent(true)">✅ Allow</button>
-      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)"> Reject</button>
+      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)">❌ Reject</button>
     </div>
   </div>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('consentModal');window.history.pushState({},'',window.location.pathname);">Cancel</button>
@@ -202,7 +204,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
-<!-- UPLOAD METHOD MODAL (NEW) -->
+<!-- UPLOAD METHOD MODAL -->
 <div id="uploadMethodModal" class="modal-overlay"><div class="modal">
   <h3>Add Document</h3>
   <p class="sub" id="uploadMethodDocType">Document Type</p>
@@ -212,7 +214,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
 </div></div>
 
-<!-- CUSTOM NAME MODAL (NEW) -->
+<!-- CUSTOM NAME MODAL -->
 <div id="customNameModal" class="modal-overlay"><div class="modal">
   <h3>Name This Document</h3>
   <p class="sub">Enter a name to save this document.</p>
@@ -221,7 +223,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('customNameModal')">Cancel</button>
 </div></div>
 
-<!-- EXPIRY DATE MODAL (NEW) -->
+<!-- EXPIRY DATE MODAL -->
 <div id="expiryDateModal" class="modal-overlay"><div class="modal">
   <h3>Validity Details</h3>
   <p class="sub">Optional: Add expiry date for reminders.</p>
@@ -236,7 +238,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="viewer-img" alt="preview"><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 </div></div>
 
-<div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF (opens without password)</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
+<div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="genericShare('a4pdf')">A4 PDF (opens without password)</button><button class="btn btn-primary" onclick="genericShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="genericShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="genericShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="genericShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
   <h3>👨👩‍👧 Share with Family</h3>
@@ -251,14 +253,14 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍ Manage Family</h3>
+  <h3>👨👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
-    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
+    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()"> Refresh List</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
@@ -319,13 +321,13 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="binView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="openFamilyManager()">← Back</button>
-    <h2 style="margin:0"> Bin</h2>
+    <h2 style="margin:0">🗑 Bin</h2>
   </div>
   <p class="sub">Deleted documents stay here for 30 days before permanent cleanup.</p>
   <div class="card"><div id="binDocsContainer"><p class="sub">Loading…</p></div></div>
 </div>
 
-<!-- NEW: Other Documents View -->
+<!-- Other Documents View -->
 <div id="otherDocsView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
@@ -381,13 +383,18 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="fileViewerModal" class="modal-overlay"><div class="modal">
   <div class="viewer-head">
     <h3 id="fileViewerTitle">Document</h3>
-    <button class="vdots" onclick="toggleViewerMenu(event)"></button>
+    <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
-      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍👩‍👧 Share with Family</button>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍‍👧 Share with Family</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
+  </div>
+  <!-- Rotation Controls -->
+  <div class="rotate-controls" id="rotateControls" style="display:none">
+    <button class="btn btn-outline btn-sm" onclick="rotateImage(-90)">↺ Rotate Left</button>
+    <button class="btn btn-outline btn-sm" onclick="rotateImage(90)">↻ Rotate Right</button>
   </div>
   <img id="fileViewerImg" class="viewer-img" alt="document">
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
@@ -414,9 +421,8 @@ let pendingInviteId = null;
 let tempUploadType = null;
 let tempFile = null;
 let tempExpiryDate = null;
-
-// Store saved document info for generic docs
 let savedGenericDocs = {};
+let currentRotation = 0;
 
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
@@ -436,7 +442,7 @@ sb.auth.onAuthStateChange((ev,s)=>{
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
     btn.style.display='none';area.style.display='block';
     loadSavedAadhaar(s.user.id);
-    loadGenericDocsStatus(); // Load status for PAN, License, etc.
+    loadGenericDocsStatus();
     setupRealTimeFamily();
     checkForInvite(); 
     loadFamilyMembers();
@@ -463,11 +469,7 @@ async function saveProfile(){
   const name = document.getElementById('profileName').value.trim();
   const phone = document.getElementById('profilePhone').value.trim();
   if(!name) return alert('Name is required');
-  
-  const { error } = await sb.auth.updateUser({
-    data: { full_name: name, phone: phone }
-  });
-  
+  const { error } = await sb.auth.updateUser({ data: { full_name: name, phone: phone } });
   if(error) alert('❌ Error updating: '+error.message);
   else {
     alert('✅ Profile updated!');
@@ -479,45 +481,24 @@ async function saveProfile(){
   }
 }
 
-// --- ROBUST INVITE CHECK (URL param + Email/Phone) ---
+// --- INVITE CHECK ---
 async function checkForInvite(){
   if(!currentUser) return;
-
-  // 1. First check URL ?invite=xxxx
   const params = new URLSearchParams(window.location.search);
   const inviteFromUrl = params.get('invite');
   if(inviteFromUrl){
-    const { data, error } = await sb.from('family_links')
-      .select('*')
-      .eq('id', inviteFromUrl)
-      .eq('status', 'pending')
-      .maybeSingle();
-    if(data){
-      showConsentModal(data);
-      return;
-    }
+    const { data, error } = await sb.from('family_links').select('*').eq('id', inviteFromUrl).eq('status', 'pending').maybeSingle();
+    if(data){ showConsentModal(data); return; }
   }
-
-  // 2. Fallback: match by email or phone
   const userPhone = currentUser.user_metadata?.phone || '';
   const userEmail = currentUser.email || '';
-  
   let query = sb.from('family_links').select('*').eq('status', 'pending');
-  
-  if(userEmail && userPhone) {
-     query = query.or(`member_email.eq.${userEmail},member_phone.eq.${userPhone}`);
-  } else if (userEmail) {
-     query = query.eq('member_email', userEmail);
-  } else if (userPhone) {
-     query = query.eq('member_phone', userPhone);
-  } else {
-    return;
-  }
-  
+  if(userEmail && userPhone) { query = query.or(`member_email.eq.${userEmail},member_phone.eq.${userPhone}`); } 
+  else if (userEmail) { query = query.eq('member_email', userEmail); } 
+  else if (userPhone) { query = query.eq('member_phone', userPhone); } 
+  else { return; }
   const { data: found } = await query.limit(1);
-  if(found && found.length > 0) {
-    showConsentModal(found[0]);
-  }
+  if(found && found.length > 0) { showConsentModal(found[0]); }
 }
 
 function showConsentModal(data){
@@ -530,25 +511,14 @@ function showConsentModal(data){
 
 async function processConsent(allow){
   if(!pendingInviteId || !currentUser) return;
-
   if(allow){
     let { error } = await sb.rpc('accept_invite', { invite_id: pendingInviteId });
-    if(error){
-      const { error: upErr } = await sb.from('family_links')
-        .update({ status: 'accepted', member_user_id: currentUser.id })
-        .eq('id', pendingInviteId).eq('status', 'pending');
-      error = upErr;
-    }
-    if(error){ alert('❌ Error accepting: ' + error.message); } 
-    else { alert('✅ You have joined the family group!'); loadFamilyMembers(); }
+    if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'accepted', member_user_id: currentUser.id }).eq('id', pendingInviteId).eq('status', 'pending'); error = upErr; }
+    if(error){ alert('❌ Error accepting: ' + error.message); } else { alert('✅ You have joined the family group!'); loadFamilyMembers(); }
   } else {
     let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
-    if(error){
-      const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId);
-      error = upErr;
-    }
-    if(error) alert('❌ Error rejecting: ' + error.message);
-    else alert('❌ Invite rejected.');
+    if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId); error = upErr; }
+    if(error) alert('❌ Error rejecting: ' + error.message); else alert('❌ Invite rejected.');
   }
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
@@ -589,7 +559,7 @@ function renderFamilyList(){
     let name = isOwner ? (fm.display_name || (fm.member_email ? fm.member_email.split('@')[0] : 'Member')) : (fm.inviter_name || 'Family Member');
     const initials = name.substring(0,2).toUpperCase();
     let statusBadge = fm.status === 'pending' ? '<span class="badge badge-warn">Pending</span>' : (fm.status === 'accepted' ? '<span class="badge badge-ok">Connected</span>' : '');
-    const deleteBtn = (isOwner && fm.status === 'pending') ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')">🗑 Cancel</button>` : '';
+    const deleteBtn = (isOwner && fm.status === 'pending') ? `<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')"> Cancel</button>` : '';
     const clickAction = fm.is_minor ? `openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')` : `alert('Shared docs view coming soon for ${name}')`;
     const div=document.createElement('div');
     div.className='family-list-item';
@@ -610,8 +580,7 @@ async function sendInviteEmail(){
   if(!name||!email)return alert('Enter Name and Email');
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
   const{data, error}=await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:email, member_phone:null, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
-  if(error){ alert('❌ Database Error: ' + error.message); } 
-  else {
+  if(error){ alert('❌ Database Error: ' + error.message); } else {
     const inviteId = data[0].id;
     const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
     alert(`✅ Invite created for ${name}!\n\nLink: ${link}\n\n(Copy and send this link)`);
@@ -655,17 +624,14 @@ async function addMinor(){
   if(!name||!dob)return alert('Fill all fields');
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || 'Parent';
   const{error}=await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:'minor_'+Date.now()+'@internal', relation_type:'child', is_minor:true, status:'accepted', display_name:name, inviter_name: inviterName, permissions:{name:name,dob:dob} });
-  if(error)alert('❌ '+error.message); else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
+  if(error)alert(' '+error.message); else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
 }
 
 // --- PHASE 1: GENERIC UPLOAD FUNCTIONS ---
-
-// Load saved status for PAN, License, Passport, Other
 async function loadGenericDocsStatus(){
   if(!currentUser) return;
   const { data, error } = await sb.from('documents').select('document_type, id, file_url, document_name').eq('user_id', currentUser.id).is('deleted_at', null);
   if(error || !data) return;
-  
   savedGenericDocs = {};
   data.forEach(d => {
     if(d.document_type === 'PAN Card') savedGenericDocs['PAN Card'] = d;
@@ -676,34 +642,19 @@ async function loadGenericDocsStatus(){
       savedGenericDocs['Other'].push(d);
     }
   });
-  
-  // Update badges
   document.getElementById('panIndicator').classList.toggle('show', !!savedGenericDocs['PAN Card']);
   document.getElementById('licenseIndicator').classList.toggle('show', !!savedGenericDocs['Driving License']);
   document.getElementById('passportIndicator').classList.toggle('show', !!savedGenericDocs['Passport']);
   document.getElementById('otherIndicator').classList.toggle('show', !!(savedGenericDocs['Other'] && savedGenericDocs['Other'].length > 0));
 }
 
-// Smart click handler: View if exists, Upload if not
 async function handleGenericIconClick(type){
   if(!currentUser){ alert('Please sign in first.'); return; }
-  
-  // Reload status to ensure fresh data
   await loadGenericDocsStatus();
-  
-  if(type === 'Other'){
-    showView('otherDocsView');
-    return;
-  }
-  
+  if(type === 'Other'){ showView('otherDocsView'); return; }
   const doc = savedGenericDocs[type];
-  if(doc){
-    // Document exists - open viewer
-    viewGenericDoc(doc.id, doc.file_url, doc.document_name || type);
-  } else {
-    // No document - show upload options
-    openGenericUpload(type);
-  }
+  if(doc){ viewGenericDoc(doc.id, doc.file_url, doc.document_name || type); } 
+  else { openGenericUpload(type); }
 }
 
 function openGenericUpload(type){
@@ -714,9 +665,7 @@ function openGenericUpload(type){
 
 function triggerCamera(){
   const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.capture = 'environment';
+  input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment';
   input.onchange = (e) => handleGenericFileSelect(e.target.files[0]);
   input.click();
   closeModal('uploadMethodModal');
@@ -730,14 +679,9 @@ function triggerFileUpload(){
 async function handleGenericFileSelect(file){
   if(!file) return;
   tempFile = file;
-  
-  if(tempUploadType === 'Other'){
-    openModal('customNameModal');
-  } else if (tempUploadType === 'Driving License' || tempUploadType === 'Passport') {
-    openModal('expiryDateModal');
-  } else {
-    await saveGenericDocument(null);
-  }
+  if(tempUploadType === 'Other'){ openModal('customNameModal'); } 
+  else if (tempUploadType === 'Driving License' || tempUploadType === 'Passport') { openModal('expiryDateModal'); } 
+  else { await saveGenericDocument(null); }
 }
 
 function confirmCustomName(){
@@ -760,7 +704,6 @@ function skipExpiryDate(){
 
 async function saveGenericDocument(expiryDate, customName = null){
   if(!tempFile || !currentUser) return;
-  
   const uid = currentUser.id;
   const ext = tempFile.name.split('.').pop().toLowerCase();
   const timestamp = Date.now();
@@ -776,17 +719,12 @@ async function saveGenericDocument(expiryDate, customName = null){
   try {
     const { error: uploadError } = await sb.storage.from('vault').upload(path, tempFile, { contentType: tempFile.type });
     if(uploadError) throw uploadError;
-
-    const { error: dbError } = await sb.from('documents').insert({
-      user_id: uid, document_type: docType, document_name: docName, file_url: path, valid_until: expiryDate, is_critical: false, deleted_at: null
-    });
+    const { error: dbError } = await sb.from('documents').insert({ user_id: uid, document_type: docType, document_name: docName, file_url: path, valid_until: expiryDate, is_critical: false, deleted_at: null });
     if(dbError) throw dbError;
-
     alert('✅ Document saved successfully!');
-    loadGenericDocsStatus(); // Refresh badges
+    loadGenericDocsStatus();
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
-
   } catch (err) {
     alert('❌ Error saving: ' + err.message);
   } finally {
@@ -801,11 +739,9 @@ async function loadOtherDocs(){
   const list = document.getElementById('otherDocsContainer');
   list.innerHTML = '<p class="sub">Loading…</p>';
   if(!currentUser) return;
-  
   const { data, error } = await sb.from('documents').select('*').eq('user_id', currentUser.id).eq('document_type', 'Other').is('deleted_at', null).order('created_at', { ascending: false });
   if(error){ list.innerHTML = `<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`; return; }
   if(!data || data.length === 0){ list.innerHTML = '<p class="sub">No custom documents yet. Click "Add New" to add one.</p>'; return; }
-  
   list.innerHTML = data.map(d => `
     <div class="doc-row">
       <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
@@ -822,24 +758,94 @@ async function viewGenericDoc(id, path, name){
     const { data, error } = await sb.storage.from('vault').createSignedUrl(path, 300);
     if(error) throw error;
     const ext = path.split('.').pop().toLowerCase();
-    viewerCtx = { kind: 'generic', id: id, path: path, label: name };
+    viewerCtx = { kind: 'generic', id: id, path: path, label: name, isImage: ['jpg','jpeg','png','webp'].includes(ext) };
     document.getElementById('fileViewerTitle').textContent = name;
     document.getElementById('fileViewerImg').src = data.signedUrl;
-    document.getElementById('fileViewerImg').style.display = ['jpg','jpeg','png','webp'].includes(ext) ? 'block' : 'none';
-    if(document.getElementById('fileViewerImg').style.display === 'none') window.open(data.signedUrl, '_blank');
+    document.getElementById('fileViewerImg').style.display = viewerCtx.isImage ? 'block' : 'none';
+    document.getElementById('rotateControls').style.display = viewerCtx.isImage ? 'flex' : 'none';
+    currentRotation = 0;
+    document.getElementById('fileViewerImg').style.transform = `rotate(${currentRotation}deg)`;
+    if(!viewerCtx.isImage) window.open(data.signedUrl, '_blank');
     else openModal('fileViewerModal');
   } catch(err){ alert('Failed: '+err.message); }
+}
+
+function rotateImage(degrees){
+  currentRotation += degrees;
+  document.getElementById('fileViewerImg').style.transform = `rotate(${currentRotation}deg)`;
 }
 
 async function deleteGenericDoc(id){
   if(!confirm('Move to Bin?')) return;
   const { error } = await sb.from('documents').update({ deleted_at: new Date().toISOString() }).eq('id', id);
   if(error) alert('❌ '+error.message);
-  else {
-    alert('✅ Moved to Bin');
-    loadGenericDocsStatus();
-    loadOtherDocs();
+  else { alert('✅ Moved to Bin'); loadGenericDocsStatus(); loadOtherDocs(); }
+}
+
+// --- SHARE FUNCTIONS FOR GENERIC DOCS ---
+async function genericShare(fmt, layout){
+  closeModal('shareModal');
+  if(!viewerCtx || !viewerCtx.isImage){ alert('Share only available for images.'); return; }
+  
+  const sendFile = async (blob, name, mime) => {
+    const f = new File([blob], name, { type: mime });
+    if(navigator.canShare && navigator.canShare({ files: [f] })){
+      try{ await navigator.share({ files: [f], title: viewerCtx.label }); }catch(e){}
+    } else {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(f);
+      a.download = f.name;
+      a.click();
+      alert('Downloaded — attach manually.');
+    }
+  };
+
+  if(fmt === 'a4pdf'){
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const img = document.getElementById('fileViewerImg');
+    const pw = 210, ph = 297;
+    // Create canvas from current rotated image
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.rotate(currentRotation * Math.PI / 180);
+    ctx.drawImage(img, -canvas.width/2, -canvas.height/2);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    const r = Math.min(pw / (canvas.width * 0.00377952755906), ph / (canvas.height * 0.00377952755906));
+    const w = canvas.width * r * 0.00377952755906;
+    const h = canvas.height * r * 0.00377952755906;
+    pdf.addImage(dataUrl, 'JPEG', (pw - w) / 2, (ph - h) / 2, w, h);
+    sendFile(pdf.output('blob'), 'document-a4.pdf', 'application/pdf');
+    return;
   }
+
+  // For JPG/PDF side/stack - create canvas with rotation applied
+  const img = document.getElementById('fileViewerImg');
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.translate(canvas.width/2, canvas.height/2);
+  ctx.rotate(currentRotation * Math.PI / 180);
+  ctx.drawImage(img, -canvas.width/2, -canvas.height/2);
+  
+  let blob, name, mime;
+  if(fmt === 'jpg'){
+    blob = await (await fetch(canvas.toDataURL('image/jpeg', 0.92))).blob();
+    name = `${viewerCtx.label.replace(/[^a-z0-9]/gi, '_')}-${layout}.jpg`;
+    mime = 'image/jpeg';
+  } else {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: [canvas.width * 0.00377952755906, canvas.height * 0.00377952755906] });
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, canvas.width * 0.00377952755906, canvas.height * 0.00377952755906);
+    blob = pdf.output('blob');
+    name = `${viewerCtx.label.replace(/[^a-z0-9]/gi, '_')}-${layout}.pdf`;
+    mime = 'application/pdf';
+  }
+  sendFile(blob, name, mime);
 }
 
 // --- END PHASE 1 FUNCTIONS ---
@@ -871,8 +877,9 @@ function viewerAction(act){
     if(act==='delete'){if(p.delete===false)alert('Delete permission is not granted.');else deleteSharedDocument(c);}
   }else if(c.kind==='generic'){
     if(act==='delete'){closeModal('fileViewerModal');deleteGenericDoc(c.id);}
-    else if(act==='update'){closeModal('fileViewerModal');openGenericUpload(tempUploadType || 'Other');}
-    else alert('Action not available for this document type yet.');
+    if(act==='update'){closeModal('fileViewerModal');openGenericUpload(tempUploadType || c.label);}
+    if(act==='share'){if(!c.isImage){alert('Share options only for images.');return;} openModal('shareModal');}
+    if(act==='familyShare'){openFamilyShareModal(c.id||null);}
   }
 }
 function openViewerPersonal(){
@@ -880,6 +887,7 @@ function openViewerPersonal(){
   viewerCtx={kind:'personal',id:aaRowId};
   document.getElementById('fileViewerTitle').textContent='Aadhaar Card — Full Page';
   document.getElementById('fileViewerImg').src=aaFull.toDataURL('image/jpeg',0.92);
+  document.getElementById('rotateControls').style.display = 'none';
   openModal('fileViewerModal');
 }
 
@@ -943,6 +951,7 @@ function viewChildAadhaar(){
   viewerCtx={kind:'childaadhaar'};
   document.getElementById('fileViewerTitle').textContent='Aadhaar — '+currentChildName;
   document.getElementById('fileViewerImg').src=img.toDataURL('image/jpeg',0.92);
+  document.getElementById('rotateControls').style.display = 'none';
   openModal('fileViewerModal');
 }
 
@@ -951,9 +960,12 @@ async function viewChildFile(id,path,ext,type){
     const{data,error}=await sb.storage.from('vault').createSignedUrl(path,300);
     if(error)throw error;
     if(['jpg','jpeg','png','webp'].includes(ext)){
-      viewerCtx={kind:'childfile',id:id,path:path,type:type,label:TYPE_LABELS[type]||'Document'};
+      viewerCtx={kind:'childfile',id:id,path:path,type:type,label:TYPE_LABELS[type]||'Document',isImage:true};
       document.getElementById('fileViewerTitle').textContent=path.split('/').pop();
       document.getElementById('fileViewerImg').src=data.signedUrl;
+      document.getElementById('rotateControls').style.display = 'flex';
+      currentRotation = 0;
+      document.getElementById('fileViewerImg').style.transform = `rotate(${currentRotation}deg)`;
       openModal('fileViewerModal');
     }else{window.open(data.signedUrl,'_blank');}
   }catch(err){alert('Failed: '+err.message);}
@@ -1004,7 +1016,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent=' '+err.message;}
+    }catch(err){status.textContent='❌ '+err.message;}
   };
   input.click();
 }
@@ -1043,7 +1055,7 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent='✂ '+r.msg;
+    st.textContent=' '+r.msg;
   }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
@@ -1051,10 +1063,10 @@ async function childAaSave(){
   const uid=currentUser.id,base=uid+'/children/'+currentChildId+'/aadhaar-';
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(base+'full.jpg',await jb(childAaCache.full),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
-  (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
-  (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
-  (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'full.jpg',await jb(childAaCache.full),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
   if(childAaRow){
     const{error}=await sb.from('documents').update({file_url:base+'side.jpg',document_name:'Aadhaar Card ('+currentChildName+')',deleted_at:null}).eq('id',childAaRow.id);
@@ -1146,7 +1158,7 @@ async function aaSave(){
   const uid=session.user.id;
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
@@ -1394,7 +1406,7 @@ async function updateSharedDocument(c){
     const ext=(file.name.split('.').pop()||'bin').toLowerCase();
     const path=`${c.document.user_id}/shared-${c.document.id}-${Date.now()}.${ext}`;
     const {error:up}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
-    if(up){alert(' '+up.message);return;}
+    if(up){alert('❌ '+up.message);return;}
     const {error}=await sb.from('documents').update({file_url:path,deleted_at:null}).eq('id',c.document.id);
     if(error){alert('❌ '+error.message);return;}
     closeModal('fileViewerModal');alert('✅ New version uploaded.');loadSharedVault();
