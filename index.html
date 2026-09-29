@@ -47,6 +47,9 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 #aadhaarModal{z-index:250}
 #consentModal{z-index:400}
 #profileModal{z-index:350}
+#uploadMethodModal{z-index:450}
+#customNameModal{z-index:450}
+#expiryDateModal{z-index:450}
 .modal{background:#fff;padding:1.25rem;border-radius:12px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
 .sos-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.6rem;margin:.5rem 0;font-size:.8rem}
 .sos-link{word-break:break-all;color:var(--primary);font-weight:600;display:block;margin-top:.4rem}
@@ -129,9 +132,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         </div>
         <span>Aadhaar</span>
       </div>
-      <div class="icon-tile" onclick="alert('PAN Card — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg></div><span>PAN Card</span></div>
-      <div class="icon-tile" onclick="alert('Driving License — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg></div><span>License</span></div>
-      <div class="icon-tile" onclick="alert('Passport — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg></div><span>Passport</span></div>
+      <div class="icon-tile" onclick="openGenericUpload('PAN Card')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg></div><span>PAN Card</span></div>
+      <div class="icon-tile" onclick="openGenericUpload('Driving License')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg></div><span>License</span></div>
+      <div class="icon-tile" onclick="openGenericUpload('Passport')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg></div><span>Passport</span></div>
+      <!-- NEW: Other Documents Icon -->
+      <div class="icon-tile" onclick="openGenericUpload('Other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div><span>Other Docs</span></div>
     </div>
   </div>
   <div class="card">
@@ -140,7 +145,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/><circle cx="22" cy="37" r="6" fill="#7c3aed"/><circle cx="42" cy="37" r="6" fill="#7c3aed"/><path d="M22 37l7-13h9l4 13M29 24l-5-5h-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span>Bike</span></div>
       <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><path d="M16 37h32l-4-11H20l-4 11z" fill="#3b82f6"/><circle cx="23" cy="40" r="4" fill="#1e3a8a"/><circle cx="41" cy="40" r="4" fill="#1e3a8a"/></svg></div><span>Car</span></div>
       <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/><path d="M32 21v22M21 32h22" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/></svg></div><span>Health</span></div>
-      <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#ccfbf1" stroke="#0f766e" stroke-width="3"/><path d="M32 21c-7-7-16 1-10 8l10 11 10-11c6-7-3-15-10-8z" fill="#14b8a6"/><path d="M25 42h14" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div><span>Life</span></div><span>Life</span></div>
+      <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#ccfbf1" stroke="#0f766e" stroke-width="3"/><path d="M32 21c-7-7-16 1-10 8l10 11 10-11c6-7-3-15-10-8z" fill="#14b8a6"/><path d="M25 42h14" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div><span>Life</span></div>
     </div>
   </div>
 </div>
@@ -173,6 +178,34 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
+<!-- UPLOAD METHOD MODAL (NEW) -->
+<div id="uploadMethodModal" class="modal-overlay"><div class="modal">
+  <h3>Add Document</h3>
+  <p class="sub" id="uploadMethodDocType">Document Type</p>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()"> Take Photo</button>
+  <button class="btn btn-outline" onclick="triggerFileUpload()">📁 Upload File</button>
+  <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('uploadMethodModal')">Cancel</button>
+  <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
+</div></div>
+
+<!-- CUSTOM NAME MODAL (NEW) -->
+<div id="customNameModal" class="modal-overlay"><div class="modal">
+  <h3>Name This Document</h3>
+  <p class="sub">Enter a name to save this document.</p>
+  <div class="field"><label>Document Name</label><input id="customDocName" type="text" placeholder="e.g. Marriage Certificate"></div>
+  <button class="btn btn-primary" onclick="confirmCustomName()">✅ Save</button>
+  <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('customNameModal')">Cancel</button>
+</div></div>
+
+<!-- EXPIRY DATE MODAL (NEW) -->
+<div id="expiryDateModal" class="modal-overlay"><div class="modal">
+  <h3>Validity Details</h3>
+  <p class="sub">Optional: Add expiry date for reminders.</p>
+  <div class="field"><label>Valid Until</label><input id="docExpiryDate" type="date"></div>
+  <button class="btn btn-primary" onclick="confirmExpiryDate()">✅ Save</button>
+  <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipExpiryDate()">Skip</button>
+</div></div>
+
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
   <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
   <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
@@ -182,7 +215,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="shareModal" class="modal-overlay"><div class="modal"><h3>Share as…</h3><button class="btn btn-outline" onclick="aaShare('a4pdf')">A4 Aadhaar PDF (opens without password)</button><button class="btn btn-primary" onclick="aaShare('jpg','side')">ID Card JPG — side by side</button><button class="btn btn-primary" onclick="aaShare('jpg','stack')">ID Card JPG — top & bottom</button><button class="btn btn-outline" onclick="aaShare('pdf','side')">ID Card PDF — side by side</button><button class="btn btn-outline" onclick="aaShare('pdf','stack')">ID Card PDF — top & bottom</button><button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button></div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 Share with Family</h3>
+  <h3>‍👩‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -191,10 +224,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="closeModal('familyShareModal')">Cancel</button>
 </div></div>
 
-<div id="emergencyModal class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
+<div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 Manage Family</h3>
+  <h3>👨‍👩‍ Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
@@ -262,10 +295,23 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="binView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="openFamilyManager()">← Back</button>
-    <h2 style="margin:0">🗑 Bin</h2>
+    <h2 style="margin:0"> Bin</h2>
   </div>
   <p class="sub">Deleted documents stay here for 30 days before permanent cleanup.</p>
   <div class="card"><div id="binDocsContainer"><p class="sub">Loading…</p></div></div>
+</div>
+
+<!-- NEW: Other Documents View -->
+<div id="otherDocsView" class="view container">
+  <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+    <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
+    <h2 id="odTitle" style="margin:0">Other Documents</h2>
+  </div>
+  <p class="sub">Custom documents saved by you.</p>
+  <div class="card">
+    <div class="card-header"><h3>Saved Files</h3><span class="badge badge-ok">Private bucket</span></div>
+    <div id="otherDocsContainer"><p class="sub">Loading…</p></div>
+  </div>
 </div>
 
 <div id="childVaultView" class="view container">
@@ -310,7 +356,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <button class="vdots" onclick="toggleViewerMenu(event)">⋮</button>
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
-      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button><button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍👩‍👧 Share with Family</button>
+      <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍👩‍👧 Share with Family</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
@@ -334,6 +381,11 @@ let shareContext=null,viewerCtx=null;
 let familyShareDocs=[],familyShareTargetId=null,sharedVaultContext=null;
 let familyChannel = null;
 let pendingInviteId = null;
+
+// Phase 1 Variables
+let tempUploadType = null;
+let tempFile = null;
+let tempExpiryDate = null;
 
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
@@ -478,7 +530,7 @@ async function processConsent(allow){
       error = upErr;
     }
     if(error) alert('❌ Error rejecting: ' + error.message);
-    else alert('Invite rejected.');
+    else alert('❌ Invite rejected.');
   }
 
   closeModal('consentModal');
@@ -698,6 +750,191 @@ async function addMinor(){
   else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
 }
 
+// --- PHASE 1: GENERIC UPLOAD FUNCTIONS ---
+function openGenericUpload(type){
+  if(!currentUser){alert('Please sign in first.');return;}
+  tempUploadType = type;
+  document.getElementById('uploadMethodDocType').textContent = type === 'Other' ? 'Other Documents' : type;
+  openModal('uploadMethodModal');
+}
+
+function triggerCamera(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.capture = 'environment';
+  input.onchange = (e) => handleGenericFileSelect(e.target.files[0]);
+  input.click();
+  closeModal('uploadMethodModal');
+}
+
+function triggerFileUpload(){
+  document.getElementById('genericFileInput').click();
+  closeModal('uploadMethodModal');
+}
+
+async function handleGenericFileSelect(file){
+  if(!file) return;
+  tempFile = file;
+  
+  if(tempUploadType === 'Other'){
+    openModal('customNameModal');
+  } else if (tempUploadType === 'Driving License' || tempUploadType === 'Passport') {
+    openModal('expiryDateModal');
+  } else {
+    // PAN Card or others without expiry
+    await saveGenericDocument(null);
+  }
+}
+
+function confirmCustomName(){
+  const name = document.getElementById('customDocName').value.trim();
+  if(!name) return alert('Please enter a document name');
+  closeModal('customNameModal');
+  // For Other docs, we don't ask expiry in Phase 1, but we could later
+  saveGenericDocument(null, name);
+}
+
+function confirmExpiryDate(){
+  const date = document.getElementById('docExpiryDate').value;
+  closeModal('expiryDateModal');
+  saveGenericDocument(date);
+}
+
+function skipExpiryDate(){
+  closeModal('expiryDateModal');
+  saveGenericDocument(null);
+}
+
+async function saveGenericDocument(expiryDate, customName = null){
+  if(!tempFile || !currentUser) return;
+  
+  const uid = currentUser.id;
+  const ext = tempFile.name.split('.').pop().toLowerCase();
+  const timestamp = Date.now();
+  let path = '';
+  let docType = tempUploadType;
+  let docName = customName || docType;
+
+  // Determine path and type
+  if(docType === 'PAN Card'){
+    path = `${uid}/pan_card_${timestamp}.${ext}`;
+    docType = 'PAN Card';
+  } else if (docType === 'Driving License') {
+    path = `${uid}/driving_license_${timestamp}.${ext}`;
+    docType = 'Driving License';
+  } else if (docType === 'Passport') {
+    path = `${uid}/passport_${timestamp}.${ext}`;
+    docType = 'Passport';
+  } else {
+    path = `${uid}/other/${docName.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.${ext}`;
+    docType = 'Other';
+  }
+
+  // Show loading alert (simple feedback)
+  const loadingMsg = alert('⏳ Uploading...'); // Blocks execution briefly
+
+  try {
+    // Upload to Storage
+    const { error: uploadError } = await sb.storage.from('vault').upload(path, tempFile, { contentType: tempFile.type });
+    if(uploadError) throw uploadError;
+
+    // Save to Database
+    const { error: dbError } = await sb.from('documents').insert({
+      user_id: uid,
+      document_type: docType,
+      document_name: docName,
+      file_url: path,
+      valid_until: expiryDate,
+      is_critical: false,
+      deleted_at: null
+    });
+
+    if(dbError) throw dbError;
+
+    alert('✅ Document saved successfully!');
+    if(docType === 'Other') loadOtherDocs(); // Refresh view if open
+    else showView('vault'); // Return to vault
+
+  } catch (err) {
+    alert(' Error saving: ' + err.message);
+  } finally {
+    // Reset
+    tempFile = null;
+    tempUploadType = null;
+    document.getElementById('genericFileInput').value = '';
+    document.getElementById('customDocName').value = '';
+    document.getElementById('docExpiryDate').value = '';
+  }
+}
+
+async function loadOtherDocs(){
+  const list = document.getElementById('otherDocsContainer');
+  list.innerHTML = '<p class="sub">Loading…</p>';
+  if(!currentUser) return;
+  
+  const { data, error } = await sb.from('documents')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .eq('document_type', 'Other')
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false });
+    
+  if(error){
+    list.innerHTML = `<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`;
+    return;
+  }
+  
+  if(!data || data.length === 0){
+    list.innerHTML = '<p class="sub">No custom documents yet. Click "Other Docs" to add one.</p>';
+    return;
+  }
+  
+  list.innerHTML = data.map(d => `
+    <div class="doc-row">
+      <div class="doc-info">
+        <h4>${escHtml(d.document_name)}</h4>
+        <p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p>
+      </div>
+      <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}')">View</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function viewGenericDoc(id, path){
+  try{
+    const { data, error } = await sb.storage.from('vault').createSignedUrl(path, 300);
+    if(error) throw error;
+    
+    const ext = path.split('.').pop().toLowerCase();
+    if(['jpg','jpeg','png','webp'].includes(ext)){
+       viewerCtx = { kind: 'generic', id: id, path: path };
+       document.getElementById('fileViewerTitle').textContent = path.split('/').pop();
+       document.getElementById('fileViewerImg').src = data.signedUrl;
+       openModal('fileViewerModal');
+    } else {
+       window.open(data.signedUrl, '_blank');
+    }
+  } catch(err){
+    alert('Failed: '+err.message);
+  }
+}
+
+async function deleteGenericDoc(id){
+  if(!confirm('Move to Bin?')) return;
+  const { error } = await sb.from('documents').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+  if(error) alert(' '+error.message);
+  else {
+    alert('✅ Moved to Bin');
+    loadOtherDocs();
+  }
+}
+
+// --- END PHASE 1 FUNCTIONS ---
+
 function toggleViewerMenu(e){e.stopPropagation();document.getElementById('viewerMenu').classList.toggle('show');}
 function viewerAction(act){
   document.getElementById('viewerMenu').classList.remove('show');
@@ -710,253 +947,7 @@ function viewerAction(act){
   }else if(c.kind==='childaadhaar'){
     if(act==='update'){closeModal('fileViewerModal');openChildAaModal('update');}
     if(act==='share'){shareChildAadhaar();}
-    if(act==='familyShare'){openFamilyShareM
-function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
-function docIsChild(d){return /^child_/.test(d.document_type||'') || (d.file_url||'').includes('/children/');}
-function docLabel(d){return d.document_name||d.document_type||'Document';}
-
-async function getFamilyAdultTargets(){
-  const map=new Map();
-  (familyMembers||[]).filter(f=>f.status==='accepted'&&!f.is_minor).forEach(f=>{
-    const id=familyOtherUserId(f); if(id)map.set(id,familyDisplayName(f));
-  });
-  return [...map.entries()].map(([id,name])=>({id,name}));
-}
-
-async function openFamilyShareModal(preselectId=null){
-  if(!currentUser){alert('Sign in first.');return;}
-  familyShareTargetId=null; familyShareDocs=[]; window.familySharePreselectId=preselectId||null;
-  await loadFamilyMembers();
-  const targets=await getFamilyAdultTargets();
-  const sel=document.getElementById('familyShareTarget');
-  sel.innerHTML=targets.length?targets.map(t=>`<option value="${t.id}">${escHtml(t.name)}</option>`).join(''):'<option value="">No connected adult family member</option>';
-  if(!targets.length){alert('Connect a family member first.');return;}
-  familyShareTargetId=sel.value;
-  if(preselectId){
-    const {data:single}=await sb.from('documents').select('*').eq('id',preselectId).maybeSingle();
-    if(single)familyShareDocs=[single];
-    else familyShareDocs=await getOwnedShareDocs();
-  }else familyShareDocs=await getOwnedShareDocs();
-  await renderFamilyShareMatrix();
-  closeModal('familyManagerModal');
-  openModal('familyShareModal');
-}
-
-async function getOwnedShareDocs(){
-  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).order('created_at',{ascending:false});
-  if(error){alert('❌ '+error.message);return[];}
-  return data||[];
-}
-
-async function renderFamilyShareMatrix(){
-  const sel=document.getElementById('familyShareTarget');
-  familyShareTargetId=sel.value;
-  const box=document.getElementById('familyShareDocs');
-  if(!familyShareDocs.length){box.innerHTML='<p class="sub">No documents available to share.</p>';return;}
-  let existing=[];
-  if(familyShareTargetId){
-    const ids=familyShareDocs.map(d=>d.id);
-    const {data}=await sb.from('document_shares').select('*').eq('recipient_user_id',familyShareTargetId).in('document_id',ids);
-    existing=data||[];
-  }
-  const byId=new Map(existing.map(x=>[x.document_id,x]));
-  box.innerHTML=familyShareDocs.map(d=>{
-    const ex=byId.get(d.id), p=ex?.permissions||{};
-    const child=docIsChild(d), checked=!!ex||d.id===window.familySharePreselectId;
-    const rights=['view','edit','download','delete','share'];
-    return `<div class="family-share-row">
-      <label style="display:flex;align-items:center;gap:.4rem;font-weight:700">
-        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}')">
-        ${escHtml(docLabel(d))}${child?' <span class="badge badge-ok">Child • Full rights</span>':''}
-      </label>
-      <table class="share-matrix" id="rights-${d.id}">
-        <tr>${rights.map(r=>`<th>${r[0].toUpperCase()+r.slice(1)}</th>`).join('')}</tr>
-        <tr>${rights.map(r=>{
-          const val=child?true:(ex?p[r]!==false:(r==='view'||r==='download'));
-          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''}></td>`;
-        }).join('')}</tr>
-      </table>
-    </div>`;
-  }).join('');
-  familyShareDocs.forEach(d=>toggleFamilyDocRights(d.id));
-}
-
-function toggleFamilyDocRights(id){
-  const checked=document.querySelector(`.family-doc-check[data-doc-id="${id}"]`)?.checked;
-  document.querySelectorAll(`[data-doc-id="${id}"].right-view,[data-doc-id="${id}"].right-edit,[data-doc-id="${id}"].right-download,[data-doc-id="${id}"].right-delete,[data-doc-id="${id}"].right-share`).forEach(x=>{x.disabled=!checked;});
-}
-
-async function saveFamilyShares(){
-  const target=document.getElementById('familyShareTarget').value;
-  if(!target)return;
-  let ok=0;
-  for(const d of familyShareDocs){
-    const selected=document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
-    const child=docIsChild(d);
-    if(!selected){
-      await sb.from('document_shares').delete().eq('document_id',d.id).eq('recipient_user_id',target);
-      continue;
-    }
-    const permissions={};
-    ['view','edit','download','delete','share'].forEach(r=>{
-      const el=document.querySelector(`.right-${r}[data-doc-id="${d.id}"]`);
-      permissions[r]=child?true:!!el?.checked;
-    });
-    const {error}=await sb.from('document_shares').upsert({
-      document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString()
-    },{onConflict:'document_id,recipient_user_id'});
-    if(!error)ok++; else alert('❌ '+error.message);
-  }
-  alert(`✅ Family access updated for ${ok} document(s).`);
-  closeModal('familyShareModal');
-}
-
-async function openSharedVault(userId,name){
-  sharedVaultContext={kind:'adult',userId,name};
-  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
-  document.getElementById('svSub').textContent='Documents '+name+' has shared with you. Access is controlled document-by-document.';
-  showView('sharedVaultView');
-  await loadSharedVault();
-}
-
-async function openSharedChildVault(childId,name,ownerId){
-  sharedVaultContext={kind:'child',childId,name,ownerId};
-  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
-  document.getElementById('svSub').textContent='Child documents shared with you. Child documents use full family rights.';
-  showView('sharedVaultView');
-  await loadSharedVault();
-}
-
-async function loadSharedVault(){
-  const box=document.getElementById('sharedDocsContainer');
-  box.innerHTML='<p class="sub">Loading…</p>';
-  if(!currentUser||!sharedVaultContext)return;
-  let q=sb.from('document_shares').select('*,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
-  const {data,error}=await q;
-  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
-  let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
-  if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
-  else rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
-  if(!rows.length){box.innerHTML='<p class="sub">No documents have been shared with you yet.</p>';return;}
-  box.innerHTML=rows.map(s=>{
-    const d=s.documents,p=s.permissions||{};
-    const actions=[];
-    if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
-    if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
-    if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
-    if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
-    if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
-    return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4><p>${docIsChild(d)?'Child document':'Family-shared document'} • rights: ${Object.keys(p).filter(k=>p[k]).join(', ')}</p></div><div class="shared-doc-actions">${actions.join('')}</div></div>`;
-  }).join('');
-}
-
-async function getSharedRecord(docId){
-  const {data,error}=await sb.from('document_shares').select('*,documents(*)').eq('document_id',docId).eq('recipient_user_id',currentUser.id).eq('status','active').maybeSingle();
-  if(error||!data||!data.documents||data.documents.deleted_at)return null;
-  return data;
-}
-
-async function openSharedDocument(docId){
-  const s=await getSharedRecord(docId); if(!s){alert('Access is no longer available.');return;}
-  const d=s.documents,p=s.permissions||{};
-  if(p.view===false){alert('View permission is not granted.');return;}
-  try{
-    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);
-    if(error)throw error;
-    viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
-    document.getElementById('fileViewerTitle').textContent=docLabel(d);
-    document.getElementById('fileViewerImg').src=data.signedUrl;
-    document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
-    if(document.getElementById('fileViewerImg').style.display==='none')window.open(data.signedUrl,'_blank');
-    else openModal('fileViewerModal');
-  }catch(err){alert('Failed: '+err.message);}
-}
-
-async function downloadSharedDocument(docId){
-  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
-  if(s.permissions?.download===false)return alert('Download permission is not granted.');
-  const {data,error}=await sb.storage.from('vault').download(s.documents.file_url);
-  if(error){alert('❌ '+error.message);return;}
-  const a=document.createElement('a');a.href=URL.createObjectURL(data);a.download=s.documents.file_url.split('/').pop();a.click();
-}
-
-async function updateSharedDocumentById(docId){
-  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
-  updateSharedDocument({id:docId,document:s.documents,permissions:s.permissions});
-}
-async function updateSharedDocument(c){
-  if(c.permissions?.edit===false)return alert('Edit permission is not granted.');
-  const input=document.createElement('input');input.type='file';input.accept='image/*,application/pdf';
-  input.onchange=async e=>{
-    const file=e.target.files[0];if(!file)return;
-    const ext=(file.name.split('.').pop()||'bin').toLowerCase();
-    const path=`${c.document.user_id}/shared-${c.document.id}-${Date.now()}.${ext}`;
-    const {error:up}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
-    if(up){alert('❌ '+up.message);return;}
-    const {error}=await sb.from('documents').update({file_url:path,deleted_at:null}).eq('id',c.document.id);
-    if(error){alert('❌ '+error.message);return;}
-    closeModal('fileViewerModal');alert('✅ New version uploaded.');loadSharedVault();
-  };
-  input.click();
-}
-
-
-async function loadSharedAaCache(path){
-  const base=path.replace(/[^/]+$/,'');
-  const get=async n=>{
-    const {data}=await sb.storage.from('vault').download(base+n);
-    if(!data)return null;
-    try{const b=await createImageBitmap(data),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;}
-  };
-  sharedAaCache={side:await get('aadhaar-side.jpg'),front:await get('aadhaar-front.jpg'),back:await get('aadhaar-back.jpg'),full:await get('aadhaar-full.jpg')};
-  return !!sharedAaCache.side||!!sharedAaCache.full;
-}
-
-async function shareSharedDocumentById(docId){
-  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
-  if(s.permissions?.share===false)return alert('Share permission is not granted.');
-  const d=s.documents;
-  if((d.document_type||'').toLowerCase().includes('aadhaar') || (d.file_url||'').includes('/aadhaar-')){
-    const loaded=await loadSharedAaCache(d.file_url);
-    if(!loaded)return alert('Aadhaar share versions are not available.');
-    shareContext={kind:'shared',docId:d.id,ownerId:d.user_id,path:d.file_url};
-    closeModal('fileViewerModal');openModal('shareModal');return;
-  }
-  try{
-    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);if(error)throw error;
-    const blob=await(await fetch(data.signedUrl)).blob();
-    const f=new File([blob],d.file_url.split('/').pop(),{type:blob.type});
-    if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:docLabel(d)});
-    else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();}
-  }catch(err){alert('Share failed: '+err.message);}
-}
-async function shareSharedDocument(c){return shareSharedDocumentById(c.id);}
-
-async function deleteSharedDocumentById(docId){
-  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
-  if(s.permissions?.delete===false)return alert('Delete permission is not granted.');
-  if(!confirm('Move this document to Bin? It can be restored for 30 days.'))return;
-  const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',docId);
-  if(error){alert('❌ '+error.message);return;}
-  closeModal('fileViewerModal');loadSharedVault();
-}
-async function deleteSharedDocument(c){return deleteSharedDocumentById(c.id);}
-
-async function openBinView(){
-  if(!currentUser)return;
-  showView('binView');
-  const box=document.getElementById('binDocsContainer');box.innerHTML='<p class="sub">Loading…</p>';
-  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).not('deleted_at','is',null).order('deleted_at',{ascending:false});
-  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
-  const active=(data||[]).filter(d=>new Date(d.deleted_at).getTime()>Date.now()-30*24*60*60*1000);
-  if(!active.length){box.innerHTML='<p class="sub">Bin is empty.</p>';return;}
-  box.innerHTML=active.map(d=>`<div class="bin-row"><div><strong>${escHtml(docLabel(d))}</strong><br><small style="color:var(--gray)">Deleted ${new Date(d.deleted_at).toLocaleString()}</small></div><button class="btn btn-success btn-sm" onclick="restoreDocument('${d.id}')">↩ Restore</button></div>`).join('');
-}
-async function restoreDocument(id){
-  const {error}=await sb.from('documents').update({deleted_at:null}).eq('id',id).eq('user_id',currentUser.id);
-  if(error)alert('❌ '+error.message);else{alert('✅ Restored.');openBinView();}
-}
-odal(c.id||childAaRow?.id||null);}
+    if(act==='familyShare'){openFamilyShareModal(c.id||childAaRow?.id||null);}
     if(act==='delete'){deleteChildAadhaar();}
   }else if(c.kind==='childfile'){
     if(act==='update'){closeModal('fileViewerModal');pickChildFile(c.type,c.id);}
@@ -969,6 +960,9 @@ odal(c.id||childAaRow?.id||null);}
     if(act==='share'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocument(c);}
     if(act==='familyShare'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocumentById(c.id);}
     if(act==='delete'){if(p.delete===false)alert('Delete permission is not granted.');else deleteSharedDocument(c);}
+  }else if(c.kind==='generic'){
+    if(act==='delete'){closeModal('fileViewerModal');deleteGenericDoc(c.id);}
+    else alert('Action not available for this document type yet.');
   }
 }
 function openViewerPersonal(){
@@ -992,7 +986,7 @@ async function loadChildDocs(){
   childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
   if(!currentUser||!currentChildId)return;
   const{data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
-  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+error.message+'</p>';return;}
+  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)"> '+error.message+'</p>';return;}
   childDocs=data||[];
   await renderChildDocs();
 }
@@ -1265,7 +1259,7 @@ async function aaDelete(){
   const{data:{session}}=await sb.auth.getSession();if(!session)return;
   const uid=session.user.id;
   const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
-  if(error){alert('❌ '+error.message);return;}
+  if(error){alert(' '+error.message);return;}
   resetAadhaarUI();closeModal('fileViewerModal');alert('✅ Moved to Bin for 30 days.');
 }
 function aaSharePick(){shareContext=null;openModal('shareModal');}
@@ -1298,9 +1292,265 @@ function startLocate(){if(!navigator.geolocation){document.getElementById('sosSt
 function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 
-function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));const m={vault:'nav-vault',autopilot:'nav-auto'};if(m[id])document.getElementById(m[id]).classList.add('active');window.scrollTo(0,0);}
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const m={vault:'nav-vault',autopilot:'nav-auto', otherDocsView:'nav-vault'}; 
+  if(m[id])document.getElementById(m[id]).classList.add('active');
+  window.scrollTo(0,0);
+  if(id === 'otherDocsView') loadOtherDocs();
+}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
+function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+function docIsChild(d){return /^child_/.test(d.document_type||'') || (d.file_url||'').includes('/children/');}
+function docLabel(d){return d.document_name||d.document_type||'Document';}
+function familyOtherUserId(f){return f.owner_id===currentUser.id ? f.member_user_id : f.owner_id;}
+function familyDisplayName(f){return f.display_name || (f.member_email?f.member_email.split('@')[0]:'Member');}
+
+async function getFamilyAdultTargets(){
+  const map=new Map();
+  (familyMembers||[]).filter(f=>f.status==='accepted'&&!f.is_minor).forEach(f=>{
+    const id=familyOtherUserId(f); if(id)map.set(id,familyDisplayName(f));
+  });
+  return [...map.entries()].map(([id,name])=>({id,name}));
+}
+
+async function openFamilyShareModal(preselectId=null){
+  if(!currentUser){alert('Sign in first.');return;}
+  familyShareTargetId=null; familyShareDocs=[]; window.familySharePreselectId=preselectId||null;
+  await loadFamilyMembers();
+  const targets=await getFamilyAdultTargets();
+  const sel=document.getElementById('familyShareTarget');
+  sel.innerHTML=targets.length?targets.map(t=>`<option value="${t.id}">${escHtml(t.name)}</option>`).join(''):'<option value="">No connected adult family member</option>';
+  if(!targets.length){alert('Connect a family member first.');return;}
+  familyShareTargetId=sel.value;
+  if(preselectId){
+    const {data:single}=await sb.from('documents').select('*').eq('id',preselectId).maybeSingle();
+    if(single)familyShareDocs=[single];
+    else familyShareDocs=await getOwnedShareDocs();
+  }else familyShareDocs=await getOwnedShareDocs();
+  await renderFamilyShareMatrix();
+  closeModal('familyManagerModal');
+  openModal('familyShareModal');
+}
+
+async function getOwnedShareDocs(){
+  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).order('created_at',{ascending:false});
+  if(error){alert('❌ '+error.message);return[];}
+  return data||[];
+}
+
+async function renderFamilyShareMatrix(){
+  const sel=document.getElementById('familyShareTarget');
+  familyShareTargetId=sel.value;
+  const box=document.getElementById('familyShareDocs');
+  if(!familyShareDocs.length){box.innerHTML='<p class="sub">No documents available to share.</p>';return;}
+  let existing=[];
+  if(familyShareTargetId){
+    const ids=familyShareDocs.map(d=>d.id);
+    const {data}=await sb.from('document_shares').select('*').eq('recipient_user_id',familyShareTargetId).in('document_id',ids);
+    existing=data||[];
+  }
+  const byId=new Map(existing.map(x=>[x.document_id,x]));
+  box.innerHTML=familyShareDocs.map(d=>{
+    const ex=byId.get(d.id), p=ex?.permissions||{};
+    const child=docIsChild(d), checked=!!ex||d.id===window.familySharePreselectId;
+    const rights=['view','edit','download','delete','share'];
+    return `<div class="family-share-row">
+      <label style="display:flex;align-items:center;gap:.4rem;font-weight:700">
+        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}')">
+        ${escHtml(docLabel(d))}${child?' <span class="badge badge-ok">Child • Full rights</span>':''}
+      </label>
+      <table class="share-matrix" id="rights-${d.id}">
+        <tr>${rights.map(r=>`<th>${r[0].toUpperCase()+r.slice(1)}</th>`).join('')}</tr>
+        <tr>${rights.map(r=>{
+          const val=child?true:(ex?p[r]!==false:(r==='view'||r==='download'));
+          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''}></td>`;
+        }).join('')}</tr>
+      </table>
+    </div>`;
+  }).join('');
+  familyShareDocs.forEach(d=>toggleFamilyDocRights(d.id));
+}
+
+function toggleFamilyDocRights(id){
+  const checked=document.querySelector(`.family-doc-check[data-doc-id="${id}"]`)?.checked;
+  document.querySelectorAll(`[data-doc-id="${id}"].right-view,[data-doc-id="${id}"].right-edit,[data-doc-id="${id}"].right-download,[data-doc-id="${id}"].right-delete,[data-doc-id="${id}"].right-share`).forEach(x=>{x.disabled=!checked;});
+}
+
+async function saveFamilyShares(){
+  const target=document.getElementById('familyShareTarget').value;
+  if(!target)return;
+  let ok=0;
+  for(const d of familyShareDocs){
+    const selected=document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
+    const child=docIsChild(d);
+    if(!selected){
+      await sb.from('document_shares').delete().eq('document_id',d.id).eq('recipient_user_id',target);
+      continue;
+    }
+    const permissions={};
+    ['view','edit','download','delete','share'].forEach(r=>{
+      const el=document.querySelector(`.right-${r}[data-doc-id="${d.id}"]`);
+      permissions[r]=child?true:!!el?.checked;
+    });
+    const {error}=await sb.from('document_shares').upsert({
+      document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString()
+    },{onConflict:'document_id,recipient_user_id'});
+    if(!error)ok++; else alert('❌ '+error.message);
+  }
+  alert(`✅ Family access updated for ${ok} document(s).`);
+  closeModal('familyShareModal');
+}
+
+async function openSharedVault(userId,name){
+  sharedVaultContext={kind:'adult',userId,name};
+  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
+  document.getElementById('svSub').textContent='Documents '+name+' has shared with you. Access is controlled document-by-document.';
+  showView('sharedVaultView');
+  await loadSharedVault();
+}
+
+async function openSharedChildVault(childId,name,ownerId){
+  sharedVaultContext={kind:'child',childId,name,ownerId};
+  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
+  document.getElementById('svSub').textContent='Child documents shared with you. Child documents use full family rights.';
+  showView('sharedVaultView');
+  await loadSharedVault();
+}
+
+async function loadSharedVault(){
+  const box=document.getElementById('sharedDocsContainer');
+  box.innerHTML='<p class="sub">Loading…</p>';
+  if(!currentUser||!sharedVaultContext)return;
+  let q=sb.from('document_shares').select('*,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
+  const {data,error}=await q;
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
+  let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
+  if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
+  else rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
+  if(!rows.length){box.innerHTML='<p class="sub">No documents have been shared with you yet.</p>';return;}
+  box.innerHTML=rows.map(s=>{
+    const d=s.documents,p=s.permissions||{};
+    const actions=[];
+    if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
+    if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
+    if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
+    if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
+    if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
+    return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4><p>${docIsChild(d)?'Child document':'Family-shared document'} • rights: ${Object.keys(p).filter(k=>p[k]).join(', ')}</p></div><div class="shared-doc-actions">${actions.join('')}</div></div>`;
+  }).join('');
+}
+
+async function getSharedRecord(docId){
+  const {data,error}=await sb.from('document_shares').select('*,documents(*)').eq('document_id',docId).eq('recipient_user_id',currentUser.id).eq('status','active').maybeSingle();
+  if(error||!data||!data.documents||data.documents.deleted_at)return null;
+  return data;
+}
+
+async function openSharedDocument(docId){
+  const s=await getSharedRecord(docId); if(!s){alert('Access is no longer available.');return;}
+  const d=s.documents,p=s.permissions||{};
+  if(p.view===false){alert('View permission is not granted.');return;}
+  try{
+    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);
+    if(error)throw error;
+    viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
+    document.getElementById('fileViewerTitle').textContent=docLabel(d);
+    document.getElementById('fileViewerImg').src=data.signedUrl;
+    document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
+    if(document.getElementById('fileViewerImg').style.display==='none')window.open(data.signedUrl,'_blank');
+    else openModal('fileViewerModal');
+  }catch(err){alert('Failed: '+err.message);}
+}
+
+async function downloadSharedDocument(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  if(s.permissions?.download===false)return alert('Download permission is not granted.');
+  const {data,error}=await sb.storage.from('vault').download(s.documents.file_url);
+  if(error){alert('❌ '+error.message);return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(data);a.download=s.documents.file_url.split('/').pop();a.click();
+}
+
+async function updateSharedDocumentById(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  updateSharedDocument({id:docId,document:s.documents,permissions:s.permissions});
+}
+async function updateSharedDocument(c){
+  if(c.permissions?.edit===false)return alert('Edit permission is not granted.');
+  const input=document.createElement('input');input.type='file';input.accept='image/*,application/pdf';
+  input.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const ext=(file.name.split('.').pop()||'bin').toLowerCase();
+    const path=`${c.document.user_id}/shared-${c.document.id}-${Date.now()}.${ext}`;
+    const {error:up}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
+    if(up){alert('❌ '+up.message);return;}
+    const {error}=await sb.from('documents').update({file_url:path,deleted_at:null}).eq('id',c.document.id);
+    if(error){alert('❌ '+error.message);return;}
+    closeModal('fileViewerModal');alert('✅ New version uploaded.');loadSharedVault();
+  };
+  input.click();
+}
+
+
+async function loadSharedAaCache(path){
+  const base=path.replace(/[^/]+$/,'');
+  const get=async n=>{
+    const {data}=await sb.storage.from('vault').download(base+n);
+    if(!data)return null;
+    try{const b=await createImageBitmap(data),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;}
+  };
+  sharedAaCache={side:await get('aadhaar-side.jpg'),front:await get('aadhaar-front.jpg'),back:await get('aadhaar-back.jpg'),full:await get('aadhaar-full.jpg')};
+  return !!sharedAaCache.side||!!sharedAaCache.full;
+}
+
+async function shareSharedDocumentById(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  if(s.permissions?.share===false)return alert('Share permission is not granted.');
+  const d=s.documents;
+  if((d.document_type||'').toLowerCase().includes('aadhaar') || (d.file_url||'').includes('/aadhaar-')){
+    const loaded=await loadSharedAaCache(d.file_url);
+    if(!loaded)return alert('Aadhaar share versions are not available.');
+    shareContext={kind:'shared',docId:d.id,ownerId:d.user_id,path:d.file_url};
+    closeModal('fileViewerModal');openModal('shareModal');return;
+  }
+  try{
+    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);if(error)throw error;
+    const blob=await(await fetch(data.signedUrl)).blob();
+    const f=new File([blob],d.file_url.split('/').pop(),{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:docLabel(d)});
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();}
+  }catch(err){alert('Share failed: '+err.message);}
+}
+async function shareSharedDocument(c){return shareSharedDocumentById(c.id);}
+
+async function deleteSharedDocumentById(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  if(s.permissions?.delete===false)return alert('Delete permission is not granted.');
+  if(!confirm('Move this document to Bin? It can be restored for 30 days.'))return;
+  const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',docId);
+  if(error){alert('❌ '+error.message);return;}
+  closeModal('fileViewerModal');loadSharedVault();
+}
+async function deleteSharedDocument(c){return deleteSharedDocumentById(c.id);}
+
+async function openBinView(){
+  if(!currentUser)return;
+  showView('binView');
+  const box=document.getElementById('binDocsContainer');box.innerHTML='<p class="sub">Loading…</p>';
+  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).not('deleted_at','is',null).order('deleted_at',{ascending:false});
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)"> '+escHtml(error.message)+'</p>';return;}
+  const active=(data||[]).filter(d=>new Date(d.deleted_at).getTime()>Date.now()-30*24*60*60*1000);
+  if(!active.length){box.innerHTML='<p class="sub">Bin is empty.</p>';return;}
+  box.innerHTML=active.map(d=>`<div class="bin-row"><div><strong>${escHtml(docLabel(d))}</strong><br><small style="color:var(--gray)">Deleted ${new Date(d.deleted_at).toLocaleString()}</small></div><button class="btn btn-success btn-sm" onclick="restoreDocument('${d.id}')">↩ Restore</button></div>`).join('');
+}
+async function restoreDocument(id){
+  const {error}=await sb.from('documents').update({deleted_at:null}).eq('id',id).eq('user_id',currentUser.id);
+  if(error)alert('❌ '+error.message);else{alert('✅ Restored.');openBinView();}
+}
+
 window.onclick=e=>{
   if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
   if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
