@@ -42,7 +42,8 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal-overlay.show{display:flex}
-#shareModal{z-index:350}
+#shareModal{z-index:450}
+#genericShareModal{z-index:450}
 #fileViewerModal{z-index:250}
 #aadhaarModal{z-index:250}
 #consentModal{z-index:400}
@@ -186,7 +187,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="consentActions" style="display:none;flex-direction:column;gap:.5rem;margin-top:1rem">
     <div style="display:flex;gap:.5rem">
       <button class="btn btn-success" style="flex:1" onclick="processConsent(true)">✅ Allow</button>
-      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)">❌ Reject</button>
+      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)"> Reject</button>
     </div>
   </div>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('consentModal');window.history.pushState({},'',window.location.pathname);">Cancel</button>
@@ -208,7 +209,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <h3>Add Document</h3>
   <p class="sub" id="uploadMethodDocType">Document Type</p>
   <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()">📷 Take Photo</button>
-  <button class="btn btn-outline" onclick="triggerFileUpload()">📁 Upload File</button>
+  <button class="btn btn-outline" onclick="triggerFileUpload()"> Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('uploadMethodModal')">Cancel</button>
   <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
 </div></div>
@@ -235,7 +236,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="passportPage2Modal" class="modal-overlay"><div class="modal">
   <h3>📄 Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()"> Take Photo</button>
   <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
@@ -250,11 +251,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <!-- AADHAAR SHARE MODAL (5 options) -->
 <div id="shareModal" class="modal-overlay"><div class="modal">
   <h3>Share Aadhaar as…</h3>
-  <button class="btn btn-outline" onclick="aaShare('a4pdf')"> A4 Aadhaar PDF</button>
+  <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','side')">📄 ID Card PDF — side by side</button>
-  <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 ID Card PDF — top & bottom</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','stack')"> ID Card PDF — top & bottom</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
 </div></div>
 
@@ -262,12 +263,12 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="genericShareModal" class="modal-overlay"><div class="modal">
   <h3>Share Document</h3>
   <button class="btn btn-primary" onclick="genericShare('jpg')">🖼️ Share as JPG</button>
-  <button class="btn btn-outline" onclick="genericShare('pdf')"> Share as PDF</button>
+  <button class="btn btn-outline" onclick="genericShare('pdf')">📄 Share as PDF</button>
   <button class="btn btn-outline" onclick="closeModal('genericShareModal')">Cancel</button>
 </div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍ Share with Family</h3>
+  <h3>👨‍👩‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -347,7 +348,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="binView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="openFamilyManager()">← Back</button>
-    <h2 style="margin:0">🗑 Bin</h2>
+    <h2 style="margin:0"> Bin</h2>
   </div>
   <p class="sub">Deleted documents stay here for 30 days before permanent cleanup.</p>
   <div class="card"><div id="binDocsContainer"><p class="sub">Loading…</p></div></div>
@@ -364,7 +365,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="card-header">
       <h3>Saved Files</h3>
       <span class="badge badge-ok">Private bucket</span>
-      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')"> Add New</button>
+      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')">➕ Add New</button>
     </div>
     <div id="otherDocsContainer"><p class="sub">Loading…</p></div>
   </div>
@@ -413,13 +414,13 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
-      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍‍👧 Share with Family</button>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍👩👧 Share with Family</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
   <div class="rotate-controls" id="rotateControls" style="display:none">
     <button class="btn btn-outline btn-sm" onclick="rotateImage(-90)">↺ Rotate Left</button>
-    <button class="btn btn-outline btn-sm" onclick="rotateImage(90)">↻ Rotate Right</button>
+    <button class="btn btn-outline btn-sm" onclick="rotateImage(90)"> Rotate Right</button>
   </div>
   <img id="fileViewerImg" class="viewer-img" alt="document">
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
@@ -840,7 +841,7 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
   } catch (err) {
-    alert(' Error saving: ' + err.message);
+    alert('❌ Error saving: ' + err.message);
   } finally {
     tempFile = null; tempUploadType = null; tempExpiryDate = null;
     document.getElementById('genericFileInput').value = '';
@@ -924,7 +925,6 @@ async function genericShare(fmt){
   let blob, name, mime;
   
   if(viewerCtx.isPassport && viewerCtx.passportData){
-    // Merge both passport pages
     const img1 = document.getElementById('fileViewerImg');
     const { data: data2 } = await sb.storage.from('vault').createSignedUrl(viewerCtx.passportData.back || viewerCtx.passportData.page2, 300);
     const img2 = new Image();
@@ -951,7 +951,6 @@ async function genericShare(fmt){
       mime = 'application/pdf';
     }
   } else {
-    // Single page document
     const img = document.getElementById('fileViewerImg');
     const canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
@@ -977,7 +976,6 @@ async function genericShare(fmt){
   
   const file = new File([blob], name, { type: mime });
   
-  // Use native share API (shows WhatsApp, Email, etc.)
   if(navigator.share && navigator.canShare({ files: [file] })){
     try {
       await navigator.share({
@@ -989,7 +987,6 @@ async function genericShare(fmt){
       console.log('Share cancelled');
     }
   } else {
-    // Fallback: download
     const a = document.createElement('a');
     a.href = URL.createObjectURL(file);
     a.download = name;
@@ -1205,7 +1202,7 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent=' '+r.msg;
+    st.textContent='✂ '+r.msg;
   }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
@@ -1308,7 +1305,7 @@ async function aaSave(){
   const uid=session.user.id;
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
@@ -1362,7 +1359,7 @@ function showSOSPanel(p){document.getElementById('sosPanel').style.display=p==='
 function mapLink(p){return 'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
 function startLocate(){if(!navigator.geolocation){document.getElementById('sosStatus').textContent='Location unsupported.';return;}navigator.geolocation.getCurrentPosition(p=>{lastPos=p;const a=document.getElementById('sosLink');a.href=mapLink(p);a.style.display='block';document.getElementById('sosStatus').textContent='Located ±'+Math.round(p.coords.accuracy)+'m';},e=>{document.getElementById('sosStatus').textContent='Error '+e.code;},{enableHighAccuracy:true,timeout:12000});}
 function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
-async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?' '+error.message:'✅ Saved.');}
+async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
