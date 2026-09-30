@@ -114,7 +114,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">‍‍👧 Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -187,7 +187,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="consentActions" style="display:none;flex-direction:column;gap:.5rem;margin-top:1rem">
     <div style="display:flex;gap:.5rem">
       <button class="btn btn-success" style="flex:1" onclick="processConsent(true)">✅ Allow</button>
-      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)"> Reject</button>
+      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)">❌ Reject</button>
     </div>
   </div>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('consentModal');window.history.pushState({},'',window.location.pathname);">Cancel</button>
@@ -236,7 +236,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="passportPage2Modal" class="modal-overlay"><div class="modal">
   <h3>📄 Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()"> Take Photo</button>
   <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
@@ -254,7 +254,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
-  <button class="btn btn-outline" onclick="aaShare('pdf','side')">📄 ID Card PDF — side by side</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','side')"> ID Card PDF — side by side</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 ID Card PDF — top & bottom</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
 </div></div>
@@ -268,7 +268,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 Share with Family</h3>
+  <h3>👨‍‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -280,14 +280,14 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>‍👩‍👧 Manage Family</h3>
+  <h3>👨‍‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
-    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
+    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()"> Refresh List</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
@@ -419,8 +419,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     </div>
   </div>
   <div class="rotate-controls" id="rotateControls" style="display:none">
-    <button class="btn btn-outline btn-sm" onclick="rotateImage(-90)"> Rotate Left</button>
-    <button class="btn btn-outline btn-sm" onclick="rotateImage(90)">↻ Rotate Right</button>
+    <button class="btn btn-outline btn-sm" onclick="rotateImage(-90)">↺ Rotate Left</button>
+    <button class="btn btn-outline btn-sm" onclick="rotateImage(90)"> Rotate Right</button>
   </div>
   <img id="fileViewerImg" class="viewer-img" alt="document">
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
@@ -651,7 +651,7 @@ async function addMinor(){
   if(error)alert('❌ '+error.message); else{alert('✅ '+name+"'s profile created.");closeModal('minorModal');loadFamilyMembers();}
 }
 
-// --- IMAGE COMPRESSION FUNCTION (Fixes slow loading) ---
+// --- IMAGE COMPRESSION FUNCTION ---
 async function compressImage(file, maxWidth = 800, quality = 0.7){
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -768,7 +768,6 @@ async function savePassportWithTwoPages(page1File, page2File){
   const timestamp = Date.now();
   
   try {
-    // Compress both pages
     const compressedPage1 = await compressImage(page1File);
     const compressedPage2 = await compressImage(page2File);
     
@@ -854,7 +853,6 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
   let docName = customName || docType;
   let fileToUpload = tempFile;
 
-  // Compress images for faster loading
   if(tempFile.type.startsWith('image/')){
     fileToUpload = await compressImage(tempFile);
   }
@@ -878,7 +876,7 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
   } catch (err) {
-    alert('❌ Error saving: ' + err.message);
+    alert(' Error saving: ' + err.message);
   } finally {
     tempFile = null; tempUploadType = null; tempExpiryDate = null;
     document.getElementById('genericFileInput').value = '';
@@ -952,10 +950,23 @@ async function deleteGenericDoc(id){
   else { alert('✅ Moved to Bin'); loadGenericDocsStatus(); loadOtherDocs(); }
 }
 
-// --- GENERIC SHARE WITH NATIVE SHARE API (WhatsApp, Email, etc.) ---
+// --- GENERIC SHARE WITH DEBUG ---
 async function genericShare(fmt){
+  console.log('=== SHARE DEBUG START ===');
+  console.log('viewerCtx:', viewerCtx);
+  console.log('viewerCtx.isImage:', viewerCtx?.isImage);
+  console.log('navigator.share:', navigator.share);
+  console.log('navigator.canShare:', navigator.canShare);
+  console.log('fmt:', fmt);
+  
   closeModal('genericShareModal');
-  if(!viewerCtx || !viewerCtx.isImage){ alert('Share only available for images.'); return; }
+  
+  if(!viewerCtx || !viewerCtx.isImage){ 
+    const debugMsg = `Share failed!\nisImage: ${viewerCtx?.isImage}\nviewerCtx: ${JSON.stringify(viewerCtx)}`;
+    console.error(debugMsg);
+    alert(debugMsg); 
+    return; 
+  }
   
   let blob, name, mime;
   
@@ -1009,31 +1020,39 @@ async function genericShare(fmt){
     }
   }
   
+  console.log('File created:', name, mime, blob.size);
+  
   const file = new File([blob], name, { type: mime });
   
-  // Try native share first (opens WhatsApp, Email, etc. on mobile)
+  console.log('Checking navigator.share...');
   if(navigator.share && navigator.canShare({ files: [file] })){
+    console.log('Native share available, attempting...');
     try {
       await navigator.share({
         files: [file],
         title: viewerCtx.label,
         text: `Sharing ${viewerCtx.label} from OneApp`
       });
+      console.log('Share successful!');
       return;
     } catch(e) {
-      console.log('Share cancelled or failed');
+      console.error('Share error:', e);
     }
+  } else {
+    console.log('Native share NOT available');
+    console.log('navigator.share:', !!navigator.share);
+    console.log('navigator.canShare:', !!navigator.canShare);
   }
   
-  // Fallback: download and show instructions
+  console.log('Falling back to download...');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(file);
   a.download = name;
   a.click();
   
-  // Show share options manually
-  const shareText = `✅ ${name} downloaded!\n\nTo share:\n1. Open WhatsApp/Gmail\n2. Attach the downloaded file\n3. Send`;
+  const shareText = `✅ ${name} downloaded!\n\nTo share:\n1. Open WhatsApp/Gmail\n2. Attach the downloaded file\n3. Send\n\nCheck console for debug info.`;
   alert(shareText);
+  console.log('=== SHARE DEBUG END ===');
 }
 
 // --- END PHASE 1 FUNCTIONS ---
@@ -1092,7 +1111,7 @@ async function loadChildDocs(){
   childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
   if(!currentUser||!currentChildId)return;
   const{data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
-  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)"> '+error.message+'</p>';return;}
+  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+error.message+'</p>';return;}
   childDocs=data||[];
   await renderChildDocs();
 }
@@ -1204,7 +1223,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent='❌ '+err.message;}
+    }catch(err){status.textContent=' '+err.message;}
   };
   input.click();
 }
@@ -1243,7 +1262,7 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent='✂ '+r.msg;
+    st.textContent=' '+r.msg;
   }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
@@ -1644,7 +1663,7 @@ async function openBinView(){
   showView('binView');
   const box=document.getElementById('binDocsContainer');box.innerHTML='<p class="sub">Loading…</p>';
   const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).not('deleted_at','is',null).order('deleted_at',{ascending:false});
-  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)"> '+escHtml(error.message)+'</p>';return;}
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
   const active=(data||[]).filter(d=>new Date(d.deleted_at).getTime()>Date.now()-30*24*60*60*1000);
   if(!active.length){box.innerHTML='<p class="sub">Bin is empty.</p>';return;}
   box.innerHTML=active.map(d=>`<div class="bin-row"><div><strong>${escHtml(docLabel(d))}</strong><br><small style="color:var(--gray)">Deleted ${new Date(d.deleted_at).toLocaleString()}</small></div><button class="btn btn-success btn-sm" onclick="restoreDocument('${d.id}')">↩ Restore</button></div>`).join('');
