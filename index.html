@@ -187,7 +187,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="consentActions" style="display:none;flex-direction:column;gap:.5rem;margin-top:1rem">
     <div style="display:flex;gap:.5rem">
       <button class="btn btn-success" style="flex:1" onclick="processConsent(true)">✅ Allow</button>
-      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)"> Reject</button>
+      <button class="btn btn-danger" style="flex:1" onclick="processConsent(false)">❌ Reject</button>
     </div>
   </div>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('consentModal');window.history.pushState({},'',window.location.pathname);">Cancel</button>
@@ -200,7 +200,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Display Name</label><input id="profileName" type="text"></div>
   <div class="field"><label>Email Address</label><input id="profileEmail" type="email"></div>
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
-  <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+  <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
@@ -209,7 +209,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <h3>Add Document</h3>
   <p class="sub" id="uploadMethodDocType">Document Type</p>
   <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()">📷 Take Photo</button>
-  <button class="btn btn-outline" onclick="triggerFileUpload()"> Upload File</button>
+  <button class="btn btn-outline" onclick="triggerFileUpload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('uploadMethodModal')">Cancel</button>
   <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
 </div></div>
@@ -234,9 +234,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 
 <!-- PASSPORT PAGE 2 MODAL -->
 <div id="passportPage2Modal" class="modal-overlay"><div class="modal">
-  <h3>📄 Passport Page 2</h3>
+  <h3> Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()"> Take Photo</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
   <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
@@ -300,9 +300,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="inviteModal" class="modal-overlay"><div class="modal">
   <h3>Invite Family Member</h3>
   <div class="invite-tabs">
-    <div class="invite-tab active" onclick="setInviteTab('email')">📧 Email</div>
-    <div class="invite-tab" onclick="setInviteTab('whatsapp')">💬 WhatsApp</div>
-    <div class="invite-tab" onclick="setInviteTab('sms')">📱 SMS</div>
+    <div class="invite-tab active" onclick="setInviteTab('email')"> Email</div>
+    <div class="invite-tab" onclick="setInviteTab('whatsapp')"> WhatsApp</div>
+    <div class="invite-tab" onclick="setInviteTab('sms')"> SMS</div>
   </div>
   <div id="inviteContent-email">
     <div class="field"><label>Name</label><input id="inviteName" type="text" placeholder="e.g. Priya Sharma"></div>
@@ -348,7 +348,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="binView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="openFamilyManager()">← Back</button>
-    <h2 style="margin:0"> Bin</h2>
+    <h2 style="margin:0">🗑 Bin</h2>
   </div>
   <p class="sub">Deleted documents stay here for 30 days before permanent cleanup.</p>
   <div class="card"><div id="binDocsContainer"><p class="sub">Loading…</p></div></div>
@@ -542,7 +542,7 @@ async function processConsent(allow){
   } else {
     let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
     if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId); error = upErr; }
-    if(error) alert('❌ Error rejecting: ' + error.message); else alert('❌ Invite rejected.');
+    if(error) alert('❌ Error rejecting: ' + error.message); else alert(' Invite rejected.');
   }
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
@@ -841,7 +841,7 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
   } catch (err) {
-    alert('❌ Error saving: ' + err.message);
+    alert(' Error saving: ' + err.message);
   } finally {
     tempFile = null; tempUploadType = null; tempExpiryDate = null;
     document.getElementById('genericFileInput').value = '';
@@ -861,13 +861,14 @@ async function loadOtherDocs(){
     <div class="doc-row">
       <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
       <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', false)">View</button>
+        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', true)">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
       </div>
     </div>
   `).join('');
 }
 
+// ✅ FIXED: Now properly uses the isImage parameter
 async function viewGenericDoc(id, path, name, isImage){
   try{
     let actualPath = path;
@@ -882,25 +883,24 @@ async function viewGenericDoc(id, path, name, isImage){
     
     const { data, error } = await sb.storage.from('vault').createSignedUrl(actualPath, 300);
     if(error) throw error;
-    const ext = actualPath.split('.').pop().toLowerCase();
-    const reallyIsImage = ['jpg','jpeg','png','webp'].includes(ext);
     
+    // ✅ Use the isImage parameter passed to the function
     viewerCtx = { 
       kind: 'generic', 
       id: id, 
       path: path, 
       label: name, 
-      isImage: reallyIsImage,
+      isImage: isImage,
       isPassport: isPassport,
       passportData: passportData
     };
     document.getElementById('fileViewerTitle').textContent = name;
     document.getElementById('fileViewerImg').src = data.signedUrl;
-    document.getElementById('fileViewerImg').style.display = reallyIsImage ? 'block' : 'none';
-    document.getElementById('rotateControls').style.display = reallyIsImage ? 'flex' : 'none';
+    document.getElementById('fileViewerImg').style.display = isImage ? 'block' : 'none';
+    document.getElementById('rotateControls').style.display = isImage ? 'flex' : 'none';
     currentRotation = 0;
     document.getElementById('fileViewerImg').style.transform = `rotate(${currentRotation}deg)`;
-    if(!reallyIsImage) window.open(data.signedUrl, '_blank');
+    if(!isImage) window.open(data.signedUrl, '_blank');
     else openModal('fileViewerModal');
   } catch(err){ alert('Failed: '+err.message); }
 }
@@ -1163,7 +1163,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent='❌ '+err.message;}
+    }catch(err){status.textContent=' '+err.message;}
   };
   input.click();
 }
@@ -1305,7 +1305,7 @@ async function aaSave(){
   const uid=session.user.id;
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
@@ -1603,7 +1603,7 @@ async function openBinView(){
   showView('binView');
   const box=document.getElementById('binDocsContainer');box.innerHTML='<p class="sub">Loading…</p>';
   const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).not('deleted_at','is',null).order('deleted_at',{ascending:false});
-  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)"> '+escHtml(error.message)+'</p>';return;}
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
   const active=(data||[]).filter(d=>new Date(d.deleted_at).getTime()>Date.now()-30*24*60*60*1000);
   if(!active.length){box.innerHTML='<p class="sub">Bin is empty.</p>';return;}
   box.innerHTML=active.map(d=>`<div class="bin-row"><div><strong>${escHtml(docLabel(d))}</strong><br><small style="color:var(--gray)">Deleted ${new Date(d.deleted_at).toLocaleString()}</small></div><button class="btn btn-success btn-sm" onclick="restoreDocument('${d.id}')">↩ Restore</button></div>`).join('');
