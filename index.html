@@ -76,7 +76,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .invite-tabs{display:flex;gap:.4rem;margin-bottom:.75rem}
 .invite-tab{flex:1;padding:.4rem;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:.75rem;font-weight:600;text-align:center}
 .invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.viewer-img{width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;transition:transform .3s ease}
+.viewer-img{width:100%;max-width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;display:block}
 .viewer-head{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:.25rem}
 .vdots{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
 .viewer-menu{position:absolute;right:0;top:115%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);padding:.4rem;display:none;z-index:60;min-width:150px;text-align:left}
@@ -430,7 +430,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
     <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
   </div>
-  <img id="fileViewerImg" class="viewer-img" alt="document">
+  <div id="fileViewerStage" style="width:100%;display:flex;justify-content:center;align-items:center;overflow:auto">
+    <img id="fileViewerImg" class="viewer-img" alt="document">
+  </div>
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
 </div></div>
 
@@ -974,45 +976,43 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
 
 function rotateImage(degrees){
   currentRotation=(currentRotation+degrees+360)%360;
-  document.getElementById('fileViewerImg').style.transform=`rotate(${currentRotation}deg)`;
 }
 
 async function rotateAndSaveImage(){
-  rotateImage(90);
-  await saveCurrentRotation();
-}
-
-async function saveCurrentRotation(){
   const c=viewerCtx;
   if(!c||c.kind!=='generic'||!c.isImage)return;
-  if(currentRotation===0){alert('No rotation change to save.');return;}
   try{
-    let sourcePath=c.path;
-    if(c.isPassport&&c.passportData) sourcePath=c.passportData.front||c.passportData.page1;
-    const loaded=await loadVaultImage(sourcePath);
-    const img=loaded.img;
-    const canvas=createRotatedCanvas(img,currentRotation);
-    URL.revokeObjectURL(loaded.objectUrl);
+    const img=document.getElementById('fileViewerImg');
+    if(!img.complete || !img.naturalWidth){
+      await new Promise((resolve,reject)=>{
+        img.onload=resolve;
+        img.onerror=()=>reject(new Error('Could not load document image'));
+      });
+    }
+    const nextRotation=(currentRotation+90)%360;
+    const canvas=createRotatedCanvas(img,nextRotation);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
     if(!blob)throw new Error('Could not create corrected image');
     const newPath=`${currentUser.id}/corrected-${c.id}-${Date.now()}.jpg`;
-    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg'});
+    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg',upsert:false});
     if(upErr)throw upErr;
     let dbPath=newPath;
-    if(c.isPassport&&c.passportData){
-      dbPath=JSON.stringify({...c.passportData,front:newPath});
-    }
+    if(c.isPassport&&c.passportData) dbPath=JSON.stringify({...c.passportData,front:newPath});
     const {error:dbErr}=await sb.from('documents').update({file_url:dbPath}).eq('id',c.id).eq('user_id',currentUser.id);
     if(dbErr){await sb.storage.from('vault').remove([newPath]);throw dbErr;}
-    if(!c.isPassport && sourcePath) await sb.storage.from('vault').remove([sourcePath]);
-    c.path=dbPath; c.passportData=c.isPassport?JSON.parse(dbPath):null;
+    if(!c.isPassport&&c.path){try{await sb.storage.from('vault').remove([c.path]);}catch(_){}
+    }
+    const previewUrl=URL.createObjectURL(blob);
+    if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
+    viewerCtx.objectUrl=previewUrl;
+    viewerCtx.path=dbPath;
+    viewerCtx.passportData=c.isPassport?JSON.parse(dbPath):null;
+    img.src=previewUrl;
+    img.style.transform='none';
     currentRotation=0;
-    document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
     await loadGenericDocsStatus(true);
-    alert('✅ Corrected orientation saved to your Vault.');
   }catch(err){alert('❌ Could not save orientation: '+err.message);}
 }
-
 async function deleteGenericDoc(id){
   if(!confirm('Move to Bin?')) return;
   const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id);
