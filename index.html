@@ -427,10 +427,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
-  <div class="rotate-controls" id="rotateControls" style="display:none">
-    <button class="btn btn-outline btn-sm" onclick="rotateImage(-90)">↺ Rotate Left</button>
-    <button class="btn btn-outline btn-sm" onclick="rotateImage(90)"> Rotate Right</button>
-    <button class="btn btn-success btn-sm" id="saveRotationBtn" onclick="saveCurrentRotation()" style="display:none">💾 Save Orientation</button>
+  <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
+    <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
   </div>
   <img id="fileViewerImg" class="viewer-img" alt="document">
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
@@ -932,29 +930,56 @@ function createRotatedCanvas(img,degrees=0){
   return canvas;
 }
 
+async function loadVaultImage(path){
+  const {data,error}=await sb.storage.from('vault').download(path);
+  if(error)throw error;
+  const objectUrl=URL.createObjectURL(data);
+  const img=new Image();
+  img.src=objectUrl;
+  try{
+    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Could not load document image'));});
+    return {img,objectUrl};
+  }catch(err){
+    URL.revokeObjectURL(objectUrl);
+    throw err;
+  }
+}
+
 async function viewGenericDoc(id, path, name, isImage, documentType=null){
   try{
     let actualPath = path;
     let isPassport = false;
     let passportData = null;
     try { passportData = JSON.parse(path); isPassport=true; actualPath=passportData.front||passportData.page1; } catch(e) {}
-    const { data, error } = await sb.storage.from('vault').createSignedUrl(actualPath, 300);
-    if(error) throw error;
     viewerCtx={kind:'generic',id,path,label:name,isImage,isPassport,passportData,documentType:documentType||name};
     document.getElementById('fileViewerTitle').textContent=name;
-    document.getElementById('fileViewerImg').src=data.signedUrl;
+    if(isImage){
+      const loaded=await loadVaultImage(actualPath);
+      if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
+      viewerCtx.objectUrl=loaded.objectUrl;
+      document.getElementById('fileViewerImg').src=loaded.objectUrl;
+    }else{
+      const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
+      if(error)throw error;
+      window.open(data.signedUrl,'_blank');
+    }
     document.getElementById('fileViewerImg').style.display=isImage?'block':'none';
     document.getElementById('rotateControls').style.display=isImage?'flex':'none';
     document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
     currentRotation=0;
     document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
-    if(!isImage) window.open(data.signedUrl,'_blank'); else openModal('fileViewerModal');
+    if(isImage) openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
 
 function rotateImage(degrees){
-  currentRotation=(currentRotation+degrees)%360;
+  currentRotation=(currentRotation+degrees+360)%360;
   document.getElementById('fileViewerImg').style.transform=`rotate(${currentRotation}deg)`;
+}
+
+async function rotateAndSaveImage(){
+  rotateImage(90);
+  await saveCurrentRotation();
 }
 
 async function saveCurrentRotation(){
@@ -964,12 +989,10 @@ async function saveCurrentRotation(){
   try{
     let sourcePath=c.path;
     if(c.isPassport&&c.passportData) sourcePath=c.passportData.front||c.passportData.page1;
-    const {data,error}=await sb.storage.from('vault').createSignedUrl(sourcePath,300);
-    if(error)throw error;
-    const img=new Image();
-    img.src=data.signedUrl;
-    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});
+    const loaded=await loadVaultImage(sourcePath);
+    const img=loaded.img;
     const canvas=createRotatedCanvas(img,currentRotation);
+    URL.revokeObjectURL(loaded.objectUrl);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
     if(!blob)throw new Error('Could not create corrected image');
     const newPath=`${currentUser.id}/corrected-${c.id}-${Date.now()}.jpg`;
@@ -1004,9 +1027,8 @@ async function buildGenericShareFile(fmt){
     const img1=document.getElementById('fileViewerImg');
     const backPath=viewerCtx.passportData.back||viewerCtx.passportData.page2;
     if(!backPath)throw new Error('Passport second page is not available.');
-    const {data:data2,error:e2}=await sb.storage.from('vault').createSignedUrl(backPath,300);
-    if(e2)throw e2;
-    const img2=new Image();img2.src=data2.signedUrl;await new Promise((r,j)=>{img2.onload=r;img2.onerror=j;});
+    const loaded2=await loadVaultImage(backPath);
+    const img2=loaded2.img;
     const frontCanvas=createRotatedCanvas(img1,currentRotation);
     const backCanvas=createRotatedCanvas(img2,0);
     const canvas=document.createElement('canvas');canvas.width=Math.max(frontCanvas.width,backCanvas.width);canvas.height=frontCanvas.height+backCanvas.height;
