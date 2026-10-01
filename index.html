@@ -4,28 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>OneApp.in | Vault + Family</title>
-<!-- PWA Meta Tags -->
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1e40af">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="OneApp">
-<link rel="apple-touch-icon" href="/icon-192.png">
-<link rel="icon" type="image/png" href="/icon-192.png">
 <style>
 :root{--primary:#1e40af;--success:#22c55e;--warn:#d97706;--danger:#ef4444;--bg:#f8fafc;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b;--tile:#f1f3f5}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--dark);line-height:1.6;overflow-x:hidden}
 nav{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
-.logo{font-weight:800;font-size:1.1rem;color:var(--primary)}.logo span{color:var(--gray)}
+.logo{font-weight:800;font-size:1.35rem;letter-spacing:-.03em;color:#0f172a;line-height:1}.logo span{color:var(--primary);font-weight:900}.logo::after{content:'';display:block;width:18px;height:3px;background:var(--primary);border-radius:999px;margin-top:4px;opacity:.9}
 .nav-links{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);font-size:.85rem;padding:.3rem .5rem;border-radius:6px}
 .nav-links button.active{color:var(--primary);background:rgba(30,64,175,.06)}
 .btn-emg{background:var(--danger)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
 .btn-auth{background:var(--primary)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
-.user-chip{display:flex;align-items:center;gap:.4rem;background:var(--primary)!important;color:#fff!important;padding:.25rem .7rem .25rem .3rem;border-radius:999px;font-weight:600;font-size:.8rem;border:none;cursor:pointer}
-.avatar{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#fff}
-.avatar-fallback{width:24px;height:24px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem}
+.user-chip{display:flex;align-items:center;justify-content:center;background:transparent!important;color:inherit!important;padding:0;border:0;cursor:pointer;width:40px;height:40px;border-radius:50%}
+.avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid #fff;box-shadow:0 2px 8px rgba(15,23,42,.16)}
+.avatar-fallback{width:36px;height:36px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;border:2px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.12)}
 .user-area{position:relative}
 .dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.75rem;min-width:200px;display:none;z-index:300;text-align:left}
 .dropdown.show{display:block}.dropdown .email{font-size:.75rem;color:var(--gray);word-break:break-all;margin-bottom:.5rem}
@@ -58,7 +52,6 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 #customNameModal{z-index:450}
 #expiryDateModal{z-index:450}
 #passportPage2Modal{z-index:450}
-#familyShareModal{z-index:500}
 .modal{background:#fff;padding:1.25rem;border-radius:12px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
 .sos-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.6rem;margin:.5rem 0;font-size:.8rem}
 .sos-link{word-break:break-all;color:var(--primary);font-weight:600;display:block;margin-top:.4rem}
@@ -83,7 +76,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .invite-tabs{display:flex;gap:.4rem;margin-bottom:.75rem}
 .invite-tab{flex:1;padding:.4rem;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:.75rem;font-weight:600;text-align:center}
 .invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.viewer-img{width:100%;max-width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;display:block}
+.viewer-img{width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;transition:transform .3s ease}
 .viewer-head{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:.25rem}
 .vdots{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
 .viewer-menu{position:absolute;right:0;top:115%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);padding:.4rem;display:none;z-index:60;min-width:150px;text-align:left}
@@ -102,12 +95,14 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
 .bin-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem 0;border-bottom:1px dashed #f1f5f9;flex-wrap:wrap}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 <nav>
   <div class="logo">One<span>App</span>.in</div>
   <div class="nav-links">
-    <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
+    <button id="nav-vault" class="active" onclick="showView('vault')">Vault</button>
+    <button id="nav-career" onclick="showView('career')">Career</button>
     <button id="nav-auto" onclick="showView('autopilot')">Autopilot</button>
     <button class="btn-emg" onclick="openSOS()">Emergency</button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
@@ -115,7 +110,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <button class="user-chip" onclick="toggleUserMenu(event)">
         <img id="userAvatar" class="avatar" alt="" style="display:none">
         <span id="userAvatarFallback" class="avatar-fallback">U</span>
-        <span id="userName">User</span>
       </button>
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
@@ -149,20 +143,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         </div>
         <span>PAN Card</span>
       </div>
-      <div class="icon-tile" onclick="handleGenericIconClick('Driving License')">
-        <div class="icon-box">
-          <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg>
-          <div id="licenseIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-        </div>
-        <span>License</span>
-      </div>
-      <div class="icon-tile" onclick="handleGenericIconClick('Passport')">
-        <div class="icon-box">
-          <svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg>
-          <div id="passportIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-        </div>
-        <span>Passport</span>
-      </div>
       <div class="icon-tile" onclick="showView('otherDocsView')">
         <div class="icon-box">
           <svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
@@ -180,6 +160,22 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       <div class="icon-tile" onclick="alert('Health Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/><path d="M32 21v22M21 32h22" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/></svg></div><span>Health</span></div>
       <div class="icon-tile" onclick="alert('Life Insurance — coming soon')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><path d="M32 7l21 8v15c0 13-8 23-21 28C19 53 11 43 11 30V15l21-8z" fill="#ccfbf1" stroke="#0f766e" stroke-width="3"/><path d="M32 21c-7-7-16 1-10 8l10 11 10-11c6-7-3-15-10-8z" fill="#14b8a6"/><path d="M25 42h14" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div><span>Life</span></div>
     </div>
+  </div>
+</div>
+
+<div id="career" class="view container">
+  <h2>My Career</h2>
+  <p class="sub">Build your career profile, keep your CV ready, and manage opportunities in one place.</p>
+  <div class="card">
+    <div class="card-header"><h3>Career Profile</h3><span class="badge badge-ok">Getting started</span></div>
+    <p class="sub">Your professional profile will become the base for CVs, job matching and applications.</p>
+    <button class="btn btn-primary btn-sm" onclick="alert('Career Profile — next build')">Open Career Profile</button>
+  </div>
+  <div class="icon-grid">
+    <div class="icon-tile" onclick="alert('CV / Resume — next build')"><div class="icon-box"><span style="font-size:1.5rem">📄</span></div><span>CV / Resume</span></div>
+    <div class="icon-tile" onclick="alert('Find Jobs — next build')"><div class="icon-box"><span style="font-size:1.5rem">🔎</span></div><span>Find Jobs</span></div>
+    <div class="icon-tile" onclick="alert('Government Jobs — next build')"><div class="icon-box"><span style="font-size:1.5rem">🏛️</span></div><span>Government Jobs</span></div>
+    <div class="icon-tile" onclick="alert('Applications — next build')"><div class="icon-box"><span style="font-size:1.5rem">📋</span></div><span>Applications</span></div>
   </div>
 </div>
 
@@ -215,8 +211,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="uploadMethodModal" class="modal-overlay"><div class="modal">
   <h3>Add Document</h3>
   <p class="sub" id="uploadMethodDocType">Document Type</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()">📷 Take Photo</button>
-  <button class="btn btn-outline" onclick="triggerFileUpload()">📁 Upload File</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()"> Take Photo</button>
+  <button class="btn btn-outline" onclick="triggerFileUpload()"> Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('uploadMethodModal')">Cancel</button>
   <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
 </div></div>
@@ -243,7 +239,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="passportPage2Modal" class="modal-overlay"><div class="modal">
   <h3>📄 Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()"> Take Photo</button>
   <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
@@ -261,7 +257,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
-  <button class="btn btn-outline" onclick="aaShare('pdf','side')">📄 ID Card PDF — side by side</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','side')"> ID Card PDF — side by side</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 ID Card PDF — top & bottom</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
 </div></div>
@@ -284,7 +280,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 Share with Family</h3>
+  <h3>👨‍‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -296,14 +292,14 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 Manage Family</h3>
+  <h3>👨‍‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
-    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
+    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()"> Refresh List</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
@@ -437,9 +433,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
     <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
   </div>
-  <div id="fileViewerStage" style="width:100%;display:flex;justify-content:center;align-items:center;overflow:auto">
-    <img id="fileViewerImg" class="viewer-img" alt="document">
-  </div>
+  <img id="fileViewerImg" class="viewer-img" alt="document">
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
 </div></div>
 
@@ -479,7 +473,6 @@ sb.auth.onAuthStateChange((ev,s)=>{
   if(s){
     currentUser=s.user;
     const m=s.user.user_metadata||{},full=m.full_name||m.name||(s.user.email?s.user.email.split('@')[0]:'User');
-    document.getElementById('userName').textContent=full;
     document.getElementById('userEmail').textContent=s.user.email||'';
     const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback'),pic=m.avatar_url||m.picture;
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
@@ -726,7 +719,7 @@ async function handleGenericIconClick(type){
   if(!savedGenericDocs || savedGenericDocs.__loadedFor !== currentUser.id) await loadGenericDocsStatus();
   if(type === 'Other' || type === 'Passport'){ showView(type === 'Passport' ? 'vault' : 'otherDocsView'); return; }
   const doc = savedGenericDocs[type];
-  if(doc){ viewGenericDoc(doc.id, doc.file_url, doc.document_name || type, true, type); }
+  if(doc){ viewGenericDoc(doc.id, doc.file_url, doc.document_name || type, /\.(jpg|jpeg|png|webp)$/i.test(doc.file_url||''), type); }
   else { openGenericUpload(type); }
 }
 
@@ -753,12 +746,70 @@ async function handleGenericFileSelect(file){
   if(!file) return;
   tempFile = file;
   if(tempUploadType === 'Other'){ openModal('customNameModal'); } 
-  else if (tempUploadType === 'Driving License') { openModal('expiryDateModal'); } 
+  else if (tempUploadType === 'Driving License') { await detectDrivingLicenseExpiry(file); } 
   else if (tempUploadType === 'Passport') { 
     passportPage1File = file;
     openModal('passportPage2Modal');
   }
   else { await saveGenericDocument(null); }
+}
+
+async function detectDrivingLicenseExpiry(file){
+  tempExpiryDate = null;
+  const status = document.getElementById('expiryDetectStatus');
+  const input = document.getElementById('docExpiryDate');
+  const help = document.getElementById('expiryHelpText');
+  input.value = '';
+  status.style.display = 'block';
+  status.textContent = '🔎 Reading the licence to find the Valid Until date…';
+  help.textContent = 'The detected date is shown below. You can correct it before saving.';
+  openModal('expiryDateModal');
+
+  if(!file.type.startsWith('image/')){
+    status.textContent = 'ℹ️ Automatic date detection currently works with licence images. Please enter the date manually for this file.';
+    return;
+  }
+  if(typeof Tesseract === 'undefined'){
+    status.textContent = 'ℹ️ Automatic detection is unavailable right now. Please enter the date manually.';
+    return;
+  }
+  try{
+    const result = await Tesseract.recognize(file,'eng',{logger:m=>{
+      if(m.status==='recognizing text' && typeof m.progress==='number') status.textContent='🔎 Reading licence… '+Math.round(m.progress*100)+'%';
+    }});
+    const detected = extractDrivingLicenseExpiry(result.data.text||'');
+    if(detected){
+      input.value = detected;
+      tempExpiryDate = detected;
+      status.textContent = '✅ Detected Valid Until: '+new Date(detected+'T00:00:00').toLocaleDateString()+'. Please confirm or correct it.';
+    }else{
+      status.textContent = 'ℹ️ I could not confidently find a Valid Until date. Please enter it manually.';
+    }
+  }catch(err){
+    status.textContent = 'ℹ️ Automatic detection could not be completed. Please enter the date manually.';
+  }
+}
+
+function extractDrivingLicenseExpiry(text){
+  const normalized=String(text||'').replace(/\r/g,'\n');
+  const dateRe=/(\d{1,2})[\s\/.\-](\d{1,2})[\s\/.\-](\d{2,4})|(\d{4})[\s\/.\-](\d{1,2})[\s\/.\-](\d{1,2})/g;
+  const candidates=[];
+  let match;
+  while((match=dateRe.exec(normalized))){
+    let y,m,d;
+    if(match[4]){ y=+match[4]; m=+match[5]; d=+match[6]; }
+    else { d=+match[1]; m=+match[2]; y=+match[3]; y=y<100?(y>=70?1900+y:2000+y):y; }
+    if(m<1||m>12||d<1||d>31) continue;
+    const iso=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const pos=match.index;
+    const context=normalized.slice(Math.max(0,pos-80),Math.min(normalized.length,pos+80)).toLowerCase();
+    const keyword=/(valid|validity|valid\s*upto|valid\s*till|expiry|expires|expir)/i.test(context);
+    candidates.push({iso,keyword,time:new Date(iso+'T00:00:00').getTime()});
+  }
+  const now=Date.now()-86400000;
+  const focused=candidates.filter(x=>x.keyword&&x.time>=now).sort((a,b)=>a.time-b.time);
+  if(focused.length)return focused[0].iso;
+  return null;
 }
 
 function triggerPassportPage2Camera(){
@@ -894,7 +945,7 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
   } catch (err) {
-    alert('❌ Error saving: ' + err.message);
+    alert(' Error saving: ' + err.message);
   } finally {
     tempFile = null; tempUploadType = null; tempExpiryDate = null;
     document.getElementById('genericFileInput').value = '';
@@ -914,7 +965,7 @@ async function loadOtherDocs(){
     <div class="doc-row">
       <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
       <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', true, '${d.document_type||'Other'}')">View</button>
+        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', /\.(jpg|jpeg|png|webp)$/i.test('${escHtml(d.file_url)}'), '${d.document_type||'Other'}')">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
       </div>
     </div>
@@ -970,9 +1021,12 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
     }else{
       const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
       if(error)throw error;
-      window.open(data.signedUrl,'_blank');
+      const frame=document.getElementById('fileViewerFrame');
+      if(frame){frame.src=data.signedUrl;}
     }
     document.getElementById('fileViewerImg').style.display=isImage?'block':'none';
+    const viewerFrame=document.getElementById('fileViewerFrame');
+    if(viewerFrame) viewerFrame.style.display=isImage?'none':'block';
     document.getElementById('rotateControls').style.display=isImage?'flex':'none';
     document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
     currentRotation=0;
@@ -983,43 +1037,45 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
 
 function rotateImage(degrees){
   currentRotation=(currentRotation+degrees+360)%360;
+  document.getElementById('fileViewerImg').style.transform=`rotate(${currentRotation}deg)`;
 }
 
 async function rotateAndSaveImage(){
+  rotateImage(90);
+  await saveCurrentRotation();
+}
+
+async function saveCurrentRotation(){
   const c=viewerCtx;
   if(!c||c.kind!=='generic'||!c.isImage)return;
+  if(currentRotation===0){alert('No rotation change to save.');return;}
   try{
-    const img=document.getElementById('fileViewerImg');
-    if(!img.complete || !img.naturalWidth){
-      await new Promise((resolve,reject)=>{
-        img.onload=resolve;
-        img.onerror=()=>reject(new Error('Could not load document image'));
-      });
-    }
-    const nextRotation=(currentRotation+90)%360;
-    const canvas=createRotatedCanvas(img,nextRotation);
+    let sourcePath=c.path;
+    if(c.isPassport&&c.passportData) sourcePath=c.passportData.front||c.passportData.page1;
+    const loaded=await loadVaultImage(sourcePath);
+    const img=loaded.img;
+    const canvas=createRotatedCanvas(img,currentRotation);
+    URL.revokeObjectURL(loaded.objectUrl);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
     if(!blob)throw new Error('Could not create corrected image');
     const newPath=`${currentUser.id}/corrected-${c.id}-${Date.now()}.jpg`;
-    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg',upsert:false});
+    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg'});
     if(upErr)throw upErr;
     let dbPath=newPath;
-    if(c.isPassport&&c.passportData) dbPath=JSON.stringify({...c.passportData,front:newPath});
+    if(c.isPassport&&c.passportData){
+      dbPath=JSON.stringify({...c.passportData,front:newPath});
+    }
     const {error:dbErr}=await sb.from('documents').update({file_url:dbPath}).eq('id',c.id).eq('user_id',currentUser.id);
     if(dbErr){await sb.storage.from('vault').remove([newPath]);throw dbErr;}
-    if(!c.isPassport&&c.path){try{await sb.storage.from('vault').remove([c.path]);}catch(_){}
-    }
-    const previewUrl=URL.createObjectURL(blob);
-    if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
-    viewerCtx.objectUrl=previewUrl;
-    viewerCtx.path=dbPath;
-    viewerCtx.passportData=c.isPassport?JSON.parse(dbPath):null;
-    img.src=previewUrl;
-    img.style.transform='none';
+    if(!c.isPassport && sourcePath) await sb.storage.from('vault').remove([sourcePath]);
+    c.path=dbPath; c.passportData=c.isPassport?JSON.parse(dbPath):null;
     currentRotation=0;
+    document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
     await loadGenericDocsStatus(true);
+    alert('✅ Corrected orientation saved to your Vault.');
   }catch(err){alert('❌ Could not save orientation: '+err.message);}
 }
+
 async function deleteGenericDoc(id){
   if(!confirm('Move to Bin?')) return;
   const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id);
@@ -1251,7 +1307,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent='❌ '+err.message;}
+    }catch(err){status.textContent=' '+err.message;}
   };
   input.click();
 }
@@ -1290,7 +1346,7 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent='✂ '+r.msg;
+    st.textContent=' '+r.msg;
   }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
@@ -1453,7 +1509,7 @@ function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
-  const m={vault:'nav-vault',autopilot:'nav-auto', otherDocsView:'nav-vault'}; 
+  const m={vault:'nav-vault',career:'nav-career',autopilot:'nav-auto', otherDocsView:'nav-vault'}; 
   if(m[id])document.getElementById(m[id]).classList.add('active');
   window.scrollTo(0,0);
   if(id === 'otherDocsView') loadOtherDocs();
@@ -1554,7 +1610,7 @@ async function saveFamilyShares(){
       permissions[r]=child?true:!!el?.checked;
     });
     const {error}=await sb.from('document_shares').upsert({ document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString() },{onConflict:'document_id,recipient_user_id'});
-    if(!error)ok++; else alert('❌ '+error.message);
+    if(!error)ok++; else alert(' '+error.message);
   }
   alert(`✅ Family access updated for ${ok} document(s).`);
   closeModal('familyShareModal');
@@ -1706,17 +1762,6 @@ window.onclick=e=>{
   if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
   if(!e.target.closest('#viewerMenu')&&!e.target.closest('.vdots'))document.getElementById('viewerMenu').classList.remove('show');
 };
-
-// --- PWA SERVICE WORKER REGISTRATION ---
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(registration => {
-      console.log('SW registered: ', registration);
-    }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
-    });
-  });
-}
 </script>
 </body>
 </html>
