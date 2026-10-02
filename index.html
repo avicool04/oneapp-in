@@ -1494,6 +1494,13 @@ function setLockMessage(t,error=false){const el=document.getElementById('appLock
 function showLockOverlay(){document.getElementById('appLockOverlay').classList.add('show');document.body.classList.add('locked');}
 function hideLockOverlay(){document.getElementById('appLockOverlay').classList.remove('show');document.body.classList.remove('locked');appUnlocked=true;}
 function lockApp(){appUnlocked=false;if(!currentUser)return;showLockOverlay();setLockMessage('');}
+function uuidBytes(uuid){
+  const hex=String(uuid||'').replace(/-/g,'');
+  if(!/^[0-9a-f]{32}$/i.test(hex))return new TextEncoder().encode(String(uuid||'OneApp user'));
+  const out=new Uint8Array(16);
+  for(let i=0;i<16;i++)out[i]=parseInt(hex.slice(i*2,i*2+2),16);
+  return out;
+}
 async function initAppLock(uid){
   if(!currentUser||currentUser.id!==uid)return;
   appUnlocked=false;
@@ -1501,37 +1508,68 @@ async function initAppLock(uid){
   setLockMessage('');
   const title=document.getElementById('appLockTitle'),sub=document.getElementById('appLockSub'),btn=document.getElementById('appLockButton');
   title.textContent='OneApp is locked';
-  sub.textContent='Use your device PIN, fingerprint or face security to open OneApp.';
+  sub.textContent='Unlock with your phone\'s screen lock (PIN, fingerprint or face).';
   btn.style.display='block';
-  btn.textContent='🔐 Unlock with device security';
+  btn.textContent='🔐 Unlock OneApp';
 }
 async function unlockApp(){
   if(appLockBusy||!currentUser)return;
   appLockBusy=true;
   setLockMessage('');
   try{
+    if(!window.PublicKeyCredential||!navigator.credentials)throw new Error('Device security is not available in this browser.');
     const stored=localStorage.getItem(lockStorageKey(appLockCredentialKey));
     if(stored){
-      await webauthnUnlock(stored);
+      try{
+        await webauthnUnlock(stored);
+      }catch(firstErr){
+        // A credential created by an older OneApp build may be unusable after a browser/device change.
+        // Forget only the local reference and create a fresh platform credential after the user taps Unlock.
+        localStorage.removeItem(lockStorageKey(appLockCredentialKey));
+        localStorage.removeItem(lockStorageKey(appLockModeKey));
+        await webauthnRegister();
+      }
     }else{
       await webauthnRegister();
     }
     hideLockOverlay();
   }catch(err){
-    setLockMessage(err?.message||'Device authentication was cancelled or unavailable.',true);
+    const msg=String(err?.message||'');
+    if(/credential manager|not allowed|operationerror|unknown error/i.test(msg)){
+      setLockMessage('Your phone/browser could not start device security. Make sure a screen PIN, fingerprint or face lock is enabled, then tap Unlock again.',true);
+    }else if(err?.name==='NotAllowedError'){
+      setLockMessage('Device unlock was cancelled. Tap Unlock OneApp and try again.',true);
+    }else{
+      setLockMessage(msg||'Device authentication could not be completed.',true);
+    }
   }finally{
     appLockBusy=false;
   }
 }
 async function webauthnRegister(){
   if(!window.PublicKeyCredential||!navigator.credentials)throw new Error('Secure device authentication is not available in this browser.');
-  const cred=await navigator.credentials.create({publicKey:{challenge:randomBytes(),rp:{name:'OneApp.in'},user:{id:new TextEncoder().encode(currentUser.id),name:currentUser.email||'OneApp user',displayName:currentUser.user_metadata?.full_name||'OneApp user'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'preferred',userVerification:'required'},attestation:'none'}});
+  const rpId=location.hostname;
+  const cred=await navigator.credentials.create({publicKey:{
+    challenge:randomBytes(32),
+    rp:{id:rpId,name:'OneApp.in'},
+    user:{id:uuidBytes(currentUser.id),name:currentUser.email||'OneApp user',displayName:currentUser.user_metadata?.full_name||'OneApp user'},
+    pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+    authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'discouraged',requireResidentKey:false,userVerification:'required'},
+    timeout:60000,
+    attestation:'none'
+  }});
   if(!cred)throw new Error('Device authentication was not completed.');
   localStorage.setItem(lockStorageKey(appLockCredentialKey),b64(cred.rawId));
   localStorage.setItem(lockStorageKey(appLockModeKey),'webauthn');
 }
 async function webauthnUnlock(stored){
-  const cred=await navigator.credentials.get({publicKey:{challenge:randomBytes(),allowCredentials:[{type:'public-key',id:fromB64(stored)}],userVerification:'required'}});
+  const cred=await navigator.credentials.get({publicKey:{
+    challenge:randomBytes(32),
+    rpId:location.hostname,
+    allowCredentials:[{type:'public-key',id:fromB64(stored)}],
+    userVerification:'required',
+    timeout:60000
+  }});
   if(!cred||b64(cred.rawId)!==stored)throw new Error('Device authentication failed.');
 }
 function openViewerFileExternally(){if(viewerCtx?.signedUrl)window.open(viewerCtx.signedUrl,'_blank','noopener');}
