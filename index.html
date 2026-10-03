@@ -7,30 +7,26 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1e40af">
 <style>
-:root{--primary:#1e40af;--success:#22c55e;--warn:#d97706;--danger:#ef4444;--bg:#f4f7fb;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b;--tile:#f1f3f5;--bg-blue:#dbeafe;--bg-indigo:#e0e7ff}
+:root{--primary:#1e40af;--success:#22c55e;--warn:#d97706;--danger:#ef4444;--bg:#f8fafc;--dark:#1e293b;--border:#e2e8f0;--gray:#64748b;--tile:#f1f3f5}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-html{background:#eef4ff}
-body{background:radial-gradient(circle at 8% 12%,rgba(59,130,246,.14),transparent 26%),radial-gradient(circle at 92% 18%,rgba(99,102,241,.12),transparent 24%),linear-gradient(180deg,#f7faff 0%,#eef4fb 48%,#f8fafc 100%);color:var(--dark);line-height:1.6;overflow-x:hidden;min-height:100vh;position:relative}
-body::before,body::after{content:"";position:fixed;pointer-events:none;z-index:0;border-radius:999px;filter:blur(2px)}
-body::before{width:340px;height:340px;right:-150px;top:120px;background:radial-gradient(circle,rgba(30,64,175,.12) 0%,rgba(30,64,175,.04) 48%,transparent 72%)}
-body::after{width:300px;height:300px;left:-150px;bottom:8%;background:radial-gradient(circle,rgba(14,165,233,.10) 0%,rgba(14,165,233,.035) 48%,transparent 72%)}
-nav{background:rgba(255,255,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(226,232,240,.82);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem;box-shadow:0 4px 24px rgba(30,64,175,.06)}
-.logo{font-weight:900;font-size:1.2rem;letter-spacing:-.04em;background:linear-gradient(135deg,#173b8f,#3b82f6);-webkit-background-clip:text;background-clip:text;color:transparent}.logo span{color:#64748b;background:none;-webkit-text-fill-color:#64748b}
+body{background:var(--bg);color:var(--dark);line-height:1.6;overflow-x:hidden}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.5rem}
+.logo{font-weight:800;font-size:1.1rem;color:var(--primary)}.logo span{color:var(--gray)}
 .nav-links{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);font-size:.85rem;padding:.3rem .5rem;border-radius:6px}
 .nav-links button.active{color:var(--primary);background:rgba(30,64,175,.06)}
-.btn-emg{background:transparent!important;color:#dc2626!important;padding:.25rem .35rem;border:0!important;border-radius:0;font-size:1.35rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;box-shadow:none!important}.btn-emg:hover{background:rgba(239,68,68,.08)!important;border-radius:8px}.btn-emg .emg-bell{width:22px;height:22px;fill:#dc2626}
+.btn-emg{background:var(--danger)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
 .btn-auth{background:var(--primary)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
-.user-chip{display:flex;align-items:center;justify-content:center;background:transparent!important;color:var(--primary)!important;padding:.15rem;border:0;cursor:pointer}.user-chip #userName{display:none}
-.avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#fff}
-.avatar-fallback{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem}
+.user-chip{display:flex;align-items:center;gap:.4rem;background:var(--primary)!important;color:#fff!important;padding:.25rem .7rem .25rem .3rem;border-radius:999px;font-weight:600;font-size:.8rem;border:none;cursor:pointer}
+.avatar{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#fff}
+.avatar-fallback{width:24px;height:24px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem}
 .user-area{position:relative}
 .dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.75rem;min-width:200px;display:none;z-index:300;text-align:left}
 .dropdown.show{display:block}.dropdown .email{font-size:.75rem;color:var(--gray);word-break:break-all;margin-bottom:.5rem}
-.container{max-width:1120px;margin:1.35rem auto;padding:0 .9rem;position:relative;z-index:1}
+.container{max-width:900px;margin:1rem auto;padding:0 .75rem}
 .view{display:none;animation:fadeIn .3s ease}.view.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card{background:rgba(255,255,255,.94);border-radius:16px;border:1px solid rgba(226,232,240,.9);box-shadow:0 10px 30px rgba(30,64,175,.07),0 2px 6px rgba(0,0,0,.035);padding:1rem;margin-bottom:1rem;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);padding:1rem;margin-bottom:1rem}
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;border-bottom:1px solid #f1f5f9;padding-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
 h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95rem}
 .sub{color:var(--gray);font-size:.8rem;margin-bottom:.75rem}
@@ -40,7 +36,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .doc-row:last-child{border-bottom:none}
 .doc-info h4{font-size:.9rem}.doc-info p{font-size:.75rem;color:var(--gray)}
 .btn{padding:.6rem 1rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.85rem;width:100%;margin-bottom:.4rem;transition:all .2s}
-.btn:hover{opacity:.9}.btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.25)}.btn-sm{padding:.35rem .7rem;font-size:.75rem;width:auto;margin:0}
+.btn:hover{opacity:.9}.btn-sm{padding:.35rem .7rem;font-size:.75rem;width:auto;margin:0}
 .btn-primary{background:var(--primary);color:#fff}.btn-outline{background:#fff;border:1px solid var(--border);color:var(--dark)}
 .btn-success{background:var(--success);color:#fff}.btn-danger{background:var(--danger);color:#fff}
 .btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem}
@@ -52,7 +48,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 #aadhaarModal{z-index:250}
 #consentModal{z-index:400}
 #profileModal{z-index:350}
-#uploadMethodModal{z-index:450}#familyShareModal{z-index:520}
+#uploadMethodModal{z-index:450}
 #customNameModal{z-index:450}
 #expiryDateModal{z-index:450}
 #passportPage2Modal{z-index:450}
@@ -66,9 +62,10 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .field input,.field select{width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem}
 .divider{display:flex;align-items:center;margin:.75rem 0;color:var(--gray);font-size:.75rem}
 .divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}.divider span{padding:0 .5rem}
-.icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem;margin-bottom:.5rem}.home-drop-zone,.home-remove-zone{display:none;border:2px dashed rgba(30,64,175,.28);border-radius:14px;padding:.8rem;text-align:center;color:var(--primary);font-size:.75rem;font-weight:700;background:rgba(219,234,254,.5);margin-top:.6rem}.home-drop-zone.drag-active,.home-remove-zone.drag-active{display:block}.home-remove-zone{color:#b91c1c;border-color:rgba(239,68,68,.3);background:rgba(254,226,226,.55)}.dragging{opacity:.45}.all-doc-tile{cursor:grab}.all-doc-tile:active{cursor:grabbing}.doc-type-grid{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.doc-type-card{width:64px;height:64px;border:0;border-radius:16px;padding:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s}.doc-type-card:hover{transform:translateY(-2px);background:rgba(30,64,175,.05)}.compact-doc-icon{width:56px;height:56px;border-radius:15px;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:1.9rem;box-shadow:0 2px 8px rgba(30,64,175,.08)}.child-folder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}.child-folder{border:1px solid var(--border);border-radius:14px;padding:.7rem;background:#fff}.child-folder-head{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem}.child-folder-icon{width:42px;height:42px;border-radius:11px;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:1.35rem}.child-folder-title{font-size:.86rem;font-weight:800}.child-folder-empty{font-size:.72rem;color:var(--gray);padding:.35rem 0}.child-folder .doc-row{padding:.45rem 0}.child-folder .doc-info h4{font-size:.78rem}.child-folder .doc-info p{display:none}@media(max-width:600px){.child-folder-grid{grid-template-columns:1fr}}
+.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem}
 .icon-tile{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
-.icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative}
+.icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.icon-box img{width:100%;height:100%;object-fit:contain}
 .icon-box svg{width:32px;height:32px}
 .icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
 .status-badge{position:absolute;bottom:0;left:0;width:16px;height:16px;background:var(--success);border-radius:50%;border:2px solid #fff;display:none;align-items:center;justify-content:center;z-index:2}
@@ -80,17 +77,15 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .invite-tabs{display:flex;gap:.4rem;margin-bottom:.75rem}
 .invite-tab{flex:1;padding:.4rem;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:.75rem;font-weight:600;text-align:center}
 .invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.viewer-img{width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;transition:transform .3s ease}
+.viewer-img{width:100%;max-width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;display:block}
 .viewer-head{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:.25rem}
 .vdots{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
 .viewer-menu{position:absolute;right:0;top:115%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);padding:.4rem;display:none;z-index:60;min-width:150px;text-align:left}
 .viewer-menu.show{display:block}
 .rotate-controls{display:flex;gap:.3rem;justify-content:center;margin:.5rem 0}
 .rotate-controls button{padding:.3rem .6rem;font-size:.75rem}
-.desktop-hero{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.2rem;margin-bottom:1rem;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(239,246,255,.78));border:1px solid rgba(191,219,254,.7);box-shadow:0 16px 38px rgba(30,64,175,.08);position:relative;overflow:hidden}.desktop-hero:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-65px;top:-80px;background:radial-gradient(circle,rgba(59,130,246,.18),transparent 70%)}.hero-copy{position:relative;z-index:1}.hero-kicker{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:#64748b;font-weight:800}.hero-title{font-size:1.45rem;color:#173b8f;font-weight:800;margin:.1rem 0}.hero-art{position:relative;z-index:1;width:130px;height:90px;display:flex;align-items:center;justify-content:center}.hero-art svg{width:120px;height:82px}.app-lock-overlay{position:fixed;inset:0;background:linear-gradient(145deg,rgba(239,246,255,.97),rgba(248,250,252,.98));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;z-index:2000;padding:1rem}.app-lock-overlay.show{display:flex}.app-lock-card{width:min(390px,100%);background:rgba(255,255,255,.97);border:1px solid rgba(226,232,240,.95);border-radius:24px;padding:1.4rem;box-shadow:0 25px 70px rgba(15,23,42,.16);text-align:center}.app-lock-icon{width:68px;height:68px;border-radius:20px;margin:0 auto .8rem;background:linear-gradient(135deg,#1e40af,#3b82f6);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(30,64,175,.22)}.app-lock-icon svg{width:36px;height:36px;fill:#fff}.app-lock-title{font-size:1.2rem;font-weight:800;color:#172554}.app-lock-sub{font-size:.8rem;color:var(--gray);margin:.25rem 0 1rem}.lock-error{display:none;background:#fee2e2;color:#991b1b;border-radius:8px;padding:.5rem;font-size:.75rem;margin-bottom:.5rem}.lock-pin{display:none}.lock-pin input{text-align:center;letter-spacing:.35em;font-size:1.2rem}.security-note{font-size:.68rem;color:#64748b;margin-top:.65rem}.drag-hint{font-size:.68rem;color:#64748b;margin-top:.4rem}.global-home-drop-zone{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(120px);z-index:1800;background:#1e40af;color:#fff;border-radius:16px;padding:.9rem 1.2rem;font-weight:800;font-size:.82rem;box-shadow:0 16px 35px rgba(30,64,175,.28);transition:transform .18s ease,opacity .18s ease;opacity:0;pointer-events:none}.global-home-drop-zone.active{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}.global-home-drop-zone.over{background:#059669;transform:translateX(-50%) translateY(-3px) scale(1.02)}.touch-dragging{position:relative;z-index:1700;opacity:.45}.family-person-card{cursor:pointer;transition:transform .15s,box-shadow .15s}.shared-vault-card{border-radius:16px}.shared-vault-card .card-header{margin-bottom:.4rem}.shared-vault-empty{padding:1rem;text-align:center;color:var(--gray);font-size:.8rem}.family-person-card:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(30,64,175,.08)}
 footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
-@media(max-width:720px){.desktop-hero{padding:1rem}.hero-title{font-size:1.15rem}.hero-art{width:90px}.hero-art svg{width:82px}.icon-grid{grid-template-columns:repeat(3,1fr)}.doc-type-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:480px){body{background:radial-gradient(circle at 12% 8%,rgba(59,130,246,.12),transparent 30%),radial-gradient(circle at 95% 24%,rgba(99,102,241,.10),transparent 28%),linear-gradient(180deg,#f7faff 0%,#f1f6fb 52%,#f8fafc 100%)}body::before{width:230px;height:230px;right:-125px;top:100px}body::after{width:210px;height:210px;left:-120px;bottom:12%}.icon-grid{grid-template-columns:repeat(3,1fr)}.modal{padding:1rem;max-width:100%}nav{padding:.5rem .75rem}}
+@media(max-width:480px){.icon-grid{grid-template-columns:repeat(3,1fr)}.modal{padding:1rem;max-width:100%}nav{padding:.5rem .75rem}}
 .family-share-list{max-height:45vh;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:.4rem}
 .family-share-row{padding:.65rem .4rem;border-bottom:1px solid #f1f5f9}
 .family-share-row:last-child{border-bottom:none}
@@ -98,28 +93,17 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .share-matrix th,.share-matrix td{border:1px solid var(--border);padding:.4rem;text-align:center}
 .share-matrix th:first-child,.share-matrix td:first-child{text-align:left}
 .shared-doc-actions{display:flex;gap:.3rem;flex-wrap:wrap}
-.family-rights-status{font-size:.68rem;color:#475569;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:.35rem .45rem;margin-top:.35rem}.rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
+.rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
 .bin-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem 0;border-bottom:1px dashed #f1f5f9;flex-wrap:wrap}
 </style>
 </head>
 <body>
-
-<div id="appLockOverlay" class="app-lock-overlay">
-  <div class="app-lock-card">
-    <div class="app-lock-icon"><svg viewBox="0 0 24 24"><path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2Zm-7-2a2 2 0 1 1 4 0v2h-4V6Zm7 13H7v-9h10v9Zm-5-2.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z"/></svg></div>
-    <div class="app-lock-title" id="appLockTitle">OneApp is locked</div>
-    <div class="app-lock-sub" id="appLockSub">Use your device security to open OneApp.</div>
-    <div id="appLockError" class="lock-error"></div>
-    <button id="appLockButton" class="btn btn-primary" onclick="unlockApp()">🔐 Unlock with device security</button>
-    <div class="security-note">Use your phone/computer device PIN, fingerprint or face security when supported. OneApp stays unlocked until this window is closed or you log out.</div>
-  </div>
-</div>
 <nav>
   <div class="logo">One<span>App</span>.in</div>
   <div class="nav-links">
     <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
-    <button id="nav-auto" onclick="showView('autopilot')">Autopilot</button><button id="nav-career" onclick="showView('career')">Career</button>
-    <button class="btn-emg" onclick="openSOS()" aria-label="Emergency" title="Emergency"><svg class="emg-bell" viewBox="0 0 24 24"><path d="M12 22a2.5 2.5 0 0 0 2.35-1.65h-4.7A2.5 2.5 0 0 0 12 22Zm7-5.2-1.7-1.9V10a5.3 5.3 0 0 0-4.3-5.2V4a1 1 0 0 0-2 0v.8A5.3 5.3 0 0 0 6.7 10v4.9L5 16.8c-.6.65-.14 1.7.75 1.7h12.5c.89 0 1.35-1.05.75-1.7Z"/></svg></button>
+    <button id="nav-auto" onclick="showView('autopilot')">Autopilot</button>
+    <button class="btn-emg" onclick="openSOS()">Emergency</button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
     <div class="user-area" id="userArea" style="display:none">
       <button class="user-chip" onclick="toggleUserMenu(event)">
@@ -131,7 +115,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 My Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">‍👩‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -140,36 +124,47 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </nav>
 
 <div id="vault" class="view active container">
-  <div class="desktop-hero"><div class="hero-copy"><div class="hero-kicker">OneApp.in</div><div class="hero-title">Your private life, organised.</div><p class="sub" style="margin:0;max-width:520px">Your important documents, family access and renewals in one calm, secure place.</p></div><div class="hero-art"><svg viewBox="0 0 140 96" fill="none"><path d="M70 8 118 25v28c0 17-11 30-48 38C33 83 22 70 22 53V25L70 8Z" fill="#dbeafe" stroke="#1e40af" stroke-width="3"/><rect x="47" y="31" width="46" height="30" rx="6" fill="#1e40af"/><circle cx="60" cy="46" r="7" fill="#bfdbfe"/><path d="M55 54c2-5 8-7 10-7s8 2 10 7M73 39h13M73 45h10M73 51h7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div></div>
+  <h2>My Secure Vault</h2>
+  <p class="sub">Encrypted mirrors of your official documents.</p>
   <div class="card">
-    <div class="card-header"><h3>Vault Home</h3><span class="badge badge-ok">Private</span></div>
-    <p class="sub">Keep only the documents you use most on Home. Everything else is in All Documents.</p>
-    <div class="icon-grid" id="homeDocumentGrid">
+    <div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
+    <div class="icon-grid">
       <div class="icon-tile" onclick="openAadhaarSmart()">
         <div class="icon-box">
-          <svg viewBox="0 0 64 64" fill="none" aria-label="Aadhaar-inspired identity mark"><circle cx="32" cy="32" r="25" fill="#fff7ed"/><g stroke="#cc292b" stroke-width="2.4" stroke-linecap="round"><path d="M32 8v8"/><path d="M32 48v8"/><path d="M8 32h8"/><path d="M48 32h8"/><path d="M15.1 15.1l5.7 5.7"/><path d="M43.2 43.2l5.7 5.7"/><path d="M48.9 15.1l-5.7 5.7"/><path d="M20.8 43.2l-5.7 5.7"/></g><path d="M32 13.5c-8.9 0-16.1 7.2-16.1 16.1 0 3.1.9 6 2.4 8.5" stroke="#cc292b" stroke-width="3" stroke-linecap="round"/><path d="M32 18.5c-6.1 0-11.1 5-11.1 11.1 0 2.1.6 4.1 1.6 5.8" stroke="#cc292b" stroke-width="2.5" stroke-linecap="round"/><path d="M32 23.5c-3.4 0-6.1 2.7-6.1 6.1 0 1.2.3 2.3.9 3.3" stroke="#cc292b" stroke-width="2.2" stroke-linecap="round"/><path d="M32 13.5c8.9 0 16.1 7.2 16.1 16.1 0 3.1-.9 6-2.4 8.5" stroke="#cc292b" stroke-width="3" stroke-linecap="round"/><path d="M32 18.5c6.1 0 11.1 5 11.1 11.1 0 2.1-.6 4.1-1.6 5.8" stroke="#cc292b" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="30" r="6.2" fill="#e8b012"/><circle cx="32" cy="30" r="2.1" fill="#fff7ed"/></svg>
+          <img src="/aadhaar-icon.png" alt="Aadhaar">
           <div id="aadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>Aadhaar</span>
       </div>
       <div class="icon-tile" onclick="handleGenericIconClick('PAN Card')">
-        <div class="icon-box" style="font-size:1.55rem">💳
+        <div class="icon-box">
+          <img src="/pan-icon.png" alt="PAN Card">
           <div id="panIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>PAN Card</span>
+      </div>
+      <div class="icon-tile" onclick="handleGenericIconClick('Driving License')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="16" width="52" height="32" rx="6" fill="#7c3aed"/><rect x="6" y="16" width="52" height="9" rx="6" fill="#a78bfa"/><circle cx="20" cy="36" r="7" fill="#ddd6fe"/><circle cx="20" cy="34" r="3" fill="#7c3aed"/><path d="M13 43 Q20 38 27 43" fill="#7c3aed"/><rect x="32" y="30" width="20" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="36" width="16" height="3" rx="1.5" fill="#c4b5fd"/><rect x="32" y="42" width="12" height="3" rx="1.5" fill="#c4b5fd"/></svg>
+          <div id="licenseIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>License</span>
+      </div>
+      <div class="icon-tile" onclick="handleGenericIconClick('Passport')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="12" y="8" width="40" height="48" rx="5" fill="#1e3a5f"/><rect x="16" y="12" width="32" height="40" rx="3" fill="#1e40af"/><circle cx="32" cy="28" r="10" fill="#3b82f6"/><circle cx="32" cy="28" r="7" fill="#1e40af"/><circle cx="32" cy="28" r="4" fill="#60a5fa"/><rect x="22" y="42" width="20" height="3" rx="1.5" fill="#93c5fd"/><rect x="26" y="47" width="12" height="2" rx="1" fill="#93c5fd"/></svg>
+          <div id="passportIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>Passport</span>
       </div>
       <div class="icon-tile" onclick="showView('otherDocsView')">
         <div class="icon-box">
           <svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
           <div id="otherIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
-        <span>Other Documents</span>
+        <span>Other Docs</span>
       </div>
-      <div id="homeCustomTiles" style="display:contents"></div>
     </div>
-    <div id="homeDropZone" class="home-drop-zone">Drop here to keep this on Home</div>
-    <div id="homeRemoveZone" class="home-remove-zone">Drop here to remove from Home</div>
-    <p class="drag-hint">Long-press a document in All Documents and drag it to Home. Removing it from Home never deletes the document.</p>
   </div>
   <div class="card">
     <div class="card-header"><h3>Insurance</h3></div>
@@ -181,8 +176,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     </div>
   </div>
 </div>
-
-<div id="career" class="view container"><div class="desktop-hero"><div class="hero-copy"><div class="hero-kicker">Career</div><div class="hero-title">Your professional life, organised.</div><p class="sub" style="margin:0">Career workspace coming next. Your Vault remains unchanged.</p></div><div class="hero-art"><svg viewBox="0 0 140 96" fill="none"><rect x="30" y="24" width="80" height="54" rx="8" fill="#dbeafe" stroke="#1e40af" stroke-width="3"/><path d="M52 24v-6h36v6M44 40h52M44 55h25M44 66h38" stroke="#1e40af" stroke-width="3" stroke-linecap="round"/></svg></div></div></div>
 
 <div id="autopilot" class="view container"><h2>Renewals Autopilot</h2><p class="sub">Every deadline tracked.</p><div class="card"><div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div><div class="doc-row"><div class="doc-info"><h4>Vehicle Insurance</h4><p>Expires in 12 days</p></div><button class="btn btn-primary btn-sm">Renew</button></div></div></div>
 
@@ -216,8 +209,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="uploadMethodModal" class="modal-overlay"><div class="modal">
   <h3>Add Document</h3>
   <p class="sub" id="uploadMethodDocType">Document Type</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()"> Take Photo</button>
-  <button class="btn btn-outline" onclick="triggerFileUpload()"> Upload File</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerCamera()">📷 Take Photo</button>
+  <button class="btn btn-outline" onclick="triggerFileUpload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('uploadMethodModal')">Cancel</button>
   <input type="file" id="genericFileInput" style="display:none" accept="image/*,application/pdf" onchange="handleGenericFileSelect(this.files[0])">
 </div></div>
@@ -244,7 +237,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="passportPage2Modal" class="modal-overlay"><div class="modal">
   <h3>📄 Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
-  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()"> Take Photo</button>
+  <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
   <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
@@ -262,7 +255,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
-  <button class="btn btn-outline" onclick="aaShare('pdf','side')"> ID Card PDF — side by side</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','side')">📄 ID Card PDF — side by side</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 ID Card PDF — top & bottom</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
 </div></div>
@@ -271,7 +264,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="genericShareModal" class="modal-overlay"><div class="modal">
   <h3>Share Document</h3>
   <button class="btn btn-primary" onclick="genericShare('jpg')">🖼️ Share as JPG</button>
-  <button class="btn btn-outline" onclick="genericShare('pdf')">📄 Share as PDF</button>
+  <button class="btn btn-outline" onclick="genericShare('pdf')"> Share as PDF</button>
   <button class="btn btn-outline" onclick="closeModal('genericShareModal')">Cancel</button>
 </div></div>
 
@@ -285,22 +278,22 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍‍👧 Share with Family</h3>
+  <h3>‍👩‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
   <div id="familyShareDocs" class="family-share-list"><p class="sub">Loading documents…</p></div>
-  <button id="familyShareSaveBtn" class="btn btn-primary" onclick="saveFamilyShares()" disabled>✅ Grant / Update Access</button>
+  <button class="btn btn-primary" onclick="saveFamilyShares()">✅ Grant / Update Access</button>
   <button class="btn btn-outline" onclick="closeModal('familyShareModal')">Cancel</button>
 </div></div>
 
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 My Family</h3>
+  <h3>👨‍👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
-    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()"> Invite Adult</button>
     <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
@@ -375,13 +368,12 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="otherDocsView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
-    <h2 id="odTitle" style="margin:0">All Documents</h2>
+    <h2 id="odTitle" style="margin:0">Other Documents</h2>
   </div>
-  <p class="sub">All document types are available here. Drag a document type to Vault Home when you want it there.</p>
-  <div class="card"><div class="card-header"><h3>Document Types</h3><span class="badge badge-ok">All available</span></div><div id="allDocumentTypes" class="doc-type-grid"></div></div>
+  <p class="sub">Custom documents saved by you.</p>
   <div class="card">
     <div class="card-header">
-      <h3>Other Saved Files</h3>
+      <h3>Saved Files</h3>
       <span class="badge badge-ok">Private bucket</span>
       <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')">➕ Add New</button>
     </div>
@@ -405,8 +397,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     </div>
   </div>
   <div class="card">
-    <div class="card-header"><h3 id="childFoldersTitle">Document Folders</h3><span class="badge badge-ok">Under <span id="childFoldersName"></span></span></div>
-    <div id="childActiveDocs" class="child-folder-grid"><p class="sub">Loading…</p></div>
+    <div class="card-header"><h3>Saved Documents</h3><span class="badge badge-ok">Private bucket</span></div>
+    <div id="childActiveDocs"><p class="sub">Loading…</p></div>
   </div>
   <div class="card" id="childDupCard" style="display:none">
     <div class="card-header"><h3>Duplicate uploads — clean up</h3><span class="badge badge-warn">Extra copies</span></div>
@@ -439,7 +431,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
     <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
   </div>
-  <img id="fileViewerImg" class="viewer-img" alt="document">
+  <div id="fileViewerStage" style="width:100%;display:flex;justify-content:center;align-items:center;overflow:auto">
+    <img id="fileViewerImg" class="viewer-img" alt="document">
+  </div>
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
 </div></div>
 
@@ -448,7 +442,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 const SUPABASE_URL='https://ylxxxmrbsllrncwcpcmb.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
@@ -456,10 +449,8 @@ let sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 let currentUser=null,familyMembers=[],currentChildId=null,currentChildName='';
-let appUnlocked=false,appLockBusy=false,appLockCredentialKey='oneapp_lock_credential_',appLockPinKey='oneapp_lock_pin_',appLockModeKey='oneapp_lock_mode_';
 let shareContext=null,viewerCtx=null;
 let familyShareDocs=[],familyShareTargetId=null,sharedVaultContext=null;
-let familyShareBaseline='';
 let familyChannel = null;
 let pendingInviteId = null;
 let tempUploadType = null;
@@ -474,7 +465,7 @@ async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({pr
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 async function handleAuthClick(){openModal('authModal');}
-async function doSignOut(){try{sessionStorage.removeItem(lockSessionKey());}catch(e){} appUnlocked=false; await sb.auth.signOut();}
+async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 
 sb.auth.onAuthStateChange((ev,s)=>{
@@ -482,25 +473,22 @@ sb.auth.onAuthStateChange((ev,s)=>{
   if(s){
     currentUser=s.user;
     const m=s.user.user_metadata||{},full=m.full_name||m.name||(s.user.email?s.user.email.split('@')[0]:'User');
-    document.getElementById('userName').textContent='';
+    document.getElementById('userName').textContent=full;
     document.getElementById('userEmail').textContent=s.user.email||'';
     const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback'),pic=m.avatar_url||m.picture;
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
     btn.style.display='none';area.style.display='block';
     loadSavedAadhaar(s.user.id);
     loadGenericDocsStatus();
-    loadHomeFavorites();
     setupRealTimeFamily();
     checkForInvite(); 
     loadFamilyMembers();
-    if(ev==='SIGNED_IN' || ev==='INITIAL_SESSION') setTimeout(()=>initAppLock(s.user.id),150);
   }
   else{
     currentUser=null;familyMembers=[];
     btn.style.display='';area.style.display='none';
     document.getElementById('userDropdown').classList.remove('show');
     resetAadhaarUI();
-    lockApp();
   }
 });
 
@@ -711,7 +699,7 @@ async function loadGenericDocsStatus(force=false){
   const cache = { __loadedFor: currentUser.id };
   data.forEach(d => {
     if(d.document_type === 'PAN Card') cache['PAN Card'] = d;
-    else if(d.document_type === 'Driving License') { if(!cache['Driving License']) cache['Driving License']=[]; cache['Driving License'].push(d); }
+    else if(d.document_type === 'Driving License') cache['Driving License'] = d;
     else if(d.document_type === 'Passport') {
       if(!cache['Passport']) cache['Passport'] = [];
       cache['Passport'].push(d);
@@ -722,19 +710,18 @@ async function loadGenericDocsStatus(force=false){
   });
   savedGenericDocs = cache;
   document.getElementById('panIndicator').classList.toggle('show', !!cache['PAN Card']);
-  document.getElementById('licenseIndicator')?.classList.toggle('show', !!cache['Driving License']);
-  document.getElementById('passportIndicator')?.classList.toggle('show', !!(cache['Passport'] && cache['Passport'].length > 0));
-  document.getElementById('otherIndicator')?.classList.toggle('show', !!(cache['Other'] && cache['Other'].length > 0));
+  document.getElementById('licenseIndicator').classList.toggle('show', !!cache['Driving License']);
+  document.getElementById('passportIndicator').classList.toggle('show', !!(cache['Passport'] && cache['Passport'].length > 0));
+  document.getElementById('otherIndicator').classList.toggle('show', !!(cache['Other'] && cache['Other'].length > 0));
 }
 
 async function handleGenericIconClick(type){
   if(!currentUser){ alert('Please sign in first.'); return; }
-  if(!savedGenericDocs || savedGenericDocs.__loadedFor !== currentUser.id) await loadGenericDocsStatus(true);
-  if(type === 'Other'){ showView('otherDocsView'); return; }
-  if(type === 'PAN Card'){ const doc=savedGenericDocs[type]; if(doc) viewGenericDoc(doc.id,doc.file_url,doc.document_name||type,true,type); else openGenericUpload(type); return; }
-  if(type === 'Passport'){ const docs=savedGenericDocs['Passport']||[]; if(docs.length) viewGenericDoc(docs[0].id,docs[0].file_url,docs[0].document_name||type,true,type); else openGenericUpload(type); return; }
-  const docs=Array.isArray(savedGenericDocs[type])?savedGenericDocs[type]:[];
-  if(docs.length) viewGenericDoc(docs[0].id,docs[0].file_url,docs[0].document_name||type,true,type); else openGenericUpload(type);
+  if(!savedGenericDocs || savedGenericDocs.__loadedFor !== currentUser.id) await loadGenericDocsStatus();
+  if(type === 'Other' || type === 'Passport'){ showView(type === 'Passport' ? 'vault' : 'otherDocsView'); return; }
+  const doc = savedGenericDocs[type];
+  if(doc){ viewGenericDoc(doc.id, doc.file_url, doc.document_name || type, true, type); }
+  else { openGenericUpload(type); }
 }
 
 function openGenericUpload(type){
@@ -760,7 +747,7 @@ async function handleGenericFileSelect(file){
   if(!file) return;
   tempFile = file;
   if(tempUploadType === 'Other'){ openModal('customNameModal'); } 
-  else if (tempUploadType === 'Driving License') { openModal('expiryDateModal'); detectDrivingLicenseExpiry(file); } 
+  else if (tempUploadType === 'Driving License') { openModal('expiryDateModal'); } 
   else if (tempUploadType === 'Passport') { 
     passportPage1File = file;
     openModal('passportPage2Modal');
@@ -824,7 +811,7 @@ async function savePassportWithTwoPages(page1File, page2File){
     loadGenericDocsStatus();
     showView('vault');
   } catch (err) {
-    alert('❌ Error saving: ' + err.message);
+    alert(' Error saving: ' + err.message);
   }
 }
 
@@ -854,20 +841,6 @@ function confirmCustomName(){
   if(!name) return alert('Please enter a document name');
   closeModal('customNameModal');
   saveGenericDocument(null, name);
-}
-
-async function detectDrivingLicenseExpiry(file){
-  const st=document.getElementById('dlOcrStatus');if(!st)return;st.textContent='Reading Driving License…';
-  if(!window.Tesseract||!file||!file.type.startsWith('image/')){st.textContent='Automatic date detection is available for image uploads. Enter the date manually.';return;}
-  try{
-    const result=await Tesseract.recognize(file,'eng',{logger:m=>{if(m.status==='recognizing text')st.textContent=`Reading Driving License… ${Math.round((m.progress||0)*100)}%`;}});
-    const text=(result.data?.text||'').replace(/\s+/g,' ');let match=null;
-    const patterns=[/valid(?:ity)?\s*(?:until|till|upto|up to|to|through)?\s*[:\-]?\s*(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i,/valid\s*until\s*[:\-]?\s*(\d{1,2}\s*[A-Za-z]{3,9}\s*\d{2,4})/i];
-    for(const re of patterns){match=text.match(re);if(match)break;}
-    if(!match){const dates=[...text.matchAll(/(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/g)].map(m=>m[1]);if(dates.length)match=['',dates[dates.length-1]];}
-    if(match){const raw=match[1].replace(/\s/g,'');const parts=raw.split(/[\/.\-]/);let iso='';if(parts.length===3){let [d,m,y]=parts;if(y.length===2)y='20'+y;iso=`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;}if(iso&& !isNaN(new Date(iso).getTime())){document.getElementById('docExpiryDate').value=iso;st.textContent='Detected valid-until date. Please confirm before saving.';return;}}
-    st.textContent='Could not confidently detect the valid-until date. Please enter it manually.';
-  }catch(e){st.textContent='Automatic detection failed. Please enter the date manually.';}
 }
 
 function confirmExpiryDate(){
@@ -915,7 +888,7 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
   } catch (err) {
-    alert(' Error saving: ' + err.message);
+    alert('❌ Error saving: ' + err.message);
   } finally {
     tempFile = null; tempUploadType = null; tempExpiryDate = null;
     document.getElementById('genericFileInput').value = '';
@@ -925,32 +898,21 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
 }
 
 async function loadOtherDocs(){
-  const list=document.getElementById('otherDocsContainer');
-  list.innerHTML='<p class="sub">Loading…</p>';
-  if(!currentUser)return;
-  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).eq('document_type','Other').is('deleted_at',null).order('created_at',{ascending:false});
-  if(error){list.innerHTML=`<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`;return;}
-  const others=data||[];
-  if(!others.length){list.innerHTML='<p class="sub">No custom documents yet. Click "Add New" to add one.</p>';return;}
-  window.otherSavedDocsById=Object.fromEntries(others.map(d=>[d.id,d]));
-  list.innerHTML=others.map(d=>`
+  const list = document.getElementById('otherDocsContainer');
+  list.innerHTML = '<p class="sub">Loading…</p>';
+  if(!currentUser) return;
+  const { data, error } = await sb.from('documents').select('*').eq('user_id', currentUser.id).eq('document_type', 'Other').is('deleted_at', null).order('created_at', { ascending: false });
+  if(error){ list.innerHTML = `<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`; return; }
+  if(!data || data.length === 0){ list.innerHTML = '<p class="sub">No custom documents yet. Click "Add New" to add one.</p>'; return; }
+  list.innerHTML = data.map(d => `
     <div class="doc-row">
-      <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until?'Expires: '+new Date(d.valid_until).toLocaleDateString():'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
+      <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
       <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="viewOtherSavedDoc('${d.id}')">View</button>
+        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', true, '${d.document_type||'Other'}')">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
       </div>
-    </div>`).join('');
-}
-
-async function viewOtherSavedDoc(id){
-  const d=window.otherSavedDocsById?.[id];
-  if(!d){alert('Document record could not be found. Please reopen Other Documents.');return;}
-  const path=d.file_url||'';
-  const name=d.document_name||'Other Document';
-  const ext=(path.split('.').pop()||'').toLowerCase();
-  const isImage=['jpg','jpeg','png','webp','gif'].includes(ext);
-  await viewGenericDoc(d.id,path,name,isImage,'Other');
+    </div>
+  `).join('');
 }
 
 function getImageExtension(name){
@@ -1002,61 +964,56 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
     }else{
       const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
       if(error)throw error;
-      viewerCtx.signedUrl=data.signedUrl;
-      let link=document.getElementById('fileViewerFileLink');
-      if(!link){link=document.createElement('div');link.id='fileViewerFileLink';link.className='sos-box';document.querySelector('#fileViewerModal .modal').insertBefore(link,document.getElementById('fileViewerImg'));}
-      link.innerHTML='This file is kept inside OneApp. <button class="btn btn-primary btn-sm" onclick="openViewerFileExternally()">Open file</button>';link.style.display='block';
+      window.open(data.signedUrl,'_blank');
     }
-    document.getElementById('fileViewerImg').style.display=isImage?'block':'none';const fileLink=document.getElementById('fileViewerFileLink');if(fileLink)fileLink.style.display=isImage?'none':'block';
+    document.getElementById('fileViewerImg').style.display=isImage?'block':'none';
     document.getElementById('rotateControls').style.display=isImage?'flex':'none';
     document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
     currentRotation=0;
     document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
-    openModal('fileViewerModal');
+    if(isImage) openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
 
 function rotateImage(degrees){
   currentRotation=(currentRotation+degrees+360)%360;
-  document.getElementById('fileViewerImg').style.transform=`rotate(${currentRotation}deg)`;
 }
 
 async function rotateAndSaveImage(){
-  rotateImage(90);
-  await saveCurrentRotation();
-}
-
-async function saveCurrentRotation(){
   const c=viewerCtx;
   if(!c||c.kind!=='generic'||!c.isImage)return;
-  if(currentRotation===0){alert('No rotation change to save.');return;}
   try{
-    let sourcePath=c.path;
-    if(c.isPassport&&c.passportData) sourcePath=c.passportData.front||c.passportData.page1;
-    const loaded=await loadVaultImage(sourcePath);
-    const img=loaded.img;
-    const canvas=createRotatedCanvas(img,currentRotation);
-    URL.revokeObjectURL(loaded.objectUrl);
+    const img=document.getElementById('fileViewerImg');
+    if(!img.complete || !img.naturalWidth){
+      await new Promise((resolve,reject)=>{
+        img.onload=resolve;
+        img.onerror=()=>reject(new Error('Could not load document image'));
+      });
+    }
+    const nextRotation=(currentRotation+90)%360;
+    const canvas=createRotatedCanvas(img,nextRotation);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
     if(!blob)throw new Error('Could not create corrected image');
     const newPath=`${currentUser.id}/corrected-${c.id}-${Date.now()}.jpg`;
-    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg'});
+    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg',upsert:false});
     if(upErr)throw upErr;
     let dbPath=newPath;
-    if(c.isPassport&&c.passportData){
-      dbPath=JSON.stringify({...c.passportData,front:newPath});
-    }
+    if(c.isPassport&&c.passportData) dbPath=JSON.stringify({...c.passportData,front:newPath});
     const {error:dbErr}=await sb.from('documents').update({file_url:dbPath}).eq('id',c.id).eq('user_id',currentUser.id);
     if(dbErr){await sb.storage.from('vault').remove([newPath]);throw dbErr;}
-    if(!c.isPassport && sourcePath) await sb.storage.from('vault').remove([sourcePath]);
-    c.path=dbPath; c.passportData=c.isPassport?JSON.parse(dbPath):null;
+    if(!c.isPassport&&c.path){try{await sb.storage.from('vault').remove([c.path]);}catch(_){}
+    }
+    const previewUrl=URL.createObjectURL(blob);
+    if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
+    viewerCtx.objectUrl=previewUrl;
+    viewerCtx.path=dbPath;
+    viewerCtx.passportData=c.isPassport?JSON.parse(dbPath):null;
+    img.src=previewUrl;
+    img.style.transform='none';
     currentRotation=0;
-    document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
     await loadGenericDocsStatus(true);
-    alert('✅ Corrected orientation saved to your Vault.');
   }catch(err){alert('❌ Could not save orientation: '+err.message);}
 }
-
 async function deleteGenericDoc(id){
   if(!confirm('Move to Bin?')) return;
   const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id);
@@ -1167,7 +1124,7 @@ let childDocs=[],childAaCache={side:null,front:null,back:null,full:null},childAa
 const TYPE_LABELS={aadhaar:'Aadhaar Card',birth_cert:'Birth Certificate',vaccine:'Vaccination Sheet',other:'Other Document'};
 function parseTypeFromUrl(url){const seg=url.split('/').pop()||'';return seg.split('-')[0]||'other';}
 
-function openChildVault(id,name){currentChildId=id;currentChildName=name;document.getElementById('cvTitle').textContent=name+"'s Vault";document.getElementById('cvNameDisplay').textContent=name;document.getElementById('childFoldersName').textContent=name;closeModal('familyManagerModal');showView('childVaultView');loadChildDocs();}
+function openChildVault(id,name){currentChildId=id;currentChildName=name;document.getElementById('cvTitle').textContent=name+"'s Vault";document.getElementById('cvNameDisplay').textContent=name;closeModal('familyManagerModal');showView('childVaultView');loadChildDocs();}
 
 async function loadChildDocs(){
   const list=document.getElementById('childActiveDocs');
@@ -1183,42 +1140,31 @@ async function loadChildDocs(){
 
 async function renderChildDocs(){
   const list=document.getElementById('childActiveDocs');
-  const folders=[
-    {type:'aadhaar',title:'Aadhaar Card',icon:'🪪'},
-    {type:'birth_cert',title:'Birth Certificate',icon:'📜'},
-    {type:'vaccine',title:'Vaccine Certificate',icon:'💉'},
-    {type:'other',title:'Other Documents',icon:'📄'}
-  ];
-  const dups=[];
-  let html='';
-  const childNameEl=document.getElementById('childFoldersName');
-  if(childNameEl)childNameEl.textContent=currentChildName;
-  for(const folder of folders){
-    const rows=childDocs.filter(r=>parseTypeFromUrl(r.file_url)===folder.type);
+  if(!childDocs.length){list.innerHTML='<p class="sub">No documents uploaded yet. Use the tiles above.</p>';return;}
+  const types=['aadhaar','birth_cert','vaccine','other'];
+  let html='';const dups=[];
+  for(const t of types){
+    const rows=childDocs.filter(r=>parseTypeFromUrl(r.file_url)===t);
+    if(!rows.length)continue;
     const active=rows[0];
     for(let i=1;i<rows.length;i++)dups.push(rows[i]);
-    let content='';
-    if(active){
-      if(folder.type==='aadhaar'){
-        childAaRow=active;
-        await loadChildAaCache();
-        content=`<div class="doc-row"><div class="doc-info"><h4>${escHtml(active.document_name||'Aadhaar Card')}</h4></div><button class="btn btn-outline btn-sm" onclick="viewChildAadhaar()">View</button></div>`;
-      }else{
-        const fname=active.file_url.split('/').pop();
-        const ext=fname.split('.').pop().toLowerCase();
-        content=`<div class="doc-row"><div class="doc-info"><h4>${escHtml(active.document_name||folder.title)}</h4></div><button class="btn btn-outline btn-sm" onclick="viewChildFile('${active.id}','${active.file_url}','${ext}','${folder.type}')">View</button></div>`;
-      }
+    if(t==='aadhaar'){
+      childAaRow=active;
+      await loadChildAaCache();
+      html+=`<div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p>${currentChildName} • saved in vault</p></div><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="viewChildAadhaar()">View</button></div></div>`;
     }else{
-      content='<div class="child-folder-empty">Not uploaded yet</div>';
+      const fname=active.file_url.split('/').pop();
+      const ext=fname.split('.').pop().toLowerCase();
+      html+=`<div class="doc-row"><div class="doc-info"><h4>${TYPE_LABELS[t]}</h4><p>${fname} • ${new Date(active.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="viewChildFile('${active.id}','${active.file_url}','${ext}','${t}')">View</button></div></div>`;
     }
-    html+=`<div class="child-folder"><div class="child-folder-head"><div class="child-folder-icon">${folder.icon}</div><div class="child-folder-title">${folder.title}</div></div>${content}</div>`;
   }
-  list.innerHTML=html;
+  list.innerHTML=html||'<p class="sub">No documents uploaded yet. Use the tiles above.</p>';
   if(dups.length){
     document.getElementById('childDupCard').style.display='block';
     document.getElementById('childDupDocs').innerHTML=dups.map(d=>{const fname=d.file_url.split('/').pop();const ext=fname.split('.').pop().toLowerCase();return `<div class="doc-row"><div class="doc-info"><h4>${TYPE_LABELS[parseTypeFromUrl(d.file_url)]||'Document'} (extra)</h4><p>${fname} • ${new Date(d.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm" onclick="viewChildFile('${d.id}','${d.file_url}','${ext}','${parseTypeFromUrl(d.file_url)}')">View</button><button class="btn btn-danger btn-sm" onclick="deleteChildOther('${d.id}','${d.file_url}')">Delete</button></div></div>`;}).join('');
   }
 }
+
 async function loadChildAaCache(){
   const uid=currentUser.id,base=uid+'/children/'+currentChildId+'/aadhaar-';
   const get=async n=>{const{data}=await sb.storage.from('vault').download(base+n);if(!data)return null;try{const b=await createImageBitmap(data);const c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;}};
@@ -1231,7 +1177,7 @@ async function loadChildAaCache(){
 function viewChildAadhaar(){
   const img=childAaCache.full||childAaCache.side;
   if(!img){alert('Not loaded yet.');return;}
-  viewerCtx={kind:'childaadhaar',id:childAaRow?.id||null,childId:currentChildId,childName:currentChildName};
+  viewerCtx={kind:'childaadhaar'};
   document.getElementById('fileViewerTitle').textContent='Aadhaar — '+currentChildName;
   document.getElementById('fileViewerImg').src=img.toDataURL('image/jpeg',0.92);
   document.getElementById('rotateControls').style.display = 'none';
@@ -1299,7 +1245,7 @@ function pickChildFile(type,rowId){
       }
       status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
       loadChildDocs();
-    }catch(err){status.textContent=' '+err.message;}
+    }catch(err){status.textContent='❌ '+err.message;}
   };
   input.click();
 }
@@ -1338,8 +1284,8 @@ async function childAaOnFile(file){
     childAaCache={side:r.side,front:r.front,back:r.back,full:c};
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st.textContent=' '+r.msg;
-  }catch(e){st.textContent='❌ '+e.message;}
+    st.textContent='✂ '+r.msg;
+  }catch(e){st.textContent=' '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
@@ -1362,13 +1308,7 @@ async function childAaSave(){
   alert('✅ Saved to '+currentChildName+"'s vault.");
   loadChildDocs();
 }
-function shareChildAadhaar(){
-  if(!childAaRow?.id){alert('Child Aadhaar is not ready to share yet.');return;}
-  closeModal('fileViewerModal');
-  shareContext={kind:'child',docId:childAaRow.id,childId:currentChildId,childName:currentChildName};
-  document.querySelector('#shareModal h3').textContent="Share "+currentChildName+"'s Aadhaar as…";
-  openModal('shareModal');
-}
+function shareChildAadhaar(){shareContext={childId:currentChildId};openModal('shareModal');}
 async function deleteChildAadhaar(){
   if(!confirm('Move '+currentChildName+"'s Aadhaar to Bin? You can restore it for 30 days."))return;
   const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',currentUser.id).ilike('file_url','%children/'+currentChildId+'/aadhaar%');
@@ -1473,7 +1413,7 @@ async function aaDelete(){
   if(error){alert('❌ '+error.message);return;}
   resetAadhaarUI();closeModal('fileViewerModal');alert('✅ Moved to Bin for 30 days.');
 }
-function aaSharePick(){shareContext=null;document.querySelector('#shareModal h3').textContent='Share Aadhaar as…';closeModal('fileViewerModal');openModal('shareModal');}
+function aaSharePick(){shareContext=null;openModal('shareModal');}
 async function aaShare(fmt,layout){
   closeModal('shareModal');
   const isChild=!!shareContext&&shareContext.kind==='child';
@@ -1503,146 +1443,14 @@ function startLocate(){if(!navigator.geolocation){document.getElementById('sosSt
 function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 
-const HOME_DEFAULTS=['Aadhaar Card','PAN Card'];
-function homeFavKey(){return 'oneapp_home_favorites_'+(currentUser?.id||'guest');}
-function getHomeFavorites(){try{const raw=localStorage.getItem(homeFavKey());if(raw)return JSON.parse(raw);const defaults=[];return defaults;}catch(e){return[];}}
-function setHomeFavorites(a){try{localStorage.setItem(homeFavKey(),JSON.stringify([...new Set(a)]));}catch(e){}}
-function isHomeFavorite(key){return getHomeFavorites().includes(key);}
-function loadHomeFavorites(){renderHomeFavorites();}
-function renderHomeFavorites(){const box=document.getElementById('homeCustomTiles');if(!box)return;const favs=getHomeFavorites().filter(k=>k!=='PAN Card');if(JSON.stringify(favs)!==JSON.stringify(getHomeFavorites()))setHomeFavorites(favs);box.innerHTML=favs.filter(k=>['Driving License','Passport','Other'].includes(k)).map(key=>{const meta={'PAN Card':{label:'PAN Card',icon:'💳'},'Driving License':{label:'License',icon:'🚗'},'Passport':{label:'Passport',icon:'🛂'},'Other':{label:'Other Docs',icon:'📄'}}[key];return `<div class="icon-tile" draggable="true" ondragstart="startHomeDrag(event,'${key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${key}')"><div class="icon-box" style="font-size:1.45rem">${meta.icon}</div><span>${meta.label}</span></div>`;}).join('');}
-let touchHomeDragKey=null,touchHomeDragTimer=null,touchHomeDragActive=false;
-function startHomeDrag(e,key){e.stopPropagation();e.dataTransfer?.setData('text/plain',key);e.dataTransfer?.setData('application/x-oneapp-home-key',key);document.getElementById('homeDropZone')?.classList.add('drag-active');document.getElementById('homeRemoveZone')?.classList.add('drag-active');document.getElementById('globalHomeDropZone')?.classList.add('active');e.currentTarget.classList.add('dragging');}
-function endHomeDrag(){document.getElementById('homeDropZone')?.classList.remove('drag-active');document.getElementById('homeRemoveZone')?.classList.remove('drag-active');document.getElementById('globalHomeDropZone')?.classList.remove('active','over');document.querySelectorAll('.dragging,.touch-dragging').forEach(x=>x.classList.remove('dragging','touch-dragging'));touchHomeDragKey=null;touchHomeDragActive=false;if(touchHomeDragTimer){clearTimeout(touchHomeDragTimer);touchHomeDragTimer=null;}}
-function addHomeFavorite(key){if(!key)return;const favs=getHomeFavorites();if(!favs.includes(key)){favs.push(key);setHomeFavorites(favs);}renderHomeFavorites();renderAllDocumentTypesFromCache();}
-function dropHome(e){e.preventDefault();const key=e.dataTransfer?.getData('application/x-oneapp-home-key')||e.dataTransfer?.getData('text/plain');if(!key)return;addHomeFavorite(key);endHomeDrag();}
-function removeHome(e){e.preventDefault();const key=e.dataTransfer?.getData('application/x-oneapp-home-key')||e.dataTransfer?.getData('text/plain');if(!key)return;setHomeFavorites(getHomeFavorites().filter(x=>x!==key));renderHomeFavorites();renderAllDocumentTypesFromCache();endHomeDrag();}
-function renderAllDocumentTypes(docs=[]){
-  const box=document.getElementById('allDocumentTypes');
-  if(!box)return;
-  const available=[
-    {key:'Driving License',label:'Driving Licence',icon:'🚗'},
-    {key:'Passport',label:'Passport',icon:'🛂'},
-    {key:'Other',label:'Other Documents',icon:'📄'}
-  ];
-  box.innerHTML=available.map(item=>{
-    const has=docs.some(d=>d&&d.document_type===item.key);
-    return `<div class="doc-type-card all-doc-tile" data-home-key="${item.key}" draggable="true" ondragstart="startHomeDrag(event,'${item.key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${item.key}')" title="${item.label}"><div class="compact-doc-icon">${item.icon}</div></div>`;
-  }).join('');
-  setupTouchHomeDrag();
-}
-function renderAllDocumentTypesFromCache(){
-  const docs=[];
-  if(savedGenericDocs&&savedGenericDocs.__loadedFor===currentUser?.id){
-    ['Driving License','Passport','Other'].forEach(k=>{const v=savedGenericDocs[k];(Array.isArray(v)?v:[v]).filter(Boolean).forEach(d=>docs.push(d));});
-  }
-  renderAllDocumentTypes(docs);
-}
-function setupTouchHomeDrag(){const box=document.getElementById('allDocumentTypes');if(!box)return;box.addEventListener('pointerdown',e=>{const card=e.target.closest('.all-doc-tile');if(!card||e.pointerType==='mouse')return;const key=card.dataset.homeKey;if(!key)return;card.setPointerCapture?.(e.pointerId);touchHomeDragKey=key;touchHomeDragTimer=setTimeout(()=>{touchHomeDragActive=true;card.classList.add('touch-dragging');document.getElementById('globalHomeDropZone')?.classList.add('active');},450);});box.addEventListener('pointermove',e=>{if(!touchHomeDragActive)return;e.preventDefault();const zone=document.getElementById('globalHomeDropZone');if(!zone)return;const r=zone.getBoundingClientRect();zone.classList.toggle('over',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);});box.addEventListener('pointerup',e=>{if(touchHomeDragTimer){clearTimeout(touchHomeDragTimer);touchHomeDragTimer=null;}if(touchHomeDragActive){const zone=document.getElementById('globalHomeDropZone');const r=zone.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)addHomeFavorite(touchHomeDragKey);}endHomeDrag();});box.addEventListener('pointercancel',endHomeDrag);}
-
-function lockStorageKey(prefix){return prefix+(currentUser?.id||'');}
-function lockSessionKey(){return 'oneapp_unlocked_session_'+(currentUser?.id||'');}
-function hasUnlockedSession(){try{return sessionStorage.getItem(lockSessionKey())==='1';}catch(e){return false;}}
-function markUnlockedSession(){try{sessionStorage.setItem(lockSessionKey(),'1');}catch(e){}}
-function clearUnlockedSession(){try{sessionStorage.removeItem(lockSessionKey());}catch(e){}}
-function b64(bytes){return btoa(String.fromCharCode(...new Uint8Array(bytes)));}
-function fromB64(s){const bin=atob(s);return Uint8Array.from(bin,c=>c.charCodeAt(0));}
-function randomBytes(n=32){const a=new Uint8Array(n);crypto.getRandomValues(a);return a;}
-function setLockMessage(t,error=false){const el=document.getElementById('appLockError');el.textContent=t;el.style.display=error?'block':'none';}
-function showLockOverlay(){document.getElementById('appLockOverlay').classList.add('show');document.body.classList.add('locked');}
-function hideLockOverlay(){document.getElementById('appLockOverlay').classList.remove('show');document.body.classList.remove('locked');appUnlocked=true;markUnlockedSession();}
-function lockApp(){appUnlocked=false;if(!currentUser)return;showLockOverlay();setLockMessage('');}
-function uuidBytes(uuid){
-  const hex=String(uuid||'').replace(/-/g,'');
-  if(!/^[0-9a-f]{32}$/i.test(hex))return new TextEncoder().encode(String(uuid||'OneApp user'));
-  const out=new Uint8Array(16);
-  for(let i=0;i<16;i++)out[i]=parseInt(hex.slice(i*2,i*2+2),16);
-  return out;
-}
-async function initAppLock(uid){
-  if(!currentUser||currentUser.id!==uid)return;
-  if(hasUnlockedSession()){appUnlocked=true;hideLockOverlay();return;}
-  appUnlocked=false;
-  showLockOverlay();
-  setLockMessage('');
-  const title=document.getElementById('appLockTitle'),sub=document.getElementById('appLockSub'),btn=document.getElementById('appLockButton');
-  title.textContent='OneApp is locked';
-  sub.textContent='Unlock with your phone\'s screen lock (PIN, fingerprint or face).';
-  btn.style.display='block';
-  btn.textContent='🔐 Unlock OneApp';
-}
-async function unlockApp(){
-  if(appLockBusy||!currentUser)return;
-  appLockBusy=true;
-  setLockMessage('');
-  try{
-    if(!window.PublicKeyCredential||!navigator.credentials)throw new Error('Device security is not available in this browser.');
-    const stored=localStorage.getItem(lockStorageKey(appLockCredentialKey));
-    if(stored){
-      try{
-        await webauthnUnlock(stored);
-      }catch(firstErr){
-        // A credential created by an older OneApp build may be unusable after a browser/device change.
-        // Forget only the local reference and create a fresh platform credential after the user taps Unlock.
-        localStorage.removeItem(lockStorageKey(appLockCredentialKey));
-        localStorage.removeItem(lockStorageKey(appLockModeKey));
-        await webauthnRegister();
-      }
-    }else{
-      await webauthnRegister();
-    }
-    hideLockOverlay();
-  }catch(err){
-    const msg=String(err?.message||'');
-    if(/credential manager|not allowed|operationerror|unknown error/i.test(msg)){
-      setLockMessage('Your phone/browser could not start device security. Make sure a screen PIN, fingerprint or face lock is enabled, then tap Unlock again.',true);
-    }else if(err?.name==='NotAllowedError'){
-      setLockMessage('Device unlock was cancelled. Tap Unlock OneApp and try again.',true);
-    }else{
-      setLockMessage(msg||'Device authentication could not be completed.',true);
-    }
-  }finally{
-    appLockBusy=false;
-  }
-}
-async function webauthnRegister(){
-  if(!window.PublicKeyCredential||!navigator.credentials)throw new Error('Secure device authentication is not available in this browser.');
-  const rpId=location.hostname;
-  const cred=await navigator.credentials.create({publicKey:{
-    challenge:randomBytes(32),
-    rp:{id:rpId,name:'OneApp.in'},
-    user:{id:uuidBytes(currentUser.id),name:currentUser.email||'OneApp user',displayName:currentUser.user_metadata?.full_name||'OneApp user'},
-    pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
-    authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'discouraged',requireResidentKey:false,userVerification:'required'},
-    timeout:60000,
-    attestation:'none'
-  }});
-  if(!cred)throw new Error('Device authentication was not completed.');
-  localStorage.setItem(lockStorageKey(appLockCredentialKey),b64(cred.rawId));
-  localStorage.setItem(lockStorageKey(appLockModeKey),'webauthn');
-}
-async function webauthnUnlock(stored){
-  const cred=await navigator.credentials.get({publicKey:{
-    challenge:randomBytes(32),
-    rpId:location.hostname,
-    allowCredentials:[{type:'public-key',id:fromB64(stored)}],
-    userVerification:'required',
-    timeout:60000
-  }});
-  if(!cred||b64(cred.rawId)!==stored)throw new Error('Device authentication failed.');
-}
-function openViewerFileExternally(){if(viewerCtx?.signedUrl)window.open(viewerCtx.signedUrl,'_blank','noopener');}
-// Do not lock on pagehide/beforeunload: mobile pull-to-refresh and normal reloads fire those events.
-// The unlock state is kept in sessionStorage for this app window and is cleared on intentional Sign Out.
-
 function showView(id){
-  if(currentUser&&!appUnlocked){showLockOverlay();return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
-  const m={vault:'nav-vault',autopilot:'nav-auto',career:'nav-career',otherDocsView:'nav-vault'}; 
+  const m={vault:'nav-vault',autopilot:'nav-auto', otherDocsView:'nav-vault'}; 
   if(m[id])document.getElementById(m[id]).classList.add('active');
   window.scrollTo(0,0);
-  if(id === 'otherDocsView'){loadGenericDocsStatus(true).then(()=>renderAllDocumentTypesFromCache());loadOtherDocs();}
+  if(id === 'otherDocsView') loadOtherDocs();
 }
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
@@ -1662,7 +1470,7 @@ async function getFamilyAdultTargets(){
 
 async function openFamilyShareModal(preselectId=null){
   if(!currentUser){alert('Sign in first.');return;}
-  familyShareTargetId=null; familyShareDocs=[]; familyShareBaseline=''; window.familySharePreselectId=preselectId||null;
+  familyShareTargetId=null; familyShareDocs=[]; window.familySharePreselectId=preselectId||null;
   await loadFamilyMembers();
   const targets=await getFamilyAdultTargets();
   const sel=document.getElementById('familyShareTarget');
@@ -1676,15 +1484,12 @@ async function openFamilyShareModal(preselectId=null){
   }else familyShareDocs=await getOwnedShareDocs();
   await renderFamilyShareMatrix();
   closeModal('familyManagerModal');
-  closeModal('fileViewerModal');
-  closeModal('shareModal');
-  closeModal('genericShareModal');
   openModal('familyShareModal');
 }
 
 async function getOwnedShareDocs(){
   const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).order('created_at',{ascending:false});
-  if(error){alert('❌ '+error.message);return[];}
+  if(error){alert(' '+error.message);return[];}
   return data||[];
 }
 
@@ -1692,13 +1497,7 @@ async function renderFamilyShareMatrix(){
   const sel=document.getElementById('familyShareTarget');
   familyShareTargetId=sel.value;
   const box=document.getElementById('familyShareDocs');
-  const saveBtn=document.getElementById('familyShareSaveBtn');
-  if(!familyShareDocs.length){
-    box.innerHTML='<p class="sub">No documents available to share.</p>';
-    familyShareBaseline='';
-    if(saveBtn)saveBtn.disabled=true;
-    return;
-  }
+  if(!familyShareDocs.length){box.innerHTML='<p class="sub">No documents available to share.</p>';return;}
   let existing=[];
   if(familyShareTargetId){
     const ids=familyShareDocs.map(d=>d.id);
@@ -1708,65 +1507,33 @@ async function renderFamilyShareMatrix(){
   const byId=new Map(existing.map(x=>[x.document_id,x]));
   box.innerHTML=familyShareDocs.map(d=>{
     const ex=byId.get(d.id), p=ex?.permissions||{};
-    const child=docIsChild(d), preselected=d.id===window.familySharePreselectId, checked=!!ex||preselected;
+    const child=docIsChild(d), checked=!!ex||d.id===window.familySharePreselectId;
     const rights=['view','edit','download','delete','share'];
-    const status=ex ? rights.map(r=>`${r[0].toUpperCase()+r.slice(1)} ${p[r]!==false?'✓':'✗'}`).join(' • ') : (preselected ? 'Not shared yet • suggested: View ✓ • Download ✓' : 'Not shared');
     return `<div class="family-share-row">
       <label style="display:flex;align-items:center;gap:.4rem;font-weight:700">
-        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}');updateFamilyShareDirty()">
+        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}')">
         ${escHtml(docLabel(d))}${child?' <span class="badge badge-ok">Child • Full rights</span>':''}
       </label>
-      <div class="family-rights-status" id="status-${d.id}">${escHtml(status)}</div>
       <table class="share-matrix" id="rights-${d.id}">
         <tr>${rights.map(r=>`<th>${r[0].toUpperCase()+r.slice(1)}</th>`).join('')}</tr>
         <tr>${rights.map(r=>{
-          const val=child?true:(ex?p[r]!==false:(preselected&&(r==='view'||r==='download')));
-          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''} onchange="updateFamilyShareDirty()"></td>`;
+          const val=child?true:(ex?p[r]!==false:(r==='view'||r==='download'));
+          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''}></td>`;
         }).join('')}</tr>
       </table>
     </div>`;
   }).join('');
   familyShareDocs.forEach(d=>toggleFamilyDocRights(d.id));
-  familyShareBaseline=JSON.stringify(familyShareDocs.map(d=>{
-    const ex=byId.get(d.id), p=ex?.permissions||{};
-    return {id:d.id,selected:!!ex,permissions:{view:!!ex&&p.view!==false,edit:!!ex&&p.edit!==false,download:!!ex&&p.download!==false,delete:!!ex&&p.delete!==false,share:!!ex&&p.share!==false}};
-  }));
-  updateFamilyShareDirty();
-}
-
-function familyShareSnapshot(useBaseline=false){
-  return JSON.stringify(familyShareDocs.map(d=>{
-    const selected=!!document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
-    const permissions={};
-    ['view','edit','download','delete','share'].forEach(r=>{
-      permissions[r]=!!document.querySelector(`.right-${r}[data-doc-id="${d.id}"]`)?.checked;
-    });
-    return {id:d.id,selected,permissions};
-  }));
-}
-
-function updateFamilyShareDirty(){
-  const btn=document.getElementById('familyShareSaveBtn');
-  if(!btn)return;
-  const dirty=!!familyShareBaseline && familyShareSnapshot()!==familyShareBaseline;
-  btn.disabled=!dirty;
 }
 
 function toggleFamilyDocRights(id){
   const checked=document.querySelector(`.family-doc-check[data-doc-id="${id}"]`)?.checked;
   document.querySelectorAll(`[data-doc-id="${id}"].right-view,[data-doc-id="${id}"].right-edit,[data-doc-id="${id}"].right-download,[data-doc-id="${id}"].right-delete,[data-doc-id="${id}"].right-share`).forEach(x=>{x.disabled=!checked;});
-  const status=document.getElementById(`status-${id}`);
-  if(status){
-    const d=familyShareDocs.find(x=>x.id===id);
-    if(!checked)status.textContent='Not selected';
-    else status.textContent=['view','edit','download','delete','share'].map(r=>`${r[0].toUpperCase()+r.slice(1)} ${document.querySelector(`.right-${r}[data-doc-id="${id}"]`)?.checked?'✓':'✗'}`).join(' • ')+(docIsChild(d||{})?' • Child rights':'');
-  }
 }
 
 async function saveFamilyShares(){
   const target=document.getElementById('familyShareTarget').value;
   if(!target)return;
-  if(!familyShareBaseline || familyShareSnapshot()===familyShareBaseline)return;
   let ok=0;
   for(const d of familyShareDocs){
     const selected=document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
@@ -1781,26 +1548,24 @@ async function saveFamilyShares(){
       permissions[r]=child?true:!!el?.checked;
     });
     const {error}=await sb.from('document_shares').upsert({ document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString() },{onConflict:'document_id,recipient_user_id'});
-    if(!error)ok++; else alert(' '+error.message);
+    if(!error)ok++; else alert('❌ '+error.message);
   }
   alert(`✅ Family access updated for ${ok} document(s).`);
   closeModal('familyShareModal');
 }
 
 async function openSharedVault(userId,name){
-  closeModal('familyManagerModal');
   sharedVaultContext={kind:'adult',userId,name};
-  document.getElementById('svTitle').textContent=name+"'s Vault";
-  document.getElementById('svSub').textContent='Documents shared with you by '+name+'.';
+  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
+  document.getElementById('svSub').textContent='Documents '+name+' has shared with you. Access is controlled document-by-document.';
   showView('sharedVaultView');
   await loadSharedVault();
 }
 
 async function openSharedChildVault(childId,name,ownerId){
-  closeModal('familyManagerModal');
   sharedVaultContext={kind:'child',childId,name,ownerId};
-  document.getElementById('svTitle').textContent=name+"'s Vault";
-  document.getElementById('svSub').textContent='Documents shared with you for '+name+'.';
+  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
+  document.getElementById('svSub').textContent='Child documents shared with you. Child documents use full family rights.';
   showView('sharedVaultView');
   await loadSharedVault();
 }
@@ -1815,7 +1580,7 @@ async function loadSharedVault(){
   let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
   if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
   else rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
-  if(!rows.length){box.innerHTML='<div class="shared-vault-empty">No documents have been shared with you yet.</div>';return;}
+  if(!rows.length){box.innerHTML='<p class="sub">No documents have been shared with you yet.</p>';return;}
   box.innerHTML=rows.map(s=>{
     const d=s.documents,p=s.permissions||{};
     const actions=[];
@@ -1845,11 +1610,8 @@ async function openSharedDocument(docId){
     document.getElementById('fileViewerTitle').textContent=docLabel(d);
     document.getElementById('fileViewerImg').src=data.signedUrl;
     document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
-    if(document.getElementById('fileViewerImg').style.display==='none'){
-      viewerCtx.signedUrl=data.signedUrl;let link=document.getElementById('fileViewerFileLink');
-      if(!link){link=document.createElement('div');link.id='fileViewerFileLink';link.className='sos-box';document.querySelector('#fileViewerModal .modal').insertBefore(link,document.getElementById('fileViewerImg'));}
-      link.innerHTML='This file is kept inside OneApp. <button class="btn btn-primary btn-sm" onclick="openViewerFileExternally()">Open file</button>';link.style.display='block';openModal('fileViewerModal');
-    } else openModal('fileViewerModal');
+    if(document.getElementById('fileViewerImg').style.display==='none')window.open(data.signedUrl,'_blank');
+    else openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
 
@@ -1933,14 +1695,22 @@ async function restoreDocument(id){
   if(error)alert('❌ '+error.message);else{alert('✅ Restored.');openBinView();}
 }
 
-window.addEventListener('DOMContentLoaded',()=>{document.getElementById('homeDropZone')?.addEventListener('dragover',e=>e.preventDefault());document.getElementById('homeDropZone')?.addEventListener('drop',dropHome);document.getElementById('homeRemoveZone')?.addEventListener('dragover',e=>e.preventDefault());document.getElementById('homeRemoveZone')?.addEventListener('drop',removeHome);const gz=document.getElementById('globalHomeDropZone');gz?.addEventListener('dragover',e=>{e.preventDefault();gz.classList.add('over');});gz?.addEventListener('dragleave',()=>gz.classList.remove('over'));gz?.addEventListener('drop',dropHome);setupTouchHomeDrag();});
-
 window.onclick=e=>{
   if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
   if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
   if(!e.target.closest('#viewerMenu')&&!e.target.closest('.vdots'))document.getElementById('viewerMenu').classList.remove('show');
 };
+
+// --- PWA SERVICE WORKER REGISTRATION ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
 </script>
-<div id="globalHomeDropZone" class="global-home-drop-zone">Drop here to add to Vault Home</div>
 </body>
 </html>
