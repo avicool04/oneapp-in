@@ -65,7 +65,6 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem}
 .icon-tile{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
 .icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.icon-box img{width:100%;height:100%;object-fit:contain}
 .icon-box svg{width:32px;height:32px}
 .icon-tile span{font-size:.65rem;font-weight:600;color:var(--dark);text-align:center;line-height:1.1}
 .status-badge{position:absolute;bottom:0;left:0;width:16px;height:16px;background:var(--success);border-radius:50%;border:2px solid #fff;display:none;align-items:center;justify-content:center;z-index:2}
@@ -131,14 +130,16 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="icon-grid">
       <div class="icon-tile" onclick="openAadhaarSmart()">
         <div class="icon-box">
-          <img src="/aadhaar-icon.png" alt="Aadhaar">
+          <!-- NEW AADHAAR SVG ICON -->
+          <svg viewBox="0 0 64 64" fill="none"><rect x="4" y="12" width="56" height="40" rx="4" fill="#fff" stroke="#e2e8f0" stroke-width="2"/><rect x="4" y="12" width="56" height="10" rx="4" fill="#f1f5f9"/><rect x="8" y="14" width="16" height="6" rx="1" fill="#f97316"/><rect x="26" y="14" width="30" height="6" rx="1" fill="#22c55e"/><circle cx="54" cy="17" r="5" fill="#eab308"/><rect x="8" y="26" width="20" height="22" rx="2" fill="#cbd5e1"/><circle cx="18" cy="34" r="6" fill="#94a3b8"/><rect x="32" y="26" width="24" height="4" rx="1" fill="#e2e8f0"/><rect x="32" y="32" width="24" height="4" rx="1" fill="#e2e8f0"/><rect x="32" y="38" width="16" height="4" rx="1" fill="#e2e8f0"/><rect x="44" y="44" width="12" height="2" rx="1" fill="#1e293b"/><rect x="8" y="50" width="48" height="2" fill="#ef4444"/></svg>
           <div id="aadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>Aadhaar</span>
       </div>
       <div class="icon-tile" onclick="handleGenericIconClick('PAN Card')">
         <div class="icon-box">
-          <img src="/pan-icon.png" alt="PAN Card">
+          <!-- NEW PAN SVG ICON -->
+          <svg viewBox="0 0 64 64" fill="none"><rect x="4" y="12" width="56" height="40" rx="4" fill="#dbeafe" stroke="#bfdbfe" stroke-width="2"/><rect x="8" y="16" width="20" height="12" rx="2" fill="#3b82f6"/><rect x="32" y="16" width="24" height="4" rx="1" fill="#1e40af"/><rect x="32" y="22" width="20" height="4" rx="1" fill="#1e40af"/><rect x="32" y="28" width="16" height="4" rx="1" fill="#1e40af"/><circle cx="52" cy="36" r="6" fill="#60a5fa" opacity="0.5"/><rect x="8" y="46" width="48" height="2" rx="1" fill="#1e40af"/></svg>
           <div id="panIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>PAN Card</span>
@@ -201,7 +202,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Display Name</label><input id="profileName" type="text"></div>
   <div class="field"><label>Email Address</label><input id="profileEmail" type="email"></div>
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
-  <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+  <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
@@ -238,7 +239,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <h3>📄 Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
   <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
-  <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
+  <button class="btn btn-outline" onclick="triggerPassportPage2Upload()"> Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
 </div></div>
@@ -254,8 +255,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <h3>Share Aadhaar as…</h3>
   <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
-  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
-  <button class="btn btn-outline" onclick="aaShare('pdf','side')">📄 ID Card PDF — side by side</button>
+  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">️ ID Card JPG — top & bottom</button>
+  <button class="btn btn-outline" onclick="aaShare('pdf','side')"> ID Card PDF — side by side</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 ID Card PDF — top & bottom</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
 </div></div>
@@ -264,7 +265,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="genericShareModal" class="modal-overlay"><div class="modal">
   <h3>Share Document</h3>
   <button class="btn btn-primary" onclick="genericShare('jpg')">🖼️ Share as JPG</button>
-  <button class="btn btn-outline" onclick="genericShare('pdf')"> Share as PDF</button>
+  <button class="btn btn-outline" onclick="genericShare('pdf')">📄 Share as PDF</button>
   <button class="btn btn-outline" onclick="closeModal('genericShareModal')">Cancel</button>
 </div></div>
 
@@ -278,7 +279,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>‍👩‍👧 Share with Family</h3>
+  <h3>👨‍‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -290,19 +291,19 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍👧 Manage Family</h3>
+  <h3>👨‍👩‍ Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
-    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()"> Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
-    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()"> Refresh List</button>
+    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openFamilyShareModal()">📤 Share Documents</button>
-    <button class="btn btn-outline btn-sm" style="flex:1" onclick="openBinView()">🗑 Bin</button>
+    <button class="btn btn-outline btn-sm" style="flex:1" onclick="openBinView()"> Bin</button>
   </div>
   <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
 </div></div>
@@ -375,7 +376,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="card-header">
       <h3>Saved Files</h3>
       <span class="badge badge-ok">Private bucket</span>
-      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')">➕ Add New</button>
+      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')"> Add New</button>
     </div>
     <div id="otherDocsContainer"><p class="sub">Loading…</p></div>
   </div>
@@ -424,7 +425,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
-      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍👩‍👧 Share with Family</button>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">‍👩‍ Share with Family</button>
       <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
     </div>
   </div>
@@ -553,7 +554,7 @@ async function processConsent(allow){
   } else {
     let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
     if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId); error = upErr; }
-    if(error) alert('❌ Error rejecting: ' + error.message); else alert('❌ Invite rejected.');
+    if(error) alert(' Error rejecting: ' + error.message); else alert('❌ Invite rejected.');
   }
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
@@ -811,7 +812,7 @@ async function savePassportWithTwoPages(page1File, page2File){
     loadGenericDocsStatus();
     showView('vault');
   } catch (err) {
-    alert(' Error saving: ' + err.message);
+    alert('❌ Error saving: ' + err.message);
   }
 }
 
@@ -1285,7 +1286,7 @@ async function childAaOnFile(file){
     const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
     st.textContent='✂ '+r.msg;
-  }catch(e){st.textContent=' '+e.message;}
+  }catch(e){st.textContent='❌ '+e.message;}
 }
 async function childAaSave(){
   if(!childAaCache.side){alert('Process the PDF first.');return;}
@@ -1337,7 +1338,7 @@ async function aaOnFile(file){
   const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadhaar')||undefined;
   let pdf;
   try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
-  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent='❌ '+err.message;return;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent=' '+err.message;return;}
   try{
     const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -1489,7 +1490,7 @@ async function openFamilyShareModal(preselectId=null){
 
 async function getOwnedShareDocs(){
   const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).order('created_at',{ascending:false});
-  if(error){alert(' '+error.message);return[];}
+  if(error){alert('❌ '+error.message);return[];}
   return data||[];
 }
 
