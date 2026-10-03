@@ -130,16 +130,97 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="icon-grid">
       <div class="icon-tile" onclick="openAadhaarSmart()">
         <div class="icon-box">
-          <!-- NEW AADHAAR SVG ICON -->
-          <svg viewBox="0 0 64 64" fill="none"><rect x="4" y="12" width="56" height="40" rx="4" fill="#fff" stroke="#e2e8f0" stroke-width="2"/><rect x="4" y="12" width="56" height="10" rx="4" fill="#f1f5f9"/><rect x="8" y="14" width="16" height="6" rx="1" fill="#f97316"/><rect x="26" y="14" width="30" height="6" rx="1" fill="#22c55e"/><circle cx="54" cy="17" r="5" fill="#eab308"/><rect x="8" y="26" width="20" height="22" rx="2" fill="#cbd5e1"/><circle cx="18" cy="34" r="6" fill="#94a3b8"/><rect x="32" y="26" width="24" height="4" rx="1" fill="#e2e8f0"/><rect x="32" y="32" width="24" height="4" rx="1" fill="#e2e8f0"/><rect x="32" y="38" width="16" height="4" rx="1" fill="#e2e8f0"/><rect x="44" y="44" width="12" height="2" rx="1" fill="#1e293b"/><rect x="8" y="50" width="48" height="2" fill="#ef4444"/></svg>
+          <!-- ✅ UPDATED: Realistic Aadhaar Icon -->
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="aadhaarBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="100%" stop-color="#f8fafc"/>
+              </linearGradient>
+              <linearGradient id="tricolor" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FF9933"/>
+                <stop offset="50%" stop-color="#FFFFFF"/>
+                <stop offset="100%" stop-color="#138808"/>
+              </linearGradient>
+              <radialGradient id="hologram" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/>
+              </radialGradient>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+              </filter>
+            </defs>
+            <rect x="3" y="11" width="58" height="42" rx="4" fill="url(#aadhaarBg)" stroke="#cbd5e1" stroke-width="0.8" filter="url(#shadow)"/>
+            <rect x="3" y="11" width="58" height="9" rx="4" fill="url(#tricolor)" opacity="0.95"/>
+            <rect x="3" y="17" width="58" height="3" fill="#138808" opacity="0.9"/>
+            <circle cx="54" cy="15" r="3.5" fill="url(#hologram)" stroke="#f59e0b" stroke-width="0.5"/>
+            <path d="M54 13c0 .8-.7 1.5-1.5 1.5S51 13.8 51 13s.7-1.5 1.5-1.5 1.5.7 1.5 1.5z" fill="#f59e0b"/>
+            <rect x="7" y="24" width="15" height="17" rx="2" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
+            <circle cx="14.5" cy="29" r="3.5" fill="#94a3b8"/>
+            <path d="M10.5 37c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" fill="#94a3b8"/>
+            <rect x="25" y="25" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/>
+            <rect x="25" y="29" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/>
+            <rect x="25" y="33" width="19" height="2.5" rx="1" fill="#475569" opacity="0.7"/>
+            <text x="25" y="41" font-size="3" font-family="monospace" fill="#1e293b" font-weight="700">XXXX XXXX XXXX</text>
+            <rect x="47" y="33" width="11" height="11" fill="#1e293b"/>
+            <rect x="48" y="34" width="3" height="3" fill="#fff"/>
+            <rect x="52" y="34" width="3" height="3" fill="#fff"/>
+            <rect x="48" y="38" width="3" height="3" fill="#fff"/>
+            <rect x="52" y="38" width="3" height="3" fill="#fff"/>
+            <rect x="48" y="42" width="3" height="3" fill="#fff"/>
+            <rect x="52" y="42" width="3" height="3" fill="#fff"/>
+            <rect x="3" y="51" width="58" height="1.5" fill="#ef4444"/>
+            <rect x="3" y="11" width="58" height="42" rx="4" fill="url(#hologram)" opacity="0.05"/>
+          </svg>
           <div id="aadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>Aadhaar</span>
       </div>
       <div class="icon-tile" onclick="handleGenericIconClick('PAN Card')">
         <div class="icon-box">
-          <!-- NEW PAN SVG ICON -->
-          <svg viewBox="0 0 64 64" fill="none"><rect x="4" y="12" width="56" height="40" rx="4" fill="#dbeafe" stroke="#bfdbfe" stroke-width="2"/><rect x="8" y="16" width="20" height="12" rx="2" fill="#3b82f6"/><rect x="32" y="16" width="24" height="4" rx="1" fill="#1e40af"/><rect x="32" y="22" width="20" height="4" rx="1" fill="#1e40af"/><rect x="32" y="28" width="16" height="4" rx="1" fill="#1e40af"/><circle cx="52" cy="36" r="6" fill="#60a5fa" opacity="0.5"/><rect x="8" y="46" width="48" height="2" rx="1" fill="#1e40af"/></svg>
+          <!-- ✅ UPDATED: Realistic PAN Card Icon -->
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="panBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f5d0e8"/>
+                <stop offset="50%" stop-color="#d4a5d4"/>
+                <stop offset="100%" stop-color="#a594d4"/>
+              </linearGradient>
+              <radialGradient id="panHolo" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#667eea" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#764ba2" stop-opacity="0.3"/>
+              </radialGradient>
+              <filter id="panShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+              </filter>
+            </defs>
+            <rect x="3" y="11" width="58" height="42" rx="4" fill="url(#panBg)" stroke="#c4b5d4" stroke-width="0.8" filter="url(#panShadow)"/>
+            <text x="7" y="17" font-size="2.5" font-family="Arial" fill="#1e3a8a" font-weight="700">आयकर</text>
+            <text x="7" y="19.5" font-size="1.3" font-family="Arial" fill="#1e3a8a">INCOME TAX</text>
+            <text x="38" y="17" font-size="2.5" font-family="Arial" fill="#1e3a8a" font-weight="700">भारत</text>
+            <text x="40" y="19.5" font-size="1.3" font-family="Arial" fill="#1e3a8a">GOVT</text>
+            <circle cx="32" cy="17" r="2.5" fill="#1e3a8a" opacity="0.7"/>
+            <text x="7" y="25" font-size="2.5" font-family="Arial" fill="#1e293b" font-weight="600">AMIT</text>
+            <text x="7" y="28.5" font-size="1.8" font-family="Arial" fill="#475569">DOB:01/12</text>
+            <text x="7" y="32" font-size="1.5" font-family="Arial" fill="#1e293b" font-weight="600">PAN</text>
+            <text x="7" y="36" font-size="3.5" font-family="monospace" fill="#1e293b" font-weight="700" letter-spacing="0.5">XXXXXXXXX</text>
+            <path d="M7 40 Q11 37 15 40 Q19 43 23 40" stroke="#1e293b" stroke-width="0.7" fill="none"/>
+            <text x="7" y="44" font-size="1.2" font-family="Arial" fill="#475569">SIGN</text>
+            <rect x="45" y="24" width="11" height="11" fill="#1e293b" opacity="0.9"/>
+            <rect x="46" y="25" width="3" height="3" fill="#fff"/>
+            <rect x="50" y="25" width="3" height="3" fill="#fff"/>
+            <rect x="46" y="29" width="3" height="3" fill="#fff"/>
+            <rect x="50" y="29" width="3" height="3" fill="#fff"/>
+            <rect x="46" y="33" width="3" height="3" fill="#fff"/>
+            <rect x="50" y="33" width="3" height="3" fill="#fff"/>
+            <rect x="45" y="37" width="11" height="11" rx="1.5" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
+            <circle cx="50.5" cy="41" r="2.5" fill="#94a3b8"/>
+            <path d="M48 45c0-1.2 1.1-2 2.5-2s2.5.8 2.5 2" fill="#94a3b8"/>
+            <circle cx="50.5" cy="29" r="4" fill="url(#panHolo)"/>
+            <circle cx="50.5" cy="29" r="2" fill="#fff" opacity="0.5"/>
+            <rect x="3" y="51" width="58" height="1" fill="#1e3a8a" opacity="0.5"/>
+            <rect x="3" y="11" width="58" height="42" rx="4" fill="url(#panHolo)" opacity="0.08"/>
+          </svg>
           <div id="panIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>PAN Card</span>
@@ -202,7 +283,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Display Name</label><input id="profileName" type="text"></div>
   <div class="field"><label>Email Address</label><input id="profileEmail" type="email"></div>
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
-  <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
+  <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
@@ -255,7 +336,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <h3>Share Aadhaar as…</h3>
   <button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
   <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
-  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">️ ID Card JPG — top & bottom</button>
+  <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','side')"> ID Card PDF — side by side</button>
   <button class="btn btn-outline" onclick="aaShare('pdf','stack')">📄 ID Card PDF — top & bottom</button>
   <button class="btn btn-outline" onclick="closeModal('shareModal')">Cancel</button>
@@ -291,11 +372,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍👩‍ Manage Family</h3>
+  <h3>👨👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
     <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
@@ -303,7 +384,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openFamilyShareModal()">📤 Share Documents</button>
-    <button class="btn btn-outline btn-sm" style="flex:1" onclick="openBinView()"> Bin</button>
+    <button class="btn btn-outline btn-sm" style="flex:1" onclick="openBinView()">🗑 Bin</button>
   </div>
   <button class="btn btn-outline" onclick="closeModal('familyManagerModal')">Close</button>
 </div></div>
@@ -376,7 +457,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="card-header">
       <h3>Saved Files</h3>
       <span class="badge badge-ok">Private bucket</span>
-      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')"> Add New</button>
+      <button class="btn btn-primary btn-sm" onclick="openGenericUpload('Other')">➕ Add New</button>
     </div>
     <div id="otherDocsContainer"><p class="sub">Loading…</p></div>
   </div>
@@ -554,7 +635,7 @@ async function processConsent(allow){
   } else {
     let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
     if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId); error = upErr; }
-    if(error) alert(' Error rejecting: ' + error.message); else alert('❌ Invite rejected.');
+    if(error) alert('❌ Error rejecting: ' + error.message); else alert('❌ Invite rejected.');
   }
   closeModal('consentModal');
   window.history.pushState({},'',window.location.pathname);
@@ -616,7 +697,7 @@ async function sendInviteEmail(){
   if(!name||!email)return alert('Enter Name and Email');
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
   const{data, error}=await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:email, member_phone:null, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
-  if(error){ alert('❌ Database Error: ' + error.message); } else {
+  if(error){ alert(' Database Error: ' + error.message); } else {
     const inviteId = data[0].id;
     const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
     alert(`✅ Invite created for ${name}!\n\nLink: ${link}\n\n(Copy and send this link)`);
@@ -1338,7 +1419,7 @@ async function aaOnFile(file){
   const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadhaar')||undefined;
   let pdf;
   try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
-  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent=' '+err.message;return;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent='❌ '+err.message;return;}
   try{
     const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -1388,7 +1469,7 @@ async function aaSave(){
   const uid=session.user.id;
   const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
   let e;
-  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert(' '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
   (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
@@ -1411,7 +1492,7 @@ async function aaDelete(){
   const{data:{session}}=await sb.auth.getSession();if(!session)return;
   const uid=session.user.id;
   const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
-  if(error){alert('❌ '+error.message);return;}
+  if(error){alert(' '+error.message);return;}
   resetAadhaarUI();closeModal('fileViewerModal');alert('✅ Moved to Bin for 30 days.');
 }
 function aaSharePick(){shareContext=null;openModal('shareModal');}
@@ -1549,7 +1630,7 @@ async function saveFamilyShares(){
       permissions[r]=child?true:!!el?.checked;
     });
     const {error}=await sb.from('document_shares').upsert({ document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString() },{onConflict:'document_id,recipient_user_id'});
-    if(!error)ok++; else alert('❌ '+error.message);
+    if(!error)ok++; else alert(' '+error.message);
   }
   alert(`✅ Family access updated for ${ok} document(s).`);
   closeModal('familyShareModal');
@@ -1676,7 +1757,7 @@ async function deleteSharedDocumentById(docId){
   if(s.permissions?.delete===false)return alert('Delete permission is not granted.');
   if(!confirm('Move this document to Bin? It can be restored for 30 days.'))return;
   const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',docId);
-  if(error){alert('❌ '+error.message);return;}
+  if(error){alert(' '+error.message);return;}
   closeModal('fileViewerModal');loadSharedVault();
 }
 async function deleteSharedDocument(c){return deleteSharedDocumentById(c.id);}
