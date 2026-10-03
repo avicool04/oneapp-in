@@ -1403,7 +1403,7 @@ async function childAaSave(){
   alert('✅ Saved to '+currentChildName+"'s vault.");
   loadChildDocs();
 }
-function shareChildAadhaar(){shareContext={childId:currentChildId};openModal('shareModal');}
+function shareChildAadhaar(){shareContext={kind:'child',childId:currentChildId};openModal('shareModal');}
 async function deleteChildAadhaar(){
   if(!confirm('Move '+currentChildName+"'s Aadhaar to Bin? You can restore it for 30 days."))return;
   const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',currentUser.id).ilike('file_url','%children/'+currentChildId+'/aadhaar%');
