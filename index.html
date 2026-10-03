@@ -40,7 +40,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .doc-row:last-child{border-bottom:none}
 .doc-info h4{font-size:.9rem}.doc-info p{font-size:.75rem;color:var(--gray)}
 .btn{padding:.6rem 1rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.85rem;width:100%;margin-bottom:.4rem;transition:all .2s}
-.btn:hover{opacity:.9}.btn-sm{padding:.35rem .7rem;font-size:.75rem;width:auto;margin:0}
+.btn:hover{opacity:.9}.btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.25)}.btn-sm{padding:.35rem .7rem;font-size:.75rem;width:auto;margin:0}
 .btn-primary{background:var(--primary);color:#fff}.btn-outline{background:#fff;border:1px solid var(--border);color:var(--dark)}
 .btn-success{background:var(--success);color:#fff}.btn-danger{background:var(--danger);color:#fff}
 .btn-google{background:#fff;border:1px solid #dadce0;color:#3c4043;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem}
@@ -52,7 +52,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 #aadhaarModal{z-index:250}
 #consentModal{z-index:400}
 #profileModal{z-index:350}
-#uploadMethodModal{z-index:450}
+#uploadMethodModal{z-index:450}#familyShareModal{z-index:520}
 #customNameModal{z-index:450}
 #expiryDateModal{z-index:450}
 #passportPage2Modal{z-index:450}
@@ -98,7 +98,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .share-matrix th,.share-matrix td{border:1px solid var(--border);padding:.4rem;text-align:center}
 .share-matrix th:first-child,.share-matrix td:first-child{text-align:left}
 .shared-doc-actions{display:flex;gap:.3rem;flex-wrap:wrap}
-.rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
+.family-rights-status{font-size:.68rem;color:#475569;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:.35rem .45rem;margin-top:.35rem}.rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
 .bin-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem 0;border-bottom:1px dashed #f1f5f9;flex-wrap:wrap}
 </style>
 </head>
@@ -152,15 +152,19 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
         </div>
         <span>Aadhaar</span>
       </div>
+      <div class="icon-tile" onclick="handleGenericIconClick('PAN Card')">
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#059669"/><rect x="6" y="14" width="52" height="10" rx="6" fill="#10b981"/><rect x="12" y="28" width="16" height="12" rx="2" fill="#a7f3d0"/><rect x="34" y="28" width="18" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="34" width="14" height="3" rx="1.5" fill="#6ee7b7"/><rect x="34" y="40" width="10" height="3" rx="1.5" fill="#6ee7b7"/><text x="32" y="50" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">PAN</text></svg>
+          <div id="panIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        </div>
+        <span>PAN Card</span>
+      </div>
       <div class="icon-tile" onclick="showView('otherDocsView')">
-        <div class="icon-box" style="position:relative;display:flex;align-items:center;justify-content:center;gap:3px">
-          <svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px"><rect x="4" y="16" width="42" height="30" rx="5" fill="#059669"/><rect x="4" y="16" width="42" height="8" rx="5" fill="#10b981"/><rect x="10" y="28" width="13" height="10" rx="2" fill="#a7f3d0"/><text x="30" y="42" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#fff">PAN</text></svg>
-          <svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px;margin-left:-12px"><rect x="18" y="11" width="38" height="42" rx="6" fill="#dbeafe" stroke="#1e40af" stroke-width="3"/><path d="M25 27h24l-3-7H28l-3 7z" fill="#3b82f6"/><circle cx="31" cy="31" r="3" fill="#1e3a8a"/><circle cx="43" cy="31" r="3" fill="#1e3a8a"/><text x="37" y="45" text-anchor="middle" font-size="8" font-weight="bold" fill="#1e40af">DL</text></svg>
+        <div class="icon-box">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="6" fill="#64748b"/><path d="M20 24h24M20 32h24M20 40h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
           <div id="otherIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
         </div>
         <span>Other Documents</span>
-      </div>
-        <span>PAN Card</span>
       </div>
       <div id="homeCustomTiles" style="display:contents"></div>
     </div>
@@ -287,7 +291,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
   <div id="familyShareDocs" class="family-share-list"><p class="sub">Loading documents…</p></div>
-  <button class="btn btn-primary" onclick="saveFamilyShares()">✅ Grant / Update Access</button>
+  <button id="familyShareSaveBtn" class="btn btn-primary" onclick="saveFamilyShares()" disabled>✅ Grant / Update Access</button>
   <button class="btn btn-outline" onclick="closeModal('familyShareModal')">Cancel</button>
 </div></div>
 
@@ -456,6 +460,7 @@ let currentUser=null,familyMembers=[],currentChildId=null,currentChildName='';
 let appUnlocked=false,appLockBusy=false,appLockCredentialKey='oneapp_lock_credential_',appLockPinKey='oneapp_lock_pin_',appLockModeKey='oneapp_lock_mode_';
 let shareContext=null,viewerCtx=null;
 let familyShareDocs=[],familyShareTargetId=null,sharedVaultContext=null;
+let familyShareBaseline='';
 let familyChannel = null;
 let pendingInviteId = null;
 let tempUploadType = null;
@@ -470,7 +475,7 @@ async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({pr
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 async function handleAuthClick(){openModal('authModal');}
-async function doSignOut(){await sb.auth.signOut();}
+async function doSignOut(){try{sessionStorage.removeItem(lockSessionKey());}catch(e){} appUnlocked=false; await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 
 sb.auth.onAuthStateChange((ev,s)=>{
@@ -1204,7 +1209,7 @@ async function loadChildAaCache(){
 function viewChildAadhaar(){
   const img=childAaCache.full||childAaCache.side;
   if(!img){alert('Not loaded yet.');return;}
-  viewerCtx={kind:'childaadhaar'};
+  viewerCtx={kind:'childaadhaar',id:childAaRow?.id||null,childId:currentChildId,childName:currentChildName};
   document.getElementById('fileViewerTitle').textContent='Aadhaar — '+currentChildName;
   document.getElementById('fileViewerImg').src=img.toDataURL('image/jpeg',0.92);
   document.getElementById('rotateControls').style.display = 'none';
@@ -1335,7 +1340,13 @@ async function childAaSave(){
   alert('✅ Saved to '+currentChildName+"'s vault.");
   loadChildDocs();
 }
-function shareChildAadhaar(){shareContext={childId:currentChildId};openModal('shareModal');}
+function shareChildAadhaar(){
+  if(!childAaRow?.id){alert('Child Aadhaar is not ready to share yet.');return;}
+  closeModal('fileViewerModal');
+  shareContext={kind:'child',docId:childAaRow.id,childId:currentChildId,childName:currentChildName};
+  document.querySelector('#shareModal h3').textContent="Share "+currentChildName+"'s Aadhaar as…";
+  openModal('shareModal');
+}
 async function deleteChildAadhaar(){
   if(!confirm('Move '+currentChildName+"'s Aadhaar to Bin? You can restore it for 30 days."))return;
   const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',currentUser.id).ilike('file_url','%children/'+currentChildId+'/aadhaar%');
@@ -1440,7 +1451,7 @@ async function aaDelete(){
   if(error){alert('❌ '+error.message);return;}
   resetAadhaarUI();closeModal('fileViewerModal');alert('✅ Moved to Bin for 30 days.');
 }
-function aaSharePick(){shareContext=null;openModal('shareModal');}
+function aaSharePick(){shareContext=null;document.querySelector('#shareModal h3').textContent='Share Aadhaar as…';closeModal('fileViewerModal');openModal('shareModal');}
 async function aaShare(fmt,layout){
   closeModal('shareModal');
   const isChild=!!shareContext&&shareContext.kind==='child';
@@ -1476,7 +1487,7 @@ function getHomeFavorites(){try{const raw=localStorage.getItem(homeFavKey());if(
 function setHomeFavorites(a){try{localStorage.setItem(homeFavKey(),JSON.stringify([...new Set(a)]));}catch(e){}}
 function isHomeFavorite(key){return getHomeFavorites().includes(key);}
 function loadHomeFavorites(){renderHomeFavorites();}
-function renderHomeFavorites(){const box=document.getElementById('homeCustomTiles');if(!box)return;const favs=getHomeFavorites();box.innerHTML=favs.filter(k=>['PAN Card','Driving License','Passport','Other'].includes(k)).map(key=>{const meta={'PAN Card':{label:'PAN Card',icon:'💳'},'Driving License':{label:'License',icon:'🚗'},'Passport':{label:'Passport',icon:'🛂'},'Other':{label:'Other Docs',icon:'📄'}}[key];return `<div class="icon-tile" draggable="true" ondragstart="startHomeDrag(event,'${key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${key}')"><div class="icon-box" style="font-size:1.45rem">${meta.icon}</div><span>${meta.label}</span></div>`;}).join('');}
+function renderHomeFavorites(){const box=document.getElementById('homeCustomTiles');if(!box)return;const favs=getHomeFavorites();box.innerHTML=favs.filter(k=>['Driving License','Passport','Other'].includes(k)).map(key=>{const meta={'PAN Card':{label:'PAN Card',icon:'💳'},'Driving License':{label:'License',icon:'🚗'},'Passport':{label:'Passport',icon:'🛂'},'Other':{label:'Other Docs',icon:'📄'}}[key];return `<div class="icon-tile" draggable="true" ondragstart="startHomeDrag(event,'${key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${key}')"><div class="icon-box" style="font-size:1.45rem">${meta.icon}</div><span>${meta.label}</span></div>`;}).join('');}
 let touchHomeDragKey=null,touchHomeDragTimer=null,touchHomeDragActive=false;
 function startHomeDrag(e,key){e.stopPropagation();e.dataTransfer?.setData('text/plain',key);e.dataTransfer?.setData('application/x-oneapp-home-key',key);document.getElementById('homeDropZone')?.classList.add('drag-active');document.getElementById('homeRemoveZone')?.classList.add('drag-active');document.getElementById('globalHomeDropZone')?.classList.add('active');e.currentTarget.classList.add('dragging');}
 function endHomeDrag(){document.getElementById('homeDropZone')?.classList.remove('drag-active');document.getElementById('homeRemoveZone')?.classList.remove('drag-active');document.getElementById('globalHomeDropZone')?.classList.remove('active','over');document.querySelectorAll('.dragging,.touch-dragging').forEach(x=>x.classList.remove('dragging','touch-dragging'));touchHomeDragKey=null;touchHomeDragActive=false;if(touchHomeDragTimer){clearTimeout(touchHomeDragTimer);touchHomeDragTimer=null;}}
@@ -1487,12 +1498,16 @@ function renderAllDocumentTypesFromCache(){if(savedGenericDocs&&savedGenericDocs
 function setupTouchHomeDrag(){const box=document.getElementById('allDocumentTypes');if(!box)return;box.addEventListener('pointerdown',e=>{const card=e.target.closest('.all-doc-tile');if(!card||e.pointerType==='mouse')return;const key=card.dataset.homeKey;if(!key)return;card.setPointerCapture?.(e.pointerId);touchHomeDragKey=key;touchHomeDragTimer=setTimeout(()=>{touchHomeDragActive=true;card.classList.add('touch-dragging');document.getElementById('globalHomeDropZone')?.classList.add('active');},450);});box.addEventListener('pointermove',e=>{if(!touchHomeDragActive)return;e.preventDefault();const zone=document.getElementById('globalHomeDropZone');if(!zone)return;const r=zone.getBoundingClientRect();zone.classList.toggle('over',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);});box.addEventListener('pointerup',e=>{if(touchHomeDragTimer){clearTimeout(touchHomeDragTimer);touchHomeDragTimer=null;}if(touchHomeDragActive){const zone=document.getElementById('globalHomeDropZone');const r=zone.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)addHomeFavorite(touchHomeDragKey);}endHomeDrag();});box.addEventListener('pointercancel',endHomeDrag);}
 
 function lockStorageKey(prefix){return prefix+(currentUser?.id||'');}
+function lockSessionKey(){return 'oneapp_unlocked_session_'+(currentUser?.id||'');}
+function hasUnlockedSession(){try{return sessionStorage.getItem(lockSessionKey())==='1';}catch(e){return false;}}
+function markUnlockedSession(){try{sessionStorage.setItem(lockSessionKey(),'1');}catch(e){}}
+function clearUnlockedSession(){try{sessionStorage.removeItem(lockSessionKey());}catch(e){}}
 function b64(bytes){return btoa(String.fromCharCode(...new Uint8Array(bytes)));}
 function fromB64(s){const bin=atob(s);return Uint8Array.from(bin,c=>c.charCodeAt(0));}
 function randomBytes(n=32){const a=new Uint8Array(n);crypto.getRandomValues(a);return a;}
 function setLockMessage(t,error=false){const el=document.getElementById('appLockError');el.textContent=t;el.style.display=error?'block':'none';}
 function showLockOverlay(){document.getElementById('appLockOverlay').classList.add('show');document.body.classList.add('locked');}
-function hideLockOverlay(){document.getElementById('appLockOverlay').classList.remove('show');document.body.classList.remove('locked');appUnlocked=true;}
+function hideLockOverlay(){document.getElementById('appLockOverlay').classList.remove('show');document.body.classList.remove('locked');appUnlocked=true;markUnlockedSession();}
 function lockApp(){appUnlocked=false;if(!currentUser)return;showLockOverlay();setLockMessage('');}
 function uuidBytes(uuid){
   const hex=String(uuid||'').replace(/-/g,'');
@@ -1503,6 +1518,7 @@ function uuidBytes(uuid){
 }
 async function initAppLock(uid){
   if(!currentUser||currentUser.id!==uid)return;
+  if(hasUnlockedSession()){appUnlocked=true;hideLockOverlay();return;}
   appUnlocked=false;
   showLockOverlay();
   setLockMessage('');
@@ -1573,7 +1589,8 @@ async function webauthnUnlock(stored){
   if(!cred||b64(cred.rawId)!==stored)throw new Error('Device authentication failed.');
 }
 function openViewerFileExternally(){if(viewerCtx?.signedUrl)window.open(viewerCtx.signedUrl,'_blank','noopener');}
-window.addEventListener('pagehide',()=>{if(currentUser)lockApp();});
+// Do not lock on pagehide/beforeunload: mobile pull-to-refresh and normal reloads fire those events.
+// The unlock state is kept in sessionStorage for this app window and is cleared on intentional Sign Out.
 
 function showView(id){
   if(currentUser&&!appUnlocked){showLockOverlay();return;}
@@ -1603,7 +1620,7 @@ async function getFamilyAdultTargets(){
 
 async function openFamilyShareModal(preselectId=null){
   if(!currentUser){alert('Sign in first.');return;}
-  familyShareTargetId=null; familyShareDocs=[]; window.familySharePreselectId=preselectId||null;
+  familyShareTargetId=null; familyShareDocs=[]; familyShareBaseline=''; window.familySharePreselectId=preselectId||null;
   await loadFamilyMembers();
   const targets=await getFamilyAdultTargets();
   const sel=document.getElementById('familyShareTarget');
@@ -1617,6 +1634,9 @@ async function openFamilyShareModal(preselectId=null){
   }else familyShareDocs=await getOwnedShareDocs();
   await renderFamilyShareMatrix();
   closeModal('familyManagerModal');
+  closeModal('fileViewerModal');
+  closeModal('shareModal');
+  closeModal('genericShareModal');
   openModal('familyShareModal');
 }
 
@@ -1630,7 +1650,13 @@ async function renderFamilyShareMatrix(){
   const sel=document.getElementById('familyShareTarget');
   familyShareTargetId=sel.value;
   const box=document.getElementById('familyShareDocs');
-  if(!familyShareDocs.length){box.innerHTML='<p class="sub">No documents available to share.</p>';return;}
+  const saveBtn=document.getElementById('familyShareSaveBtn');
+  if(!familyShareDocs.length){
+    box.innerHTML='<p class="sub">No documents available to share.</p>';
+    familyShareBaseline='';
+    if(saveBtn)saveBtn.disabled=true;
+    return;
+  }
   let existing=[];
   if(familyShareTargetId){
     const ids=familyShareDocs.map(d=>d.id);
@@ -1640,33 +1666,65 @@ async function renderFamilyShareMatrix(){
   const byId=new Map(existing.map(x=>[x.document_id,x]));
   box.innerHTML=familyShareDocs.map(d=>{
     const ex=byId.get(d.id), p=ex?.permissions||{};
-    const child=docIsChild(d), checked=!!ex||d.id===window.familySharePreselectId;
+    const child=docIsChild(d), preselected=d.id===window.familySharePreselectId, checked=!!ex||preselected;
     const rights=['view','edit','download','delete','share'];
+    const status=ex ? rights.map(r=>`${r[0].toUpperCase()+r.slice(1)} ${p[r]!==false?'✓':'✗'}`).join(' • ') : (preselected ? 'Not shared yet • suggested: View ✓ • Download ✓' : 'Not shared');
     return `<div class="family-share-row">
       <label style="display:flex;align-items:center;gap:.4rem;font-weight:700">
-        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}')">
+        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}');updateFamilyShareDirty()">
         ${escHtml(docLabel(d))}${child?' <span class="badge badge-ok">Child • Full rights</span>':''}
       </label>
+      <div class="family-rights-status" id="status-${d.id}">${escHtml(status)}</div>
       <table class="share-matrix" id="rights-${d.id}">
         <tr>${rights.map(r=>`<th>${r[0].toUpperCase()+r.slice(1)}</th>`).join('')}</tr>
         <tr>${rights.map(r=>{
-          const val=child?true:(ex?p[r]!==false:(r==='view'||r==='download'));
-          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''}></td>`;
+          const val=child?true:(ex?p[r]!==false:(preselected&&(r==='view'||r==='download')));
+          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''} onchange="updateFamilyShareDirty()"></td>`;
         }).join('')}</tr>
       </table>
     </div>`;
   }).join('');
   familyShareDocs.forEach(d=>toggleFamilyDocRights(d.id));
+  familyShareBaseline=JSON.stringify(familyShareDocs.map(d=>{
+    const ex=byId.get(d.id), p=ex?.permissions||{};
+    return {id:d.id,selected:!!ex,permissions:{view:!!ex&&p.view!==false,edit:!!ex&&p.edit!==false,download:!!ex&&p.download!==false,delete:!!ex&&p.delete!==false,share:!!ex&&p.share!==false}};
+  }));
+  updateFamilyShareDirty();
+}
+
+function familyShareSnapshot(useBaseline=false){
+  return JSON.stringify(familyShareDocs.map(d=>{
+    const selected=!!document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
+    const permissions={};
+    ['view','edit','download','delete','share'].forEach(r=>{
+      permissions[r]=!!document.querySelector(`.right-${r}[data-doc-id="${d.id}"]`)?.checked;
+    });
+    return {id:d.id,selected,permissions};
+  }));
+}
+
+function updateFamilyShareDirty(){
+  const btn=document.getElementById('familyShareSaveBtn');
+  if(!btn)return;
+  const dirty=!!familyShareBaseline && familyShareSnapshot()!==familyShareBaseline;
+  btn.disabled=!dirty;
 }
 
 function toggleFamilyDocRights(id){
   const checked=document.querySelector(`.family-doc-check[data-doc-id="${id}"]`)?.checked;
   document.querySelectorAll(`[data-doc-id="${id}"].right-view,[data-doc-id="${id}"].right-edit,[data-doc-id="${id}"].right-download,[data-doc-id="${id}"].right-delete,[data-doc-id="${id}"].right-share`).forEach(x=>{x.disabled=!checked;});
+  const status=document.getElementById(`status-${id}`);
+  if(status){
+    const d=familyShareDocs.find(x=>x.id===id);
+    if(!checked)status.textContent='Not selected';
+    else status.textContent=['view','edit','download','delete','share'].map(r=>`${r[0].toUpperCase()+r.slice(1)} ${document.querySelector(`.right-${r}[data-doc-id="${id}"]`)?.checked?'✓':'✗'}`).join(' • ')+(docIsChild(d||{})?' • Child rights':'');
+  }
 }
 
 async function saveFamilyShares(){
   const target=document.getElementById('familyShareTarget').value;
   if(!target)return;
+  if(!familyShareBaseline || familyShareSnapshot()===familyShareBaseline)return;
   let ok=0;
   for(const d of familyShareDocs){
     const selected=document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
