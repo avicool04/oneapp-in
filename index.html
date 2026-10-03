@@ -15,11 +15,11 @@ nav{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1rem;di
 .nav-links{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .nav-links button{background:none;border:none;cursor:pointer;font-weight:600;color:var(--gray);font-size:.85rem;padding:.3rem .5rem;border-radius:6px}
 .nav-links button.active{color:var(--primary);background:rgba(30,64,175,.06)}
-.btn-emg{background:var(--danger)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
+.btn-emg{width:40px;height:40px;border-radius:50%;background:var(--danger)!important;color:#fff!important;padding:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 2px 8px rgba(239,68,68,.3)}
 .btn-auth{background:var(--primary)!important;color:#fff!important;padding:.35rem .7rem;border-radius:6px;font-size:.8rem}
-.user-chip{display:flex;align-items:center;gap:.4rem;background:transparent!important;color:inherit!important;padding:0;border-radius:50%;font-weight:600;font-size:.8rem;border:none;cursor:pointer}
-.avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;background:#fff;border:1px solid var(--border)}
-.avatar-fallback{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+.user-chip{display:flex;align-items:center;gap:.4rem;background:var(--primary)!important;color:#fff!important;padding:.25rem .7rem .25rem .3rem;border-radius:999px;font-weight:600;font-size:.8rem;border:none;cursor:pointer}
+.avatar{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#fff}
+.avatar-fallback{width:24px;height:24px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem}
 .user-area{position:relative}
 .dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.12);padding:.75rem;min-width:200px;display:none;z-index:300;text-align:left}
 .dropdown.show{display:block}.dropdown .email{font-size:.75rem;color:var(--gray);word-break:break-all;margin-bottom:.5rem}
@@ -102,18 +102,19 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="nav-links">
     <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
     <button id="nav-auto" onclick="showView('autopilot')">Autopilot</button>
-    <button class="btn-emg" onclick="openSOS()">Emergency</button>
+    <button class="btn-emg" onclick="openSOS()"></button>
     <button id="authBtn" class="btn-auth" onclick="handleAuthClick()">Sign In</button>
     <div class="user-area" id="userArea" style="display:none">
       <button class="user-chip" onclick="toggleUserMenu(event)">
         <img id="userAvatar" class="avatar" alt="" style="display:none">
         <span id="userAvatarFallback" class="avatar-fallback">U</span>
+        <span id="userName">User</span>
       </button>
       <div class="dropdown" id="userDropdown">
         <div class="email" id="userEmail"></div>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">⚙️ Profile Settings</button>
-        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">‍👩‍👧 Manage Family</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍‍👧 Manage Family</button>
         <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
         <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
       </div>
@@ -129,7 +130,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="icon-grid">
       <div class="icon-tile" onclick="openAadhaarSmart()">
         <div class="icon-box">
-          <!-- ✅ UPDATED: Realistic Aadhaar Icon -->
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="aadhaarBg" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -177,7 +177,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
       </div>
       <div class="icon-tile" onclick="handleGenericIconClick('PAN Card')">
         <div class="icon-box">
-          <!-- ✅ UPDATED: Realistic PAN Card Icon -->
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="panBg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -282,7 +281,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Display Name</label><input id="profileName" type="text"></div>
   <div class="field"><label>Email Address</label><input id="profileEmail" type="email"></div>
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
-  <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+  <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 </div></div>
 
@@ -319,7 +318,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <h3>📄 Passport Page 2</h3>
   <p class="sub">Please upload the second page (last page with observation/address).</p>
   <button class="btn btn-primary" style="margin-bottom:.5rem" onclick="triggerPassportPage2Camera()">📷 Take Photo</button>
-  <button class="btn btn-outline" onclick="triggerPassportPage2Upload()"> Upload File</button>
+  <button class="btn btn-outline" onclick="triggerPassportPage2Upload()">📁 Upload File</button>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="skipPassportPage2()">Skip (Save with 1 page)</button>
   <input type="file" id="passportPage2Input" style="display:none" accept="image/*" onchange="handlePassportPage2Select(this.files[0])">
 </div></div>
@@ -359,7 +358,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div></div>
 
 <div id="familyShareModal" class="modal-overlay"><div class="modal">
-  <h3>👨‍‍👧 Share with Family</h3>
+  <h3>👨‍👩‍👧 Share with Family</h3>
   <p class="sub">Select documents, choose a family member, then set the rights for each document.</p>
   <div class="field"><label>Share with</label><select id="familyShareTarget" onchange="renderFamilyShareMatrix()"></select></div>
   <div class="rights-note">View = open • Edit = upload a new version • Download = save a copy • Delete = move to Bin for 30 days • Share = share externally or with family when permitted.</div>
@@ -371,14 +370,14 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-  <h3>👨👩‍👧 Manage Family</h3>
+  <h3>👨‍👩‍👧 Manage Family</h3>
   <p class="sub">Connected members and permission settings.</p>
   <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
     <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()"> Add Minor</button>
+    <button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
   </div>
   <div style="text-align:right;margin-bottom:.5rem">
-    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()">🔄 Refresh List</button>
+    <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()"> Refresh List</button>
   </div>
   <div id="familyListContainer" style="margin-bottom:.75rem"></div>
   <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
@@ -439,7 +438,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div id="binView" class="view container">
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
     <button class="btn btn-outline btn-sm" onclick="openFamilyManager()">← Back</button>
-    <h2 style="margin:0">🗑 Bin</h2>
+    <h2 style="margin:0"> Bin</h2>
   </div>
   <p class="sub">Deleted documents stay here for 30 days before permanent cleanup.</p>
   <div class="card"><div id="binDocsContainer"><p class="sub">Loading…</p></div></div>
@@ -505,8 +504,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div class="viewer-menu" id="viewerMenu">
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('update')">🔄 Update</button>
       <button class="btn btn-outline btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('share')">📤 Share</button>
-      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">‍👩‍ Share with Family</button>
-      <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')">🗑 Delete</button>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('familyShare')">👨‍👩‍👧 Share with Family</button>
+      <button class="btn btn-danger btn-sm" style="width:100%;margin:.15rem 0" onclick="viewerAction('delete')"> Delete</button>
     </div>
   </div>
   <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
@@ -545,7 +544,20 @@ let passportPage1Path = null;
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
-async function handleAuthClick(){openModal('authModal');}
+
+// ✅ FIXED: Login button function
+async function handleAuthClick(){
+  console.log('Login button clicked');
+  const modal = document.getElementById('authModal');
+  if(modal){
+    modal.classList.add('show');
+    console.log('Auth modal opened');
+  } else {
+    console.error('Auth modal not found');
+    alert('Error: Login modal not found');
+  }
+}
+
 async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 
@@ -554,6 +566,7 @@ sb.auth.onAuthStateChange((ev,s)=>{
   if(s){
     currentUser=s.user;
     const m=s.user.user_metadata||{},full=m.full_name||m.name||(s.user.email?s.user.email.split('@')[0]:'User');
+    document.getElementById('userName').textContent=full;
     document.getElementById('userEmail').textContent=s.user.email||'';
     const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback'),pic=m.avatar_url||m.picture;
     if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
@@ -591,6 +604,7 @@ async function saveProfile(){
     alert('✅ Profile updated!');
     closeModal('profileModal');
     const newFull = name;
+    document.getElementById('userName').textContent = newFull;
     const fb = document.getElementById('userAvatarFallback');
     fb.textContent = (newFull.charAt(0)||'U').toUpperCase();
   }
@@ -628,7 +642,7 @@ async function processConsent(allow){
   if(allow){
     let { error } = await sb.rpc('accept_invite', { invite_id: pendingInviteId });
     if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'accepted', member_user_id: currentUser.id }).eq('id', pendingInviteId).eq('status', 'pending'); error = upErr; }
-    if(error){ alert('❌ Error accepting: ' + error.message); } else { alert('✅ You have joined the family group!'); loadFamilyMembers(); }
+    if(error){ alert(' Error accepting: ' + error.message); } else { alert('✅ You have joined the family group!'); loadFamilyMembers(); }
   } else {
     let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
     if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId); error = upErr; }
@@ -694,7 +708,7 @@ async function sendInviteEmail(){
   if(!name||!email)return alert('Enter Name and Email');
   const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
   const{data, error}=await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:email, member_phone:null, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
-  if(error){ alert(' Database Error: ' + error.message); } else {
+  if(error){ alert('❌ Database Error: ' + error.message); } else {
     const inviteId = data[0].id;
     const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
     alert(`✅ Invite created for ${name}!\n\nLink: ${link}\n\n(Copy and send this link)`);
@@ -967,7 +981,7 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
     if(docType === 'Other') loadOtherDocs();
     else showView('vault');
   } catch (err) {
-    alert('❌ Error saving: ' + err.message);
+    alert(' Error saving: ' + err.message);
   } finally {
     tempFile = null; tempUploadType = null; tempExpiryDate = null;
     document.getElementById('genericFileInput').value = '';
@@ -1043,4 +1057,753 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
     }else{
       const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
       if(error)throw error;
-      window.open(data
+      window.open(data.signedUrl,'_blank');
+    }
+    document.getElementById('fileViewerImg').style.display=isImage?'block':'none';
+    document.getElementById('rotateControls').style.display=isImage?'flex':'none';
+    document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
+    currentRotation=0;
+    document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
+    if(isImage) openModal('fileViewerModal');
+  }catch(err){alert('Failed: '+err.message);}
+}
+
+function rotateImage(degrees){
+  currentRotation=(currentRotation+degrees+360)%360;
+}
+
+async function rotateAndSaveImage(){
+  const c=viewerCtx;
+  if(!c||c.kind!=='generic'||!c.isImage)return;
+  try{
+    const img=document.getElementById('fileViewerImg');
+    if(!img.complete || !img.naturalWidth){
+      await new Promise((resolve,reject)=>{
+        img.onload=resolve;
+        img.onerror=()=>reject(new Error('Could not load document image'));
+      });
+    }
+    const nextRotation=(currentRotation+90)%360;
+    const canvas=createRotatedCanvas(img,nextRotation);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
+    if(!blob)throw new Error('Could not create corrected image');
+    const newPath=`${currentUser.id}/corrected-${c.id}-${Date.now()}.jpg`;
+    const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg',upsert:false});
+    if(upErr)throw upErr;
+    let dbPath=newPath;
+    if(c.isPassport&&c.passportData) dbPath=JSON.stringify({...c.passportData,front:newPath});
+    const {error:dbErr}=await sb.from('documents').update({file_url:dbPath}).eq('id',c.id).eq('user_id',currentUser.id);
+    if(dbErr){await sb.storage.from('vault').remove([newPath]);throw dbErr;}
+    if(!c.isPassport&&c.path){try{await sb.storage.from('vault').remove([c.path]);}catch(_){}
+    }
+    const previewUrl=URL.createObjectURL(blob);
+    if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
+    viewerCtx.objectUrl=previewUrl;
+    viewerCtx.path=dbPath;
+    viewerCtx.passportData=c.isPassport?JSON.parse(dbPath):null;
+    img.src=previewUrl;
+    img.style.transform='none';
+    currentRotation=0;
+    await loadGenericDocsStatus(true);
+  }catch(err){alert('❌ Could not save orientation: '+err.message);}
+}
+async function deleteGenericDoc(id){
+  if(!confirm('Move to Bin?')) return;
+  const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id);
+  if(error) alert('❌ '+error.message);
+  else { alert('✅ Moved to Bin'); await loadGenericDocsStatus(true); loadOtherDocs(); }
+}
+
+async function buildGenericShareFile(fmt){
+  if(!viewerCtx||!viewerCtx.isImage)throw new Error('This document is not an image.');
+  let blob,name,mime;
+  if(viewerCtx.isPassport&&viewerCtx.passportData){
+    const img1=document.getElementById('fileViewerImg');
+    const backPath=viewerCtx.passportData.back||viewerCtx.passportData.page2;
+    if(!backPath)throw new Error('Passport second page is not available.');
+    const loaded2=await loadVaultImage(backPath);
+    const img2=loaded2.img;
+    const frontCanvas=createRotatedCanvas(img1,currentRotation);
+    const backCanvas=createRotatedCanvas(img2,0);
+    const canvas=document.createElement('canvas');canvas.width=Math.max(frontCanvas.width,backCanvas.width);canvas.height=frontCanvas.height+backCanvas.height;
+    const ctx=canvas.getContext('2d');ctx.drawImage(frontCanvas,(canvas.width-frontCanvas.width)/2,0);ctx.drawImage(backCanvas,(canvas.width-backCanvas.width)/2,frontCanvas.height);
+    if(fmt==='jpg'){blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.88));name=`${viewerCtx.label}.jpg`;mime='image/jpeg';}
+    else {const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});const w=210,h=Math.min(297,canvas.height*210/canvas.width);pdf.addImage(canvas.toDataURL('image/jpeg',0.88),'JPEG',0,0,w,h);blob=pdf.output('blob');name=`${viewerCtx.label}.pdf`;mime='application/pdf';}
+  }else{
+    const canvas=createRotatedCanvas(document.getElementById('fileViewerImg'),currentRotation);
+    if(fmt==='jpg'){blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.88));name=`${viewerCtx.label}.jpg`;mime='image/jpeg';}
+    else {const {jsPDF}=window.jspdf;const mmPerPx=0.264583;const pdf=new jsPDF({unit:'mm',format:[canvas.width*mmPerPx,canvas.height*mmPerPx]});pdf.addImage(canvas.toDataURL('image/jpeg',0.88),'JPEG',0,0,canvas.width*mmPerPx,canvas.height*mmPerPx);blob=pdf.output('blob');name=`${viewerCtx.label}.pdf`;mime='application/pdf';}
+  }
+  if(!blob)throw new Error('Could not create share file');
+  return new File([blob],name,{type:mime});
+}
+
+let pendingGenericShareFile=null;
+async function genericShare(fmt){
+  closeModal('genericShareModal');
+  try{
+    const file=await buildGenericShareFile(fmt);
+    pendingGenericShareFile=file;
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      try{await navigator.share({files:[file],title:viewerCtx.label,text:`Sharing ${viewerCtx.label} from OneApp`});return;}catch(e){if(e.name==='AbortError')return;}
+    }
+    document.getElementById('genericShareFallbackName').textContent=file.name;
+    openModal('genericShareFallbackModal');
+  }catch(err){alert('Share failed: '+err.message);}
+}
+
+function downloadPendingGenericShare(){
+  if(!pendingGenericShareFile)return;
+  const url=URL.createObjectURL(pendingGenericShareFile);const a=document.createElement('a');a.href=url;a.download=pendingGenericShareFile.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function sharePendingGenericWhatsApp(){
+  if(!pendingGenericShareFile)return;
+  const text=`Sharing ${pendingGenericShareFile.name} from OneApp. The file will be available after download.`;
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+  downloadPendingGenericShare();
+}
+function sharePendingGenericEmail(){
+  if(!pendingGenericShareFile)return;
+  const subject=`OneApp document: ${pendingGenericShareFile.name}`;
+  const body=`Please find the document "${pendingGenericShareFile.name}".\n\nOneApp has downloaded the file to your device; attach it to this email before sending.`;
+  window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  downloadPendingGenericShare();
+}
+
+// --- END PHASE 1 FUNCTIONS ---
+
+function toggleViewerMenu(e){e.stopPropagation();document.getElementById('viewerMenu').classList.toggle('show');}
+function viewerAction(act){
+  document.getElementById('viewerMenu').classList.remove('show');
+  const c=viewerCtx;if(!c)return;
+  if(c.kind==='personal'){
+    if(act==='update'){closeModal('fileViewerModal');aaUpdateFlow();}
+    if(act==='share'){aaSharePick();}
+    if(act==='familyShare'){openFamilyShareModal(c.id||null);}
+    if(act==='delete'){aaDelete();}
+  }else if(c.kind==='childaadhaar'){
+    if(act==='update'){closeModal('fileViewerModal');openChildAaModal('update');}
+    if(act==='share'){shareChildAadhaar();}
+    if(act==='familyShare'){openFamilyShareModal(c.id||childAaRow?.id||null);}
+    if(act==='delete'){deleteChildAadhaar();}
+  }else if(c.kind==='childfile'){
+    if(act==='update'){closeModal('fileViewerModal');pickChildFile(c.type,c.id);}
+    if(act==='share'){shareChildFile(c.path,c.label);}
+    if(act==='familyShare'){openFamilyShareModal(c.id||null);}
+    if(act==='delete'){closeModal('fileViewerModal');deleteChildOther(c.id,c.path);}
+  }else if(c.kind==='shared'){
+    const p=c.permissions||{};
+    if(act==='update'){if(p.edit===false)alert('Edit permission is not granted.');else{closeModal('fileViewerModal');updateSharedDocument(c);}}
+    if(act==='share'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocument(c);}
+    if(act==='familyShare'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocumentById(c.id);}
+    if(act==='delete'){if(p.delete===false)alert('Delete permission is not granted.');else deleteSharedDocument(c);}
+  }else if(c.kind==='generic'){
+    if(act==='delete'){closeModal('fileViewerModal');deleteGenericDoc(c.id);}
+    if(act==='update'){closeModal('fileViewerModal');openGenericUpload(c.documentType || c.label);}
+    if(act==='share'){if(!c.isImage){alert('Share options only for images.');return;} openModal('genericShareModal');}
+    if(act==='familyShare'){openFamilyShareModal(c.id||null);}
+  }
+}
+function openViewerPersonal(){
+  if(!aaFull){alert('No Aadhaar saved yet.');return;}
+  viewerCtx={kind:'personal',id:aaRowId};
+  document.getElementById('fileViewerTitle').textContent='Aadhaar Card — Full Page';
+  document.getElementById('fileViewerImg').src=aaFull.toDataURL('image/jpeg',0.92);
+  document.getElementById('rotateControls').style.display = 'none';
+  openModal('fileViewerModal');
+}
+
+let childDocs=[],childAaCache={side:null,front:null,back:null,full:null},childAaRow=null,childAaFile=null;
+const TYPE_LABELS={aadhaar:'Aadhaar Card',birth_cert:'Birth Certificate',vaccine:'Vaccination Sheet',other:'Other Document'};
+function parseTypeFromUrl(url){const seg=url.split('/').pop()||'';return seg.split('-')[0]||'other';}
+
+function openChildVault(id,name){currentChildId=id;currentChildName=name;document.getElementById('cvTitle').textContent=name+"'s Vault";document.getElementById('cvNameDisplay').textContent=name;closeModal('familyManagerModal');showView('childVaultView');loadChildDocs();}
+
+async function loadChildDocs(){
+  const list=document.getElementById('childActiveDocs');
+  list.innerHTML='<p class="sub">Loading…</p>';
+  document.getElementById('childDupCard').style.display='none';
+  childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
+  if(!currentUser||!currentChildId)return;
+  const{data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
+  if(error){list.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+error.message+'</p>';return;}
+  childDocs=data||[];
+  await renderChildDocs();
+}
+
+async function renderChildDocs(){
+  const list=document.getElementById('childActiveDocs');
+  if(!childDocs.length){list.innerHTML='<p class="sub">No documents uploaded yet. Use the tiles above.</p>';return;}
+  const types=['aadhaar','birth_cert','vaccine','other'];
+  let html='';const dups=[];
+  for(const t of types){
+    const rows=childDocs.filter(r=>parseTypeFromUrl(r.file_url)===t);
+    if(!rows.length)continue;
+    const active=rows[0];
+    for(let i=1;i<rows.length;i++)dups.push(rows[i]);
+    if(t==='aadhaar'){
+      childAaRow=active;
+      await loadChildAaCache();
+      html+=`<div class="doc-row"><div class="doc-info"><h4>Aadhaar Card</h4><p>${currentChildName} • saved in vault</p></div><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="viewChildAadhaar()">View</button></div></div>`;
+    }else{
+      const fname=active.file_url.split('/').pop();
+      const ext=fname.split('.').pop().toLowerCase();
+      html+=`<div class="doc-row"><div class="doc-info"><h4>${TYPE_LABELS[t]}</h4><p>${fname} • ${new Date(active.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="viewChildFile('${active.id}','${active.file_url}','${ext}','${t}')">View</button></div></div>`;
+    }
+  }
+  list.innerHTML=html||'<p class="sub">No documents uploaded yet. Use the tiles above.</p>';
+  if(dups.length){
+    document.getElementById('childDupCard').style.display='block';
+    document.getElementById('childDupDocs').innerHTML=dups.map(d=>{const fname=d.file_url.split('/').pop();const ext=fname.split('.').pop().toLowerCase();return `<div class="doc-row"><div class="doc-info"><h4>${TYPE_LABELS[parseTypeFromUrl(d.file_url)]||'Document'} (extra)</h4><p>${fname} • ${new Date(d.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm" onclick="viewChildFile('${d.id}','${d.file_url}','${ext}','${parseTypeFromUrl(d.file_url)}')">View</button><button class="btn btn-danger btn-sm" onclick="deleteChildOther('${d.id}','${d.file_url}')">Delete</button></div></div>`;}).join('');
+  }
+}
+
+async function loadChildAaCache(){
+  const uid=currentUser.id,base=uid+'/children/'+currentChildId+'/aadhaar-';
+  const get=async n=>{const{data}=await sb.storage.from('vault').download(base+n);if(!data)return null;try{const b=await createImageBitmap(data);const c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;}};
+  childAaCache.side=await get('side.jpg');
+  childAaCache.front=await get('front.jpg');
+  childAaCache.back=await get('back.jpg');
+  childAaCache.full=await get('full.jpg');
+}
+
+function viewChildAadhaar(){
+  const img=childAaCache.full||childAaCache.side;
+  if(!img){alert('Not loaded yet.');return;}
+  viewerCtx={kind:'childaadhaar'};
+  document.getElementById('fileViewerTitle').textContent='Aadhaar — '+currentChildName;
+  document.getElementById('fileViewerImg').src=img.toDataURL('image/jpeg',0.92);
+  document.getElementById('rotateControls').style.display = 'none';
+  openModal('fileViewerModal');
+}
+
+async function viewChildFile(id,path,ext,type){
+  try{
+    const{data,error}=await sb.storage.from('vault').createSignedUrl(path,300);
+    if(error)throw error;
+    if(['jpg','jpeg','png','webp'].includes(ext)){
+      viewerCtx={kind:'childfile',id:id,path:path,type:type,label:TYPE_LABELS[type]||'Document',isImage:true};
+      document.getElementById('fileViewerTitle').textContent=path.split('/').pop();
+      document.getElementById('fileViewerImg').src=data.signedUrl;
+      document.getElementById('rotateControls').style.display = 'flex';
+      currentRotation = 0;
+      document.getElementById('fileViewerImg').style.transform = `rotate(${currentRotation}deg)`;
+      openModal('fileViewerModal');
+    }else{window.open(data.signedUrl,'_blank');}
+  }catch(err){alert('Failed: '+err.message);}
+}
+
+async function shareChildFile(path,label){
+  try{
+    const{data,error}=await sb.storage.from('vault').createSignedUrl(path,300);
+    if(error)throw error;
+    const blob=await(await fetch(data.signedUrl)).blob();
+    const f=new File([blob],path.split('/').pop(),{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:label});}
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually.');}
+  }catch(err){alert('Share failed: '+err.message);}
+}
+
+function triggerChildUpload(type){
+  if(type==='aadhaar'){
+    const exists=childDocs.some(r=>parseTypeFromUrl(r.file_url)==='aadhaar');
+    if(exists&&!confirm('Replace existing Aadhaar card for '+currentChildName+'?'))return;
+    openChildAaModal(exists?'update':'new');
+    return;
+  }
+  const exists=childDocs.some(r=>parseTypeFromUrl(r.file_url)===type);
+  if(exists&&!confirm('Upload a new copy of '+TYPE_LABELS[type]+'? Old copy moves to duplicates.'))return;
+  pickChildFile(type,null);
+}
+
+function pickChildFile(type,rowId){
+  const input=document.createElement('input');input.type='file';input.accept='image/*,application/pdf';
+  input.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const list=document.getElementById('childActiveDocs');
+    const status=document.createElement('div');status.className='sos-box';status.textContent='Uploading '+TYPE_LABELS[type]+'…';list.prepend(status);
+    try{
+      const ext=file.name.split('.').pop();
+      const path=currentUser.id+'/children/'+currentChildId+'/'+type+'-'+Date.now()+'.'+ext;
+      const{error}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
+      if(error)throw error;
+      if(rowId){
+        const old=childDocs.find(r=>r.id===rowId);
+        const{error:uerr}=await sb.from('documents').update({file_url:path}).eq('id',rowId);
+        if(uerr)throw uerr;
+        if(old)await sb.storage.from('vault').remove([old.file_url]).catch(()=>{});
+      }else{
+        const{error:derr}=await sb.from('documents').insert({user_id:currentUser.id,doc_category:(type==='birth_cert'||type==='vaccine')?'legal':'identity',document_type:'child_'+currentChildId+'_'+type,document_name:TYPE_LABELS[type]+' ('+currentChildName+')',file_url:path,is_critical:true,deleted_at:null,permissions:{[currentChildId]:{view:true,edit:true,download:true}}});
+        if(derr)throw derr;
+      }
+      status.textContent='✅ Uploaded.';setTimeout(()=>status.remove(),1500);
+      loadChildDocs();
+    }catch(err){status.textContent='❌ '+err.message;}
+  };
+  input.click();
+}
+
+async function deleteChildOther(id,path){
+  if(!confirm('Move this file to Bin? You can restore it for 30 days.'))return;
+  const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id).eq('user_id',currentUser.id);
+  if(error)alert('❌ '+error.message);else loadChildDocs();
+}
+function openChildAaModal(mode){
+  document.getElementById('childAaTitle').textContent=(mode==='update'?'Update':'Upload')+' Aadhaar — '+currentChildName;
+  document.getElementById('childAaFile').value='';
+  document.getElementById('childAaPass').value='';
+  document.getElementById('childAaPassRow').style.display='none';
+  document.getElementById('childAaStatus').textContent='Waiting for PDF…';
+  document.getElementById('childAaPreview').style.display='none';
+  document.getElementById('childAaSaveBtn').style.display='none';
+  childAaFile=null;
+  openModal('childAaModal');
+}
+function childAaUnlock(){if(!childAaFile){alert('Select PDF first.');return;}childAaOnFile(childAaFile);}
+async function childAaOnFile(file){
+  if(!file)return;childAaFile=file;
+  const st=document.getElementById('childAaStatus');st.textContent='Reading PDF…';
+  const uid=currentUser.id;
+  const pw=document.getElementById('childAaPass').value||getSavedPdfPassword(uid,'child_'+currentChildId)||undefined;
+  let pdf;
+  try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('childAaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it for this child.';return;}st.textContent='❌ '+err.message;return;}
+  try{
+    const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    const entered=document.getElementById('childAaPass').value;
+    if(entered)savePdfPassword(uid,'child_'+currentChildId,entered);
+    const r=computeCards(c);
+    childAaCache={side:r.side,front:r.front,back:r.back,full:c};
+    const img=document.getElementById('childAaPreview');img.src=r.side.toDataURL('image/jpeg',0.92);img.style.display='block';
+    document.getElementById('childAaSaveBtn').style.display='';
+    st.textContent='✂ '+r.msg;
+  }catch(e){st.textContent='❌ '+e.message;}
+}
+async function childAaSave(){
+  if(!childAaCache.side){alert('Process the PDF first.');return;}
+  const uid=currentUser.id,base=uid+'/children/'+currentChildId+'/aadhaar-';
+  const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
+  let e;
+  (e=await sb.storage.from('vault').upload(base+'full.jpg',await jb(childAaCache.full),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'front.jpg',await jb(childAaCache.front),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'back.jpg',await jb(childAaCache.back),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(base+'side.jpg',await jb(childAaCache.side),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  if(childAaFile){(e=await sb.storage.from('vault').upload(base+'original.pdf',childAaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
+  if(childAaRow){
+    const{error}=await sb.from('documents').update({file_url:base+'side.jpg',document_name:'Aadhaar Card ('+currentChildName+')',deleted_at:null}).eq('id',childAaRow.id);
+    if(error)alert('❌ '+error.message);
+  }else{
+    const{error}=await sb.from('documents').insert({user_id:uid,doc_category:'identity',document_type:'child_'+currentChildId+'_aadhaar',document_name:'Aadhaar Card ('+currentChildName+')',file_url:base+'side.jpg',is_critical:true,deleted_at:null,permissions:{[currentChildId]:{view:true,edit:true,download:true}}});
+    if(error)alert('❌ '+error.message);
+  }
+  closeModal('childAaModal');
+  alert('✅ Saved to '+currentChildName+"'s vault.");
+  loadChildDocs();
+}
+function shareChildAadhaar(){shareContext={childId:currentChildId};openModal('shareModal');}
+async function deleteChildAadhaar(){
+  if(!confirm('Move '+currentChildName+"'s Aadhaar to Bin? You can restore it for 30 days."))return;
+  const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',currentUser.id).ilike('file_url','%children/'+currentChildId+'/aadhaar%');
+  if(error){alert('❌ '+error.message);return;}
+  closeModal('fileViewerModal');loadChildDocs();
+}
+let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false,aaRowId=null;
+let sharedAaCache={side:null,front:null,back:null,full:null};
+function showAa(id){['aaStep1','aaStep2','aaStep3'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
+function openAadhaar(){showAa('aaStep1');openModal('aadhaarModal');}
+function openAadhaarSmart(){if(aaFull){openViewerPersonal();}else{openAadhaar();}}
+function aaUpdateFlow(){
+  document.getElementById('aaCoach').style.display='none';
+  document.getElementById('aaStep2Sub').textContent='Upload a fresh e-Aadhaar PDF. Saved password is used automatically.';
+  document.getElementById('aaPassRow').style.display='none';
+  document.getElementById('aaStatus').textContent='Waiting for PDF…';
+  showAa('aaStep1');
+  openModal('aadhaarModal');
+}
+function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='myAadhaar portal opened. Services → Download e-Aadhaar.';showAa('aaStep2');}
+function aaDirect(){document.getElementById('aaCoach').style.display='none';document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — converts on your device.';showAa('aaStep2');}
+function aaUnlock(){if(!aaFile){alert('Select PDF first.');return;}aaOnFile(aaFile);}
+async function aaOnFile(file){
+  if(!file)return;aaFile=file;const st=document.getElementById('aaStatus');st.textContent='Reading PDF…';
+  const uid=currentUser?currentUser.id:'guest';
+  const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadhaar')||undefined;
+  let pdf;
+  try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
+  catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent=' '+err.message;return;}
+  try{
+    const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    const entered=document.getElementById('aaPass').value;
+    if(entered)savePdfPassword(uid,'aadhaar',entered);
+    aaFull=c;const r=computeCards(c);aaSide=r.side;aaFront=r.front;aaBack=r.back;
+    document.getElementById('aaCutInfo').textContent='✂ '+r.msg;
+    refreshPreview();showAa('aaStep3');
+  }catch(e){st.textContent='❌ '+e.message;}
+}
+function rc(s,x,y,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(s,x,y,w,h,0,0,w,h);return c;}
+function computeCards(src){
+  const cutY=findScissorsRow(src);let msg,strip;
+  if(cutY>0){msg='Scissors line found at '+Math.round(cutY/src.height*100)+'% — cut below it.';strip=autoCrop(rc(src,0,cutY+2,src.width,src.height-cutY-2));}
+  else{msg='Scissors line not detected — using 68% fallback.';strip=autoCrop(rc(src,0,Math.round(src.height*0.68),src.width,src.height-Math.round(src.height*0.68)));}
+  const midX=Math.round(strip.width/2);
+  return{side:strip,front:autoCrop(rc(strip,0,0,midX,strip.height)),back:autoCrop(rc(strip,midX,0,strip.width-midX,strip.height)),msg:msg};
+}
+function findScissorsRow(canvas){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,data=ctx.getImageData(0,0,w,h).data;
+  let bestY=-1,bestScore=0;const y0=Math.round(h*0.4),y1=Math.round(h*0.8);
+  for(let y=y0;y<y1;y++){const runs=[];let inRun=false,runStart=0;
+    for(let x=0;x<w;x++){const i=(y*w+x)*4;const dark=data[i]<120&&data[i+1]<120&&data[i+2]<120;if(dark&&!inRun){inRun=true;runStart=x;}if(!dark&&inRun){inRun=false;runs.push({s:runStart,l:x-runStart});}}
+    if(inRun)runs.push({s:runStart,l:w-runStart});
+    const shortRuns=runs.filter(r=>r.l>=2&&r.l<=25);if(shortRuns.length<4)continue;
+    const span=shortRuns[shortRuns.length-1].s+shortRuns[shortRuns.length-1].l-shortRuns[0].s;if(span<w*0.4)continue;
+    const score=shortRuns.length*(span/w);if(score>bestScore){bestScore=score;bestY=y;}}
+  return bestY;
+}
+function cardCanvas(s){const W=1000,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const r=Math.min(W/s.width,H/s.height),w=Math.round(s.width*r),h=Math.round(s.height*r);ctx.drawImage(s,Math.round((W-w)/2),Math.round((H-h)/2),w,h);return c;}
+function composeCanvasFor(layout,cache){
+  if(!cache.front||!cache.back)return null;
+  if(layout==='side'&&cache.side)return cache.side;
+  const a=cardCanvas(cache.front),b=cardCanvas(cache.back),c=document.createElement('canvas'),ctx=c.getContext('2d');
+  if(layout==='stack'){c.width=a.width;c.height=a.height+b.height+24;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,0);ctx.drawImage(b,0,a.height+24);}
+  else{c.width=a.width+b.width+24;c.height=a.height;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,0);ctx.drawImage(b,a.width+24,0);}
+  return c;
+}
+function composeCanvas(layout){return composeCanvasFor(layout,{side:aaSide,front:aaFront,back:aaBack});}
+function refreshPreview(){const c=composeCanvas('side');if(c)document.getElementById('aaPreview').src=c.toDataURL('image/jpeg',0.92);}
+function autoCrop(cv){const ctx=cv.getContext('2d'),w=cv.width,h=cv.height,d=ctx.getImageData(0,0,w,h).data;let t=h,b=0,l=w,r=0;for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;if(d[i]<240||d[i+1]<240||d[i+2]<240){if(y<t)t=y;if(y>b)b=y;if(x<l)l=x;if(x>r)r=x;}}if(b<=t||r<=l)return cv;const p=Math.round(w*0.005);t=Math.max(0,t-p);l=Math.max(0,l-p);b=Math.min(h-1,b+p);r=Math.min(w-1,r+p);const c2=document.createElement('canvas');c2.width=r-l+1;c2.height=b-t+1;c2.getContext('2d').drawImage(cv,l,t,c2.width,c2.height,0,0,c2.width,c2.height);return c2;}
+function makePdf(c){const{jsPDF}=window.jspdf,wm=180,hm=180*c.height/c.width,p=(wm>=hm)?new jsPDF({unit:'mm',format:[hm,wm],orientation:'landscape'}):new jsPDF({unit:'mm',format:[wm,hm],orientation:'portrait'});p.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,wm,hm);return p;}
+function makeA4Pdf(c){const{jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});const pw=210,ph=297;const r=Math.min(pw/c.width,ph/c.height);const w=c.width*r,h=c.height*r;pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',(pw-w)/2,(ph-h)/2,w,h);return pdf;}
+async function aaSave(){
+  if(!aaFront||!aaBack){alert('Not ready.');return;}
+  const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}
+  const uid=session.user.id;
+  const jb=c=>fetch(c.toDataURL('image/jpeg',0.92)).then(r=>r.blob());
+  let e;
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-full.jpg',await jb(aaFull),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-front.jpg',await jb(aaFront),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-back.jpg',await jb(aaBack),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  (e=await sb.storage.from('vault').upload(uid+'/aadhaar-side.jpg',await jb(aaSide),{contentType:'image/jpeg',upsert:true})).error&&alert('❌ '+e.error.message);
+  if(aaFile){(e=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',aaFile,{contentType:'application/pdf',upsert:true})).error&&alert('❌ '+e.error.message);}
+  const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
+  let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true,deleted_at:null}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true,deleted_at:null}));
+  if(err){alert('❌ '+err.message);return;}
+  aaHasOrig=true;setSaved('Wallet card saved');closeModal('aadhaarModal');alert('✅ Saved!');}
+function setSaved(t){document.getElementById('aadhaarIndicator').classList.add('show');}
+function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;aaRowId=null;document.getElementById('aadhaarIndicator').classList.remove('show');}
+async function loadSavedAadhaar(uid){
+  const{data}=await sb.from('documents').select('id,file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').is('deleted_at',null).limit(1);if(!data||!data.length){resetAadhaarUI();return;} aaRowId=data[0].id;
+  const cfb=async b=>{const bmp=await createImageBitmap(b);const c=document.createElement('canvas');c.width=bmp.width;c.height=bmp.height;c.getContext('2d').drawImage(bmp,0,0);return c;};
+  const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
+  if(a)aaFull=await cfb(a);if(b)aaFront=await cfb(b);if(c)aaBack=await cfb(c);if(d)aaSide=await cfb(d);
+  aaHasOrig=true;setSaved('Wallet card saved');
+}
+async function aaDelete(){
+  if(!confirm('Move all Aadhaar files to Bin? You can restore them for 30 days.'))return;
+  const{data:{session}}=await sb.auth.getSession();if(!session)return;
+  const uid=session.user.id;
+  const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)');
+  if(error){alert('❌ '+error.message);return;}
+  resetAadhaarUI();closeModal('fileViewerModal');alert('✅ Moved to Bin for 30 days.');
+}
+function aaSharePick(){shareContext=null;openModal('shareModal');}
+async function aaShare(fmt,layout){
+  closeModal('shareModal');
+  const isChild=!!shareContext&&shareContext.kind==='child';
+  const isShared=!!shareContext&&shareContext.kind==='shared';
+  const cache=isShared?sharedAaCache:(isChild?childAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull});
+  const sendFile=async f=>{
+    if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Aadhaar Card'});}catch(e){}}
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually. Opens WITHOUT password.');}
+  };
+  if(fmt==='a4pdf'){
+    if(cache.full){sendFile(new File([makeA4Pdf(cache.full).output('blob')],'aadhaar-a4.pdf',{type:'application/pdf'}));return;}
+    if(!isChild&&aaFile){sendFile(aaFile);return;}
+    alert('No full page available.');return;
+  }
+  const c=composeCanvasFor(layout,cache);if(!c)return;
+  let blob,name,mime;
+  if(fmt==='jpg'){blob=await(await fetch(c.toDataURL('image/jpeg',0.92))).blob();name='aadhaar-'+layout+'.jpg';mime='image/jpeg';}
+  else{blob=makePdf(c).output('blob');name='aadhaar-'+layout+'.pdf';mime='application/pdf';}
+  sendFile(new File([blob],name,{type:mime}));
+}
+
+let lastPos=null;
+function openSOS(){openModal('emergencyModal');showSOSPanel('sos');}
+function showSOSPanel(p){document.getElementById('sosPanel').style.display=p==='sos'?'block':'none';document.getElementById('guardPanel').style.display=p==='guard'?'block':'none';document.getElementById('tabSos').classList.toggle('on',p==='sos');document.getElementById('tabGuard').classList.toggle('on',p==='guard');if(p==='sos')startLocate();}
+function mapLink(p){return 'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
+function startLocate(){if(!navigator.geolocation){document.getElementById('sosStatus').textContent='Location unsupported.';return;}navigator.geolocation.getCurrentPosition(p=>{lastPos=p;const a=document.getElementById('sosLink');a.href=mapLink(p);a.style.display='block';document.getElementById('sosStatus').textContent='Located ±'+Math.round(p.coords.accuracy)+'m';},e=>{document.getElementById('sosStatus').textContent='Error '+e.code;},{enableHighAccuracy:true,timeout:12000});}
+function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
+async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const m={vault:'nav-vault',autopilot:'nav-auto', otherDocsView:'nav-vault'}; 
+  if(m[id])document.getElementById(m[id]).classList.add('active');
+  window.scrollTo(0,0);
+  if(id === 'otherDocsView') loadOtherDocs();
+}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+function docIsChild(d){return /^child_/.test(d.document_type||'') || (d.file_url||'').includes('/children/');}
+function docLabel(d){return d.document_name||d.document_type||'Document';}
+function familyOtherUserId(f){return f.owner_id===currentUser.id ? f.member_user_id : f.owner_id;}
+function familyDisplayName(f){return f.display_name || (f.member_email?f.member_email.split('@')[0]:'Member');}
+
+async function getFamilyAdultTargets(){
+  const map=new Map();
+  (familyMembers||[]).filter(f=>f.status==='accepted'&&!f.is_minor).forEach(f=>{
+    const id=familyOtherUserId(f); if(id)map.set(id,familyDisplayName(f));
+  });
+  return [...map.entries()].map(([id,name])=>({id,name}));
+}
+
+async function openFamilyShareModal(preselectId=null){
+  if(!currentUser){alert('Sign in first.');return;}
+  familyShareTargetId=null; familyShareDocs=[]; window.familySharePreselectId=preselectId||null;
+  await loadFamilyMembers();
+  const targets=await getFamilyAdultTargets();
+  const sel=document.getElementById('familyShareTarget');
+  sel.innerHTML=targets.length?targets.map(t=>`<option value="${t.id}">${escHtml(t.name)}</option>`).join(''):'<option value="">No connected adult family member</option>';
+  if(!targets.length){alert('Connect a family member first.');return;}
+  familyShareTargetId=sel.value;
+  if(preselectId){
+    const {data:single}=await sb.from('documents').select('*').eq('id',preselectId).maybeSingle();
+    if(single)familyShareDocs=[single];
+    else familyShareDocs=await getOwnedShareDocs();
+  }else familyShareDocs=await getOwnedShareDocs();
+  await renderFamilyShareMatrix();
+  closeModal('familyManagerModal');
+  openModal('familyShareModal');
+}
+
+async function getOwnedShareDocs(){
+  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).order('created_at',{ascending:false});
+  if(error){alert('❌ '+error.message);return[];}
+  return data||[];
+}
+
+async function renderFamilyShareMatrix(){
+  const sel=document.getElementById('familyShareTarget');
+  familyShareTargetId=sel.value;
+  const box=document.getElementById('familyShareDocs');
+  if(!familyShareDocs.length){box.innerHTML='<p class="sub">No documents available to share.</p>';return;}
+  let existing=[];
+  if(familyShareTargetId){
+    const ids=familyShareDocs.map(d=>d.id);
+    const {data}=await sb.from('document_shares').select('*').eq('recipient_user_id',familyShareTargetId).in('document_id',ids);
+    existing=data||[];
+  }
+  const byId=new Map(existing.map(x=>[x.document_id,x]));
+  box.innerHTML=familyShareDocs.map(d=>{
+    const ex=byId.get(d.id), p=ex?.permissions||{};
+    const child=docIsChild(d), checked=!!ex||d.id===window.familySharePreselectId;
+    const rights=['view','edit','download','delete','share'];
+    return `<div class="family-share-row">
+      <label style="display:flex;align-items:center;gap:.4rem;font-weight:700">
+        <input type="checkbox" class="family-doc-check" data-doc-id="${d.id}" ${checked?'checked':''} onchange="toggleFamilyDocRights('${d.id}')">
+        ${escHtml(docLabel(d))}${child?' <span class="badge badge-ok">Child • Full rights</span>':''}
+      </label>
+      <table class="share-matrix" id="rights-${d.id}">
+        <tr>${rights.map(r=>`<th>${r[0].toUpperCase()+r.slice(1)}</th>`).join('')}</tr>
+        <tr>${rights.map(r=>{
+          const val=child?true:(ex?p[r]!==false:(r==='view'||r==='download'));
+          return `<td><input type="checkbox" class="right-${r}" data-doc-id="${d.id}" ${val?'checked':''} ${child?'disabled':''}></td>`;
+        }).join('')}</tr>
+      </table>
+    </div>`;
+  }).join('');
+  familyShareDocs.forEach(d=>toggleFamilyDocRights(d.id));
+}
+
+function toggleFamilyDocRights(id){
+  const checked=document.querySelector(`.family-doc-check[data-doc-id="${id}"]`)?.checked;
+  document.querySelectorAll(`[data-doc-id="${id}"].right-view,[data-doc-id="${id}"].right-edit,[data-doc-id="${id}"].right-download,[data-doc-id="${id}"].right-delete,[data-doc-id="${id}"].right-share`).forEach(x=>{x.disabled=!checked;});
+}
+
+async function saveFamilyShares(){
+  const target=document.getElementById('familyShareTarget').value;
+  if(!target)return;
+  let ok=0;
+  for(const d of familyShareDocs){
+    const selected=document.querySelector(`.family-doc-check[data-doc-id="${d.id}"]`)?.checked;
+    const child=docIsChild(d);
+    if(!selected){
+      await sb.from('document_shares').delete().eq('document_id',d.id).eq('recipient_user_id',target);
+      continue;
+    }
+    const permissions={};
+    ['view','edit','download','delete','share'].forEach(r=>{
+      const el=document.querySelector(`.right-${r}[data-doc-id="${d.id}"]`);
+      permissions[r]=child?true:!!el?.checked;
+    });
+    const {error}=await sb.from('document_shares').upsert({ document_id:d.id,owner_id:d.user_id,recipient_user_id:target,permissions:permissions,status:'active',updated_at:new Date().toISOString() },{onConflict:'document_id,recipient_user_id'});
+    if(!error)ok++; else alert('❌ '+error.message);
+  }
+  alert(`✅ Family access updated for ${ok} document(s).`);
+  closeModal('familyShareModal');
+}
+
+async function openSharedVault(userId,name){
+  sharedVaultContext={kind:'adult',userId,name};
+  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
+  document.getElementById('svSub').textContent='Documents '+name+' has shared with you. Access is controlled document-by-document.';
+  showView('sharedVaultView');
+  await loadSharedVault();
+}
+
+async function openSharedChildVault(childId,name,ownerId){
+  sharedVaultContext={kind:'child',childId,name,ownerId};
+  document.getElementById('svTitle').textContent=name+"'s Shared Vault";
+  document.getElementById('svSub').textContent='Child documents shared with you. Child documents use full family rights.';
+  showView('sharedVaultView');
+  await loadSharedVault();
+}
+
+async function loadSharedVault(){
+  const box=document.getElementById('sharedDocsContainer');
+  box.innerHTML='<p class="sub">Loading…</p>';
+  if(!currentUser||!sharedVaultContext)return;
+  let q=sb.from('document_shares').select('*,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
+  const {data,error}=await q;
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
+  let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
+  if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
+  else rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
+  if(!rows.length){box.innerHTML='<p class="sub">No documents have been shared with you yet.</p>';return;}
+  box.innerHTML=rows.map(s=>{
+    const d=s.documents,p=s.permissions||{};
+    const actions=[];
+    if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
+    if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
+    if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
+    if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
+    if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
+    return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4><p>${docIsChild(d)?'Child document':'Family-shared document'} • rights: ${Object.keys(p).filter(k=>p[k]).join(', ')}</p></div><div class="shared-doc-actions">${actions.join('')}</div></div>`;
+  }).join('');
+}
+
+async function getSharedRecord(docId){
+  const {data,error}=await sb.from('document_shares').select('*,documents(*)').eq('document_id',docId).eq('recipient_user_id',currentUser.id).eq('status','active').maybeSingle();
+  if(error||!data||!data.documents||data.documents.deleted_at)return null;
+  return data;
+}
+
+async function openSharedDocument(docId){
+  const s=await getSharedRecord(docId); if(!s){alert('Access is no longer available.');return;}
+  const d=s.documents,p=s.permissions||{};
+  if(p.view===false){alert('View permission is not granted.');return;}
+  try{
+    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);
+    if(error)throw error;
+    viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
+    document.getElementById('fileViewerTitle').textContent=docLabel(d);
+    document.getElementById('fileViewerImg').src=data.signedUrl;
+    document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
+    if(document.getElementById('fileViewerImg').style.display==='none')window.open(data.signedUrl,'_blank');
+    else openModal('fileViewerModal');
+  }catch(err){alert('Failed: '+err.message);}
+}
+
+async function downloadSharedDocument(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  if(s.permissions?.download===false)return alert('Download permission is not granted.');
+  const {data,error}=await sb.storage.from('vault').download(s.documents.file_url);
+  if(error){alert('❌ '+error.message);return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(data);a.download=s.documents.file_url.split('/').pop();a.click();
+}
+
+async function updateSharedDocumentById(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  updateSharedDocument({id:docId,document:s.documents,permissions:s.permissions});
+}
+async function updateSharedDocument(c){
+  if(c.permissions?.edit===false)return alert('Edit permission is not granted.');
+  const input=document.createElement('input');input.type='file';input.accept='image/*,application/pdf';
+  input.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const ext=(file.name.split('.').pop()||'bin').toLowerCase();
+    const path=`${c.document.user_id}/shared-${c.document.id}-${Date.now()}.${ext}`;
+    const {error:up}=await sb.storage.from('vault').upload(path,file,{contentType:file.type});
+    if(up){alert('❌ '+up.message);return;}
+    const {error}=await sb.from('documents').update({file_url:path,deleted_at:null}).eq('id',c.document.id);
+    if(error){alert('❌ '+error.message);return;}
+    closeModal('fileViewerModal');alert('✅ New version uploaded.');loadSharedVault();
+  };
+  input.click();
+}
+
+async function loadSharedAaCache(path){
+  const base=path.replace(/[^/]+$/,'');
+  const get=async n=>{ const {data}=await sb.storage.from('vault').download(base+n); if(!data)return null; try{const b=await createImageBitmap(data),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;} };
+  sharedAaCache={side:await get('aadhaar-side.jpg'),front:await get('aadhaar-front.jpg'),back:await get('aadhaar-back.jpg'),full:await get('aadhaar-full.jpg')};
+  return !!sharedAaCache.side||!!sharedAaCache.full;
+}
+
+async function shareSharedDocumentById(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  if(s.permissions?.share===false)return alert('Share permission is not granted.');
+  const d=s.documents;
+  if((d.document_type||'').toLowerCase().includes('aadhaar') || (d.file_url||'').includes('/aadhaar-')){
+    const loaded=await loadSharedAaCache(d.file_url);
+    if(!loaded)return alert('Aadhaar share versions are not available.');
+    shareContext={kind:'shared',docId:d.id,ownerId:d.user_id,path:d.file_url};
+    closeModal('fileViewerModal');openModal('shareModal');return;
+  }
+  try{
+    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);if(error)throw error;
+    const blob=await(await fetch(data.signedUrl)).blob();
+    const f=new File([blob],d.file_url.split('/').pop(),{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:docLabel(d)});
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();}
+  }catch(err){alert('Share failed: '+err.message);}
+}
+async function shareSharedDocument(c){return shareSharedDocumentById(c.id);}
+
+async function deleteSharedDocumentById(docId){
+  const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer available.');
+  if(s.permissions?.delete===false)return alert('Delete permission is not granted.');
+  if(!confirm('Move this document to Bin? It can be restored for 30 days.'))return;
+  const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',docId);
+  if(error){alert('❌ '+error.message);return;}
+  closeModal('fileViewerModal');loadSharedVault();
+}
+async function deleteSharedDocument(c){return deleteSharedDocumentById(c.id);}
+
+async function openBinView(){
+  if(!currentUser)return;
+  showView('binView');
+  const box=document.getElementById('binDocsContainer');box.innerHTML='<p class="sub">Loading…</p>';
+  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).not('deleted_at','is',null).order('deleted_at',{ascending:false});
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
+  const active=(data||[]).filter(d=>new Date(d.deleted_at).getTime()>Date.now()-30*24*60*60*1000);
+  if(!active.length){box.innerHTML='<p class="sub">Bin is empty.</p>';return;}
+  box.innerHTML=active.map(d=>`<div class="bin-row"><div><strong>${escHtml(docLabel(d))}</strong><br><small style="color:var(--gray)">Deleted ${new Date(d.deleted_at).toLocaleString()}</small></div><button class="btn btn-success btn-sm" onclick="restoreDocument('${d.id}')">↩ Restore</button></div>`).join('');
+}
+async function restoreDocument(id){
+  const {error}=await sb.from('documents').update({deleted_at:null}).eq('id',id).eq('user_id',currentUser.id);
+  if(error)alert(' '+error.message);else{alert('✅ Restored.');openBinView();}
+}
+
+window.onclick=e=>{
+  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
+  if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
+  if(!e.target.closest('#viewerMenu')&&!e.target.closest('.vdots'))document.getElementById('viewerMenu').classList.remove('show');
+};
+
+// --- PWA SERVICE WORKER REGISTRATION ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
+</script>
+</body>
+</html>
