@@ -81,6 +81,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .invite-tab{flex:1;padding:.4rem;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:.75rem;font-weight:600;text-align:center}
 .invite-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .viewer-img{width:100%;border-radius:8px;border:1px solid var(--border);margin:.5rem 0;background:#f8fafc;transition:transform .3s ease}
+.viewer-file-frame{width:100%;height:68vh;min-height:420px;border:1px solid var(--border);border-radius:8px;background:#f8fafc;margin:.5rem 0;display:none}
 .viewer-head{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:.25rem}
 .vdots{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
 .viewer-menu{position:absolute;right:0;top:115%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);padding:.4rem;display:none;z-index:60;min-width:150px;text-align:left}
@@ -399,10 +400,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="card">
     <div class="card-header"><h3>Upload New</h3></div>
     <div class="icon-grid">
-      <div class="icon-tile" onclick="triggerChildUpload('aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
-      <div class="icon-tile" onclick="triggerChildUpload('birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg></div><span>Birth Cert</span></div>
-      <div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
-      <div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
+      <div class="icon-tile" onclick="openChildCategory('aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg></div><span>Aadhaar</span></div>
+      <div class="icon-tile" onclick="openChildCategory('birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg></div><span>Birth Cert</span></div>
+      <div class="icon-tile" onclick="openChildCategory('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
+      <div class="icon-tile" onclick="openChildCategory('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
     </div>
   </div>
   <div class="card">
@@ -441,6 +442,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
   </div>
   <img id="fileViewerImg" class="viewer-img" alt="document">
+  <iframe id="fileViewerFrame" class="viewer-file-frame" title="Document viewer" allow="fullscreen"></iframe>
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
 </div></div>
 
@@ -993,26 +995,36 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
     let isPassport = false;
     let passportData = null;
     try { passportData = JSON.parse(path); isPassport=true; actualPath=passportData.front||passportData.page1; } catch(e) {}
-    viewerCtx={kind:'generic',id,path,label:name,isImage,isPassport,passportData,documentType:documentType||name};
+    const ext=(actualPath.split('.').pop()||'').toLowerCase();
+    const imageType=['jpg','jpeg','png','webp','gif','bmp','svg'].includes(ext) || !!isImage;
+    viewerCtx={kind:'generic',id,path,label:name,isImage:imageType,isPassport,passportData,documentType:documentType||name};
     document.getElementById('fileViewerTitle').textContent=name;
-    if(isImage){
-      const loaded=await loadVaultImage(actualPath);
-      if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
-      viewerCtx.objectUrl=loaded.objectUrl;
-      document.getElementById('fileViewerImg').src=loaded.objectUrl;
+    const img=document.getElementById('fileViewerImg');
+    const frame=document.getElementById('fileViewerFrame');
+    img.style.display='none';
+    frame.style.display='none';
+    frame.removeAttribute('src');
+    const oldLink=document.getElementById('fileViewerFileLink');
+    if(oldLink)oldLink.style.display='none';
+
+    const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
+    if(error)throw error;
+    viewerCtx.signedUrl=data.signedUrl;
+
+    if(imageType){
+      img.src=data.signedUrl;
+      img.style.display='block';
     }else{
-      const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
-      if(error)throw error;
-      viewerCtx.signedUrl=data.signedUrl;
-      let link=document.getElementById('fileViewerFileLink');
-      if(!link){link=document.createElement('div');link.id='fileViewerFileLink';link.className='sos-box';document.querySelector('#fileViewerModal .modal').insertBefore(link,document.getElementById('fileViewerImg'));}
-      link.innerHTML='This file is kept inside OneApp. <button class="btn btn-primary btn-sm" onclick="openViewerFileExternally()">Open file</button>';link.style.display='block';
+      // Keep every non-image document inside OneApp. PDFs render in the
+      // embedded viewer; other browser-renderable document types stay in
+      // this same in-app frame instead of opening a new browser window.
+      frame.src=data.signedUrl;
+      frame.style.display='block';
     }
-    document.getElementById('fileViewerImg').style.display=isImage?'block':'none';const fileLink=document.getElementById('fileViewerFileLink');if(fileLink)fileLink.style.display=isImage?'none':'block';
-    document.getElementById('rotateControls').style.display=isImage?'flex':'none';
-    document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
+    document.getElementById('rotateControls').style.display=imageType?'flex':'none';
+    document.getElementById('saveRotationBtn').style.display=imageType?'inline-block':'none';
     currentRotation=0;
-    document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
+    img.style.transform='rotate(0deg)';
     openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
@@ -1142,6 +1154,8 @@ function viewerAction(act){
     if(act==='share'){shareChildFile(c.path,c.label);}
     if(act==='familyShare'){openFamilyShareModal(c.id||null);}
     if(act==='delete'){closeModal('fileViewerModal');deleteChildOther(c.id,c.path);}
+  }else if(c.kind==='childfilelist'){
+    return;
   }else if(c.kind==='shared'){
     const p=c.permissions||{};
     if(act==='update'){if(p.edit===false)alert('Edit permission is not granted.');else{closeModal('fileViewerModal');updateSharedDocument(c);}}
@@ -1232,15 +1246,30 @@ async function viewChildFile(id,path,ext,type){
   try{
     const{data,error}=await sb.storage.from('vault').createSignedUrl(path,300);
     if(error)throw error;
-    if(['jpg','jpeg','png','webp'].includes(ext)){
-      viewerCtx={kind:'childfile',id:id,path:path,type:type,label:TYPE_LABELS[type]||'Document',isImage:true};
-      document.getElementById('fileViewerTitle').textContent=path.split('/').pop();
-      document.getElementById('fileViewerImg').src=data.signedUrl;
-      document.getElementById('rotateControls').style.display = 'flex';
-      currentRotation = 0;
-      document.getElementById('fileViewerImg').style.transform = `rotate(${currentRotation}deg)`;
-      openModal('fileViewerModal');
-    }else{window.open(data.signedUrl,'_blank');}
+    const imageType=['jpg','jpeg','png','webp','gif','bmp','svg'].includes((ext||'').toLowerCase());
+    viewerCtx={kind:'childfile',id:id,path:path,type:type,label:TYPE_LABELS[type]||'Document',isImage:imageType};
+    document.getElementById('fileViewerTitle').textContent=TYPE_LABELS[type]||path.split('/').pop()||'Document';
+    const img=document.getElementById('fileViewerImg');
+    const frame=document.getElementById('fileViewerFrame');
+    img.style.display='none';
+    frame.style.display='none';
+    frame.removeAttribute('src');
+    const oldLink=document.getElementById('fileViewerFileLink');
+    if(oldLink)oldLink.style.display='none';
+    if(imageType){
+      img.src=data.signedUrl;
+      img.style.display='block';
+      document.getElementById('rotateControls').style.display='flex';
+      document.getElementById('saveRotationBtn').style.display='inline-block';
+    }else{
+      frame.src=data.signedUrl;
+      frame.style.display='block';
+      document.getElementById('rotateControls').style.display='none';
+      document.getElementById('saveRotationBtn').style.display='none';
+    }
+    currentRotation=0;
+    img.style.transform='rotate(0deg)';
+    openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
 
@@ -1253,6 +1282,53 @@ async function shareChildFile(path,label){
     if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:label});}
     else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually.');}
   }catch(err){alert('Share failed: '+err.message);}
+}
+
+async function openChildCategory(type){
+  if(!currentUser||!currentChildId)return;
+  const rows=childDocs.filter(r=>parseTypeFromUrl(r.file_url)===type);
+  if(!rows.length){triggerChildUpload(type);return;}
+  if(type==='aadhaar'){
+    childAaRow=rows[0];
+    await loadChildAaCache();
+    viewChildAadhaar();
+    return;
+  }
+  if(type==='other' && rows.length>1){
+    // Other is the child's custom-document area only. Do not mix in
+    // Driving Licence, Passport, Insurance, or other parent categories.
+    document.getElementById('fileViewerTitle').textContent=currentChildName+" — Other Documents";
+    const frame=document.getElementById('fileViewerFrame');
+    const img=document.getElementById('fileViewerImg');
+    img.style.display='none';
+    frame.style.display='none';
+    frame.removeAttribute('src');
+    document.getElementById('rotateControls').style.display='none';
+    const old=document.getElementById('childOtherList');
+    if(old)old.remove();
+    const list=document.createElement('div');
+    list.id='childOtherList';
+    list.innerHTML=rows.map(r=>{
+      const safeId=String(r.id).replace(/'/g,"\\'");
+      return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(r.document_name||'Other Document')}</h4><p>Saved in ${escHtml(currentChildName)}'s Other Documents</p></div><button class="btn btn-outline btn-sm" onclick="viewChildOtherFromList('${safeId}')">View</button></div>`;
+    }).join('');
+    document.querySelector('#fileViewerModal .modal').insertBefore(list,document.querySelector('#fileViewerModal .modal > .btn.btn-outline:last-child'));
+    viewerCtx={kind:'childfilelist',childId:currentChildId,childName:currentChildName};
+    openModal('fileViewerModal');
+    return;
+  }
+  const row=rows[0];
+  const ext=(row.file_url.split('.').pop()||'').toLowerCase();
+  await viewChildFile(row.id,row.file_url,ext,type);
+}
+
+async function viewChildOtherFromList(id){
+  const row=childDocs.find(r=>r.id===id);
+  if(!row)return;
+  const ext=(row.file_url.split('.').pop()||'').toLowerCase();
+  const list=document.getElementById('childOtherList');
+  if(list)list.remove();
+  await viewChildFile(row.id,row.file_url,ext,'other');
 }
 
 function triggerChildUpload(type){
@@ -1615,7 +1691,14 @@ function showView(id){
   if(id === 'otherDocsView') loadOtherDocs();
 }
 function openModal(id){document.getElementById(id).classList.add('show')}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
+function closeModal(id){
+  document.getElementById(id).classList.remove('show');
+  if(id==='fileViewerModal'){
+    const frame=document.getElementById('fileViewerFrame');if(frame){frame.removeAttribute('src');frame.style.display='none';}
+    const list=document.getElementById('childOtherList');if(list)list.remove();
+    const img=document.getElementById('fileViewerImg');if(img)img.src='';
+  }
+}
 function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
 function docIsChild(d){return /^child_/.test(d.document_type||'') || (d.file_url||'').includes('/children/');}
 function docLabel(d){return d.document_name||d.document_type||'Document';}
@@ -1809,17 +1892,21 @@ async function openSharedDocument(docId){
   const d=s.documents,p=s.permissions||{};
   if(p.view===false){alert('View permission is not granted.');return;}
   try{
-    const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);
+    let actualPath=d.file_url||'';
+    try{const parsed=JSON.parse(actualPath);actualPath=parsed.front||parsed.page1||actualPath;}catch(e){}
+    const ext=(actualPath.split('.').pop()||'').toLowerCase();
+    const imageType=['jpg','jpeg','png','webp','gif','bmp','svg'].includes(ext);
+    const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
     if(error)throw error;
-    viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
+    viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d,isImage:imageType,signedUrl:data.signedUrl};
     document.getElementById('fileViewerTitle').textContent=docLabel(d);
-    document.getElementById('fileViewerImg').src=data.signedUrl;
-    document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
-    if(document.getElementById('fileViewerImg').style.display==='none'){
-      viewerCtx.signedUrl=data.signedUrl;let link=document.getElementById('fileViewerFileLink');
-      if(!link){link=document.createElement('div');link.id='fileViewerFileLink';link.className='sos-box';document.querySelector('#fileViewerModal .modal').insertBefore(link,document.getElementById('fileViewerImg'));}
-      link.innerHTML='This file is kept inside OneApp. <button class="btn btn-primary btn-sm" onclick="openViewerFileExternally()">Open file</button>';link.style.display='block';openModal('fileViewerModal');
-    } else openModal('fileViewerModal');
+    const img=document.getElementById('fileViewerImg');
+    const frame=document.getElementById('fileViewerFrame');
+    img.style.display='none';frame.style.display='none';frame.removeAttribute('src');
+    const oldLink=document.getElementById('fileViewerFileLink');if(oldLink)oldLink.style.display='none';
+    if(imageType){img.src=data.signedUrl;img.style.display='block';document.getElementById('rotateControls').style.display='flex';document.getElementById('saveRotationBtn').style.display='inline-block';}
+    else{frame.src=data.signedUrl;frame.style.display='block';document.getElementById('rotateControls').style.display='none';document.getElementById('saveRotationBtn').style.display='none';}
+    currentRotation=0;img.style.transform='rotate(0deg)';openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
 
