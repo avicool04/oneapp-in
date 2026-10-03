@@ -66,7 +66,7 @@ h2{color:var(--primary);margin-bottom:.25rem;font-size:1.1rem}h3{font-size:.95re
 .field input,.field select{width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem}
 .divider{display:flex;align-items:center;margin:.75rem 0;color:var(--gray);font-size:.75rem}
 .divider::before,.divider::after{content:"";flex:1;border-bottom:1px solid var(--border)}.divider span{padding:0 .5rem}
-.icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem;margin-bottom:.5rem}.home-drop-zone,.home-remove-zone{display:none;border:2px dashed rgba(30,64,175,.28);border-radius:14px;padding:.8rem;text-align:center;color:var(--primary);font-size:.75rem;font-weight:700;background:rgba(219,234,254,.5);margin-top:.6rem}.home-drop-zone.drag-active,.home-remove-zone.drag-active{display:block}.home-remove-zone{color:#b91c1c;border-color:rgba(239,68,68,.3);background:rgba(254,226,226,.55)}.dragging{opacity:.45}.all-doc-tile{cursor:grab}.all-doc-tile:active{cursor:grabbing}.doc-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}.doc-type-card{border:1px solid var(--border);border-radius:14px;padding:.8rem;background:rgba(248,250,252,.85);cursor:pointer;transition:transform .15s,box-shadow .15s}.doc-type-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(30,64,175,.08)}.doc-type-card h4{font-size:.85rem}.doc-type-card p{font-size:.7rem;color:var(--gray);margin-top:.2rem}
+.icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem;margin-bottom:.5rem}.home-drop-zone,.home-remove-zone{display:none;border:2px dashed rgba(30,64,175,.28);border-radius:14px;padding:.8rem;text-align:center;color:var(--primary);font-size:.75rem;font-weight:700;background:rgba(219,234,254,.5);margin-top:.6rem}.home-drop-zone.drag-active,.home-remove-zone.drag-active{display:block}.home-remove-zone{color:#b91c1c;border-color:rgba(239,68,68,.3);background:rgba(254,226,226,.55)}.dragging{opacity:.45}.all-doc-tile{cursor:grab}.all-doc-tile:active{cursor:grabbing}.doc-type-grid{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.doc-type-card{width:64px;height:64px;border:0;border-radius:16px;padding:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s}.doc-type-card:hover{transform:translateY(-2px);background:rgba(30,64,175,.05)}.compact-doc-icon{width:56px;height:56px;border-radius:15px;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:1.9rem;box-shadow:0 2px 8px rgba(30,64,175,.08)}
 .icon-tile{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
 .icon-box{width:50px;height:50px;background:var(--tile);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative}
 .icon-box svg{width:32px;height:32px}
@@ -494,7 +494,7 @@ sb.auth.onAuthStateChange((ev,s)=>{
     setupRealTimeFamily();
     checkForInvite(); 
     loadFamilyMembers();
-    setTimeout(()=>initAppLock(s.user.id),150);
+    if(ev==='SIGNED_IN' || ev==='INITIAL_SESSION') setTimeout(()=>initAppLock(s.user.id),150);
   }
   else{
     currentUser=null;familyMembers=[];
@@ -926,20 +926,32 @@ async function saveGenericDocument(expiryDate, customName = null, isPassportSing
 }
 
 async function loadOtherDocs(){
-  const list=document.getElementById('otherDocsContainer');list.innerHTML='<p class="sub">Loading…</p>';if(!currentUser)return;
-  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).order('created_at',{ascending:false});
+  const list=document.getElementById('otherDocsContainer');
+  list.innerHTML='<p class="sub">Loading…</p>';
+  if(!currentUser)return;
+  const {data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).eq('document_type','Other').is('deleted_at',null).order('created_at',{ascending:false});
   if(error){list.innerHTML=`<p class="sub" style="color:var(--danger)">❌ ${error.message}</p>`;return;}
-  const docs=data||[];renderAllDocumentTypes(docs);
-  const others=docs.filter(d=>d.document_type==='Other');
-  if(!others.length){list.innerHTML='<p class="sub">No custom documents yet. Use Add New to add one.</p>';return;}
-  list.innerHTML=others.map(d=>{const ext=(d.file_url||'').split('.').pop().toLowerCase();const isImage=['jpg','jpeg','png','webp'].includes(ext);return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until?'Expires: '+new Date(d.valid_until).toLocaleDateString():'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}','${escHtml(d.file_url)}','${escHtml(d.document_name)}',${isImage},'Other')">View</button><button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button></div></div>`;}).join('');
+  const others=data||[];
+  if(!others.length){list.innerHTML='<p class="sub">No custom documents yet. Click "Add New" to add one.</p>';return;}
+  window.otherSavedDocsById=Object.fromEntries(others.map(d=>[d.id,d]));
+  list.innerHTML=others.map(d=>`
+    <div class="doc-row">
+      <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until?'Expires: '+new Date(d.valid_until).toLocaleDateString():'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
+      <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="viewOtherSavedDoc('${d.id}')">View</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
+      </div>
+    </div>`).join('');
 }
-function renderAllDocumentTypes(docs){
-  const box=document.getElementById('allDocumentTypes');if(!box)return;const dl=docs.filter(d=>d.document_type==='Driving License'),pp=docs.filter(d=>d.document_type==='Passport'),other=docs.filter(d=>d.document_type==='Other');
-  const pan=docs.filter(d=>d.document_type==='PAN Card');
-  const types=[{key:'PAN Card',label:'PAN Card',desc:pan.length?`${pan.length} saved • tap to open`:'Not uploaded yet',icon:'💳'},{key:'Driving License',label:'Driving License',desc:dl.length?`${dl.length} saved • tap to open`:'Not uploaded yet',icon:'🚗'},{key:'Passport',label:'Passport',desc:pp.length?`${pp.length} saved • tap to open`:'Not uploaded yet',icon:'🛂'},{key:'Other',label:'Other Documents',desc:other.length?`${other.length} saved`:'Add custom documents',icon:'📄'}];
-  box.innerHTML=types.map(t=>{const fav=isHomeFavorite(t.key);return `<div class="doc-type-card all-doc-tile" draggable="true" data-home-key="${escHtml(t.key)}" ondragstart="startHomeDrag(event,'${t.key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${t.key}')"><div style="font-size:1.55rem">${t.icon}</div><h4>${t.label}${fav?' • On Home':''}</h4><p>${t.desc}</p><div class="drag-hint">Long-press / drag to Home</div></div>`;}).join('');
-  renderHomeFavorites();
+
+async function viewOtherSavedDoc(id){
+  const d=window.otherSavedDocsById?.[id];
+  if(!d){alert('Document record could not be found. Please reopen Other Documents.');return;}
+  const path=d.file_url||'';
+  const name=d.document_name||'Other Document';
+  const ext=(path.split('.').pop()||'').toLowerCase();
+  const isImage=['jpg','jpeg','png','webp','gif'].includes(ext);
+  await viewGenericDoc(d.id,path,name,isImage,'Other');
 }
 
 function getImageExtension(name){
@@ -1001,7 +1013,7 @@ async function viewGenericDoc(id, path, name, isImage, documentType=null){
     document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
     currentRotation=0;
     document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
-    if(isImage) openModal('fileViewerModal');
+    openModal('fileViewerModal');
   }catch(err){alert('Failed: '+err.message);}
 }
 
@@ -1487,7 +1499,7 @@ function getHomeFavorites(){try{const raw=localStorage.getItem(homeFavKey());if(
 function setHomeFavorites(a){try{localStorage.setItem(homeFavKey(),JSON.stringify([...new Set(a)]));}catch(e){}}
 function isHomeFavorite(key){return getHomeFavorites().includes(key);}
 function loadHomeFavorites(){renderHomeFavorites();}
-function renderHomeFavorites(){const box=document.getElementById('homeCustomTiles');if(!box)return;const favs=getHomeFavorites();box.innerHTML=favs.filter(k=>['Driving License','Passport','Other'].includes(k)).map(key=>{const meta={'PAN Card':{label:'PAN Card',icon:'💳'},'Driving License':{label:'License',icon:'🚗'},'Passport':{label:'Passport',icon:'🛂'},'Other':{label:'Other Docs',icon:'📄'}}[key];return `<div class="icon-tile" draggable="true" ondragstart="startHomeDrag(event,'${key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${key}')"><div class="icon-box" style="font-size:1.45rem">${meta.icon}</div><span>${meta.label}</span></div>`;}).join('');}
+function renderHomeFavorites(){const box=document.getElementById('homeCustomTiles');if(!box)return;const favs=getHomeFavorites().filter(k=>k!=='PAN Card');if(JSON.stringify(favs)!==JSON.stringify(getHomeFavorites()))setHomeFavorites(favs);box.innerHTML=favs.filter(k=>['Driving License','Passport','Other'].includes(k)).map(key=>{const meta={'PAN Card':{label:'PAN Card',icon:'💳'},'Driving License':{label:'License',icon:'🚗'},'Passport':{label:'Passport',icon:'🛂'},'Other':{label:'Other Docs',icon:'📄'}}[key];return `<div class="icon-tile" draggable="true" ondragstart="startHomeDrag(event,'${key}')" ondragend="endHomeDrag()" onclick="handleGenericIconClick('${key}')"><div class="icon-box" style="font-size:1.45rem">${meta.icon}</div><span>${meta.label}</span></div>`;}).join('');}
 let touchHomeDragKey=null,touchHomeDragTimer=null,touchHomeDragActive=false;
 function startHomeDrag(e,key){e.stopPropagation();e.dataTransfer?.setData('text/plain',key);e.dataTransfer?.setData('application/x-oneapp-home-key',key);document.getElementById('homeDropZone')?.classList.add('drag-active');document.getElementById('homeRemoveZone')?.classList.add('drag-active');document.getElementById('globalHomeDropZone')?.classList.add('active');e.currentTarget.classList.add('dragging');}
 function endHomeDrag(){document.getElementById('homeDropZone')?.classList.remove('drag-active');document.getElementById('homeRemoveZone')?.classList.remove('drag-active');document.getElementById('globalHomeDropZone')?.classList.remove('active','over');document.querySelectorAll('.dragging,.touch-dragging').forEach(x=>x.classList.remove('dragging','touch-dragging'));touchHomeDragKey=null;touchHomeDragActive=false;if(touchHomeDragTimer){clearTimeout(touchHomeDragTimer);touchHomeDragTimer=null;}}
