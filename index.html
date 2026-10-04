@@ -1676,7 +1676,10 @@ function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt
 function docIsChild(d){return /^child_/.test(d.document_type||'') || (d.file_url||'').includes('/children/');}
 function docLabel(d){return d.document_name||d.document_type||'Document';}
 function familyOtherUserId(f){return f.owner_id===currentUser.id ? f.member_user_id : f.owner_id;}
-function familyDisplayName(f){return f.display_name || (f.member_email?f.member_email.split('@')[0]:'Member');}
+function familyDisplayName(f){
+  if(f.owner_id===currentUser.id) return f.display_name || (f.member_email?f.member_email.split('@')[0]:'Member');
+  return f.inviter_name || 'Family Member';
+}
 
 async function getFamilyAdultTargets(){
   const map=new Map();
