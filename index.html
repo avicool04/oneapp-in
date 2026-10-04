@@ -98,34 +98,20 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
 .bin-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem 0;border-bottom:1px dashed #f1f5f9;flex-wrap:wrap}
 
-/* ===== APP LOCK OVERLAY ===== */
+/* ===== APP LOCK OVERLAY — DEVICE UNLOCK ONLY ===== */
 #appLockOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#0f172a 0%,#1e293b 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;color:#fff}
 #appLockOverlay.hidden{display:none}
 .lock-logo{font-weight:800;font-size:1.4rem;margin-bottom:2rem;color:#fff}.lock-logo span{color:#60a5fa}
-.lock-icon-wrap{width:64px;height:64px;border-radius:50%;background:rgba(30,64,175,.15);border:2px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
-.lock-icon-wrap svg{width:32px;height:32px;fill:#60a5fa}
-.lock-title{font-size:1rem;font-weight:700;margin-bottom:.3rem}
-.lock-sub{font-size:.75rem;color:#94a3b8;margin-bottom:1.5rem;text-align:center;max-width:320px;line-height:1.5}
-.bio-btn{margin-top:.25rem;padding:.85rem 1.5rem;border-radius:10px;border:1px solid rgba(96,165,250,.4);background:rgba(30,64,175,.2);color:#60a5fa;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.bio-btn:active{background:rgba(30,64,175,.4);transform:scale(.97)}
-.bio-btn svg{width:18px;height:18px;fill:currentColor}
-.lock-err{color:#f87171;font-size:.75rem;margin-top:.75rem;min-height:1rem;text-align:center;max-width:320px}
-
-/* ===== PIN PAD FOR APP LOCK ===== */
-.pin-dots{display:flex;gap:14px;margin:1.25rem 0;justify-content:center}
-.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #60a5fa;transition:background .2s}
-.pin-dot.filled{background:#60a5fa}
-.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:260px;margin:0 auto}
-.pin-key{width:64px;height:64px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#fff;font-size:1.5rem;font-weight:600;cursor:pointer;transition:background .15s}
-.pin-key:active{background:rgba(255,255,255,.22)}
-.pin-key.delete{background:transparent;font-size:1.1rem}
-.pin-setup{width:100%;max-width:280px;margin:1rem auto 0}
-.pin-setup input{width:100%;padding:.75rem;border-radius:8px;border:1px solid rgba(96,165,250,.3);background:rgba(255,255,255,.06);color:#fff;text-align:center;font-size:1.5rem;letter-spacing:8px;margin-bottom:.5rem;outline:none}
-.pin-setup input:focus{border-color:#60a5fa}
-.pin-setup .btn{margin-top:.25rem}
-.lock-divider{display:flex;align-items:center;margin:1.25rem 0;color:#64748b;font-size:.7rem;max-width:280px}
-.lock-divider::before,.lock-divider::after{content:"";flex:1;border-bottom:1px solid rgba(255,255,255,.1)}
-.lock-divider span{padding:0 .5rem}
+.lock-icon-wrap{width:72px;height:72px;border-radius:50%;background:rgba(30,64,175,.15);border:2px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+.lock-icon-wrap svg{width:36px;height:36px;fill:#60a5fa}
+.lock-title{font-size:1.15rem;font-weight:700;margin-bottom:.4rem}
+.lock-sub{font-size:.78rem;color:#94a3b8;margin-bottom:1.75rem;text-align:center;max-width:340px;line-height:1.55}
+.bio-btn{padding:1rem 2rem;border-radius:12px;border:1px solid rgba(96,165,250,.4);background:rgba(30,64,175,.25);color:#60a5fa;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.6rem;min-width:240px;justify-content:center}
+.bio-btn:active{background:rgba(30,64,175,.45);transform:scale(.97)}
+.bio-btn:disabled{opacity:.5;cursor:not-allowed}
+.bio-btn svg{width:22px;height:22px;fill:currentColor;flex-shrink:0}
+.lock-err{color:#f87171;font-size:.78rem;margin-top:1rem;min-height:1.2rem;text-align:center;max-width:340px;line-height:1.5}
+.lock-hint{font-size:.7rem;color:#64748b;margin-top:1.5rem;text-align:center;max-width:300px;line-height:1.5}
 
 /* ===== TOAST ===== */
 #toastContainer{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9998;display:flex;flex-direction:column;gap:.5rem;align-items:center;pointer-events:none;width:100%;max-width:400px;padding:0 1rem}
@@ -200,7 +186,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <div class="email" id="userEmail"></div>
 <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
 <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openProfileModal()">️ Profile Settings</button>
-<button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍‍ Manage Family</button>
+<button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="openFamilyManager()">👨‍👩‍👧 Manage Family</button>
 <hr style="border:0;border-top:1px solid var(--border);margin:.4rem 0">
 <button class="btn btn-outline btn-sm" style="width:100%;margin:.2rem 0" onclick="doSignOut()">Sign Out</button>
 </div>
@@ -448,7 +434,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div></div>
 <div id="emergencyModal" class="modal-overlay"><div class="modal"><div class="tab-row"><button class="tab-btn on" id="tabSos" onclick="showSOSPanel('sos')">I need help</button><button class="tab-btn" id="tabGuard" onclick="showSOSPanel('guard')">Family member</button></div><div id="sosPanel"><h3 style="color:var(--danger)">SOS Beacon</h3><div class="sos-box"><div id="sosStatus">Locating… allow location when asked.</div><a id="sosLink" class="sos-link" href="#" target="_blank" style="display:none">Open in Google Maps</a></div><button class="btn btn-success" onclick="shareWhatsApp()">Share on WhatsApp</button><button class="btn btn-outline" onclick="saveSOS()">Save location to Vault</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Close</button></div><div id="guardPanel" style="display:none"><h3 style="color:var(--danger)">Family Member Access</h3><button class="btn btn-danger" onclick="closeModal('emergencyModal');alert('Verified: Documents released.')">Verify & Unlock</button><button class="btn btn-outline" onclick="closeModal('emergencyModal')">Cancel</button></div></div></div>
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
-<h3>👨‍👩‍ Manage Family</h3>
+<h3>👨‍👩‍👧 Manage Family</h3>
 <p class="sub">Connected members and permission settings.</p>
 <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
 <button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
@@ -589,50 +575,20 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
 </div></div>
 
-<!-- APP LOCK OVERLAY (UPDATED WITH PIN) -->
-<div id="appLockOverlay">
+<!-- ========== APP LOCK OVERLAY — DEVICE UNLOCK ONLY ========== -->
+<div id="appLockOverlay" class="hidden">
   <div class="lock-logo">One<span>App</span>.in</div>
-  <div class="lock-icon-wrap"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg></div>
-  <div class="lock-title">App Locked</div>
-  <div class="lock-sub">Unlock using your device security — PIN, password, fingerprint, face recognition, or another method supported by your device.</div>
-
-  <!-- PIN ENTRY VIEW -->
-  <div id="pinEntryView">
-    <div class="pin-dots">
-      <div class="pin-dot" id="pinDot1"></div>
-      <div class="pin-dot" id="pinDot2"></div>
-      <div class="pin-dot" id="pinDot3"></div>
-      <div class="pin-dot" id="pinDot4"></div>
-    </div>
-    <div class="pin-keypad">
-      <button class="pin-key" onclick="pinPress(1)">1</button>
-      <button class="pin-key" onclick="pinPress(2)">2</button>
-      <button class="pin-key" onclick="pinPress(3)">3</button>
-      <button class="pin-key" onclick="pinPress(4)">4</button>
-      <button class="pin-key" onclick="pinPress(5)">5</button>
-      <button class="pin-key" onclick="pinPress(6)">6</button>
-      <button class="pin-key" onclick="pinPress(7)">7</button>
-      <button class="pin-key" onclick="pinPress(8)">8</button>
-      <button class="pin-key" onclick="pinPress(9)">9</button>
-      <button class="pin-key" style="visibility:hidden"></button>
-      <button class="pin-key" onclick="pinPress(0)">0</button>
-      <button class="pin-key delete" onclick="pinDelete()">⌫</button>
-    </div>
+  <div class="lock-icon-wrap">
+    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
   </div>
-
-  <!-- PIN SETUP VIEW (first time) -->
-  <div id="pinSetupView" style="display:none">
-    <div class="pin-setup">
-      <input id="pinSetup1" type="password" maxlength="4" inputmode="numeric" placeholder="Create 4-digit PIN">
-      <input id="pinSetup2" type="password" maxlength="4" inputmode="numeric" placeholder="Confirm PIN">
-      <button class="btn btn-primary" onclick="pinSave()">Set PIN</button>
-    </div>
-  </div>
-
-  <div class="lock-divider"><span>OR</span></div>
-
-  <button class="bio-btn" onclick="lockDeviceAuth()"><svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 3.98 2.58 7.36 6.15 8.55.23.08.5.1.75.1.34 0 .67-.09.96-.24.29-.15.54-.36.73-.61.19-.25.33-.54.41-.85.08-.31.1-.63.06-.95l-.06-.57c-.02-.23.02-.46.11-.67.09-.21.24-.39.42-.53.18-.14.4-.23.63-.26.23-.03.47-.01.69.07l.57.2c.31.11.64.16.97.14.33-.02.66-.11.95-.27.29-.16.55-.38.75-.64.2-.27.34-.57.41-.9.07-.32.08-.66.02-.99l-.13-.67c-.05-.23-.04-.47.03-.69.07-.23.2-.43.37-.59.17-.16.39-.28.62-.34.23-.06.48-.07.71-.03l.67.12c.33.06.66.06.99-.01.32-.07.63-.2.9-.39.27-.2.5-.44.66-.72.16-.28.27-.59.31-.91.04-.32.03-.65-.04-.97l-.05-.27C20.67 6.58 16.73 2 12 2zm-2.5 12c-.83 0-1.5-.67-1.5-1.5S8.67 11 9.5 11s1.5.67 1.5 1.5S10.33 14 9.5 14zm5-2c-.83 0-1.5-.67-1.5-1.5S13.67 9 14.5 9s1.5 1.5 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> Unlock with Device Security</button>
+  <div class="lock-title" id="lockTitle">App Locked</div>
+  <div class="lock-sub" id="lockSub">Unlock using your device security — fingerprint, face recognition, or screen lock PIN/password/pattern.</div>
+  <button class="bio-btn" id="bioUnlockBtn" onclick="lockDeviceAuth()">
+    <svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 3.98 2.58 7.36 6.15 8.55.23.08.5.1.75.1.34 0 .67-.09.96-.24.29-.15.54-.36.73-.61.19-.25.33-.54.41-.85.08-.31.1-.63.06-.95l-.06-.57c-.02-.23.02-.46.11-.67.09-.21.24-.39.42-.53.18-.14.4-.23.63-.26.23-.03.47-.01.69.07l.57.2c.31.11.64.16.97.14.33-.02.66-.11.95-.27.29-.16.55-.38.75-.64.2-.27.34-.57.41-.9.07-.32.08-.66.02-.99l-.13-.67c-.05-.23-.04-.47.03-.69.07-.23.2-.43.37-.59.17-.16.39-.28.62-.34.23-.06.48-.07.71-.03l.67.12c.33.06.66.06.99-.01.32-.07.63-.2.9-.39.27-.2.5-.44.66-.72.16-.28.27-.59.31-.91.04-.32.03-.65-.04-.97l-.05-.27C20.67 6.58 16.73 2 12 2zm-2.5 12c-.83 0-1.5-.67-1.5-1.5S8.67 11 9.5 11s1.5.67 1.5 1.5S10.33 14 9.5 14zm5-2c-.83 0-1.5-.67-1.5-1.5S13.67 9 14.5 9s1.5 1.5 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+    <span id="bioBtnLabel">Unlock with Device Security</span>
+  </button>
   <div class="lock-err" id="lockErr"></div>
+  <div class="lock-hint" id="lockHint">Your device will show its own unlock prompt (fingerprint, face, or screen lock).</div>
 </div>
 
 <!-- TOAST CONTAINER -->
@@ -728,17 +684,11 @@ let passportPage1Path = null;
 async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
-// ✅ FIXED: Login button function
 async function handleAuthClick(){
 console.log('Login button clicked');
 const modal = document.getElementById('authModal');
-if(modal){
-modal.classList.add('show');
-console.log('Auth modal opened');
-} else {
-console.error('Auth modal not found');
-alert('Error: Login modal not found');
-}
+if(modal){modal.classList.add('show');}
+else {alert('Error: Login modal not found');}
 }
 async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
@@ -892,8 +842,7 @@ if(!phone)return alert('Enter Phone Number');
 const rel=document.getElementById('inviteRelationWa').value;
 const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
 const {data, error} = await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:null, member_phone:phone, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
-if(error){ alert('❌ Could not create unique link.
-Error: ' + error.message); return; }
+if(error){ alert('❌ Could not create unique link.\nError: ' + error.message); return; }
 const inviteId = data[0].id;
 const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
 const msg = `Hi ${name}! ${inviterName} invited you to join their family on OneApp. Click here to accept: ${link}`;
@@ -907,8 +856,7 @@ if(!phone)return alert('Enter Phone Number');
 const rel=document.getElementById('inviteRelationSms').value;
 const inviterName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Someone';
 const {data, error} = await sb.from('family_links').insert({ owner_id:currentUser.id, member_email:null, member_phone:phone, relation_type:rel, status:'pending', display_name:name, inviter_name: inviterName }).select();
-if(error){ alert('❌ Could not create unique link.
-Error: ' + error.message); return; }
+if(error){ alert('❌ Could not create unique link.\nError: ' + error.message); return; }
 const inviteId = data[0].id;
 const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
 const msg = `Join my family on OneApp: ${link}`;
@@ -1333,8 +1281,7 @@ downloadPendingGenericShare();
 function sharePendingGenericEmail(){
 if(!pendingGenericShareFile)return;
 const subject=`OneApp document: ${pendingGenericShareFile.name}`;
-const body=`Please find the document "${pendingGenericShareFile.name}".
-OneApp has downloaded the file to your device; attach it to this email before sending.`;
+const body=`Please find the document "${pendingGenericShareFile.name}".\nOneApp has downloaded the file to your device; attach it to this email before sending.`;
 window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 downloadPendingGenericShare();
 }
@@ -1753,9 +1700,7 @@ function openSOS(){openModal('emergencyModal');showSOSPanel('sos');}
 function showSOSPanel(p){document.getElementById('sosPanel').style.display=p==='sos'?'block':'none';document.getElementById('guardPanel').style.display=p==='guard'?'block':'none';document.getElementById('tabSos').classList.toggle('on',p==='sos');document.getElementById('tabGuard').classList.toggle('on',p==='guard');if(p==='sos')startLocate();}
 function mapLink(p){return 'https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);}
 function startLocate(){if(!navigator.geolocation){document.getElementById('sosStatus').textContent='Location unsupported.';return;}navigator.geolocation.getCurrentPosition(p=>{lastPos=p;const a=document.getElementById('sosLink');a.href=mapLink(p);a.style.display='block';document.getElementById('sosStatus').textContent='Located ±'+Math.round(p.coords.accuracy)+'m';},e=>{document.getElementById('sosStatus').textContent='Error '+e.code;},{enableHighAccuracy:true,timeout:12000});}
-function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY
-'+mapLink(lastPos)+'
-'+new Date().toLocaleString()),'_blank');}
+function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open('https://wa.me/?text='+encodeURIComponent('EMERGENCY\n'+mapLink(lastPos)+'\n'+new Date().toLocaleString()),'_blank');}
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 function showView(id){
 document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -2007,111 +1952,162 @@ if(!e.target.closest('.user-area'))document.getElementById('userDropdown').class
 if(!e.target.closest('#viewerMenu')&&!e.target.closest('.vdots'))document.getElementById('viewerMenu').classList.remove('show');
 };
 
-// ===== APP LOCK (PIN + DEVICE AUTHENTICATION) =====
-const DEVICE_CREDENTIAL_KEY='oneapp_device_credential_id';
-const PIN_STORAGE_KEY = 'oneapp_lock_pin';
-let pinBuffer = '';
+/* ====================================================================
+   APP LOCK — DEVICE UNLOCK ONLY (WebAuthn / Passkey)
+   ==================================================================== */
+const DEVICE_CREDENTIAL_KEY = 'oneapp_device_credential_id';
+const APP_LOCK_ENABLED_KEY = 'oneapp_app_lock_enabled';
 
-function pinRenderDots() {
-  for (let i = 1; i <= 4; i++) {
-    const dot = document.getElementById('pinDot' + i);
-    if (dot) dot.classList.toggle('filled', i <= pinBuffer.length);
+function bytesToBase64Url(bytes){
+  let s='';
+  bytes = new Uint8Array(bytes);
+  for(let i=0;i<bytes.length;i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function base64UrlToBytes(value){
+  value = value.replace(/-/g,'+').replace(/_/g,'/');
+  while(value.length%4) value += '=';
+  const s = atob(value);
+  const out = new Uint8Array(s.length);
+  for(let i=0;i<s.length;i++) out[i] = s.charCodeAt(i);
+  return out;
+}
+function randomBytes(length){
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return bytes;
+}
+
+function isWebAuthnSupported(){
+  return !!(window.isSecureContext && window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
+}
+
+// Register a passkey on the current device (so future unlocks can use it)
+async function lockRegisterDevice(){
+  const errEl = document.getElementById('lockErr');
+  errEl.textContent = '';
+  if(!isWebAuthnSupported()){
+    errEl.textContent = 'Device security is not available. Please open this site on HTTPS in a modern browser.';
+    return false;
+  }
+  try{
+    const challenge = randomBytes(32);
+    const userId = randomBytes(16);
+    const userName = currentUser?.email || 'oneapp-user';
+    const displayName = currentUser?.user_metadata?.full_name
+                     || currentUser?.user_metadata?.name
+                     || 'OneApp User';
+
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: 'OneApp.in' },
+        user: { id: userId, name: userName, displayName },
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 },   // ES256
+          { type: 'public-key', alg: -257 }  // RS256
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required',
+          residentKey: 'preferred'
+        },
+        timeout: 60000,
+        attestation: 'none'
+      }
+    });
+
+    if(!credential) throw new Error('Setup was cancelled.');
+
+    const idB64 = bytesToBase64Url(credential.rawId);
+    localStorage.setItem(DEVICE_CREDENTIAL_KEY, idB64);
+    localStorage.setItem(APP_LOCK_ENABLED_KEY, '1');
+    showToast('Device unlock enabled — you can now lock the app.', 'success');
+    return true;
+  }catch(e){
+    errEl.textContent = 'Setup failed: ' + (e.message || e.name || 'unknown error');
+    return false;
   }
 }
 
-function pinPress(num) {
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += String(num);
-  pinRenderDots();
-  if (pinBuffer.length === 4) {
-    setTimeout(pinVerify, 200);
+// Authenticate the user with the registered device credential
+async function lockDeviceAuth(){
+  const errEl = document.getElementById('lockErr');
+  errEl.textContent = '';
+  if(!isWebAuthnSupported()){
+    errEl.textContent = 'Device security is not available in this browser (needs HTTPS).';
+    return;
   }
-}
-
-function pinDelete() {
-  pinBuffer = pinBuffer.slice(0, -1);
-  pinRenderDots();
-}
-
-function pinVerify() {
-  const saved = localStorage.getItem(PIN_STORAGE_KEY);
-  if (!saved) { pinBuffer = ''; pinRenderDots(); return; }
-  if (pinBuffer === saved) {
-    pinBuffer = '';
-    pinRenderDots();
+  const storedId = localStorage.getItem(DEVICE_CREDENTIAL_KEY);
+  if(!storedId){
+    // No credential yet — run registration first
+    const registered = await lockRegisterDevice();
+    if(registered){
+      // Immediately try to unlock after registration
+      return lockDeviceAuth();
+    }
+    return;
+  }
+  try{
+    const credentialId = base64UrlToBytes(storedId);
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: randomBytes(32),
+        allowCredentials: [{ type: 'public-key', id: credentialId }],
+        userVerification: 'required',
+        timeout: 60000
+      }
+    });
+    if(!assertion) throw new Error('Authentication was cancelled.');
     lockHide();
-    showToast('App unlocked', 'success');
-  } else {
-    document.getElementById('lockErr').textContent = 'Incorrect PIN. Try again.';
-    pinBuffer = '';
-    pinRenderDots();
-    setTimeout(() => { const e = document.getElementById('lockErr'); if (e) e.textContent = ''; }, 2000);
+    showToast('Unlocked with device security', 'success');
+  }catch(e){
+    const name = e.name || '';
+    if(name === 'NotAllowedError'){
+      errEl.textContent = 'Authentication was cancelled or timed out. Tap the button to try again.';
+    }else if(name === 'InvalidStateError'){
+      // Credential no longer valid — clear and re-register
+      localStorage.removeItem(DEVICE_CREDENTIAL_KEY);
+      errEl.textContent = 'Your saved device passkey is no longer valid. Tap again to set up device unlock.';
+    }else{
+      errEl.textContent = 'Could not authenticate: ' + (e.message || name || 'unknown error');
+    }
   }
 }
 
-function pinSave() {
-  const p1 = document.getElementById('pinSetup1').value.trim();
-  const p2 = document.getElementById('pinSetup2').value.trim();
-  if (!/^\d{4}$/.test(p1)) { document.getElementById('lockErr').textContent = 'PIN must be exactly 4 digits.'; return; }
-  if (p1 !== p2) { document.getElementById('lockErr').textContent = 'PINs do not match.'; return; }
-  localStorage.setItem(PIN_STORAGE_KEY, p1);
-  document.getElementById('pinSetup1').value = '';
-  document.getElementById('pinSetup2').value = '';
-  document.getElementById('lockErr').textContent = '';
-  document.getElementById('pinSetupView').style.display = 'none';
-  document.getElementById('pinEntryView').style.display = 'block';
-  showToast('PIN set successfully', 'success');
+function refreshLockUI(){
+  const hasCredential = !!localStorage.getItem(DEVICE_CREDENTIAL_KEY);
+  const label = document.getElementById('bioBtnLabel');
+  const sub   = document.getElementById('lockSub');
+  const hint  = document.getElementById('lockHint');
+  if(label){
+    label.textContent = hasCredential
+      ? 'Unlock with Device Security'
+      : 'Set up Device Unlock';
+  }
+  if(sub){
+    sub.textContent = hasCredential
+      ? 'Unlock using your device security — fingerprint, face recognition, or screen lock PIN/password/pattern.'
+      : 'First time here — tap the button below to register this device. Your phone will ask you to confirm with fingerprint, face, or screen lock.';
+  }
+  if(hint){
+    hint.textContent = hasCredential
+      ? 'Your device will show its own unlock prompt.'
+      : 'Your device security prompt will appear so you can register this device.';
+  }
 }
 
 function lockShow(){
-  document.getElementById('lockErr').textContent='';
-  const hasPin = !!localStorage.getItem(PIN_STORAGE_KEY);
-  if (hasPin) { 
-    document.getElementById('pinSetupView').style.display = 'none';
-    document.getElementById('pinEntryView').style.display = 'block';
-    pinBuffer = '';
-    pinRenderDots();
-  } else { 
-    document.getElementById('pinEntryView').style.display = 'none';
-    document.getElementById('pinSetupView').style.display = 'block';
-  }
+  document.getElementById('lockErr').textContent = '';
+  refreshLockUI();
   document.getElementById('appLockOverlay').classList.remove('hidden');
 }
-function lockHide(){document.getElementById('appLockOverlay').classList.add('hidden');}
-function bytesToBase64Url(bytes){let s='';bytes=new Uint8Array(bytes);for(let i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
-function base64UrlToBytes(value){value=value.replace(/-/g,'+').replace(/_/g,'/');while(value.length%4)value+='=';const s=atob(value);const out=new Uint8Array(s.length);for(let i=0;i<s.length;i++)out[i]=s.charCodeAt(i);return out;}
-function randomBytes(length){const bytes=new Uint8Array(length);crypto.getRandomValues(bytes);return bytes;}
-async function lockDeviceAuth(){
-const err=document.getElementById('lockErr');
-err.textContent='';
-if(!window.isSecureContext || !window.PublicKeyCredential || !navigator.credentials){
-showToast('Device authentication is not available in this browser.','warn');
-return false;
-}
-try{
-const storedId=localStorage.getItem(DEVICE_CREDENTIAL_KEY);
-if(!storedId){
-showToast('Device lock setup is not available from this web app yet.','warn');
-return false;
-}
-const credentialId=base64UrlToBytes(storedId);
-const assertion=await navigator.credentials.get({publicKey:{
-challenge:randomBytes(32),
-allowCredentials:[{type:'public-key',id:credentialId}],
-userVerification:'required',
-timeout:60000
-}});
-if(!assertion)throw new Error('Device authentication was not completed.');
-lockHide();
-showToast('Device authenticated — app unlocked','success');
-return true;
-}catch(e){
-showToast('Device authentication could not be completed. OneApp remains open.','warn');
-return false;
-}
+
+function lockHide(){
+  document.getElementById('appLockOverlay').classList.add('hidden');
 }
 
-// ===== TOAST =====
+/* ===== TOAST ===== */
 function showToast(msg,type='default'){
 const c=document.getElementById('toastContainer');
 const t=document.createElement('div');
@@ -2120,7 +2116,7 @@ t.textContent=msg;
 c.appendChild(t);
 setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300);},3000);
 }
-// ===== EMERGENCY BELL FLOW =====
+/* ===== EMERGENCY BELL FLOW ===== */
 let bellSeverity=null,bellDuration=null;
 function openEmergencyBell(){
 bellReset();
@@ -2160,7 +2156,7 @@ closeModal('emergencyBellModal');
 showToast('Alert Sent: '+sevLabel+' for '+bellDuration+'. Escalation active.',bellSeverity==='severe'?'danger':'warn');
 bellReset();
 }
-// ===== SMART DOCUMENT SCANNER (MOCK) =====
+/* ===== SMART DOCUMENT SCANNER (MOCK) ===== */
 function startScanFlow(){
 document.getElementById('scanOverlay').classList.add('show');
 setTimeout(()=>{
@@ -2209,9 +2205,18 @@ closeModal('scanFlowModal');
 showToast('Vaccine reminder created for Aryansh — alerts scheduled','success');
 scanReset();
 }
-// ===== AUTO-LOCK ON LOAD =====
-// Do not block the app on startup. Browser credential-manager support varies by device/browser.
-// Device authentication is invoked only when the user explicitly chooses Lock App Now.
+
+/* ===== AUTO-LOCK ON LOAD (only if user has previously enabled) ===== */
+(function autoLockOnLoad(){
+  // Only auto-lock if the user has already registered a device credential.
+  // Otherwise, show the app normally so they can set up device unlock from Profile → Lock App Now.
+  if(localStorage.getItem(APP_LOCK_ENABLED_KEY) === '1' && localStorage.getItem(DEVICE_CREDENTIAL_KEY)){
+    lockShow();
+  } else {
+    lockHide();
+  }
+})();
+
 // --- PWA SERVICE WORKER REGISTRATION ---
 if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
