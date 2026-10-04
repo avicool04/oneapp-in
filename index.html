@@ -673,6 +673,7 @@ let currentUser=null,familyMembers=[],currentChildId=null,currentChildName='';
 let shareContext=null,viewerCtx=null;
 let familyShareDocs=[],familyShareTargetId=null,sharedVaultContext=null;
 let familyChannel = null;
+let bellAlertChannel = null;
 let pendingInviteId = null;
 let tempUploadType = null;
 let tempFile = null;
@@ -704,6 +705,7 @@ btn.style.display='none';area.style.display='block';
 loadSavedAadhaar(s.user.id);
 loadGenericDocsStatus();
 setupRealTimeFamily();
+startBellListener();
 checkForInvite();
 loadFamilyMembers();
 }
@@ -712,6 +714,7 @@ currentUser=null;familyMembers=[];
 btn.style.display='';area.style.display='none';
 document.getElementById('userDropdown').classList.remove('show');
 resetAadhaarUI();
+if(bellAlertChannel){ sb.removeChannel(bellAlertChannel); bellAlertChannel = null; }
 }
 });
 function openProfileModal(){
@@ -829,9 +832,7 @@ const{data, error}=await sb.from('family_links').insert({ owner_id:currentUser.i
 if(error){ alert('❌ Database Error: ' + error.message); } else {
 const inviteId = data[0].id;
 const link = `https://oneapp-in.vercel.app/?invite=${inviteId}`;
-alert(`✅ Invite created for ${name}!
-Link: ${link}
-(Copy and send this link)`);
+alert(`✅ Invite created for ${name}!\nLink: ${link}\n(Copy and send this link)`);
 closeModal('inviteModal'); loadFamilyMembers();
 }
 }
@@ -1977,12 +1978,9 @@ function randomBytes(length){
   crypto.getRandomValues(bytes);
   return bytes;
 }
-
 function isWebAuthnSupported(){
   return !!(window.isSecureContext && window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
 }
-
-// Register a passkey on the current device (so future unlocks can use it)
 async function lockRegisterDevice(){
   const errEl = document.getElementById('lockErr');
   errEl.textContent = '';
@@ -1997,15 +1995,14 @@ async function lockRegisterDevice(){
     const displayName = currentUser?.user_metadata?.full_name
                      || currentUser?.user_metadata?.name
                      || 'OneApp User';
-
     const credential = await navigator.credentials.create({
       publicKey: {
         challenge,
         rp: { name: 'OneApp.in' },
         user: { id: userId, name: userName, displayName },
         pubKeyCredParams: [
-          { type: 'public-key', alg: -7 },   // ES256
-          { type: 'public-key', alg: -257 }  // RS256
+          { type: 'public-key', alg: -7 },
+          { type: 'public-key', alg: -257 }
         ],
         authenticatorSelection: {
           authenticatorAttachment: 'platform',
@@ -2016,9 +2013,7 @@ async function lockRegisterDevice(){
         attestation: 'none'
       }
     });
-
     if(!credential) throw new Error('Setup was cancelled.');
-
     const idB64 = bytesToBase64Url(credential.rawId);
     localStorage.setItem(DEVICE_CREDENTIAL_KEY, idB64);
     localStorage.setItem(APP_LOCK_ENABLED_KEY, '1');
@@ -2029,8 +2024,6 @@ async function lockRegisterDevice(){
     return false;
   }
 }
-
-// Authenticate the user with the registered device credential
 async function lockDeviceAuth(){
   const errEl = document.getElementById('lockErr');
   errEl.textContent = '';
@@ -2040,12 +2033,8 @@ async function lockDeviceAuth(){
   }
   const storedId = localStorage.getItem(DEVICE_CREDENTIAL_KEY);
   if(!storedId){
-    // No credential yet — run registration first
     const registered = await lockRegisterDevice();
-    if(registered){
-      // Immediately try to unlock after registration
-      return lockDeviceAuth();
-    }
+    if(registered){ return lockDeviceAuth(); }
     return;
   }
   try{
@@ -2066,7 +2055,6 @@ async function lockDeviceAuth(){
     if(name === 'NotAllowedError'){
       errEl.textContent = 'Authentication was cancelled or timed out. Tap the button to try again.';
     }else if(name === 'InvalidStateError'){
-      // Credential no longer valid — clear and re-register
       localStorage.removeItem(DEVICE_CREDENTIAL_KEY);
       errEl.textContent = 'Your saved device passkey is no longer valid. Tap again to set up device unlock.';
     }else{
@@ -2074,7 +2062,6 @@ async function lockDeviceAuth(){
     }
   }
 }
-
 function refreshLockUI(){
   const hasCredential = !!localStorage.getItem(DEVICE_CREDENTIAL_KEY);
   const label = document.getElementById('bioBtnLabel');
@@ -2096,15 +2083,198 @@ function refreshLockUI(){
       : 'Your device security prompt will appear so you can register this device.';
   }
 }
-
 function lockShow(){
   document.getElementById('lockErr').textContent = '';
   refreshLockUI();
   document.getElementById('appLockOverlay').classList.remove('hidden');
 }
-
 function lockHide(){
   document.getElementById('appLockOverlay').classList.add('hidden');
+}
+
+/* ====================================================================
+   EMERGENCY BELL FLOW — REAL FAMILY NOTIFICATION
+   ==================================================================== */
+let bellSeverity=null,bellDuration=null;
+let bellAudioCtx=null;
+
+function openEmergencyBell(){ bellReset(); openModal('emergencyBellModal'); }
+function bellReset(){
+  bellSeverity=null;bellDuration=null;
+  document.getElementById('bellStep1').classList.add('active');
+  document.getElementById('bellStep2').classList.remove('active');
+  document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+  document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('bellSummary').textContent='';
+}
+function bellSelectSeverity(sev){
+  bellSeverity=sev;
+  document.getElementById('bellStep1').classList.remove('active');
+  document.getElementById('bellStep2').classList.add('active');
+  document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+  document.querySelectorAll('#bellDots .step-dot')[1].classList.add('active');
+}
+function bellSelectDuration(dur,btn){
+  bellDuration=dur;
+  document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const sevLabel=bellSeverity==='severe'?'SEVERE: Accident/Immediate Danger':'NORMAL: Monitor my location';
+  document.getElementById('bellSummary').textContent='Severity: '+sevLabel+'  |  Duration: '+dur;
+}
+function bellBack(){
+  document.getElementById('bellStep2').classList.remove('active');
+  document.getElementById('bellStep1').classList.add('active');
+  document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+}
+function bellGetLocation(){
+  return new Promise((resolve) => {
+    if(!navigator.geolocation){ resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      p => resolve(p),
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  });
+}
+async function bellSendAlert(){
+  if(!bellDuration){ alert('Please select a duration.'); return; }
+  if(!currentUser){ alert('Please sign in first.'); return; }
+  const sendBtn = document.getElementById('bellSendBtn');
+  if(sendBtn){ sendBtn.disabled = true; sendBtn.textContent = 'SENDING…'; }
+  try{
+    const pos = await bellGetLocation();
+    const lat = pos?.coords?.latitude ?? null;
+    const lng = pos?.coords?.longitude ?? null;
+    const acc = pos?.coords?.accuracy ?? null;
+    const { error } = await sb.from('family_alerts').insert({
+      sender_id: currentUser.id,
+      severity: bellSeverity || 'normal',
+      duration: bellDuration,
+      lat, lng, accuracy: acc,
+      note: null
+    });
+    if(error){
+      alert('❌ Could not send alert: ' + error.message);
+      return;
+    }
+    playBellBeep(bellSeverity === 'severe' ? 'severe' : 'normal');
+    const sevLabel = bellSeverity === 'severe' ? 'SEVERE' : 'NORMAL';
+    closeModal('emergencyBellModal');
+    showToast(
+      `Alert sent to family: ${sevLabel} • ${bellDuration}`,
+      bellSeverity === 'severe' ? 'danger' : 'warn'
+    );
+    bellReset();
+  }finally{
+    if(sendBtn){ sendBtn.disabled = false; sendBtn.textContent = 'SEND ALERT'; }
+  }
+}
+function startBellListener(){
+  if(!currentUser) return;
+  if(bellAlertChannel) sb.removeChannel(bellAlertChannel);
+  bellAlertChannel = sb
+    .channel('family_alerts_live')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'family_alerts' },
+      async (payload) => {
+        const alert = payload.new;
+        if(alert.sender_id === currentUser.id) return;
+        const linked = (familyMembers || []).some(f =>
+          f.status === 'accepted' &&
+          (familyOtherUserId(f) === alert.sender_id)
+        );
+        if(!linked) return;
+        const link = (familyMembers || []).find(f =>
+          familyOtherUserId(f) === alert.sender_id
+        );
+        const senderName = link ? familyDisplayName(link) : 'Family member';
+        playBellBeep(alert.severity || 'normal');
+        showBellBanner(senderName, alert);
+      }
+    )
+    .subscribe();
+}
+function ensureBellAudio(){
+  if(bellAudioCtx) return bellAudioCtx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  bellAudioCtx = new AC();
+  return bellAudioCtx;
+}
+function playBellBeep(severity){
+  const ctx = ensureBellAudio();
+  if(!ctx) return;
+  if(ctx.state === 'suspended') ctx.resume().catch(()=>{});
+  const now = ctx.currentTime;
+  const isSevere = severity === 'severe';
+  const beeps = isSevere
+    ? [{t:0.00,f:1200},{t:0.22,f:1200},{t:0.44,f:1200}]
+    : [{t:0.00,f:880},{t:0.35,f:880}];
+  const dur = isSevere ? 0.18 : 0.28;
+  const gain = isSevere ? 0.35 : 0.25;
+  beeps.forEach(b => {
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = b.f;
+    g.gain.setValueAtTime(0, now + b.t);
+    g.gain.linearRampToValueAtTime(gain, now + b.t + 0.02);
+    g.gain.linearRampToValueAtTime(0, now + b.t + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(now + b.t);
+    osc.stop(now + b.t + dur + 0.05);
+  });
+  if(navigator.vibrate){
+    navigator.vibrate(isSevere ? [200,80,200,80,200] : [300,120,300]);
+  }
+}
+function showBellBanner(senderName, alert){
+  const existing = document.getElementById('incomingBellBanner');
+  if(existing) existing.remove();
+  const isSevere = (alert.severity === 'severe');
+  const banner = document.createElement('div');
+  banner.id = 'incomingBellBanner';
+  banner.style.cssText = `
+    position:fixed;top:0;left:0;right:0;z-index:99999;
+    background:${isSevere ? '#dc2626' : '#d97706'};
+    color:#fff;padding:1rem 1.1rem;
+    box-shadow:0 6px 24px rgba(0,0,0,.35);
+    display:flex;flex-direction:column;gap:.4rem;
+    animation:bellSlideIn .3s ease;
+  `;
+  const mapUrl = (alert.lat != null && alert.lng != null)
+    ? `https://maps.google.com/?q=${alert.lat.toFixed(6)},${alert.lng.toFixed(6)}`
+    : null;
+  banner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1rem;">
+      <span style="font-size:1.4rem;">🔔</span>
+      <span>${isSevere ? 'SEVERE ALERT' : 'Location alert'} from ${escHtml(senderName)}</span>
+    </div>
+    <div style="font-size:.85rem;opacity:.95;">
+      ${isSevere
+        ? 'Immediate danger reported.'
+        : 'Monitoring location for ' + escHtml(alert.duration || '') + '.'}
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:.4rem;flex-wrap:wrap;">
+      ${mapUrl ? `<a href="${mapUrl}" target="_blank" style="background:#fff;color:${isSevere?'#dc2626':'#92400e'};padding:.5rem .9rem;border-radius:8px;font-weight:700;text-decoration:none;font-size:.8rem;">📍 Open Map</a>` : ''}
+      <button onclick="dismissBellBanner()" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);padding:.5rem .9rem;border-radius:8px;font-weight:700;font-size:.8rem;cursor:pointer;">Dismiss</button>
+    </div>
+  `;
+  if(!document.getElementById('bellSlideInStyles')){
+    const st = document.createElement('style');
+    st.id = 'bellSlideInStyles';
+    st.textContent = `@keyframes bellSlideIn{from{transform:translateY(-100%);}to{transform:translateY(0);}}`;
+    document.head.appendChild(st);
+  }
+  document.body.appendChild(banner);
+  if(!isSevere){
+    setTimeout(() => { dismissBellBanner(); }, 30000);
+  }
+}
+function dismissBellBanner(){
+  const el = document.getElementById('incomingBellBanner');
+  if(el) el.remove();
 }
 
 /* ===== TOAST ===== */
@@ -2116,46 +2286,7 @@ t.textContent=msg;
 c.appendChild(t);
 setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300);},3000);
 }
-/* ===== EMERGENCY BELL FLOW ===== */
-let bellSeverity=null,bellDuration=null;
-function openEmergencyBell(){
-bellReset();
-openModal('emergencyBellModal');
-}
-function bellReset(){
-bellSeverity=null;bellDuration=null;
-document.getElementById('bellStep1').classList.add('active');
-document.getElementById('bellStep2').classList.remove('active');
-document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
-document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('selected'));
-document.getElementById('bellSummary').textContent='';
-}
-function bellSelectSeverity(sev){
-bellSeverity=sev;
-document.getElementById('bellStep1').classList.remove('active');
-document.getElementById('bellStep2').classList.add('active');
-document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
-document.querySelectorAll('#bellDots .step-dot')[1].classList.add('active');
-}
-function bellSelectDuration(dur,btn){
-bellDuration=dur;
-document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('selected'));
-btn.classList.add('selected');
-const sevLabel=bellSeverity==='severe'?'SEVERE: Accident/Immediate Danger':'NORMAL: Monitor my location';
-document.getElementById('bellSummary').textContent='Severity: '+sevLabel+'  |  Duration: '+dur;
-}
-function bellBack(){
-document.getElementById('bellStep2').classList.remove('active');
-document.getElementById('bellStep1').classList.add('active');
-document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
-}
-function bellSendAlert(){
-if(!bellDuration){alert('Please select a duration.');return;}
-const sevLabel=bellSeverity==='severe'?'SEVERE':'NORMAL';
-closeModal('emergencyBellModal');
-showToast('Alert Sent: '+sevLabel+' for '+bellDuration+'. Escalation active.',bellSeverity==='severe'?'danger':'warn');
-bellReset();
-}
+
 /* ===== SMART DOCUMENT SCANNER (MOCK) ===== */
 function startScanFlow(){
 document.getElementById('scanOverlay').classList.add('show');
@@ -2206,10 +2337,8 @@ showToast('Vaccine reminder created for Aryansh — alerts scheduled','success')
 scanReset();
 }
 
-/* ===== AUTO-LOCK ON LOAD (only if user has previously enabled) ===== */
+/* ===== AUTO-LOCK ON LOAD ===== */
 (function autoLockOnLoad(){
-  // Only auto-lock if the user has already registered a device credential.
-  // Otherwise, show the app normally so they can set up device unlock from Profile → Lock App Now.
   if(localStorage.getItem(APP_LOCK_ENABLED_KEY) === '1' && localStorage.getItem(DEVICE_CREDENTIAL_KEY)){
     lockShow();
   } else {
