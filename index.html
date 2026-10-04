@@ -97,6 +97,79 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .shared-doc-actions{display:flex;gap:.3rem;flex-wrap:wrap}
 .rights-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:8px;padding:.55rem;font-size:.72rem;margin:.5rem 0}
 .bin-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem 0;border-bottom:1px dashed #f1f5f9;flex-wrap:wrap}
+
+/* ===== APP LOCK OVERLAY ===== */
+#appLockOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#0f172a 0%,#1e293b 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;color:#fff}
+#appLockOverlay.hidden{display:none}
+.lock-logo{font-weight:800;font-size:1.4rem;margin-bottom:2rem;color:#fff}.lock-logo span{color:#60a5fa}
+.lock-icon-wrap{width:64px;height:64px;border-radius:50%;background:rgba(30,64,175,.15);border:2px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+.lock-icon-wrap svg{width:32px;height:32px;fill:#60a5fa}
+.lock-title{font-size:1rem;font-weight:700;margin-bottom:.3rem}
+.lock-sub{font-size:.75rem;color:#94a3b8;margin-bottom:1.5rem;text-align:center}
+.pin-dots{display:flex;gap:.6rem;margin-bottom:1.5rem}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.25);transition:all .2s}
+.pin-dot.filled{background:#60a5fa;border-color:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.5)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:.6rem;margin-bottom:1rem}
+.pin-key{width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font-size:1.4rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.pin-key:active{background:rgba(96,165,250,.3);transform:scale(.95)}
+.pin-key.del{font-size:1.1rem;color:#94a3b8}
+.pin-key.del:active{color:#fff}
+.bio-btn{margin-top:1rem;padding:.7rem 1.5rem;border-radius:10px;border:1px solid rgba(96,165,250,.4);background:rgba(30,64,175,.2);color:#60a5fa;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.bio-btn:active{background:rgba(30,64,175,.4);transform:scale(.97)}
+.bio-btn svg{width:18px;height:18px;fill:currentColor}
+.lock-err{color:#f87171;font-size:.75rem;margin-top:.5rem;height:1rem;text-align:center}
+
+/* ===== TOAST ===== */
+#toastContainer{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9998;display:flex;flex-direction:column;gap:.5rem;align-items:center;pointer-events:none;width:100%;max-width:400px;padding:0 1rem}
+.toast{background:var(--dark);color:#fff;padding:.75rem 1.25rem;border-radius:10px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:.5rem;animation:toastIn .3s ease;max-width:100%}
+.toast.success{background:var(--success)}
+.toast.danger{background:var(--danger)}
+.toast.warn{background:var(--warn)}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(20px)}}
+
+/* ===== SCAN FAB ===== */
+#scanFab{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;background:#fff;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:90;transition:transform .2s,box-shadow .2s}
+#scanFab:active{transform:translateX(-50%) scale(.92)}
+#scanFab:hover{box-shadow:0 6px 20px rgba(0,0,0,.22)}
+#scanFab svg{width:26px;height:26px;fill:var(--dark)}
+
+/* ===== SCAN OVERLAY ===== */
+#scanOverlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+#scanOverlay.show{display:flex}
+.scan-spinner{width:64px;height:64px;border:4px solid rgba(255,255,255,.15);border-top-color:#60a5fa;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:1.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-text{font-size:.95rem;font-weight:600}
+.scan-sub{font-size:.75rem;color:#94a3b8;margin-top:.3rem}
+
+/* ===== EMERGENCY BELL FLOW ===== */
+#emergencyBellModal{z-index:550}
+.bell-step{display:none}.bell-step.active{display:block}
+.bell-step-title{font-size:.85rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.05rem;margin-bottom:.75rem;text-align:center}
+.severity-btn{width:100%;padding:1rem;border-radius:10px;border:none;font-weight:700;font-size:.85rem;cursor:pointer;margin-bottom:.6rem;text-align:left;display:flex;flex-direction:column;gap:.2rem;transition:transform .15s}
+.severity-btn:active{transform:scale(.98)}
+.severity-severe{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.severity-normal{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.severity-btn .sev-label{font-size:.9rem}
+.severity-btn .sev-desc{font-size:.7rem;opacity:.85;font-weight:400}
+.duration-row{display:flex;gap:.5rem;margin-bottom:1rem}
+.duration-btn{flex:1;padding:.7rem;border-radius:8px;border:2px solid var(--border);background:#fff;cursor:pointer;font-weight:600;font-size:.82rem;transition:all .15s}
+.duration-btn:active{transform:scale(.97)}
+.duration-btn.selected{border-color:var(--primary);background:rgba(30,64,175,.06);color:var(--primary)}
+.bell-summary{background:#f0f4ff;border:1px solid #bfdbfe;border-radius:8px;padding:.6rem;font-size:.78rem;color:#1e3a8a;margin-bottom:.75rem;text-align:center}
+.step-dots{display:flex;justify-content:center;gap:.4rem;margin-bottom:1rem}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s}
+.step-dot.active{background:var(--primary);width:24px;border-radius:4px}
+
+/* ===== SCAN FLOW MODAL ===== */
+#scanFlowModal{z-index:550}
+.scan-flow-step{display:none}.scan-flow-step.active{display:block}
+.scan-flow-icon{width:48px;height:48px;border-radius:50%;background:rgba(30,64,175,.08);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
+.scan-flow-icon svg{width:24px;height:24px;fill:var(--primary)}
+.scan-flow-text{font-size:.85rem;color:var(--dark);line-height:1.55;margin-bottom:1rem;text-align:center}
+.scan-flow-text strong{color:var(--primary)}
+.scan-flow-actions{display:flex;gap:.5rem}
+.scan-flow-actions .btn{margin:0}
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -108,7 +181,7 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="nav-links">
     <button id="nav-vault" class="active" onclick="showView('vault')">My Vault</button>
     <button id="nav-auto" onclick="showView('reminders')">Reminders</button>
-    <button class="btn-emg" onclick="openSOS()" aria-label="Emergency" title="Emergency">
+    <button class="btn-emg" onclick="openEmergencyBell()" aria-label="Emergency" title="Emergency">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M12 2a2 2 0 0 1 2 2v.35A6 6 0 0 1 18 10v4.5l2 2V18H4v-1.5l2-2V10a6 6 0 0 1 4-5.65V4a2 2 0 0 1 2-2Zm-2 18h4a2 2 0 0 1-4 0Z"/>
       </svg>
@@ -292,6 +365,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="field"><label>Mobile Number (with country code)</label><input id="profilePhone" type="tel" placeholder="+91 9876543210"></div>
   <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
   <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
+  <hr style="border:0;border-top:1px solid var(--border);margin:.75rem 0">
+  <button class="btn btn-outline btn-sm" style="width:100%" onclick="closeModal('profileModal');lockShow();">Lock App Now (Test)</button>
 </div></div>
 
 <!-- UPLOAD METHOD MODAL -->
@@ -532,6 +607,110 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
     <div id="fileViewerPdf" class="pdf-viewer-pages" style="display:none" aria-label="PDF document pages"></div>
   </div>
   <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
+</div></div>
+
+<!-- APP LOCK OVERLAY -->
+<div id="appLockOverlay">
+  <div class="lock-logo">One<span>App</span>.in</div>
+  <div class="lock-icon-wrap"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg></div>
+  <div class="lock-title">App Locked</div>
+  <div class="lock-sub">Enter your PIN to unlock OneApp</div>
+  <div class="pin-dots" id="pinDots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+  <div class="pin-pad" id="pinPad">
+    <button class="pin-key" onclick="lockPin('1')">1</button>
+    <button class="pin-key" onclick="lockPin('2')">2</button>
+    <button class="pin-key" onclick="lockPin('3')">3</button>
+    <button class="pin-key" onclick="lockPin('4')">4</button>
+    <button class="pin-key" onclick="lockPin('5')">5</button>
+    <button class="pin-key" onclick="lockPin('6')">6</button>
+    <button class="pin-key" onclick="lockPin('7')">7</button>
+    <button class="pin-key" onclick="lockPin('8')">8</button>
+    <button class="pin-key" onclick="lockPin('9')">9</button>
+    <button class="pin-key del" onclick="lockPinDel()">&#9003;</button>
+    <button class="pin-key" onclick="lockPin('0')">0</button>
+    <button class="pin-key del" onclick="lockPinClear()">C</button>
+  </div>
+  <button class="bio-btn" onclick="lockBiometric()"><svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 3.98 2.58 7.36 6.15 8.55.23.08.5.1.75.1.34 0 .67-.09.96-.24.29-.15.54-.36.73-.61.19-.25.33-.54.41-.85.08-.31.1-.63.06-.95l-.06-.57c-.02-.23.02-.46.11-.67.09-.21.24-.39.42-.53.18-.14.4-.23.63-.26.23-.03.47-.01.69.07l.57.2c.31.11.64.16.97.14.33-.02.66-.11.95-.27.29-.16.55-.38.75-.64.2-.27.34-.57.41-.9.07-.32.08-.66.02-.99l-.13-.67c-.05-.23-.04-.47.03-.69.07-.23.2-.43.37-.59.17-.16.39-.28.62-.34.23-.06.48-.07.71-.03l.67.12c.33.06.66.06.99-.01.32-.07.63-.2.9-.39.27-.2.5-.44.66-.72.16-.28.27-.59.31-.91.04-.32.03-.65-.04-.97l-.05-.27C20.67 6.58 16.73 2 12 2zm-2.5 12c-.83 0-1.5-.67-1.5-1.5S8.67 11 9.5 11s1.5.67 1.5 1.5S10.33 14 9.5 14zm5-2c-.83 0-1.5-.67-1.5-1.5S13.67 9 14.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> Simulate Biometric Unlock</button>
+  <div class="lock-err" id="lockErr"></div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer"></div>
+
+<!-- SCAN FAB -->
+<div id="scanFab" onclick="startScanFlow()" aria-label="Scan Document" title="Scan Document">
+  <svg viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6.5-2c0-3.59-2.91-6.5-6.5-6.5S5.5 11.41 5.5 15c0 .55.06 1.08.17 1.59.11.51.28 1 .5 1.46l1.42-1.42c-.06-.21-.09-.42-.09-.63 0-1.93 1.57-3.5 3.5-3.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5c-.21 0-.42-.03-.63-.09L9.95 20.33c.46.22.95.39 1.46.5.51.11 1.04.17 1.59.17 3.59 0 6.5-2.91 6.5-6.5zM20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4.5l-1.43-1.43c-.36-.36-.36-.94 0-1.31.36-.36.94-.36 1.31 0L12 20.84l3.62-3.62c.36-.36.94-.36 1.31 0 .36.36.36.94 0 1.31L15.5 20H20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+</div>
+
+<!-- SCAN OVERLAY (loading state) -->
+<div id="scanOverlay">
+  <div class="scan-spinner"></div>
+  <div class="scan-text">Scanning...</div>
+  <div class="scan-sub">Analyzing document with AI</div>
+</div>
+
+<!-- EMERGENCY BELL FLOW MODAL -->
+<div id="emergencyBellModal" class="modal-overlay"><div class="modal">
+  <div class="step-dots" id="bellDots"><div class="step-dot active"></div><div class="step-dot"></div></div>
+  <div class="bell-step active" id="bellStep1">
+    <div class="bell-step-title">Select Severity</div>
+    <button class="severity-btn severity-severe" onclick="bellSelectSeverity('severe')"><span class="sev-label">SEVERE: Accident / Immediate Danger</span><span class="sev-desc">Emergency services &amp; all contacts alerted instantly</span></button>
+    <button class="severity-btn severity-normal" onclick="bellSelectSeverity('normal')"><span class="sev-label">NORMAL: Monitor my location</span><span class="sev-desc">Live location shared with family for a set duration</span></button>
+  </div>
+  <div class="bell-step" id="bellStep2">
+    <div class="bell-step-title">Select Duration</div>
+    <div class="duration-row">
+      <button class="duration-btn" onclick="bellSelectDuration('15 Mins',this)">15 Mins</button>
+      <button class="duration-btn" onclick="bellSelectDuration('1 Hour',this)">1 Hour</button>
+      <button class="duration-btn" onclick="bellSelectDuration('3 Hours',this)">3 Hours</button>
+    </div>
+    <div class="bell-summary" id="bellSummary"></div>
+    <button class="btn btn-danger" id="bellSendBtn" onclick="bellSendAlert()" style="margin-bottom:.4rem">SEND ALERT</button>
+    <button class="btn btn-outline" onclick="bellBack()">Back</button>
+  </div>
+  <button class="btn btn-outline" style="margin-top:.4rem" onclick="closeModal('emergencyBellModal');bellReset();">Cancel</button>
+</div></div>
+
+<!-- SCAN FLOW MODAL (sequential prompts) -->
+<div id="scanFlowModal" class="modal-overlay"><div class="modal">
+  <div class="step-dots" id="scanDots"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+
+  <div class="scan-flow-step active" id="scanStep1">
+    <div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+    <div class="scan-flow-text">I scanned an <strong>Immunization Card</strong>. I see the name <strong>'Udayansh'</strong>, but your child's profile is <strong>'Aryansh'</strong> (DOB: 26.06.26) and spouse is <strong>'Geetanjali Gupta'</strong>. Is this for Aryansh?</div>
+    <div class="scan-flow-actions">
+      <button class="btn btn-primary" onclick="scanStepYes(1)">Yes</button>
+      <button class="btn btn-outline" onclick="scanStepNo(1)">No</button>
+    </div>
+  </div>
+
+  <div class="scan-flow-step" id="scanStep2">
+    <div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M3 5v14h18V5H3zm16 12H5V7h14v10zM7 9h10v2H7zm0 4h7v2H7z"/></svg></div>
+    <div class="scan-flow-text">Save this in the <strong>'Vaccines'</strong> section under <strong>Aryansh's</strong> profile?</div>
+    <div class="scan-flow-actions">
+      <button class="btn btn-primary" onclick="scanStepYes(2)">Yes</button>
+      <button class="btn btn-outline" onclick="scanStepNo(2)">No</button>
+    </div>
+  </div>
+
+  <div class="scan-flow-step" id="scanStep3">
+    <div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></div>
+    <div class="scan-flow-text">I see the <strong>6-month vaccine</strong> is next. Vaccination Specification: Is the clinic open on <strong>'Normal Days'</strong> (exact date) or a <strong>'Specific Day of the Week'</strong>?</div>
+    <div class="scan-flow-actions">
+      <button class="btn btn-outline" onclick="scanSelectDayType('normal')">Normal Days</button>
+      <button class="btn btn-outline" onclick="scanSelectDayType('specific')">Specific Day (e.g., Wednesday)</button>
+    </div>
+  </div>
+
+  <div class="scan-flow-step" id="scanStep4">
+    <div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+    <div class="scan-flow-text" id="scanConfirmText">Reminder set for the next <strong>Wednesday</strong> after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.</div>
+    <div class="scan-flow-actions">
+      <button class="btn btn-success" onclick="scanConfirm()">Confirm</button>
+    </div>
+  </div>
+
+  <button class="btn btn-outline" style="margin-top:.4rem" onclick="closeModal('scanFlowModal');scanReset();">Cancel</button>
 </div></div>
 
 <footer>OneApp.in • Live on Vercel + Supabase<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
@@ -1921,6 +2100,113 @@ window.onclick=e=>{
   if(!e.target.closest('.user-area'))document.getElementById('userDropdown').classList.remove('show');
   if(!e.target.closest('#viewerMenu')&&!e.target.closest('.vdots'))document.getElementById('viewerMenu').classList.remove('show');
 };
+
+// ===== APP LOCK (MOCK) =====
+let lockPinEntry='';
+const MOCK_PIN='1234';
+function lockShow(){lockPinEntry='';lockUpdateDots();document.getElementById('lockErr').textContent='';document.getElementById('appLockOverlay').classList.remove('hidden');}
+function lockHide(){document.getElementById('appLockOverlay').classList.add('hidden');}
+function lockPin(d){if(lockPinEntry.length>=4)return;lockPinEntry+=d;lockUpdateDots();if(lockPinEntry.length===4){setTimeout(lockCheck,200);}}
+function lockPinDel(){lockPinEntry=lockPinEntry.slice(0,-1);lockUpdateDots();document.getElementById('lockErr').textContent='';}
+function lockPinClear(){lockPinEntry='';lockUpdateDots();document.getElementById('lockErr').textContent='';}
+function lockUpdateDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<lockPinEntry.length));}
+function lockCheck(){if(lockPinEntry===MOCK_PIN){lockHide();showToast('App unlocked','success');}else{document.getElementById('lockErr').textContent='Incorrect PIN. Try 1234.';lockPinEntry='';lockUpdateDots();}}
+function lockBiometric(){document.getElementById('lockErr').textContent='';setTimeout(()=>{lockHide();showToast('Biometric authenticated — app unlocked','success');},600);}
+
+// ===== TOAST =====
+function showToast(msg,type='default'){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast'+(type!=='default'?' '+type:'');
+  t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300);},3000);
+}
+
+// ===== EMERGENCY BELL FLOW =====
+let bellSeverity=null,bellDuration=null;
+function openEmergencyBell(){
+  bellReset();
+  openModal('emergencyBellModal');
+}
+function bellReset(){
+  bellSeverity=null;bellDuration=null;
+  document.getElementById('bellStep1').classList.add('active');
+  document.getElementById('bellStep2').classList.remove('active');
+  document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+  document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('bellSummary').textContent='';
+}
+function bellSelectSeverity(sev){
+  bellSeverity=sev;
+  document.getElementById('bellStep1').classList.remove('active');
+  document.getElementById('bellStep2').classList.add('active');
+  document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+  document.querySelectorAll('#bellDots .step-dot')[1].classList.add('active');
+}
+function bellSelectDuration(dur,btn){
+  bellDuration=dur;
+  document.querySelectorAll('.duration-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const sevLabel=bellSeverity==='severe'?'SEVERE: Accident/Immediate Danger':'NORMAL: Monitor my location';
+  document.getElementById('bellSummary').textContent='Severity: '+sevLabel+'  |  Duration: '+dur;
+}
+function bellBack(){
+  document.getElementById('bellStep2').classList.remove('active');
+  document.getElementById('bellStep1').classList.add('active');
+  document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+}
+function bellSendAlert(){
+  if(!bellDuration){alert('Please select a duration.');return;}
+  const sevLabel=bellSeverity==='severe'?'SEVERE':'NORMAL';
+  closeModal('emergencyBellModal');
+  showToast('Alert Sent: '+sevLabel+' for '+bellDuration+'. Escalation active.',bellSeverity==='severe'?'danger':'warn');
+  bellReset();
+}
+
+// ===== SMART DOCUMENT SCANNER (MOCK) =====
+function startScanFlow(){
+  document.getElementById('scanOverlay').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('scanOverlay').classList.remove('show');
+    scanReset();
+    openModal('scanFlowModal');
+  },2000);
+}
+function scanReset(){
+  document.querySelectorAll('.scan-flow-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('scanStep1').classList.add('active');
+  document.querySelectorAll('#scanDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
+}
+function scanGoStep(n){
+  document.querySelectorAll('.scan-flow-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('scanStep'+n).classList.add('active');
+  document.querySelectorAll('#scanDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i<n));
+}
+function scanStepYes(step){
+  if(step===1)scanGoStep(2);
+  else if(step===2)scanGoStep(3);
+}
+function scanStepNo(step){
+  if(step===1){closeModal('scanFlowModal');showToast('Scan cancelled — name did not match child profile','warn');}
+  else if(step===2){closeModal('scanFlowModal');showToast('Document not saved to Vaccines section','default');}
+}
+function scanSelectDayType(type){
+  if(type==='normal'){
+    document.getElementById('scanConfirmText').innerHTML='Reminder set for the exact date after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.';
+  }else{
+    document.getElementById('scanConfirmText').innerHTML='Reminder set for the next <strong>Wednesday</strong> after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.';
+  }
+  scanGoStep(4);
+}
+function scanConfirm(){
+  closeModal('scanFlowModal');
+  showToast('Vaccine reminder created for Aryansh — alerts scheduled','success');
+  scanReset();
+}
+
+// ===== AUTO-LOCK ON LOAD (MOCK) =====
+window.addEventListener('load',()=>{setTimeout(()=>{lockShow();},300);});
 
 // --- PWA SERVICE WORKER REGISTRATION ---
 if ('serviceWorker' in navigator) {
