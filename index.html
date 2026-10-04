@@ -105,19 +105,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .lock-icon-wrap{width:64px;height:64px;border-radius:50%;background:rgba(30,64,175,.15);border:2px solid rgba(96,165,250,.3);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
 .lock-icon-wrap svg{width:32px;height:32px;fill:#60a5fa}
 .lock-title{font-size:1rem;font-weight:700;margin-bottom:.3rem}
-.lock-sub{font-size:.75rem;color:#94a3b8;margin-bottom:1.5rem;text-align:center}
-.pin-dots{display:flex;gap:.6rem;margin-bottom:1.5rem}
-.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.25);transition:all .2s}
-.pin-dot.filled{background:#60a5fa;border-color:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.5)}
-.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:.6rem;margin-bottom:1rem}
-.pin-key{width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font-size:1.4rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
-.pin-key:active{background:rgba(96,165,250,.3);transform:scale(.95)}
-.pin-key.del{font-size:1.1rem;color:#94a3b8}
-.pin-key.del:active{color:#fff}
-.bio-btn{margin-top:1rem;padding:.7rem 1.5rem;border-radius:10px;border:1px solid rgba(96,165,250,.4);background:rgba(30,64,175,.2);color:#60a5fa;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.lock-sub{font-size:.75rem;color:#94a3b8;margin-bottom:1.5rem;text-align:center;max-width:320px;line-height:1.5}
+.bio-btn{margin-top:.25rem;padding:.85rem 1.5rem;border-radius:10px;border:1px solid rgba(96,165,250,.4);background:rgba(30,64,175,.2);color:#60a5fa;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
 .bio-btn:active{background:rgba(30,64,175,.4);transform:scale(.97)}
 .bio-btn svg{width:18px;height:18px;fill:currentColor}
-.lock-err{color:#f87171;font-size:.75rem;margin-top:.5rem;height:1rem;text-align:center}
+.lock-err{color:#f87171;font-size:.75rem;margin-top:.75rem;min-height:1rem;text-align:center;max-width:320px}
 
 /* ===== TOAST ===== */
 #toastContainer{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:9998;display:flex;flex-direction:column;gap:.5rem;align-items:center;pointer-events:none;width:100%;max-width:400px;padding:0 1rem}
@@ -614,23 +606,8 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div class="lock-logo">One<span>App</span>.in</div>
   <div class="lock-icon-wrap"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg></div>
   <div class="lock-title">App Locked</div>
-  <div class="lock-sub">Enter your PIN to unlock OneApp</div>
-  <div class="pin-dots" id="pinDots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
-  <div class="pin-pad" id="pinPad">
-    <button class="pin-key" onclick="lockPin('1')">1</button>
-    <button class="pin-key" onclick="lockPin('2')">2</button>
-    <button class="pin-key" onclick="lockPin('3')">3</button>
-    <button class="pin-key" onclick="lockPin('4')">4</button>
-    <button class="pin-key" onclick="lockPin('5')">5</button>
-    <button class="pin-key" onclick="lockPin('6')">6</button>
-    <button class="pin-key" onclick="lockPin('7')">7</button>
-    <button class="pin-key" onclick="lockPin('8')">8</button>
-    <button class="pin-key" onclick="lockPin('9')">9</button>
-    <button class="pin-key del" onclick="lockPinDel()">&#9003;</button>
-    <button class="pin-key" onclick="lockPin('0')">0</button>
-    <button class="pin-key del" onclick="lockPinClear()">C</button>
-  </div>
-  <button class="bio-btn" onclick="lockBiometric()"><svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 3.98 2.58 7.36 6.15 8.55.23.08.5.1.75.1.34 0 .67-.09.96-.24.29-.15.54-.36.73-.61.19-.25.33-.54.41-.85.08-.31.1-.63.06-.95l-.06-.57c-.02-.23.02-.46.11-.67.09-.21.24-.39.42-.53.18-.14.4-.23.63-.26.23-.03.47-.01.69.07l.57.2c.31.11.64.16.97.14.33-.02.66-.11.95-.27.29-.16.55-.38.75-.64.2-.27.34-.57.41-.9.07-.32.08-.66.02-.99l-.13-.67c-.05-.23-.04-.47.03-.69.07-.23.2-.43.37-.59.17-.16.39-.28.62-.34.23-.06.48-.07.71-.03l.67.12c.33.06.66.06.99-.01.32-.07.63-.2.9-.39.27-.2.5-.44.66-.72.16-.28.27-.59.31-.91.04-.32.03-.65-.04-.97l-.05-.27C20.67 6.58 16.73 2 12 2zm-2.5 12c-.83 0-1.5-.67-1.5-1.5S8.67 11 9.5 11s1.5.67 1.5 1.5S10.33 14 9.5 14zm5-2c-.83 0-1.5-.67-1.5-1.5S13.67 9 14.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> Simulate Biometric Unlock</button>
+  <div class="lock-sub">Unlock using your device security — PIN, password, fingerprint, face recognition, or another method supported by your device.</div>
+  <button class="bio-btn" onclick="lockDeviceAuth()"><svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 3.98 2.58 7.36 6.15 8.55.23.08.5.1.75.1.34 0 .67-.09.96-.24.29-.15.54-.36.73-.61.19-.25.33-.54.41-.85.08-.31.1-.63.06-.95l-.06-.57c-.02-.23.02-.46.11-.67.09-.21.24-.39.42-.53.18-.14.4-.23.63-.26.23-.03.47-.01.69.07l.57.2c.31.11.64.16.97.14.33-.02.66-.11.95-.27.29-.16.55-.38.75-.64.2-.27.34-.57.41-.9.07-.32.08-.66.02-.99l-.13-.67c-.05-.23-.04-.47.03-.69.07-.23.2-.43.37-.59.17-.16.39-.28.62-.34.23-.06.48-.07.71-.03l.67.12c.33.06.66.06.99-.01.32-.07.63-.2.9-.39.27-.2.5-.44.66-.72.16-.28.27-.59.31-.91.04-.32.03-.65-.04-.97l-.05-.27C20.67 6.58 16.73 2 12 2zm-2.5 12c-.83 0-1.5-.67-1.5-1.5S8.67 11 9.5 11s1.5.67 1.5 1.5S10.33 14 9.5 14zm5-2c-.83 0-1.5-.67-1.5-1.5S13.67 9 14.5 9s1.5 1.5 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> Unlock with Device Security</button>
   <div class="lock-err" id="lockErr"></div>
 </div>
 
@@ -2101,17 +2078,54 @@ window.onclick=e=>{
   if(!e.target.closest('#viewerMenu')&&!e.target.closest('.vdots'))document.getElementById('viewerMenu').classList.remove('show');
 };
 
-// ===== APP LOCK (MOCK) =====
-let lockPinEntry='';
-const MOCK_PIN='1234';
-function lockShow(){lockPinEntry='';lockUpdateDots();document.getElementById('lockErr').textContent='';document.getElementById('appLockOverlay').classList.remove('hidden');}
+// ===== APP LOCK (DEVICE AUTHENTICATION) =====
+const DEVICE_CREDENTIAL_KEY='oneapp_device_credential_id';
+function lockShow(){
+  document.getElementById('lockErr').textContent='';
+  document.getElementById('appLockOverlay').classList.remove('hidden');
+}
 function lockHide(){document.getElementById('appLockOverlay').classList.add('hidden');}
-function lockPin(d){if(lockPinEntry.length>=4)return;lockPinEntry+=d;lockUpdateDots();if(lockPinEntry.length===4){setTimeout(lockCheck,200);}}
-function lockPinDel(){lockPinEntry=lockPinEntry.slice(0,-1);lockUpdateDots();document.getElementById('lockErr').textContent='';}
-function lockPinClear(){lockPinEntry='';lockUpdateDots();document.getElementById('lockErr').textContent='';}
-function lockUpdateDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<lockPinEntry.length));}
-function lockCheck(){if(lockPinEntry===MOCK_PIN){lockHide();showToast('App unlocked','success');}else{document.getElementById('lockErr').textContent='Incorrect PIN. Try 1234.';lockPinEntry='';lockUpdateDots();}}
-function lockBiometric(){document.getElementById('lockErr').textContent='';setTimeout(()=>{lockHide();showToast('Biometric authenticated — app unlocked','success');},600);}
+function bytesToBase64Url(bytes){let s='';bytes=new Uint8Array(bytes);for(let i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function base64UrlToBytes(value){value=value.replace(/-/g,'+').replace(/_/g,'/');while(value.length%4)value+='=';const s=atob(value);const out=new Uint8Array(s.length);for(let i=0;i<s.length;i++)out[i]=s.charCodeAt(i);return out;}
+function randomBytes(length){const bytes=new Uint8Array(length);crypto.getRandomValues(bytes);return bytes;}
+async function lockDeviceAuth(){
+  const err=document.getElementById('lockErr');
+  err.textContent='';
+  if(!window.isSecureContext || !window.PublicKeyCredential || !navigator.credentials){
+    err.textContent='Device authentication is not available in this browser or context.';
+    return;
+  }
+  try{
+    const storedId=localStorage.getItem(DEVICE_CREDENTIAL_KEY);
+    let credentialId=storedId?base64UrlToBytes(storedId):null;
+    if(!credentialId){
+      const credential=await navigator.credentials.create({publicKey:{
+        challenge:randomBytes(32),
+        rp:{name:'OneApp.in',id:location.hostname},
+        user:{id:randomBytes(16),name:'oneapp-user',displayName:'OneApp User'},
+        pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+        authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'required',requireResidentKey:true,userVerification:'required'},
+        timeout:60000,
+        attestation:'none'
+      }});
+      if(!credential)throw new Error('Device authentication was cancelled.');
+      credentialId=new Uint8Array(credential.rawId);
+      localStorage.setItem(DEVICE_CREDENTIAL_KEY,bytesToBase64Url(credentialId));
+    }
+    const assertion=await navigator.credentials.get({publicKey:{
+      challenge:randomBytes(32),
+      allowCredentials:[{type:'public-key',id:credentialId}],
+      userVerification:'required',
+      timeout:60000
+    }});
+    if(!assertion)throw new Error('Device authentication was not completed.');
+    lockHide();
+    showToast('Device authenticated — app unlocked','success');
+  }catch(e){
+    if(e&&e.name==='NotAllowedError')err.textContent='Authentication cancelled or not completed. Try again.';
+    else err.textContent=e&&e.message?e.message:'Device authentication failed. Try again.';
+  }
+}
 
 // ===== TOAST =====
 function showToast(msg,type='default'){
@@ -2174,6 +2188,7 @@ function startScanFlow(){
   },2000);
 }
 function scanReset(){
+  scanReminderType=null;
   document.querySelectorAll('.scan-flow-step').forEach(s=>s.classList.remove('active'));
   document.getElementById('scanStep1').classList.add('active');
   document.querySelectorAll('#scanDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
@@ -2191,13 +2206,21 @@ function scanStepNo(step){
   if(step===1){closeModal('scanFlowModal');showToast('Scan cancelled — name did not match child profile','warn');}
   else if(step===2){closeModal('scanFlowModal');showToast('Document not saved to Vaccines section','default');}
 }
+let scanReminderType=null;
 function scanSelectDayType(type){
+  scanReminderType=type;
+  const confirmText=document.getElementById('scanConfirmText');
   if(type==='normal'){
-    document.getElementById('scanConfirmText').innerHTML='Reminder set for the exact date after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.';
-  }else{
-    document.getElementById('scanConfirmText').innerHTML='Reminder set for the next <strong>Wednesday</strong> after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.';
+    confirmText.innerHTML='Reminder set for the exact date after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.';
+    scanGoStep(4);
+    return;
   }
+  confirmText.innerHTML='Calculating the next Wednesday after the 6-month mark…';
   scanGoStep(4);
+  setTimeout(()=>{
+    if(scanReminderType!=='specific')return;
+    confirmText.innerHTML='Reminder set for the next <strong>Wednesday</strong> after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.';
+  },800);
 }
 function scanConfirm(){
   closeModal('scanFlowModal');
