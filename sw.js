@@ -1,71 +1,27 @@
-// OneApp.in Service Worker
-// App shell caching + offline fallback. Supabase/API requests stay network-only.
+self.addEventListener('install', e => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 
-const CACHE_NAME = 'oneapp-v2';
-const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
-];
-
-self.addEventListener('install', (event) => {
+// Real Web Push (needs a push service + VAPID — set up later if desired)
+self.addEventListener('push', event => {
+  let data = { title: 'OneApp alert', body: 'You have a new family alert.' };
+  try { if(event.data) data = event.data.json(); } catch(_) {}
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      vibrate: [200,80,200,80,200],
+      tag: 'oneapp-bell'
+    })
   );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  const request = event.request;
-  if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-
-  // Never intercept Supabase/API/CDN requests. Authentication, database,
-  // storage and realtime-related network calls must always reach the network.
-  if (url.origin !== self.location.origin) return;
-
-  // HTML navigation: network first so the installed app receives new
-  // OneApp releases, with the cached shell as the offline fallback.
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', copy));
-          return response;
-        })
-        .catch(() => caches.match('/index.html'))
-    );
-    return;
-  }
-
-  // Static same-origin assets: cache first, then network and cache the result.
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((response) => {
-        if (response && response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        }
-        return response;
-      });
+    self.clients.matchAll({ type: 'window' }).then(cs => {
+      for(const c of cs){ if('focus' in c) return c.focus(); }
+      if(self.clients.openWindow) return self.clients.openWindow('/');
     })
   );
 });
