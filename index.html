@@ -349,8 +349,14 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <!-- GENERIC SHARE MODAL (2 options with native share) -->
 <div id="genericShareModal" class="modal-overlay"><div class="modal">
   <h3>Share Document</h3>
-  <button class="btn btn-primary" onclick="genericShare('jpg')">🖼️ Share as JPG</button>
-  <button class="btn btn-outline" onclick="genericShare('pdf')">📄 Share as PDF</button>
+  <div id="genericShareImageOptions">
+    <button class="btn btn-primary" onclick="genericShare('jpg')">🖼️ Share as JPG</button>
+    <button class="btn btn-outline" onclick="genericShare('pdf')">📄 Share as PDF</button>
+  </div>
+  <div id="genericSharePdfOptions" style="display:none">
+    <p class="sub">Share the original PDF file.</p>
+    <button class="btn btn-primary" onclick="genericShare('original-pdf')">📄 Share Original PDF</button>
+  </div>
   <button class="btn btn-outline" onclick="closeModal('genericShareModal')">Cancel</button>
 </div></div>
 
@@ -1068,7 +1074,7 @@ async function viewGenericDoc(id, path, name, isImageHint, documentType=null){
     clearPdfViewer();
     const viewerImg=document.getElementById('fileViewerImg');
     viewerImg.style.display='none';viewerImg.removeAttribute('src');
-    viewerCtx={kind:'generic',id,path,label:name,isImage,isPdf,isPassport,passportData,documentType:documentType||name};
+    viewerCtx={kind:'generic',id,path,actualPath,label:name,isImage,isPdf,isPassport,passportData,documentType:documentType||name};
     document.getElementById('fileViewerTitle').textContent=name;
     document.getElementById('rotateControls').style.display='none';
     document.getElementById('saveRotationBtn').style.display='none';
@@ -1146,7 +1152,17 @@ async function deleteGenericDoc(id){
 }
 
 async function buildGenericShareFile(fmt){
-  if(!viewerCtx||!viewerCtx.isImage)throw new Error('This document is not an image.');
+  const c=viewerCtx;
+  if(c?.kind==='generic'&&c.isPdf){
+    const path=c.actualPath||c.path;
+    if(!path)throw new Error('The original PDF path is not available.');
+    const {data,error}=await sb.storage.from('vault').download(path);
+    if(error)throw error;
+    const baseName=String(c.label||'Document').replace(/[\\/:*?"<>|]+/g,'_').trim()||'Document';
+    const fileName=/\.pdf$/i.test(baseName)?baseName:`${baseName}.pdf`;
+    return new File([data],fileName,{type:'application/pdf'});
+  }
+  if(!c||!c.isImage)throw new Error('This document cannot be shared in this format.');
   let blob,name,mime;
   if(viewerCtx.isPassport&&viewerCtx.passportData){
     const img1=document.getElementById('fileViewerImg');
@@ -1231,7 +1247,12 @@ function viewerAction(act){
   }else if(c.kind==='generic'){
     if(act==='delete'){closeModal('fileViewerModal');deleteGenericDoc(c.id);}
     if(act==='update'){closeModal('fileViewerModal');openGenericUpload(c.documentType || c.label);}
-    if(act==='share'){if(!c.isImage){alert('Share options only for images.');return;} openModal('genericShareModal');}
+    if(act==='share'){
+      if(!c.isImage&&!c.isPdf){alert('Sharing is not available for this document type.');return;}
+      document.getElementById('genericShareImageOptions').style.display=c.isPdf?'none':'block';
+      document.getElementById('genericSharePdfOptions').style.display=c.isPdf?'block':'none';
+      openModal('genericShareModal');
+    }
     if(act==='familyShare'){openFamilyShareModal(c.id||null);}
   }
 }
@@ -1344,11 +1365,18 @@ async function renderPdfInViewer(url,label='Document'){
   for(let pageNumber=1;pageNumber<=pdf.numPages;pageNumber++){
     const page=await pdf.getPage(pageNumber),baseViewport=page.getViewport({scale:1});
     const scale=Math.min((host.clientWidth||360)/baseViewport.width,2);
-    const viewport=page.getViewport({scale}),canvas=document.createElement('canvas');
-    canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+    const viewport=page.getViewport({scale});
+    const deviceScale=Math.max(1,Math.min(window.devicePixelRatio||1,3));
+    const pixelBudgetScale=Math.sqrt(8000000/(viewport.width*viewport.height));
+    const outputScale=Math.max(1,Math.min(deviceScale,pixelBudgetScale));
+    const renderViewport=page.getViewport({scale:scale*outputScale});
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.ceil(renderViewport.width);canvas.height=Math.ceil(renderViewport.height);
+    canvas.style.width=`${Math.ceil(viewport.width)}px`;
+    canvas.style.height=`${Math.ceil(viewport.height)}px`;
     canvas.setAttribute('role','img');
     canvas.setAttribute('aria-label',`${label}, page ${pageNumber}`);
-    await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+    await page.render({canvasContext:canvas.getContext('2d'),viewport:renderViewport}).promise;
     host.appendChild(canvas);
   }
 }
