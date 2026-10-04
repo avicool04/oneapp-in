@@ -1007,12 +1007,20 @@ async function loadOtherDocs(){
     <div class="doc-row">
       <div class="doc-info"><h4>${escHtml(d.document_name)}</h4><p>${d.valid_until ? 'Expires: '+new Date(d.valid_until).toLocaleDateString() : 'No expiry'} • ${new Date(d.created_at).toLocaleDateString()}</p></div>
       <div style="display:flex;gap:.3rem;flex-wrap:wrap">
-        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', true, '${d.document_type||'Other'}')">View</button>
+        <button class="btn btn-outline btn-sm" onclick="viewGenericDoc('${d.id}', '${d.file_url}', '${escHtml(d.document_name)}', ${isVaultImagePath(d.file_url)}, '${d.document_type||'Other'}')">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteGenericDoc('${d.id}')">Delete</button>
       </div>
     </div>
   `).join('');
 }
+
+const VAULT_IMAGE_EXTENSIONS=new Set(['jpg','jpeg','png','webp','gif','bmp','avif']);
+function getVaultFileExtension(path){
+  const fileName=String(path||'').split('/').pop()?.split('?')[0]||'';
+  const dot=fileName.lastIndexOf('.');
+  return dot<0?'':fileName.slice(dot+1).toLowerCase();
+}
+function isVaultImagePath(path){return VAULT_IMAGE_EXTENSIONS.has(getVaultFileExtension(path));}
 
 function getImageExtension(name){
   const ext=(name||'').split('.').pop().toLowerCase();
@@ -1047,31 +1055,48 @@ async function loadVaultImage(path){
   }
 }
 
-async function viewGenericDoc(id, path, name, isImage, documentType=null){
+async function viewGenericDoc(id, path, name, isImageHint, documentType=null){
   try{
     let actualPath = path;
     let isPassport = false;
     let passportData = null;
     try { passportData = JSON.parse(path); isPassport=true; actualPath=passportData.front||passportData.page1; } catch(e) {}
-    viewerCtx={kind:'generic',id,path,label:name,isImage,isPassport,passportData,documentType:documentType||name};
+    const previousObjectUrl=viewerCtx?.kind==='generic'?viewerCtx.objectUrl:null;
+    if(previousObjectUrl)URL.revokeObjectURL(previousObjectUrl);
+    const isImage=isVaultImagePath(actualPath);
+    const isPdf=getVaultFileExtension(actualPath)==='pdf';
+    clearPdfViewer();
+    const viewerImg=document.getElementById('fileViewerImg');
+    viewerImg.style.display='none';viewerImg.removeAttribute('src');
+    viewerCtx={kind:'generic',id,path,label:name,isImage,isPdf,isPassport,passportData,documentType:documentType||name};
     document.getElementById('fileViewerTitle').textContent=name;
+    document.getElementById('rotateControls').style.display='none';
+    document.getElementById('saveRotationBtn').style.display='none';
+    currentRotation=0;
+    viewerImg.style.transform='rotate(0deg)';
     if(isImage){
       const loaded=await loadVaultImage(actualPath);
-      if(viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
       viewerCtx.objectUrl=loaded.objectUrl;
-      document.getElementById('fileViewerImg').src=loaded.objectUrl;
+      viewerImg.src=loaded.objectUrl;
+      viewerImg.style.display='block';
+      document.getElementById('rotateControls').style.display='flex';
+      document.getElementById('saveRotationBtn').style.display='inline-block';
+      openModal('fileViewerModal');
     }else{
       const {data,error}=await sb.storage.from('vault').createSignedUrl(actualPath,300);
       if(error)throw error;
-      window.open(data.signedUrl,'_blank');
+      if(isPdf){
+        document.getElementById('fileViewerPdf').style.display='block';
+        openModal('fileViewerModal');
+        await renderPdfInViewer(data.signedUrl,name);
+      }else{
+        window.open(data.signedUrl,'_blank');
+      }
     }
-    document.getElementById('fileViewerImg').style.display=isImage?'block':'none';
-    document.getElementById('rotateControls').style.display=isImage?'flex':'none';
-    document.getElementById('saveRotationBtn').style.display=isImage?'inline-block':'none';
-    currentRotation=0;
-    document.getElementById('fileViewerImg').style.transform='rotate(0deg)';
-    if(isImage) openModal('fileViewerModal');
-  }catch(err){alert('Failed: '+err.message);}
+  }catch(err){
+    if(document.getElementById('fileViewerPdf').style.display!=='none')closeModal('fileViewerModal');
+    alert('Failed: '+err.message);
+  }
 }
 
 function rotateImage(degrees){
@@ -1309,12 +1334,12 @@ function viewChildAadhaar(){
   openModal('fileViewerModal');
 }
 
-async function renderChildPdfInViewer(url){
+async function renderPdfInViewer(url,label='Document'){
   const host=document.getElementById('fileViewerPdf');
   host.replaceChildren();
   if(!window.pdfjsLib)throw new Error('PDF preview is unavailable. Please try again.');
   const response=await fetch(url);
-  if(!response.ok)throw new Error('Could not download the certificate.');
+  if(!response.ok)throw new Error('Could not download this document.');
   const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await response.arrayBuffer())}).promise;
   for(let pageNumber=1;pageNumber<=pdf.numPages;pageNumber++){
     const page=await pdf.getPage(pageNumber),baseViewport=page.getViewport({scale:1});
@@ -1322,7 +1347,7 @@ async function renderChildPdfInViewer(url){
     const viewport=page.getViewport({scale}),canvas=document.createElement('canvas');
     canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
     canvas.setAttribute('role','img');
-    canvas.setAttribute('aria-label',`${currentChildName}'s birth certificate, page ${pageNumber}`);
+    canvas.setAttribute('aria-label',`${label}, page ${pageNumber}`);
     await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
     host.appendChild(canvas);
   }
@@ -1348,7 +1373,7 @@ async function viewChildFile(id,path,ext,type){
       pdfViewer.style.display='block';
       document.getElementById('rotateControls').style.display='none';
       openModal('fileViewerModal');
-      await renderChildPdfInViewer(data.signedUrl);
+      await renderPdfInViewer(data.signedUrl,`${currentChildName}'s birth certificate`);
     }else{
       window.open(data.signedUrl,'_blank');
     }
