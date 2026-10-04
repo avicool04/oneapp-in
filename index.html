@@ -2082,7 +2082,7 @@ window.onclick=e=>{
 const DEVICE_CREDENTIAL_KEY='oneapp_device_credential_id';
 function lockShow(){
   document.getElementById('lockErr').textContent='';
-  document.getElementById('appLockOverlay').classList.remove('hidden');
+  lockDeviceAuth();
 }
 function lockHide(){document.getElementById('appLockOverlay').classList.add('hidden');}
 function bytesToBase64Url(bytes){let s='';bytes=new Uint8Array(bytes);for(let i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
@@ -2092,26 +2092,16 @@ async function lockDeviceAuth(){
   const err=document.getElementById('lockErr');
   err.textContent='';
   if(!window.isSecureContext || !window.PublicKeyCredential || !navigator.credentials){
-    err.textContent='Device authentication is not available in this browser or context.';
-    return;
+    showToast('Device authentication is not available in this browser.','warn');
+    return false;
   }
   try{
     const storedId=localStorage.getItem(DEVICE_CREDENTIAL_KEY);
-    let credentialId=storedId?base64UrlToBytes(storedId):null;
-    if(!credentialId){
-      const credential=await navigator.credentials.create({publicKey:{
-        challenge:randomBytes(32),
-        rp:{name:'OneApp.in',id:location.hostname},
-        user:{id:randomBytes(16),name:'oneapp-user',displayName:'OneApp User'},
-        pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
-        authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'required',requireResidentKey:true,userVerification:'required'},
-        timeout:60000,
-        attestation:'none'
-      }});
-      if(!credential)throw new Error('Device authentication was cancelled.');
-      credentialId=new Uint8Array(credential.rawId);
-      localStorage.setItem(DEVICE_CREDENTIAL_KEY,bytesToBase64Url(credentialId));
+    if(!storedId){
+      showToast('Device lock setup is not available from this web app yet.','warn');
+      return false;
     }
+    const credentialId=base64UrlToBytes(storedId);
     const assertion=await navigator.credentials.get({publicKey:{
       challenge:randomBytes(32),
       allowCredentials:[{type:'public-key',id:credentialId}],
@@ -2121,9 +2111,10 @@ async function lockDeviceAuth(){
     if(!assertion)throw new Error('Device authentication was not completed.');
     lockHide();
     showToast('Device authenticated — app unlocked','success');
+    return true;
   }catch(e){
-    if(e&&e.name==='NotAllowedError')err.textContent='Authentication cancelled or not completed. Try again.';
-    else err.textContent=e&&e.message?e.message:'Device authentication failed. Try again.';
+    showToast('Device authentication could not be completed. OneApp remains open.','warn');
+    return false;
   }
 }
 
@@ -2228,8 +2219,9 @@ function scanConfirm(){
   scanReset();
 }
 
-// ===== AUTO-LOCK ON LOAD (MOCK) =====
-window.addEventListener('load',()=>{setTimeout(()=>{lockShow();},300);});
+// ===== AUTO-LOCK ON LOAD =====
+// Do not block the app on startup. Browser credential-manager support varies by device/browser.
+// Device authentication is invoked only when the user explicitly chooses Lock App Now.
 
 // --- PWA SERVICE WORKER REGISTRATION ---
 if ('serviceWorker' in navigator) {
