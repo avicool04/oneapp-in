@@ -113,6 +113,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 #scanFab:active{transform:translateX(-50%) scale(.92)}
 #scanFab:hover{box-shadow:0 6px 20px rgba(0,0,0,.22)}
 #scanFab svg{width:26px;height:26px;fill:var(--dark)}
+.last-updated-box{display:flex;align-items:center;gap:.4rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:.5rem .8rem;margin-bottom:1rem;font-size:.8rem;color:#166534}
+.last-updated-box svg{color:#16a34a;flex-shrink:0}
+.last-updated-box strong{font-weight:700}
 /* ===== SCAN OVERLAY ===== */
 #scanOverlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff}
 #scanOverlay.show{display:flex}
@@ -174,6 +177,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div>
 </nav>
 <div id="vault" class="view active container">
+<div id="lastUpdatedBox" class="last-updated-box">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+<span>Last updated: <strong id="lastUpdatedText">—</strong></span>
+</div>
 <h2>My Secure Vault</h2>
 <p class="sub">Encrypted mirrors of your official documents.</p>
 <div class="card">
@@ -612,6 +619,9 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div id="scanAiBody"><p class="sub">Analyzing scanned document...</p></div>
   <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('scanFlowModal')">Cancel</button>
 </div></div>
+<button id="scanFab" onclick="startScanFlow()" aria-label="Scan Document" title="Scan Document">
+<svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/><circle cx="12" cy="12" r="3.2" fill="var(--dark)" opacity=".15"/></svg>
+</button>
 <footer>OneApp.in • Live on Vercel + Supabase<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -1028,6 +1038,7 @@ user_id: uid, document_type: docType, document_name: docName, file_url: isPasspo
 });
 if(dbError) throw dbError;
 alert('✅ Document saved successfully!');
+updateLastUpdated();
 await loadGenericDocsStatus(true);
 if(docType === 'Other') loadOtherDocs();
 else showView('vault');
@@ -1526,6 +1537,7 @@ const{error}=await sb.from('documents').insert({user_id:uid,doc_category:'identi
 if(error)alert('❌ '+error.message);
 }
 closeModal('childAaModal');
+updateLastUpdated();
 alert('✅ Saved to '+currentChildName+"'s vault.");
 loadChildDocs();
 }
@@ -1616,7 +1628,7 @@ if(aaFile){(e=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',
 const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
 let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true,deleted_at:null}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true,deleted_at:null}));
 if(err){alert('❌ '+err.message);return;}
-aaHasOrig=true;setSaved('Wallet card saved');closeModal('aadhaarModal');alert('✅ Saved!');}
+aaHasOrig=true;setSaved('Wallet card saved');updateLastUpdated();closeModal('aadhaarModal');alert('✅ Saved!');}
 function setSaved(t){document.getElementById('aadhaarIndicator').classList.add('show');}
 function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;aaRowId=null;document.getElementById('aadhaarIndicator').classList.remove('show');}
 async function loadSavedAadhaar(uid){
@@ -2064,9 +2076,15 @@ async function scanAiConfirm(){
   else{await saveGenericDocument(null);}
   const dtCount=scanAiResult.dates.length,rmCount=scanAiResult.reminders.filter(r=>r._enabled!==false).length;
   showToast(`Saved as ${cat}${dtCount?' • '+dtCount+' date(s)':''}${rmCount?' • '+rmCount+' reminder(s)':''}`,rmCount?'success':'default');
+  updateLastUpdated();
   scanAiResult=null;
 }
 function closeScanCrop(){closeModal('scanCropModal');scanSourceFile=null;scanAiResult=null;}
+
+// ===== LAST UPDATED TRACKER =====
+function updateLastUpdated(){const now=new Date();const ts=now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' • '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});try{localStorage.setItem('oneapp_last_updated',ts);}catch(e){}const el=document.getElementById('lastUpdatedText');if(el)el.textContent=ts;}
+function loadLastUpdated(){try{const ts=localStorage.getItem('oneapp_last_updated');const el=document.getElementById('lastUpdatedText');if(el)el.textContent=ts||'Welcome — no updates yet';}catch(e){}}
+loadLastUpdated();
 
 // ===== AUTO-LOCK ON FOREGROUND LOSS =====
 setupAutoLock();
