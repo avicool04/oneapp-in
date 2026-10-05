@@ -585,7 +585,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   <div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:.8rem"><label style="font-weight:700"><input id="scanEnhance" type="checkbox" checked> Correct + Enhance</label><button class="btn btn-primary" onclick="scanOpenSaveMenu()">Continue</button></div>
   <button class="btn btn-outline" style="margin-top:.6rem" onclick="closeScanCrop()">Retake</button>
 </div></div>
-<div id="scanSaveModal" class="modal-overlay"><div class="modal"><h3>Save Scanned Document</h3><p class="sub">Choose where this document belongs.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem"><button class="btn btn-primary" onclick="scanSaveTo('Aadhaar')">Aadhaar</button><button class="btn btn-primary" onclick="scanSaveTo('PAN Card')">PAN</button><button class="btn btn-primary" onclick="scanSaveTo('Driving License')">License</button><button class="btn btn-primary" onclick="scanSaveTo('Passport')">Passport</button><button class="btn btn-outline" onclick="scanSaveTo('Other')">Other</button></div><button class="btn btn-outline" style="margin-top:.7rem" onclick="closeModal('scanSaveModal')">Cancel</button></div></div>
 <!-- EMERGENCY BELL FLOW MODAL -->
 <div id="emergencyBellModal" class="modal-overlay"><div class="modal">
 <div class="step-dots" id="bellDots"><div class="step-dot active"></div><div class="step-dot"></div></div>
@@ -607,41 +606,11 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 </div>
 <button class="btn btn-outline" style="margin-top:.4rem" onclick="closeModal('emergencyBellModal');bellReset();">Cancel</button>
 </div></div>
-<!-- SCAN FLOW MODAL (sequential prompts) -->
-<div id="scanFlowModal" class="modal-overlay"><div class="modal">
-<div class="step-dots" id="scanDots"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
-<div class="scan-flow-step active" id="scanStep1">
-<div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-<div class="scan-flow-text">I scanned an <strong>Immunization Card</strong>. I see the name <strong>'Udayansh'</strong>, but your child's profile is <strong>'Aryansh'</strong> (DOB: 26.06.26) and spouse is <strong>'Geetanjali Gupta'</strong>. Is this for Aryansh?</div>
-<div class="scan-flow-actions">
-<button class="btn btn-primary" onclick="scanStepYes(1)">Yes</button>
-<button class="btn btn-outline" onclick="scanStepNo(1)">No</button>
-</div>
-</div>
-<div class="scan-flow-step" id="scanStep2">
-<div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M3 5v14h18V5H3zm16 12H5V7h14v10zM7 9h10v2H7zm0 4h7v2H7z"/></svg></div>
-<div class="scan-flow-text">Save this in the <strong>'Vaccines'</strong> section under <strong>Aryansh's</strong> profile?</div>
-<div class="scan-flow-actions">
-<button class="btn btn-primary" onclick="scanStepYes(2)">Yes</button>
-<button class="btn btn-outline" onclick="scanStepNo(2)">No</button>
-</div>
-</div>
-<div class="scan-flow-step" id="scanStep3">
-<div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></div>
-<div class="scan-flow-text">I see the <strong>6-month vaccine</strong> is next. Vaccination Specification: Is the clinic open on <strong>'Normal Days'</strong> (exact date) or a <strong>'Specific Day of the Week'</strong>?</div>
-<div class="scan-flow-actions">
-<button class="btn btn-outline" onclick="scanSelectDayType('normal')">Normal Days</button>
-<button class="btn btn-outline" onclick="scanSelectDayType('specific')">Specific Day (e.g., Wednesday)</button>
-</div>
-</div>
-<div class="scan-flow-step" id="scanStep4">
-<div class="scan-flow-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
-<div class="scan-flow-text" id="scanConfirmText">Reminder set for the next <strong>Wednesday</strong> after the 6-month mark. Alerts will be sent to You, Geetanjali, and Parents at <strong>30, 7, 2, and 1 days</strong> prior.</div>
-<div class="scan-flow-actions">
-<button class="btn btn-success" onclick="scanConfirm()">Confirm</button>
-</div>
-</div>
-<button class="btn btn-outline" style="margin-top:.4rem" onclick="closeModal('scanFlowModal');scanReset();">Cancel</button>
+<!-- AI DOCUMENT ANALYSIS MODAL -->
+<div id="scanFlowModal" class="modal-overlay"><div class="modal" style="max-width:440px">
+  <h3 style="display:flex;align-items:center;gap:.4rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> AI Document Analysis</h3>
+  <div id="scanAiBody"><p class="sub">Analyzing scanned document...</p></div>
+  <button class="btn btn-outline" style="margin-top:.5rem" onclick="closeModal('scanFlowModal')">Cancel</button>
 </div></div>
 <footer>OneApp.in • Live on Vercel + Supabase<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2016,10 +1985,88 @@ async function handleScanBlob(file){closeScanner();scanSourceFile=file;const url
 function positionScanCorners(){const stage=document.getElementById('scanCropStage'),w=stage.clientWidth,h=document.getElementById('scanCropCanvas').clientHeight;document.querySelectorAll('.scan-corner').forEach((el,i)=>{el.style.left=(scanCorners[i][0]*w-11)+'px';el.style.top=(scanCorners[i][1]*h-11)+'px';});}
 function initScanCornerDrag(){document.querySelectorAll('.scan-corner').forEach((el,i)=>{el.onpointerdown=e=>{e.preventDefault();el.setPointerCapture(e.pointerId);const move=ev=>{const r=document.getElementById('scanCropStage').getBoundingClientRect();scanCorners[i][0]=Math.max(0,Math.min(1,(ev.clientX-r.left)/r.width));scanCorners[i][1]=Math.max(0,Math.min(1,(ev.clientY-r.top)/document.getElementById('scanCropCanvas').clientHeight));positionScanCorners();};const up=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);};el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);};});}
 async function makeScannedBlob(){const src=scanSourceFile;if(!src)throw new Error('No scan selected.');const img=await new Promise((resolve,reject)=>{const u=URL.createObjectURL(src),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=()=>{URL.revokeObjectURL(u);reject(new Error('Could not read image.'))};im.src=u;});const cw=img.naturalWidth,ch=img.naturalHeight,pts=scanCorners.map(p=>[p[0]*cw,p[1]*ch]),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),minX=Math.max(0,Math.floor(Math.min(...xs))),maxX=Math.min(cw,Math.ceil(Math.max(...xs))),minY=Math.max(0,Math.floor(Math.min(...ys))),maxY=Math.min(ch,Math.ceil(Math.max(...ys)));const out=document.createElement('canvas');out.width=Math.max(1,maxX-minX);out.height=Math.max(1,maxY-minY);const ctx=out.getContext('2d');ctx.save();ctx.beginPath();ctx.moveTo(pts[0][0]-minX,pts[0][1]-minY);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0]-minX,pts[i][1]-minY);ctx.closePath();ctx.clip();if(document.getElementById('scanEnhance').checked)ctx.filter='brightness(1.06) contrast(1.18) saturate(.9)';ctx.drawImage(img,-minX,-minY);ctx.restore();return await new Promise(r=>out.toBlob(r,'image/jpeg',.94));}
-async function scanOpenSaveMenu(){try{scanSourceFile=await makeScannedBlob();closeModal('scanCropModal');openModal('scanSaveModal');}catch(e){alert('Scan processing failed: '+e.message);}}
-async function scanSaveTo(type){try{if(!scanSourceFile)return;tempUploadType=type;tempFile=new File([scanSourceFile],`OneApp-Scan-${Date.now()}.jpg`,{type:'image/jpeg'});closeModal('scanSaveModal');if(type==='Other'){openModal('customNameModal');}else if(type==='Driving License'){openModal('expiryDateModal');}else if(type==='Passport'){passportPage1File=tempFile;openModal('passportPage2Modal');}else{await saveGenericDocument(null);}showToast('Scanned document prepared for '+type,'success');}catch(e){alert('Could not save scan: '+e.message);}}
-function closeScanCrop(){closeModal('scanCropModal');scanSourceFile=null;}
-window.addEventListener('resize',()=>{if(document.getElementById('scanCropModal').classList.contains('show'))positionScanCorners();});
+async function scanOpenSaveMenu(){try{scanSourceFile=await makeScannedBlob();closeModal('scanCropModal');openModal('scanFlowModal');startAiAnalysis();}catch(e){alert('Scan processing failed: '+e.message);}}
+
+// ===== AI DOCUMENT ANALYSIS (MOCK) =====
+const MOCK_AI_DOCS=[
+  {type:'Aadhaar Card',suggestedCategory:'Aadhaar',dates:[],reminders:[],confidence:0.95},
+  {type:'PAN Card',suggestedCategory:'PAN Card',dates:[],reminders:[],confidence:0.93},
+  {type:'Driving License',suggestedCategory:'Driving License',dates:[{label:'Valid Until',value:'2031-06-15',type:'expiry'}],reminders:[{label:'DL Renewal',advanceDays:[30,7],targetDate:'2031-06-15'}],confidence:0.91},
+  {type:'Passport',suggestedCategory:'Passport',dates:[{label:'Expiry Date',value:'2030-03-22',type:'expiry'}],reminders:[{label:'Passport Renewal',advanceDays:[90,30,7],targetDate:'2030-03-22'}],confidence:0.92},
+  {type:'Immunization Card',suggestedCategory:'Vaccination',dates:[{label:'Next Vaccine (6-month)',value:'2026-12-26',type:'vaccination'}],reminders:[{label:'6-month vaccine',advanceDays:[30,7,2,1],targetDate:'2026-12-26'}],confidence:0.88},
+  {type:'Vehicle Insurance',suggestedCategory:'Other',dates:[{label:'Policy Expiry',value:'2027-04-14',type:'expiry'}],reminders:[{label:'Insurance Renewal',advanceDays:[30,7,1],targetDate:'2027-04-14'}],confidence:0.85},
+  {type:'Health Insurance Policy',suggestedCategory:'Other',dates:[{label:'Policy Renewal',value:'2027-03-01',type:'renewal'}],reminders:[{label:'Health Insurance Renewal',advanceDays:[30,7],targetDate:'2027-03-01'}],confidence:0.82},
+  {type:'Birth Certificate',suggestedCategory:'Other',dates:[{label:'Date of Birth',value:'2026-06-26',type:'birth'}],reminders:[],confidence:0.90},
+  {type:'Property Tax Receipt',suggestedCategory:'Other',dates:[{label:'Payment Date',value:'2026-04-05',type:'payment'}],reminders:[{label:'Next Property Tax',advanceDays:[30],targetDate:'2027-04-05'}],confidence:0.75},
+  {type:'Marriage Certificate',suggestedCategory:'Other',dates:[{label:'Marriage Date',value:'2023-02-14',type:'event'}],reminders:[{label:'Marriage Anniversary',advanceDays:[7,1],targetDate:'2027-02-14'}],confidence:0.87}
+];
+let scanAiResult=null;
+function startAiAnalysis(){
+  const body=document.getElementById('scanAiBody');
+  body.innerHTML='<div style="display:flex;align-items:center;gap:.6rem;padding:1rem 0"><div class="scan-spinner" style="width:28px;height:28px;border-width:3px;margin:0"></div><span style="font-size:.85rem;color:var(--gray)">AI is reading the document...</span></div>';
+  setTimeout(()=>{
+    const pick=MOCK_AI_DOCS[Math.floor(Math.random()*MOCK_AI_DOCS.length)];
+    scanAiResult=JSON.parse(JSON.stringify(pick));
+    renderAiResult();
+  },2000);
+}
+function renderAiResult(){
+  const r=scanAiResult;const body=document.getElementById('scanAiBody');
+  const pct=Math.round(r.confidence*100);
+  const allCats=['Aadhaar','PAN Card','Driving License','Passport','Vaccination','Other Documents'];
+  let catOpts=allCats.map(c=>`<option ${c===r.suggestedCategory?'selected':''}>${c}</option>`).join('');
+  let dateRows=r.dates.map((d,i)=>`
+    <div class="scan-date-row" style="display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid #f1f5f9">
+      <div style="flex:1">
+        <div style="font-size:.75rem;font-weight:600;color:var(--dark)">${escHtml(d.label)}</div>
+        <div style="font-size:.7rem;color:var(--gray)">${formatDateReadable(d.value)}</div>
+      </div>
+      <input type="date" value="${d.value}" onchange="scanAiUpdateDate(${i},this.value)" style="padding:.3rem;border:1px solid var(--border);border-radius:6px;font-size:.75rem;width:130px">
+    </div>`).join('');
+  if(!dateRows)dateRows='<p class="sub" style="padding:.5rem 0">No important dates detected on this document.</p>';
+  let reminderRows=r.reminders.map((rm,i)=>`
+    <div class="scan-reminder-row" style="display:flex;align-items:flex-start;gap:.5rem;padding:.5rem 0;border-bottom:1px solid #f1f5f9">
+      <input type="checkbox" checked onchange="scanAiToggleReminder(${i},this.checked)" style="margin-top:.2rem">
+      <div style="flex:1">
+        <div style="font-size:.78rem;font-weight:600">${escHtml(rm.label)}</div>
+        <div style="font-size:.7rem;color:var(--gray)">Alerts ${rm.advanceDays.map(d=>d+'d').join(', ')} before ${formatDateReadable(rm.targetDate)}</div>
+      </div>
+    </div>`).join('');
+  if(!reminderRows)reminderRows='<p class="sub" style="padding:.5rem 0">No reminders suggested for this document.</p>';
+  body.innerHTML=`
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.8rem;margin-bottom:.8rem">
+      <div style="font-size:.7rem;font-weight:700;color:#1e3a8a;text-transform:uppercase;letter-spacing:.04rem;margin-bottom:.2rem">AI Identified</div>
+      <div style="font-size:1rem;font-weight:700;color:var(--dark)">${escHtml(r.type)}</div>
+      <div style="font-size:.7rem;color:var(--gray);margin-top:.2rem">Confidence: ${pct}%</div>
+    </div>
+    <div class="field">
+      <label>Save to category</label>
+      <select id="scanAiCategory" onchange="scanAiResult.suggestedCategory=this.value">${catOpts}</select>
+    </div>
+    <div style="font-size:.75rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.04rem;margin:.6rem 0 .2rem">Important Dates</div>
+    ${dateRows}
+    <div style="font-size:.75rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.04rem;margin:.8rem 0 .2rem">Suggested Reminders</div>
+    ${reminderRows}
+    <button class="btn btn-success" style="margin-top:.8rem" onclick="scanAiConfirm()">Confirm &amp; Save</button>`;
+}
+function scanAiUpdateDate(i,val){if(scanAiResult.dates[i])scanAiResult.dates[i].value=val;if(scanAiResult.reminders[i])scanAiResult.reminders[i].targetDate=val;}
+function scanAiToggleReminder(i,on){if(scanAiResult.reminders[i])scanAiResult.reminders[i]._enabled=on;}
+function formatDateReadable(d){if(!d)return'';const dt=new Date(d);return dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+async function scanAiConfirm(){
+  if(!scanAiResult||!scanSourceFile)return;
+  const cat=scanAiResult.suggestedCategory;
+  tempUploadType=cat==='Other Documents'?'Other':cat;
+  tempFile=new File([scanSourceFile],`OneApp-Scan-${Date.now()}.jpg`,{type:'image/jpeg'});
+  closeModal('scanFlowModal');
+  if(tempUploadType==='Other'){openModal('customNameModal');}
+  else if(tempUploadType==='Driving License'){openModal('expiryDateModal');}
+  else if(tempUploadType==='Passport'){passportPage1File=tempFile;openModal('passportPage2Modal');}
+  else{await saveGenericDocument(null);}
+  const dtCount=scanAiResult.dates.length,rmCount=scanAiResult.reminders.filter(r=>r._enabled!==false).length;
+  showToast(`Saved as ${cat}${dtCount?' • '+dtCount+' date(s)':''}${rmCount?' • '+rmCount+' reminder(s)':''}`,rmCount?'success':'default');
+  scanAiResult=null;
+}
+function closeScanCrop(){closeModal('scanCropModal');scanSourceFile=null;scanAiResult=null;}
 
 // ===== AUTO-LOCK ON FOREGROUND LOSS =====
 setupAutoLock();
