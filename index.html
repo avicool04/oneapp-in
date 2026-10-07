@@ -2004,10 +2004,68 @@ bellReset();
 // ===== REAL DOCUMENT SCANNER =====
 let scanStream=null,scanSourceFile=null,scanCorners=[];
 function startScanFlow(){document.getElementById('scanOverlay').classList.add('show');startScanCamera();}
-async function startScanCamera(){try{scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});document.getElementById('scanVideo').srcObject=scanStream;}catch(e){closeScanner();alert('Camera could not be opened. Use Upload File instead, or allow camera access in your browser.');}}
-function closeScanner(){if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}const v=document.getElementById('scanVideo');if(v)v.srcObject=null;document.getElementById('scanOverlay').classList.remove('show');}
+async function startScanCamera(){
+try{
+  const video=document.getElementById('scanVideo');
+  scanStream=await navigator.mediaDevices.getUserMedia({
+    video:{
+      facingMode:{exact:'environment'},
+      width:{min:1280,ideal:3840},
+      height:{min:720,ideal:2160},
+      frameRate:{ideal:30,max:60}
+    },
+    audio:false
+  });
+  const track=scanStream.getVideoTracks()[0];
+  if(track){
+    const caps=track.getCapabilities?track.getCapabilities():{};
+    const advanced=[];
+    if(Array.isArray(caps.focusMode)&&caps.focusMode.includes('continuous')) advanced.push({focusMode:'continuous'});
+    if(caps.exposureMode&&Array.isArray(caps.exposureMode)&&caps.exposureMode.includes('continuous')) advanced.push({exposureMode:'continuous'});
+    if(advanced.length){try{await track.applyConstraints({advanced});}catch(e){}}
+    window.scanCameraTrack=track;
+  }
+  video.srcObject=scanStream;
+  video.setAttribute('playsinline','');
+  video.setAttribute('autoplay','');
+  video.muted=true;
+  await video.play().catch(()=>{});
+}catch(e){
+  // Some devices reject exact environment/high-resolution constraints; retry with a broad rear-camera request.
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:2560},height:{ideal:1440}},audio:false});
+    const track=scanStream.getVideoTracks()[0];
+    window.scanCameraTrack=track||null;
+    if(track){const caps=track.getCapabilities?track.getCapabilities():{};if(Array.isArray(caps.focusMode)&&caps.focusMode.includes('continuous')){try{await track.applyConstraints({advanced:[{focusMode:'continuous'}]});}catch(err){}}}
+    const video=document.getElementById('scanVideo');video.srcObject=scanStream;video.setAttribute('playsinline','');video.setAttribute('autoplay','');video.muted=true;await video.play().catch(()=>{});
+  }catch(err){closeScanner();alert('Camera could not be opened. Use Upload File instead, or allow camera access in your browser.');}
+}}
+function closeScanner(){if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}window.scanCameraTrack=null;const v=document.getElementById('scanVideo');if(v)v.srcObject=null;document.getElementById('scanOverlay').classList.remove('show');}
 function scanUploadFile(){document.getElementById('scanUploadInput').click();}
-function captureScanPhoto(){const v=document.getElementById('scanVideo');if(!v.videoWidth)return;const c=document.getElementById('scanLiveCanvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0,c.width,c.height);c.toBlob(blob=>{if(blob)handleScanBlob(blob,'scan-camera.jpg');},'image/jpeg',.95);}
+async function captureScanPhoto(){
+  const track=window.scanCameraTrack||(scanStream&&scanStream.getVideoTracks()[0]);
+  if(!track)return;
+  // Prefer the camera's native still-photo pipeline. It can provide a much higher-resolution image than the live video frame.
+  if(typeof ImageCapture!=='undefined'){
+    try{
+      const imageCapture=new ImageCapture(track);
+      const caps=typeof imageCapture.getPhotoCapabilities==='function'?await imageCapture.getPhotoCapabilities():null;
+      const opts={imageWidth:undefined,imageHeight:undefined};
+      if(caps){
+        if(caps.imageWidth&&caps.imageWidth.max)opts.imageWidth=caps.imageWidth.max;
+        if(caps.imageHeight&&caps.imageHeight.max)opts.imageHeight=caps.imageHeight.max;
+      }
+      const blob=await imageCapture.takePhoto(opts);
+      if(blob){handleScanBlob(blob,'scan-camera.jpg');return;}
+    }catch(e){/* fall back to the actual video frame below */}
+  }
+  const v=document.getElementById('scanVideo');
+  if(!v.videoWidth)return;
+  const c=document.getElementById('scanLiveCanvas');
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+  c.toBlob(blob=>{if(blob)handleScanBlob(blob,'scan-camera.jpg');},'image/jpeg',.98);
+}
 function handleScanUpload(file){if(file)handleScanBlob(file,file.name);}
 async function handleScanBlob(file){closeScanner();scanSourceFile=file;const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{const c=document.getElementById('scanCropCanvas');const maxW=1200,scale=Math.min(1,maxW/img.naturalWidth);c.width=Math.round(img.naturalWidth*scale);c.height=Math.round(img.naturalHeight*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);scanCorners=[[.08,.08],[.92,.08],[.92,.92],[.08,.92]];openModal('scanCropModal');setTimeout(()=>{positionScanCorners();initScanCornerDrag();},50);URL.revokeObjectURL(url);};img.src=url;}
 function positionScanCorners(){const stage=document.getElementById('scanCropStage'),w=stage.clientWidth,h=document.getElementById('scanCropCanvas').clientHeight;document.querySelectorAll('.scan-corner').forEach((el,i)=>{el.style.left=(scanCorners[i][0]*w-11)+'px';el.style.top=(scanCorners[i][1]*h-11)+'px';});}
