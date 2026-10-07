@@ -111,13 +111,72 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 #scanFab:active{transform:translateX(-50%) scale(.92)}
 #scanFab:hover{box-shadow:0 6px 20px rgba(0,0,0,.22)}
 #scanFab svg{width:42px;height:42px;display:block}
-/* ===== SCAN OVERLAY ===== */
-#scanOverlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+/* ===== SMART SCANNER (only scanner styles) ===== */
+#smartScanModal{z-index:500}
+.smart-scan-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;margin:0 auto;padding:1.25rem 1rem 1.5rem;max-height:90vh;overflow-y:auto;position:relative}
+.smart-scan-handle{width:36px;height:4px;background:#e2e8f0;border-radius:2px;margin:0 auto .9rem}
+.smart-scan-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem}
+.smart-scan-header h2{font-size:1.35rem;font-weight:800;color:var(--dark);margin:0}
+.smart-scan-header .smart-label{font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--primary);text-transform:uppercase;margin-bottom:.15rem}
+.smart-scan-close{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--gray)}
+.smart-scan-sub{font-size:.82rem;color:var(--gray);margin-bottom:1rem;line-height:1.45}
+.smart-scan-option{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border:1px solid var(--border);border-radius:14px;background:#fff;cursor:pointer;margin-bottom:.6rem;transition:background .15s,border-color .15s}
+.smart-scan-option:active{background:#f8fafc}
+.smart-scan-option .opt-icon{width:42px;height:42px;border-radius:12px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.smart-scan-option .opt-icon svg{width:22px;height:22px;stroke:var(--primary);fill:none;stroke-width:2}
+.smart-scan-option .opt-text{flex:1;min-width:0}
+.smart-scan-option .opt-text strong{display:block;font-size:.9rem;color:var(--dark)}
+.smart-scan-option .opt-text span{font-size:.72rem;color:var(--gray)}
+.smart-scan-option .opt-chevron{color:#94a3b8;font-size:1.1rem}
+.smart-scan-note{font-size:.7rem;color:var(--gray);text-align:center;margin-top:.75rem;display:flex;align-items:center;justify-content:center;gap:.35rem}
+/* Guided capture overlay */
+#scanOverlay{position:fixed;inset:0;background:linear-gradient(180deg,#0b1220 0%,#0f172a 40%,#020617 100%);z-index:9990;display:none;flex-direction:column;align-items:center;justify-content:flex-start;color:#fff;padding:0}
 #scanOverlay.show{display:flex}
-.scan-spinner{width:64px;height:64px;border:4px solid rgba(255,255,255,.15);border-top-color:#60a5fa;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:1.5rem}
-@keyframes spin{to{transform:rotate(360deg)}}
-.scan-text{font-size:.95rem;font-weight:600}
-.scan-sub{font-size:.75rem;color:#94a3b8;margin-top:.3rem}
+.scan-guided-top{width:100%;max-width:520px;padding:14px 16px 6px;display:flex;align-items:center;justify-content:space-between}
+.scan-guided-top .back-btn,.scan-guided-top .spark-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.scan-guided-top .back-btn:active,.scan-guided-top .spark-btn:active{background:rgba(255,255,255,.2)}
+.scan-guided-title{text-align:center;flex:1}
+.scan-guided-title .guided-label{font-size:.62rem;font-weight:700;letter-spacing:.1em;color:#94a3b8;text-transform:uppercase}
+.scan-guided-title h3{font-size:1.08rem;font-weight:700;margin:2px 0 0;color:#fff}
+.scan-guided-hint{font-size:.78rem;color:#94a3b8;text-align:center;padding:0 1.25rem 12px;max-width:520px;line-height:1.4}
+.scan-steps{display:flex;align-items:center;justify-content:center;gap:.55rem;margin-bottom:12px}
+.scan-step-pill{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:#64748b}
+.scan-step-pill .step-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;border:1.5px solid rgba(255,255,255,.15)}
+.scan-step-pill.done .step-num{background:#22c55e;color:#fff;border-color:#22c55e}
+.scan-step-pill.done{color:#86efac}
+.scan-step-pill.active .step-num{background:#3b82f6;color:#fff;border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+.scan-step-pill.active{color:#fff}
+.scan-step-line{width:36px;height:2px;background:rgba(255,255,255,.18);border-radius:1px}
+.scan-camera-wrap{position:relative;width:min(92vw,400px);aspect-ratio:3/4;background:#0a0f1a;border-radius:20px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06);margin:0 auto}
+#scanVideo{width:100%;height:100%;object-fit:cover;background:#0a0f1a}
+.scan-frame-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.38) 100%)}
+.scan-frame-box{width:82%;height:56%;border:1.5px solid rgba(255,255,255,.5);border-radius:6px;position:relative;box-shadow:0 0 0 9999px rgba(0,0,0,.3)}
+.scan-frame-box::before,.scan-frame-box::after{content:'';position:absolute;width:28px;height:28px;border-color:#3b82f6;border-style:solid}
+.scan-frame-box::before{top:-2px;left:-2px;border-width:3.5px 0 0 3.5px;border-radius:4px 0 0 0}
+.scan-frame-box::after{bottom:-2px;right:-2px;border-width:0 3.5px 3.5px 0;border-radius:0 0 4px 0}
+.scan-frame-corners{position:absolute;inset:0}
+.scan-frame-corners span{position:absolute;width:28px;height:28px;border-color:#3b82f6;border-style:solid}
+.scan-frame-corners span:nth-child(1){top:-2px;right:-2px;border-width:3.5px 3.5px 0 0;border-radius:0 4px 0 0}
+.scan-frame-corners span:nth-child(2){bottom:-2px;left:-2px;border-width:0 0 3.5px 3.5px;border-radius:0 0 0 4px}
+.scan-frame-label{position:absolute;top:14px;left:14px;background:rgba(15,23,42,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:.68rem;font-weight:700;padding:.3rem .65rem;border-radius:8px;letter-spacing:.05em;border:1px solid rgba(255,255,255,.1)}
+.scan-frame-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.scan-frame-center .focus-icon{width:52px;height:52px;margin:0 auto 10px;border:2px solid rgba(59,130,246,.45);border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.3)}
+.scan-frame-center .focus-icon svg{width:26px;height:26px;stroke:#60a5fa;fill:none;stroke-width:1.8}
+.scan-frame-center p{font-size:.88rem;font-weight:650;color:#fff;margin:0 0 4px;text-shadow:0 1px 4px rgba(0,0,0,.55)}
+.scan-frame-center span{font-size:.68rem;color:#94a3b8;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.scan-bottom-bar{width:100%;max-width:520px;padding:18px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:auto;background:linear-gradient(transparent,rgba(0,0,0,.6) 28%)}
+/* Professional circular shutter — outer ring + white core + camera glyph */
+.scan-shutter{width:80px;height:80px;border-radius:50%;border:none;padding:0;cursor:pointer;position:relative;background:transparent;display:flex;align-items:center;justify-content:center;transition:transform .12s ease;-webkit-tap-highlight-color:transparent}
+.scan-shutter:active{transform:scale(.9)}
+.scan-shutter::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(145deg,#3b82f6 0%,#1d4ed8 55%,#1e3a8a 100%);box-shadow:0 6px 24px rgba(37,99,235,.5),0 0 0 4px rgba(255,255,255,.18),inset 0 1px 0 rgba(255,255,255,.25)}
+.scan-shutter::after{content:'';position:absolute;inset:7px;border-radius:50%;background:#ffffff;box-shadow:inset 0 2px 5px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)}
+.scan-shutter svg{position:relative;z-index:2;width:30px;height:30px;stroke:#1e3a8a;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.scan-shutter-label{font-size:.8rem;font-weight:650;color:#e2e8f0;letter-spacing:.02em}
+.scan-save-both{width:100%;max-width:320px;padding:.9rem;border-radius:14px;border:none;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;display:none;box-shadow:0 4px 16px rgba(37,99,235,.35)}
+.scan-save-both.show{display:block}
+.scan-upload-alt{font-size:.76rem;color:#94a3b8;cursor:pointer;margin-top:2px;opacity:.9}
+.scan-upload-alt:active{opacity:1}
+.scan-corner{position:absolute;width:22px;height:22px;border:3px solid #fff;border-radius:50%;background:#2563eb;box-shadow:0 1px 8px #0008;touch-action:none}
 /* ===== EMERGENCY BELL FLOW ===== */
 #emergencyBellModal{z-index:550}
 .bell-step{display:none}.bell-step.active{display:block}
@@ -136,8 +195,6 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .step-dots{display:flex;justify-content:center;gap:.4rem;margin-bottom:1rem}
 .step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s}
 .step-dot.active{background:var(--primary);width:24px;border-radius:4px}
-/* ===== REAL DOCUMENT SCANNER ===== */
-#scanOverlay{position:fixed;inset:0;background:#0f172a;z-index:9990;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff;padding:1rem}#scanOverlay.show{display:flex}.scan-camera-wrap{position:relative;width:min(92vw,520px);height:min(72vh,680px);background:#111827;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}#scanVideo{width:100%;height:100%;object-fit:contain;background:#111827}.scan-topbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px;color:#fff;background:linear-gradient(#0008,transparent)}.scan-bottom{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:18px;background:linear-gradient(transparent,#000b)}.scan-capture{width:68px;height:68px;border-radius:50%;border:5px solid #fff;background:#fff;box-shadow:0 0 0 3px #64748b;cursor:pointer}.scan-hint{margin-top:12px;text-align:center;color:#cbd5e1;font-size:.85rem}.scan-choice-row{display:flex;gap:.7rem;margin-top:1rem}.scan-choice-row .btn{min-width:130px}.scan-corner{position:absolute;width:22px;height:22px;border:3px solid #fff;border-radius:50%;background:#2563eb;box-shadow:0 1px 8px #0008;touch-action:none}
 </style>
 <meta property="og:image" content="https://bolt.new/static/og_default.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -572,18 +629,89 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
 </div></div>
 
-<!-- REAL DOCUMENT SCANNER -->
+<!-- SMART SCANNER CHOOSER (bottom sheet) -->
+<div id="smartScanModal" class="modal-overlay" style="align-items:flex-end;padding:0">
+  <div class="smart-scan-sheet" onclick="event.stopPropagation()">
+    <div class="smart-scan-handle"></div>
+    <div class="smart-scan-header">
+      <div>
+        <div class="smart-label">SMART SCANNER</div>
+        <h2>Scan Document</h2>
+      </div>
+      <button class="smart-scan-close" onclick="closeModal('smartScanModal')" aria-label="Close">×</button>
+    </div>
+    <p class="smart-scan-sub">What are you scanning? Choose a path and OneApp will guide the right workflow.</p>
+    <div class="smart-scan-option" onclick="smartScanChoose('gov')">
+      <div class="opt-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4M7 13h6"/></svg></div>
+      <div class="opt-text"><strong>ID / Government Document</strong><span>Aadhaar, PAN, voter ID and more</span></div>
+      <span class="opt-chevron">›</span>
+    </div>
+    <div class="smart-scan-option" onclick="smartScanChoose('medical')">
+      <div class="opt-icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="opt-text"><strong>Medical / Vaccine Document</strong><span>Save vaccine dates and reminders</span></div>
+      <span class="opt-chevron">›</span>
+    </div>
+    <div class="smart-scan-option" onclick="smartScanChoose('normal')">
+      <div class="opt-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="opt-text"><strong>Normal Document</strong><span>Create a clean multi-page file</span></div>
+      <span class="opt-chevron">›</span>
+    </div>
+    <div class="smart-scan-option" onclick="smartScanChoose('upload')">
+      <div class="opt-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <div class="opt-text"><strong>Upload Image / PDF</strong><span>Use an existing photo or document</span></div>
+      <span class="opt-chevron">›</span>
+    </div>
+    <div class="smart-scan-note">✦ Original sides stay separate. Sharing layouts can be chosen later.</div>
+  </div>
+</div>
+
+<!-- GUIDED CAPTURE OVERLAY -->
 <div id="scanOverlay">
+  <div class="scan-guided-top">
+    <button class="back-btn" onclick="closeScanner()" aria-label="Back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="scan-guided-title">
+      <div class="guided-label">GUIDED CAPTURE</div>
+      <h3 id="scanGuidedDocTitle">Government ID</h3>
+    </div>
+    <button class="spark-btn" aria-label="Tips">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z"/></svg>
+    </button>
+  </div>
+  <p class="scan-guided-hint" id="scanGuidedHint">Keep each side original. OneApp will clean the frame without fusing them.</p>
+  <div class="scan-steps" id="scanStepsRow">
+    <div class="scan-step-pill active" id="scanStepFront"><span class="step-num">1</span> Front</div>
+    <div class="scan-step-line"></div>
+    <div class="scan-step-pill" id="scanStepBack"><span class="step-num">2</span> Back</div>
+  </div>
   <div class="scan-camera-wrap">
     <video id="scanVideo" autoplay playsinline muted></video>
     <canvas id="scanLiveCanvas" style="display:none"></canvas>
-    <div class="scan-topbar"><strong>Scan Document</strong><button class="btn btn-outline" style="color:#fff;border-color:#ffffff66" onclick="closeScanner()">Close</button></div>
-    <div class="scan-bottom"><button class="scan-capture" aria-label="Take Photo" onclick="captureScanPhoto()"></button></div>
+    <div class="scan-frame-overlay">
+      <div class="scan-frame-label" id="scanFrameLabel">● SMART FRAME · FRONT</div>
+      <div class="scan-frame-box">
+        <div class="scan-frame-corners"><span></span><span></span></div>
+        <div class="scan-frame-center">
+          <div class="focus-icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+          <p>Align document inside the frame</p>
+          <span>Guided camera preview · edge detection ready</span>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="scan-hint">Position the document inside the frame, then tap the shutter.</div>
-  <div class="scan-choice-row"><button class="btn btn-outline" style="color:#fff;border-color:#ffffff66" onclick="scanUploadFile()">Upload File</button></div>
-  <input id="scanUploadInput" type="file" accept="image/*" style="display:none" onchange="handleScanUpload(this.files[0])">
+  <div class="scan-bottom-bar">
+    <button class="scan-shutter" id="scanShutterBtn" aria-label="Capture" onclick="captureScanPhoto()">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><circle cx="12" cy="13" r="1.5" fill="#1e3a8a" stroke="none"/></svg>
+    </button>
+    <div class="scan-shutter-label" id="scanShutterLabel">Capture front</div>
+    <button class="scan-save-both" id="scanSaveBothBtn" onclick="scanFinishGuided()">Save front + back</button>
+    <div class="scan-upload-alt" onclick="scanUploadFile()">Upload from gallery instead</div>
+  </div>
+  <input id="scanUploadInput" type="file" accept="image/*,application/pdf" style="display:none" onchange="handleScanUpload(this.files[0])">
 </div>
+
+<!-- CROP + SAVE (unchanged logic, kept for non-guided paths) -->
 <div id="scanCropModal" class="modal-overlay"><div class="modal" style="max-width:620px">
   <h3>Adjust Document</h3><p class="sub">Drag all four corners to match the document. Then choose the enhancement and destination.</p>
   <div id="scanCropStage" style="position:relative;width:100%;background:#111827;border-radius:12px;overflow:hidden;touch-action:none">
@@ -2001,9 +2129,77 @@ closeModal('emergencyBellModal');
 showToast('Alert Sent: '+sevLabel+' for '+bellDuration+'. Escalation active.',bellSeverity==='severe'?'danger':'warn');
 bellReset();
 }
-// ===== REAL DOCUMENT SCANNER =====
+// ===== REAL DOCUMENT SCANNER (Smart Scanner) =====
 let scanStream=null,scanSourceFile=null,scanCorners=[];
-function startScanFlow(){document.getElementById('scanOverlay').classList.add('show');startScanCamera();}
+let scanMode='single'; // 'gov' | 'medical' | 'normal' | 'single'
+let scanFrontBlob=null,scanBackBlob=null;
+let scanCurrentSide='front'; // 'front' | 'back'
+
+function startScanFlow(){
+  // Open Smart Scanner chooser (matches screenshots)
+  openModal('smartScanModal');
+}
+
+function smartScanChoose(path){
+  closeModal('smartScanModal');
+  scanMode=path;
+  scanFrontBlob=null;
+  scanBackBlob=null;
+  scanCurrentSide='front';
+  if(path==='upload'){
+    document.getElementById('scanUploadInput').click();
+    return;
+  }
+  // Prepare guided UI labels
+  const titleEl=document.getElementById('scanGuidedDocTitle');
+  const hintEl=document.getElementById('scanGuidedHint');
+  const stepsRow=document.getElementById('scanStepsRow');
+  if(path==='gov'){
+    titleEl.textContent='Government ID';
+    hintEl.textContent='Keep each side original. OneApp will clean the frame without fusing them.';
+    stepsRow.style.display='flex';
+    updateGuidedUI();
+  }else if(path==='medical'){
+    titleEl.textContent='Medical / Vaccine';
+    hintEl.textContent='Capture the page clearly. Dates and reminders can be set after save.';
+    stepsRow.style.display='none';
+    document.getElementById('scanFrameLabel').textContent='● SMART FRAME';
+    document.getElementById('scanShutterLabel').textContent='Capture page';
+    document.getElementById('scanSaveBothBtn').classList.remove('show');
+  }else{
+    titleEl.textContent='Normal Document';
+    hintEl.textContent='Create a clean page. You can add more pages after the first capture.';
+    stepsRow.style.display='none';
+    document.getElementById('scanFrameLabel').textContent='● SMART FRAME';
+    document.getElementById('scanShutterLabel').textContent='Capture page';
+    document.getElementById('scanSaveBothBtn').classList.remove('show');
+  }
+  document.getElementById('scanOverlay').classList.add('show');
+  startScanCamera();
+}
+
+function updateGuidedUI(){
+  const frontPill=document.getElementById('scanStepFront');
+  const backPill=document.getElementById('scanStepBack');
+  const label=document.getElementById('scanFrameLabel');
+  const shutterLabel=document.getElementById('scanShutterLabel');
+  const saveBoth=document.getElementById('scanSaveBothBtn');
+  if(scanCurrentSide==='front'){
+    frontPill.className='scan-step-pill active';
+    backPill.className='scan-step-pill'+(scanFrontBlob?' done':'');
+    if(scanFrontBlob) frontPill.classList.add('done');
+    label.textContent='● SMART FRAME · FRONT';
+    shutterLabel.textContent=scanFrontBlob?'Retake front':'Capture front';
+  }else{
+    frontPill.className='scan-step-pill done';
+    backPill.className='scan-step-pill active';
+    label.textContent='● SMART FRAME · BACK';
+    shutterLabel.textContent=scanBackBlob?'Retake back':'Capture back';
+  }
+  if(scanFrontBlob&&scanBackBlob) saveBoth.classList.add('show');
+  else saveBoth.classList.remove('show');
+}
+
 async function startScanCamera(){
 try{
   const video=document.getElementById('scanVideo');
@@ -2031,7 +2227,6 @@ try{
   video.muted=true;
   await video.play().catch(()=>{});
 }catch(e){
-  // Some devices reject exact environment/high-resolution constraints; retry with a broad rear-camera request.
   try{
     scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:2560},height:{ideal:1440}},audio:false});
     const track=scanStream.getVideoTracks()[0];
@@ -2040,31 +2235,49 @@ try{
     const video=document.getElementById('scanVideo');video.srcObject=scanStream;video.setAttribute('playsinline','');video.setAttribute('autoplay','');video.muted=true;await video.play().catch(()=>{});
   }catch(err){closeScanner();alert('Camera could not be opened. Use Upload File instead, or allow camera access in your browser.');}
 }}
-function closeScanner(){if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}window.scanCameraTrack=null;const v=document.getElementById('scanVideo');if(v)v.srcObject=null;document.getElementById('scanOverlay').classList.remove('show');}
+function closeScanner(){if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}window.scanCameraTrack=null;const v=document.getElementById('scanVideo');if(v)v.srcObject=null;document.getElementById('scanOverlay').classList.remove('show');scanFrontBlob=null;scanBackBlob=null;scanCurrentSide='front';}
 function scanUploadFile(){document.getElementById('scanUploadInput').click();}
 async function captureScanPhoto(){
   const track=window.scanCameraTrack||(scanStream&&scanStream.getVideoTracks()[0]);
   if(!track)return;
-  // Prefer the camera's native still-photo pipeline. It can provide a much higher-resolution image than the live video frame.
+  let blob=null;
   if(typeof ImageCapture!=='undefined'){
     try{
       const imageCapture=new ImageCapture(track);
       const caps=typeof imageCapture.getPhotoCapabilities==='function'?await imageCapture.getPhotoCapabilities():null;
-      const opts={imageWidth:undefined,imageHeight:undefined};
+      const opts={};
       if(caps){
         if(caps.imageWidth&&caps.imageWidth.max)opts.imageWidth=caps.imageWidth.max;
         if(caps.imageHeight&&caps.imageHeight.max)opts.imageHeight=caps.imageHeight.max;
       }
-      const blob=await imageCapture.takePhoto(opts);
-      if(blob){handleScanBlob(blob,'scan-camera.jpg');return;}
-    }catch(e){/* fall back to the actual video frame below */}
+      blob=await imageCapture.takePhoto(opts);
+    }catch(e){}
   }
-  const v=document.getElementById('scanVideo');
-  if(!v.videoWidth)return;
-  const c=document.getElementById('scanLiveCanvas');
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  c.getContext('2d').drawImage(v,0,0,c.width,c.height);
-  c.toBlob(blob=>{if(blob)handleScanBlob(blob,'scan-camera.jpg');},'image/jpeg',.98);
+  if(!blob){
+    const v=document.getElementById('scanVideo');
+    if(!v.videoWidth)return;
+    const c=document.getElementById('scanLiveCanvas');
+    c.width=v.videoWidth;c.height=v.videoHeight;
+    c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+    blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.98));
+  }
+  if(!blob)return;
+  if(scanMode==='gov'){
+    // Guided front/back flow
+    if(scanCurrentSide==='front'){
+      scanFrontBlob=blob;
+      scanCurrentSide='back';
+      updateGuidedUI();
+      showToast('Front captured. Now capture the back.','success');
+    }else{
+      scanBackBlob=blob;
+      updateGuidedUI();
+      showToast('Back captured. You can save or retake.','success');
+    }
+  }else{
+    // Single-page path → existing crop flow
+    handleScanBlob(blob,'scan-camera.jpg');
+  }
 }
 function handleScanUpload(file){if(file)handleScanBlob(file,file.name);}
 async function handleScanBlob(file){closeScanner();scanSourceFile=file;const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{const c=document.getElementById('scanCropCanvas');const maxW=1200,scale=Math.min(1,maxW/img.naturalWidth);c.width=Math.round(img.naturalWidth*scale);c.height=Math.round(img.naturalHeight*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);scanCorners=[[.08,.08],[.92,.08],[.92,.92],[.08,.92]];openModal('scanCropModal');setTimeout(()=>{positionScanCorners();initScanCornerDrag();},50);URL.revokeObjectURL(url);};img.src=url;}
@@ -2074,6 +2287,17 @@ async function makeScannedBlob(){const src=scanSourceFile;if(!src)throw new Erro
 async function scanOpenSaveMenu(){try{scanSourceFile=await makeScannedBlob();closeModal('scanCropModal');openModal('scanSaveModal');}catch(e){alert('Scan processing failed: '+e.message);}}
 async function scanSaveTo(type){try{if(!scanSourceFile)return;tempUploadType=type;tempFile=new File([scanSourceFile],`OneApp-Scan-${Date.now()}.jpg`,{type:'image/jpeg'});closeModal('scanSaveModal');if(type==='Other'){openModal('customNameModal');}else if(type==='Driving License'){openModal('expiryDateModal');}else if(type==='Passport'){passportPage1File=tempFile;openModal('passportPage2Modal');}else{await saveGenericDocument(null);}showToast('Scanned document prepared for '+type,'success');}catch(e){alert('Could not save scan: '+e.message);}}
 function closeScanCrop(){closeModal('scanCropModal');scanSourceFile=null;}
+async function scanFinishGuided(){
+  if(!scanFrontBlob||!scanBackBlob){showToast('Capture both front and back first.','warn');return;}
+  closeScanner();
+  // Use front as primary for existing save flow (Aadhaar-style keeps sides separate later)
+  scanSourceFile=scanFrontBlob;
+  tempFile=new File([scanFrontBlob],`OneApp-Scan-Front-${Date.now()}.jpg`,{type:'image/jpeg'});
+  // Also stash back for potential Aadhaar dual-side handling
+  window._scanBackBlob=scanBackBlob;
+  openModal('scanSaveModal');
+  showToast('Front + back ready. Choose document type.','success');
+}
 window.addEventListener('resize',()=>{if(document.getElementById('scanCropModal').classList.contains('show'))positionScanCorners();});
 
 // ===== SITE LAST UPDATED =====
