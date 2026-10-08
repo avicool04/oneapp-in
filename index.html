@@ -165,12 +165,10 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
 .scan-frame-center p{font-size:.88rem;font-weight:650;color:#fff;margin:0 0 4px;text-shadow:0 1px 4px rgba(0,0,0,.55)}
 .scan-frame-center span{font-size:.68rem;color:#94a3b8;text-shadow:0 1px 3px rgba(0,0,0,.4)}
 .scan-bottom-bar{width:100%;max-width:520px;padding:18px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:auto;background:linear-gradient(transparent,rgba(0,0,0,.6) 28%)}
-/* Professional circular shutter — outer ring + white core + camera glyph */
-.scan-shutter{width:80px;height:80px;border-radius:50%;border:none;padding:0;cursor:pointer;position:relative;background:transparent;display:flex;align-items:center;justify-content:center;transition:transform .12s ease;-webkit-tap-highlight-color:transparent}
-.scan-shutter:active{transform:scale(.9)}
-.scan-shutter::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(145deg,#3b82f6 0%,#1d4ed8 55%,#1e3a8a 100%);box-shadow:0 6px 24px rgba(37,99,235,.5),0 0 0 4px rgba(255,255,255,.18),inset 0 1px 0 rgba(255,255,255,.25)}
-.scan-shutter::after{content:'';position:absolute;inset:7px;border-radius:50%;background:#ffffff;box-shadow:inset 0 2px 5px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)}
-.scan-shutter svg{position:relative;z-index:2;width:30px;height:30px;stroke:#1e3a8a;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* True aperture shutter icon (option 1) — pure SVG, no image */
+.scan-shutter{width:84px;height:84px;border-radius:50%;border:none;padding:0;cursor:pointer;position:relative;background:transparent;display:flex;align-items:center;justify-content:center;transition:transform .12s ease,filter .12s ease;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 22px rgba(0,0,0,.35)}
+.scan-shutter:active{transform:scale(.9);filter:brightness(.92)}
+.scan-shutter svg{width:84px;height:84px;display:block;border-radius:50%}
 .scan-shutter-label{font-size:.8rem;font-weight:650;color:#e2e8f0;letter-spacing:.02em}
 .scan-save-both{width:100%;max-width:320px;padding:.9rem;border-radius:14px;border:none;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;display:none;box-shadow:0 4px 16px rgba(37,99,235,.35)}
 .scan-save-both.show{display:block}
@@ -702,7 +700,56 @@ footer{text-align:center;padding:1.5rem 1rem;color:var(--gray);font-size:.7rem}
   </div>
   <div class="scan-bottom-bar">
     <button class="scan-shutter" id="scanShutterBtn" aria-label="Capture" onclick="captureScanPhoto()">
-      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><circle cx="12" cy="13" r="1.5" fill="#1e3a8a" stroke="none"/></svg>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="shRim" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e8eef5"/>
+            <stop offset="45%" stop-color="#b8c4d4"/>
+            <stop offset="100%" stop-color="#8a97a8"/>
+          </linearGradient>
+          <linearGradient id="shIris" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#5eb0ff"/>
+            <stop offset="45%" stop-color="#3b6fd9"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+          <radialGradient id="shHole" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1a1a1a"/>
+            <stop offset="100%" stop-color="#000"/>
+          </radialGradient>
+        </defs>
+        <!-- outer silver rim -->
+        <circle cx="50" cy="50" r="48" fill="url(#shRim)"/>
+        <circle cx="50" cy="50" r="48" fill="none" stroke="#ffffff" stroke-width="1.2" opacity=".55"/>
+        <!-- black barrel -->
+        <circle cx="50" cy="50" r="41" fill="#1c1c1e"/>
+        <circle cx="50" cy="50" r="41" fill="none" stroke="#2a2a2e" stroke-width="1.5"/>
+        <!-- iris disc -->
+        <circle cx="50" cy="50" r="33" fill="url(#shIris)"/>
+        <!-- 8 aperture blades -->
+        <g fill="#0f172a" opacity=".28">
+          <path d="M50 17 L58 42 L50 50 Z"/>
+          <path d="M73 27 L62 48 L50 50 Z"/>
+          <path d="M83 50 L62 58 L50 50 Z"/>
+          <path d="M73 73 L58 62 L50 50 Z"/>
+          <path d="M50 83 L42 62 L50 50 Z"/>
+          <path d="M27 73 L38 58 L50 50 Z"/>
+          <path d="M17 50 L38 42 L50 50 Z"/>
+          <path d="M27 27 L42 38 L50 50 Z"/>
+        </g>
+        <g fill="none" stroke="#ffffff" stroke-width="1.1" opacity=".35">
+          <path d="M50 17 Q62 32 50 50"/>
+          <path d="M73 27 Q68 45 50 50"/>
+          <path d="M83 50 Q68 58 50 50"/>
+          <path d="M73 73 Q58 68 50 50"/>
+          <path d="M50 83 Q38 68 50 50"/>
+          <path d="M27 73 Q32 58 50 50"/>
+          <path d="M17 50 Q32 42 50 50"/>
+          <path d="M27 27 Q42 32 50 50"/>
+        </g>
+        <!-- center opening -->
+        <circle cx="50" cy="50" r="11" fill="url(#shHole)"/>
+        <circle cx="50" cy="50" r="11" fill="none" stroke="#334155" stroke-width="1"/>
+      </svg>
     </button>
     <div class="scan-shutter-label" id="scanShutterLabel">Capture front</div>
     <button class="scan-save-both" id="scanSaveBothBtn" onclick="scanFinishGuided()">Save front + back</button>
@@ -2237,6 +2284,25 @@ try{
 }}
 function closeScanner(){if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}window.scanCameraTrack=null;const v=document.getElementById('scanVideo');if(v)v.srcObject=null;document.getElementById('scanOverlay').classList.remove('show');scanFrontBlob=null;scanBackBlob=null;scanCurrentSide='front';}
 function scanUploadFile(){document.getElementById('scanUploadInput').click();}
+/** Crop photo to the on-screen smart frame (82% × 56% centered) and lightly enhance — scanner only */
+async function cropToSmartFrame(blob){
+  const img=await new Promise((resolve,reject)=>{
+    const u=URL.createObjectURL(blob),im=new Image();
+    im.onload=()=>{URL.revokeObjectURL(u);resolve(im);};
+    im.onerror=()=>{URL.revokeObjectURL(u);reject(new Error('Could not read capture'));};
+    im.src=u;
+  });
+  const fw=0.82,fh=0.56; // matches .scan-frame-box CSS
+  const cw=img.naturalWidth,ch=img.naturalHeight;
+  const cropW=Math.round(cw*fw),cropH=Math.round(ch*fh);
+  const sx=Math.round((cw-cropW)/2),sy=Math.round((ch-cropH)/2);
+  const out=document.createElement('canvas');
+  out.width=cropW;out.height=cropH;
+  const ctx=out.getContext('2d');
+  ctx.filter='brightness(1.05) contrast(1.12) saturate(0.92)';
+  ctx.drawImage(img,sx,sy,cropW,cropH,0,0,cropW,cropH);
+  return await new Promise(r=>out.toBlob(r,'image/jpeg',0.92));
+}
 async function captureScanPhoto(){
   const track=window.scanCameraTrack||(scanStream&&scanStream.getVideoTracks()[0]);
   if(!track)return;
@@ -2262,20 +2328,20 @@ async function captureScanPhoto(){
     blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.98));
   }
   if(!blob)return;
+  // Always crop guided captures to the smart frame so background is removed
+  try{blob=await cropToSmartFrame(blob);}catch(e){/* keep full frame if crop fails */}
   if(scanMode==='gov'){
-    // Guided front/back flow
     if(scanCurrentSide==='front'){
       scanFrontBlob=blob;
       scanCurrentSide='back';
       updateGuidedUI();
-      showToast('Front captured. Now capture the back.','success');
+      showToast('Front captured & cropped. Now capture the back.','success');
     }else{
       scanBackBlob=blob;
       updateGuidedUI();
-      showToast('Back captured. You can save or retake.','success');
+      showToast('Back captured & cropped. You can save or retake.','success');
     }
   }else{
-    // Single-page path → existing crop flow
     handleScanBlob(blob,'scan-camera.jpg');
   }
 }
@@ -2292,12 +2358,59 @@ async function scanSaveTo(type){try{
     tempFile=new File([scanSourceFile],`OneApp-Scan-${Date.now()}.jpg`,{type:scanSourceFile.type||'image/jpeg'});
   }
   closeModal('scanSaveModal');
-  if(type==='Other'){openModal('customNameModal');}
+  if(type==='Other'){
+    // Scanner path: name modal uses dual-side save when back exists
+    const inp=document.getElementById('customDocName');
+    if(inp){inp.value='';inp.placeholder='e.g. Voter ID / Election Card';}
+    const saveBtn=document.querySelector('#customNameModal .btn-primary');
+    if(saveBtn){saveBtn.setAttribute('onclick','confirmScanCustomName()');}
+    openModal('customNameModal');
+  }
   else if(type==='Driving License'){openModal('expiryDateModal');}
   else if(type==='Passport'){passportPage1File=tempFile;openModal('passportPage2Modal');}
-  else{await saveGenericDocument(null);}
+  else{
+    await saveGenericDocument(null);
+    // If guided 2-side scan, also store the back as a companion Other doc
+    if(window._scanBackBlob){await scanSaveCompanionBack(type+' (Back)');}
+  }
   showToast('Scanned document prepared for '+type,'success');
 }catch(e){alert('Could not save scan: '+e.message);}}
+/** Scanner-only: save named Other doc; if back side exists, save both Front + Back */
+async function confirmScanCustomName(){
+  const name=(document.getElementById('customDocName').value||'').trim();
+  if(!name){alert('Please enter a document name');return;}
+  closeModal('customNameModal');
+  // restore normal button for non-scan uploads
+  const saveBtn=document.querySelector('#customNameModal .btn-primary');
+  if(saveBtn){saveBtn.setAttribute('onclick','confirmCustomName()');}
+  const back=window._scanBackBlob;
+  if(back&&tempFile){
+    // Save front
+    tempUploadType='Other';
+    await saveGenericDocument(null, name+' (Front)');
+    // Save back
+    tempFile=new File([back],`OneApp-Scan-Back-${Date.now()}.jpg`,{type:'image/jpeg'});
+    tempUploadType='Other';
+    await saveGenericDocument(null, name+' (Back)');
+    window._scanBackBlob=null;
+    scanSourceFile=null;
+    showToast('Saved both sides: '+name,'success');
+  }else{
+    await saveGenericDocument(null, name);
+  }
+}
+/** Scanner-only helper: upload back side as companion Other document */
+async function scanSaveCompanionBack(label){
+  if(!window._scanBackBlob||!currentUser)return;
+  try{
+    const backFile=new File([window._scanBackBlob],`OneApp-Scan-Back-${Date.now()}.jpg`,{type:'image/jpeg'});
+    const prevFile=tempFile,prevType=tempUploadType;
+    tempFile=backFile;tempUploadType='Other';
+    await saveGenericDocument(null, label);
+    tempFile=prevFile;tempUploadType=prevType;
+    window._scanBackBlob=null;
+  }catch(e){console.warn('Back side save skipped',e);}
+}
 function closeScanCrop(){closeModal('scanCropModal');scanSourceFile=null;}
 async function scanFinishGuided(){
   if(!scanFrontBlob||!scanBackBlob){showToast('Capture both front and back first.','warn');return;}
@@ -2309,7 +2422,7 @@ async function scanFinishGuided(){
   tempFile=new File([front],`OneApp-Scan-Front-${Date.now()}.jpg`,{type:'image/jpeg'});
   window._scanBackBlob=back;
   openModal('scanSaveModal');
-  showToast('Front + back ready. Choose document type.','success');
+  showToast('Front + back cropped & ready. Choose document type.','success');
 }
 window.addEventListener('resize',()=>{if(document.getElementById('scanCropModal').classList.contains('show'))positionScanCorners();});
 
