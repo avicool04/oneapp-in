@@ -847,11 +847,11 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 <div class="card">
 <div class="card-header"><h3>Documents</h3></div>
-<p class="sub">Upload Aadhaar, PAN and medical cards as photos.</p>
+<p class="sub">Tap empty icon to upload photo. Green tick = saved. Tap again to view.</p>
 <div class="icon-grid">
-<div class="icon-tile" onclick="elderUploadDoc('aadhaar')"><div class="icon-box">🪪</div><span>Aadhaar</span></div>
-<div class="icon-tile" onclick="elderUploadDoc('pan')"><div class="icon-box">💳</div><span>PAN</span></div>
-<div class="icon-tile" onclick="elderUploadDoc('medical')"><div class="icon-box">🏥</div><span>Medical</span></div>
+<div id="elderAadhaarTile" class="icon-tile" onclick="openElderDocument('aadhaar')"><div class="icon-box">🪪<div id="elderAadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Aadhaar</span></div>
+<div id="elderPanTile" class="icon-tile" onclick="openElderDocument('pan')"><div class="icon-box">💳<div id="elderPanIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN</span></div>
+<div id="elderMedicalTile" class="icon-tile" onclick="openElderDocument('medical')"><div class="icon-box">🏥<div id="elderMedicalIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Medical</span></div>
 </div>
 <div id="elderDocsList" style="margin-top:.75rem"></div>
 <input type="file" id="elderDocInput" accept="image/*" style="display:none" onchange="handleElderDocFile(this.files[0])">
@@ -1345,7 +1345,7 @@ div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" oncli
 cont.appendChild(div);
 });
 }
-function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}loadFamilyMembers();openModal('familyManagerModal');}
+async function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}await loadFamilyMembers();await forceSyncMyFamilyAvatar();await loadFamilyMembers();openModal('familyManagerModal');}
 function deleteMember(id){if(!confirm('Cancel this request?'))return;sb.from('family_links').delete().eq('id',id).then(({error})=>{if(error)alert('❌ '+error.message);else{alert('✅ Cancelled.');loadFamilyMembers();}});}
 function setInviteTab(tab){['email','whatsapp','sms'].forEach(t=>{document.getElementById('inviteContent-'+t).style.display=t===tab?'block':'none';});document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));event.target.classList.add('active');}
 function openInviteModal(){openModal('inviteModal');}
@@ -3373,7 +3373,29 @@ function openElderVault(id,name,ownerId){
   else{img.style.display='none';fb.style.display='flex';fb.textContent=(name||'E').charAt(0).toUpperCase();}
   closeModal('familyManagerModal');
   showView('elderVaultView');
-  loadElderDocs();
+  loadElderDocs().then(()=>{if(currentElderOwnerId===currentUser.id||(familyMembers.find(f=>f.id===currentElderId)||{}).owner_id===currentUser.id)shareExistingElderDocsWithFamily();});
+}
+async function shareExistingElderDocsWithFamily(){
+  if(!currentUser||!currentElderId)return;
+  try{
+    await loadFamilyMembers();
+    const targets=(familyMembers||[]).filter(f=>f.status==='accepted'&&!f.is_minor&&familyOtherUserId(f));
+    if(!targets.length)return;
+    const{data:docs}=await sb.from('documents').select('id,document_type,file_url').eq('user_id',currentUser.id).is('deleted_at',null);
+    const prefix='elder_'+currentElderId+'_';
+    const mine=(docs||[]).filter(d=>(d.document_type||'').startsWith(prefix)||(d.file_url||'').includes('/elders/'+currentElderId+'/'));
+    for(const d of mine){
+      for(const f of targets){
+        const rid=familyOtherUserId(f);
+        if(!rid)continue;
+        await sb.from('document_shares').upsert({
+          document_id:d.id,owner_id:currentUser.id,recipient_user_id:rid,
+          permissions:{view:true,edit:true,download:true,delete:false,share:true},
+          status:'active',updated_at:new Date().toISOString()
+        },{onConflict:'document_id,recipient_user_id'});
+      }
+    }
+  }catch(e){console.warn('shareExistingElder',e);}
 }
 function elderPhotoMenu(){
   const img=document.getElementById('evPhotoImg');
@@ -3424,32 +3446,95 @@ async function handleElderDocFile(file){
     const{error:upErr}=await sb.storage.from('vault').upload(path,compressed,{contentType:'image/jpeg'});
     if(upErr)throw upErr;
     const labels={aadhaar:'Aadhaar',pan:'PAN',medical:'Medical'};
-    const{error:dbErr}=await sb.from('documents').insert({
+    const{data:ins,error:dbErr}=await sb.from('documents').insert({
       user_id:currentUser.id,
       document_type:'elder_'+currentElderId+'_'+elderDocKind,
       document_name:(labels[elderDocKind]||elderDocKind)+' ('+currentElderName+')',
       file_url:path,
       is_critical:true,
       deleted_at:null
-    });
+    }).select('id').maybeSingle();
     if(dbErr)throw dbErr;
-    alert('✅ Saved');
+    // Auto-share parent docs with spouse & siblings (accepted adults)
+    try{
+      await loadFamilyMembers();
+      const targets=(familyMembers||[]).filter(f=>f.status==='accepted'&&!f.is_minor&&familyOtherUserId(f));
+      const docId=ins&&ins.id;
+      if(docId){
+        for(const f of targets){
+          const rid=familyOtherUserId(f);
+          if(!rid||rid===currentUser.id)continue;
+          await sb.from('document_shares').upsert({
+            document_id:docId,
+            owner_id:currentUser.id,
+            recipient_user_id:rid,
+            permissions:{view:true,edit:true,download:true,delete:false,share:true},
+            status:'active',
+            updated_at:new Date().toISOString()
+          },{onConflict:'document_id,recipient_user_id'});
+        }
+      }
+    }catch(shareErr){console.warn('elder auto-share',shareErr);}
+    alert('✅ Saved (shared with connected spouse/siblings)');
     loadElderDocs();
   }catch(e){alert('Upload failed: '+e.message);}
+}
+let elderDocsCache=[];
+function setElderDocTileStatus(kind,saved){
+  const map={aadhaar:['elderAadhaarIndicator','elderAadhaarTile'],pan:['elderPanIndicator','elderPanTile'],medical:['elderMedicalIndicator','elderMedicalTile']};
+  const ids=map[kind]; if(!ids)return;
+  const badge=document.getElementById(ids[0]);
+  if(badge)badge.classList.toggle('show',!!saved);
+}
+function openElderDocument(kind){
+  const row=(elderDocsCache||[]).find(d=>(d.document_type||'').endsWith('_'+kind)|| (d.document_type||'').includes('_'+kind));
+  if(row){viewElderDoc(row.id,row.file_url);return;}
+  elderUploadDoc(kind);
 }
 async function loadElderDocs(){
   const box=document.getElementById('elderDocsList');
   if(!box||!currentElderId)return;
   box.innerHTML='<p class="sub">Loading…</p>';
+  setElderDocTileStatus('aadhaar',false);setElderDocTileStatus('pan',false);setElderDocTileStatus('medical',false);
+  elderDocsCache=[];
   const owner=currentElderOwnerId||currentUser.id;
   const adultIds=(familyMembers||[]).filter(f=>!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
   const allowed=Array.from(new Set([currentUser.id,owner,...adultIds].filter(Boolean)));
-  let q=sb.from('documents').select('*').is('deleted_at',null).ilike('document_type','elder_'+currentElderId+'_%').order('created_at',{ascending:false});
+  const prefix='elder_'+currentElderId+'_';
+  let q=sb.from('documents').select('*').is('deleted_at',null).order('created_at',{ascending:false});
   if(allowed.length>1)q=q.in('user_id',allowed); else q=q.eq('user_id',currentUser.id);
   const{data,error}=await q;
   if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">'+error.message+'</p>';return;}
-  if(!data||!data.length){box.innerHTML='<p class="sub">No documents yet. Upload Aadhaar, PAN or medical as photo.</p>';return;}
-  box.innerHTML=data.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
+  let rows=(data||[]).filter(d=>{
+    const t=d.document_type||'';
+    const u=d.file_url||'';
+    return t.startsWith(prefix)||u.includes('/elders/'+currentElderId+'/');
+  });
+  // Also load docs shared with me that belong to this elder
+  try{
+    const{data:shares}=await sb.from('document_shares').select('document_id,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
+    for(const s of (shares||[])){
+      const d=s.documents;
+      if(!d||d.deleted_at)continue;
+      const t=d.document_type||'';
+      const u=d.file_url||'';
+      if(!(t.startsWith(prefix)||u.includes('/elders/'+currentElderId+'/')))continue;
+      if(!rows.find(r=>r.id===d.id))rows.push(d);
+    }
+  }catch(e){console.warn('elder shares',e);}
+  elderDocsCache=rows;
+  const has={aadhaar:false,pan:false,medical:false};
+  rows.forEach(d=>{
+    const t=d.document_type||'';
+    if(t.includes('_aadhaar')||(d.file_url||'').includes('/aadhaar_'))has.aadhaar=true;
+    if(t.includes('_pan')||(d.file_url||'').includes('/pan_'))has.pan=true;
+    if(t.includes('_medical')||(d.file_url||'').includes('/medical_'))has.medical=true;
+  });
+  setElderDocTileStatus('aadhaar',has.aadhaar);
+  setElderDocTileStatus('pan',has.pan);
+  setElderDocTileStatus('medical',has.medical);
+  if(!rows.length){box.innerHTML='<p class="sub">No documents yet. Tap Aadhaar / PAN / Medical to upload a photo.</p>';return;}
+  box.innerHTML=rows.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
     <button class="btn btn-outline btn-sm" onclick="viewElderDoc('${d.id}','${escHtml(d.file_url)}')">View</button></div>`).join('');
 }
 async function viewElderDoc(id,path){
