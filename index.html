@@ -766,15 +766,30 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
 <h2 id="cvTitle" style="margin:0">Child Vault</h2>
 </div>
-<p class="sub">Documents for <strong id="cvNameDisplay"></strong>. Spouse gets auto-view access.</p>
+<!-- Child Profile Card with Photo Upload -->
+<div class="card" style="padding:.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:.85rem">
+    <div style="position:relative;cursor:pointer" onclick="document.getElementById('childPhotoInput').click()" title="Tap to upload profile picture">
+      <img id="cvPhotoImg" style="width:48px;height:48px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--primary-soft)" alt="Child photo">
+      <div id="cvPhotoFallback" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:800;font-size:1.15rem">C</div>
+      <div style="position:absolute;bottom:-2px;right:-2px;background:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.2);font-size:10px;border:1px solid #cbd5e1">📷</div>
+    </div>
+    <div>
+      <h3 id="cvNameDisplay" style="margin:0;font-size:1.05rem">Child</h3>
+      <p class="sub" style="margin:0;font-size:.75rem">Tap photo to upload profile picture</p>
+    </div>
+  </div>
+  <button class="btn btn-outline btn-sm" onclick="document.getElementById('childPhotoInput').click()">Upload Photo</button>
+  <input type="file" id="childPhotoInput" accept="image/*" style="display:none" onchange="uploadChildPhoto(this.files[0])">
+</div>
 <div class="card">
 <div class="card-header"><h3>Child Documents</h3></div>
 <p class="sub">Tap a saved Aadhaar or birth certificate to open it. Tap an empty icon to upload.</p>
 <div class="icon-grid">
-<div id="childAadhaarTile" class="icon-tile" role="button" tabindex="0" aria-label="Aadhaar. Tap to upload or view." onclick="openChildDocument('aadhaar')" onkeydown="activateChildTile(event,'aadhaar')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="36" rx="6" fill="#1e40af"/><circle cx="22" cy="36" r="8" fill="#bfdbfe"/></svg><div id="childAadhaarIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Aadhaar</span></div>
-<div id="childBirthCertTile" class="icon-tile" role="button" tabindex="0" aria-label="Birth certificate. Tap to upload or view." onclick="openChildDocument('birth_cert')" onkeydown="activateChildTile(event,'birth_cert')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#f59e0b"/><path d="M20 30h24M20 40h16" stroke="#fff" stroke-width="3"/></svg><div id="childBirthCertIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Birth Cert</span></div>
-<div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#10b981"/><path d="M32 20v24M20 32h24" stroke="#fff" stroke-width="3"/></svg></div><span>Vaccine</span></div>
-<div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" fill="#64748b"/><path d="M20 32h24M32 20v24" stroke="#fff" stroke-width="3"/></svg></div><span>Other</span></div>
+<div id="childAadhaarTile" class="icon-tile" role="button" tabindex="0" aria-label="Aadhaar. Tap to upload or view." onclick="openChildDocument('aadhaar')" onkeydown="activateChildTile(event,'aadhaar')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="chAadhaarBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f8fafc"/></linearGradient><linearGradient id="chTricolor" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF9933"/><stop offset="50%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#138808"/></linearGradient><radialGradient id="chHologram" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/></radialGradient></defs><rect x="3" y="11" width="58" height="42" rx="4" fill="url(#chAadhaarBg)" stroke="#cbd5e1" stroke-width="0.8"/><rect x="3" y="11" width="58" height="9" rx="4" fill="url(#chTricolor)" opacity="0.95"/><rect x="3" y="17" width="58" height="3" fill="#138808" opacity="0.9"/><circle cx="54" cy="15" r="3.5" fill="url(#chHologram)" stroke="#f59e0b" stroke-width="0.5"/><rect x="7" y="24" width="15" height="17" rx="2" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/><circle cx="14.5" cy="29" r="3.5" fill="#94a3b8"/><path d="M10.5 37c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" fill="#94a3b8"/><rect x="25" y="25" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/><rect x="25" y="29" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/><rect x="25" y="33" width="19" height="2.5" rx="1" fill="#475569" opacity="0.7"/><text x="25" y="41" font-size="3" font-family="monospace" fill="#1e293b" font-weight="700">XXXX XXXX XXXX</text><rect x="47" y="33" width="11" height="11" fill="#1e293b"/><rect x="48" y="34" width="3" height="3" fill="#fff"/><rect x="52" y="34" width="3" height="3" fill="#fff"/><rect x="48" y="38" width="3" height="3" fill="#fff"/><rect x="52" y="38" width="3" height="3" fill="#fff"/><rect x="3" y="51" width="58" height="1.5" fill="#ef4444"/></svg><div id="childAadhaarIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Aadhaar</span></div>
+<div id="childBirthCertTile" class="icon-tile" role="button" tabindex="0" aria-label="Birth certificate. Tap to upload or view." onclick="openChildDocument('birth_cert')" onkeydown="activateChildTile(event,'birth_cert')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bcBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fffbeb"/><stop offset="100%" stop-color="#fef3c7"/></linearGradient></defs><rect x="8" y="6" width="48" height="52" rx="5" fill="url(#bcBg)" stroke="#f59e0b" stroke-width="1.5"/><rect x="12" y="10" width="40" height="44" rx="3" fill="none" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="2 1"/><circle cx="32" cy="16" r="3.5" fill="#f59e0b"/><circle cx="32" cy="16" r="2" fill="#fffbeb"/><rect x="18" y="23" width="28" height="2" rx="1" fill="#b45309"/><rect x="16" y="28" width="32" height="1.8" rx="0.9" fill="#d97706" opacity="0.7"/><rect x="16" y="32" width="26" height="1.8" rx="0.9" fill="#d97706" opacity="0.7"/><rect x="16" y="36" width="20" height="1.8" rx="0.9" fill="#d97706" opacity="0.7"/><ellipse cx="23" cy="45" rx="2.5" ry="3.5" fill="#f59e0b" opacity="0.85"/><circle cx="21" cy="40.5" r="0.8" fill="#f59e0b"/><circle cx="23" cy="40" r="0.8" fill="#f59e0b"/><circle cx="25" cy="40.8" r="0.8" fill="#f59e0b"/><circle cx="43" cy="45" r="4.5" fill="#f59e0b"/><circle cx="43" cy="45" r="3" fill="#fbbf24"/><path d="M41 48l-2 5 4-2 4 2-2-5" fill="#d97706"/></svg><div id="childBirthCertIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Birth Cert</span></div>
+<div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="vacBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ecfdf5"/><stop offset="100%" stop-color="#d1fae5"/></linearGradient></defs><rect x="6" y="6" width="52" height="52" rx="14" fill="url(#vacBg)" stroke="#10b981" stroke-width="1.5"/><path d="M46 14l4 4-3 3-4-4 3-3z" fill="#059669"/><path d="M44 16l-5 5" stroke="#047857" stroke-width="2.5" stroke-linecap="round"/><path d="M36 21l7 7" stroke="#047857" stroke-width="2.5" stroke-linecap="round"/><path d="M35 22l7 7-14 14-7-7 14-14z" fill="#ffffff" stroke="#10b981" stroke-width="1.8"/><path d="M31 26l7 7-6 6-7-7 6-6z" fill="#34d399"/><path d="M31 31l2-2M28 34l2-2M25 37l2-2" stroke="#059669" stroke-width="1.5"/><path d="M21 36l-3 3" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/><path d="M18 39l-6 6" stroke="#64748b" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="49" r="2.5" fill="#10b981"/><path d="M10 45l1.5 2.5h-3L10 45z" fill="#10b981"/></svg></div><span>Vaccine</span></div>
+<div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="folBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#3730a3"/></linearGradient><linearGradient id="folFront" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#4338ca"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#folBg)"/><rect x="14" y="16" width="36" height="20" rx="2" fill="#ffffff" opacity="0.95"/><rect x="18" y="20" width="20" height="2" rx="1" fill="#94a3b8"/><rect x="18" y="24" width="28" height="2" rx="1" fill="#cbd5e1"/><path d="M6 26c0-2 1.5-3.6 3.5-3.9l17-2.1c1.2-.1 2.4.4 3 1.4l2.5 4.6H54c2.2 0 4 1.8 4 4v16c0 2.2-1.8 4-4 4H10c-2.2 0-4-1.8-4-4V26z" fill="url(#folFront)"/><circle cx="32" cy="38" r="3" fill="#ffffff" opacity="0.8"/></svg></div><span>Other</span></div>
 </div>
 </div>
 <div class="card">
@@ -2207,6 +2222,7 @@ async function openSharedVault(userId,name){
 sharedVaultContext={kind:'adult',userId,name};
 document.getElementById('svTitle').textContent=name+"'s Shared Vault";
 document.getElementById('svSub').textContent='Documents '+name+' has shared with you. Access is controlled document-by-document.';
+closeModal('familyManagerModal');
 showView('sharedVaultView');
 await loadSharedVault();
 }
@@ -2214,6 +2230,7 @@ async function openSharedChildVault(childId,name,ownerId){
 sharedVaultContext={kind:'child',childId,name,ownerId};
 document.getElementById('svTitle').textContent=name+"'s Shared Vault";
 document.getElementById('svSub').textContent='Child documents shared with you. Child documents use full family rights.';
+closeModal('familyManagerModal');
 showView('sharedVaultView');
 await loadSharedVault();
 }
@@ -2236,7 +2253,7 @@ if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" oncli
 if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
 if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
 if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
-return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4><p>${docIsChild(d)?'Child document':'Family-shared document'} • rights: ${Object.keys(p).filter(k=>p[k]).join(', ')}</p></div><div class="shared-doc-actions">${actions.join('')}</div></div>`;
+return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4></div><div class="shared-doc-actions">${actions.join('')}</div></div>`;
 }).join('');
 }
 async function getSharedRecord(docId){
@@ -2933,10 +2950,22 @@ let currentChildOwnerId=null;
 async function loadFamilyMembers(){
   if(!currentUser)return;
   const uid=currentUser.id;
+  const myAvatar=currentUser.user_metadata?.avatar_url||currentUser.user_metadata?.picture||'';
   const{data:outgoing}=await sb.from('family_links').select('*').eq('owner_id',uid).in('status',['accepted','pending']);
   const{data:incoming}=await sb.from('family_links').select('*').eq('member_user_id',uid).in('status',['accepted','pending']);
   let all=[...(outgoing||[]),...(incoming||[])];
   all=all.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
+
+  if(myAvatar){
+    all.forEach(async f=>{
+      let perms=(typeof f.permissions==='object'&&f.permissions)?{...f.permissions}:{};
+      let changed=false;
+      if(f.owner_id===uid&&perms.owner_avatar!==myAvatar){perms.owner_avatar=myAvatar;changed=true;}
+      if(f.member_user_id===uid&&perms.member_avatar!==myAvatar){perms.member_avatar=myAvatar;changed=true;}
+      if(changed){f.permissions=perms;await sb.from('family_links').update({permissions:perms}).eq('id',f.id);}
+    });
+  }
+
   // A child belongs to both parents: borrow minors owned by connected adults
   const adultIds=all.filter(f=>f.status==='accepted'&&!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
   let borrowed=[];
@@ -2964,17 +2993,74 @@ function renderFamilyList(){
     let statusBadge=fm.status==='pending'?'<span class="badge badge-warn">Pending</span>':(fm.status==='accepted'?'<span class="badge badge-ok">Connected</span>':'');
     const deleteBtn=(isOwner&&fm.status==='pending')?`<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')"> Cancel</button>`:'';
     const clickAction=fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}','${fm.owner_id}')`:(fm.status==='accepted'?`openSharedVault('${familyOtherUserId(fm)}','${name.replace(/'/g,"\\'")}')`:`alert('This family member is still pending.')`);
+
+    let avatarUrl='';
+    const perms=(typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
+    if(fm.is_minor){
+      avatarUrl=perms.signed_photo_url||perms.photo_url||'';
+    }else{
+      if(isOwner) avatarUrl=perms.member_avatar||perms.avatar_url||'';
+      else avatarUrl=perms.owner_avatar||perms.inviter_avatar||perms.avatar_url||'';
+    }
+
+    const avatarHtml=avatarUrl
+      ? `<img src="${escHtml(avatarUrl)}" class="family-avatar-sm" style="object-fit:cover;border:1.5px solid #cbd5e1" alt="${escHtml(name)}" onerror="this.outerHTML='<div class=\\'family-avatar-sm\\'>${initials}</div>'">`
+      : `<div class="family-avatar-sm">${initials}</div>`;
+
     const div=document.createElement('div');
     div.className='family-list-item';
-    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong> ${isMe&&!isOwner?'<span class="badge badge-ok">(You joined)</span>':''}<br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
+    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">${avatarHtml}<div><strong>${name}</strong> ${isMe&&!isOwner?'<span class="badge badge-ok">(You joined)</span>':''}<br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
     cont.appendChild(div);
   });
+}
+function updateChildPhotoUI(url,name){
+  const img=document.getElementById('cvPhotoImg');
+  const fb=document.getElementById('cvPhotoFallback');
+  if(!img||!fb)return;
+  if(url){
+    img.src=url;
+    img.style.display='block';
+    fb.style.display='none';
+  }else{
+    img.style.display='none';
+    fb.style.display='flex';
+    fb.textContent=(name?name.charAt(0):'C').toUpperCase();
+  }
 }
 function openChildVault(id,name,ownerId){
   currentChildId=id;currentChildName=name;currentChildOwnerId=ownerId||currentUser.id;
   document.getElementById('cvTitle').textContent=name+"'s Vault";
-  document.getElementById('cvNameDisplay').textContent=name;
-  closeModal('familyManagerModal');showView('childVaultView');loadChildDocs();
+  const nameEl=document.getElementById('cvNameDisplay');
+  if(nameEl)nameEl.textContent=name;
+  const fm=familyMembers.find(f=>f.id===id);
+  const perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
+  updateChildPhotoUI(perms.signed_photo_url||perms.photo_url||'',name);
+  closeModal('familyManagerModal');
+  showView('childVaultView');
+  loadChildDocs();
+}
+async function uploadChildPhoto(file){
+  if(!file||!currentChildId)return;
+  try{
+    const compressed=await compressImage(file,400,0.8);
+    const path=`${currentUser.id}/children/${currentChildId}/profile_photo_${Date.now()}.jpg`;
+    const{error:upErr}=await sb.storage.from('vault').upload(path,compressed,{contentType:'image/jpeg',upsert:true});
+    if(upErr)throw upErr;
+    const{data:signData}=await sb.storage.from('vault').createSignedUrl(path,60*60*24*365);
+    const photoUrl=signData?.signedUrl||'';
+    const fm=familyMembers.find(f=>f.id===currentChildId);
+    let perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?{...fm.permissions}:{};
+    perms.photo_url=photoUrl;
+    perms.signed_photo_url=photoUrl;
+    perms.storage_path=path;
+    await sb.from('family_links').update({permissions:perms}).eq('id',currentChildId);
+    if(fm)fm.permissions=perms;
+    updateChildPhotoUI(photoUrl,currentChildName);
+    renderFamilyList();
+    alert('✅ Child profile photo updated!');
+  }catch(e){
+    alert('Failed to upload photo: '+e.message);
+  }
 }
 async function loadChildDocs(){
   const list=document.getElementById('childActiveDocs');
