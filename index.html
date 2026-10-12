@@ -570,6 +570,41 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 </div>
 </div>
+
+<div id="career" class="view container">
+  <h2>Career</h2>
+  <p class="sub">Save certificates once. Opportunities that fully match you come to your inbox.</p>
+  <div class="card">
+    <div class="card-header"><h3>Your profile</h3><span class="badge badge-ok">Matching</span></div>
+    <div class="field"><label>Date of birth</label><input id="careerDob" type="date"></div>
+    <div class="field"><label>Gender</label><select id="careerGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+    <div class="field"><label>Category</label><select id="careerCategory"><option value="">Select</option><option>General</option><option>OBC</option><option>SC</option><option>ST</option><option>EWS</option></select></div>
+    <div class="field"><label>State</label><input id="careerState" type="text" placeholder="e.g. Jharkhand"></div>
+    <div class="field"><label>Qualification</label><input id="careerQual" type="text" placeholder="e.g. B.E."></div>
+    <div class="field"><label>Branch</label><input id="careerBranch" type="text" placeholder="e.g. EEE"></div>
+    <div class="field"><label>% / CGPA</label><input id="careerPct" type="text"></div>
+    <div class="field"><label>Languages</label><input id="careerLang" type="text" placeholder="Hindi, English"></div>
+    <div class="field"><label>Skills</label><input id="careerSkills" type="text"></div>
+    <div class="field"><label>Interest streams</label><input id="careerStreams" type="text" placeholder="SSC, banking, state jobs"></div>
+    <button class="btn btn-primary" onclick="saveCareerProfile()">Save profile</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Career documents</h3></div>
+    <div class="icon-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="icon-tile" onclick="careerUploadAsset('photo')"><div class="icon-box">📷</div><span>Photo</span></div>
+      <div class="icon-tile" onclick="careerUploadAsset('signature')"><div class="icon-box">✍️</div><span>Signature</span></div>
+      <div class="icon-tile" onclick="careerUploadAsset('certificate')"><div class="icon-box">📄</div><span>Certificate</span></div>
+    </div>
+    <div id="careerAssetsList" style="margin-top:.5rem"></div>
+    <input type="file" id="careerAssetInput" accept="image/*,application/pdf" style="display:none" onchange="handleCareerAssetFile(this.files[0])">
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Opportunities inbox</h3><span class="badge">0 matches</span></div>
+    <p class="sub">Only full matches on qualification, skills, age, location and language will appear here.</p>
+    <div id="careerInbox"><div class="doc-row"><div class="doc-info"><h4>No matched opportunities yet</h4><p>Save your profile to start matching.</p></div></div></div>
+  </div>
+</div>
+
 <div id="reminders" class="view container"><h2>Reminders</h2><p class="sub">Every deadline tracked.</p><div class="card"><div class="card-header"><h3>Action Needed</h3><span class="badge badge-alert">2 items</span></div><div class="doc-row"><div class="doc-info"><h4>Vehicle Insurance</h4><p>Expires in 12 days</p></div><button class="btn btn-primary btn-sm">Renew</button></div></div></div>
 <div id="authModal" class="modal-overlay"><div class="modal"><h3>Welcome to OneApp</h3><button class="btn btn-google" onclick="signInWithGoogle()" style="margin-top:.5rem"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button><div class="divider"><span>OR</span></div><div id="authMsg" style="display:none;background:#fee2e2;color:#991b1b;padding:.4rem;border-radius:6px;font-size:.75rem;margin:.4rem 0;text-align:center"></div><div class="field"><label>Email</label><input id="authEmail" type="email"></div><div class="field"><label>Password</label><input id="authPass" type="password"></div><button class="btn btn-primary" onclick="submitAuth()">Sign In</button><button class="btn btn-outline" onclick="closeModal('authModal')">Cancel</button></div></div>
 <!-- CONSENT MODAL -->
@@ -678,9 +713,10 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="familyManagerModal" class="modal-overlay"><div class="modal">
 <h3>👨‍👩‍ Manage Family</h3>
 <p class="sub">Connected members and permission settings.</p>
-<div style="display:flex;gap:.4rem;margin-bottom:.75rem">
-<button class="btn btn-primary btn-sm" style="flex:1" onclick="openInviteModal()">➕ Invite Adult</button>
-<button class="btn btn-success btn-sm" style="flex:1" onclick="openAddMinorModal()">👶 Add Minor</button>
+<div style="display:flex;gap:.4rem;margin-bottom:.75rem;flex-wrap:wrap">
+<button class="btn btn-primary btn-sm" style="flex:1;min-width:110px" onclick="openInviteModal()">➕ Invite Adult</button>
+<button class="btn btn-success btn-sm" style="flex:1;min-width:110px" onclick="openAddMinorModal()">👶 Add Minor</button>
+<button class="btn btn-outline btn-sm" style="flex:1;min-width:110px" onclick="openAddElderModal()">👴 Add Elder</button>
 </div>
 <div style="text-align:right;margin-bottom:.5rem">
 <button class="btn btn-outline btn-sm" onclick="loadFamilyMembers()"> Refresh List</button>
@@ -726,6 +762,24 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-primary" onclick="addMinor()">Create Profile</button>
 <button class="btn btn-outline" onclick="closeModal('minorModal')">Cancel</button>
 </div></div>
+
+<div id="elderModal" class="modal-overlay"><div class="modal">
+<h3>Add Elder (Parent)</h3>
+<p class="sub">Store parents' documents and share with spouse/siblings. Elders do not need their own login.</p>
+<div class="field"><label>Name</label><input id="elderName" type="text" placeholder="e.g. Father's name"></div>
+<div class="field"><label>Relation</label>
+<select id="elderRelation"><option value="father">Father</option><option value="mother">Mother</option><option value="parent">Parent</option><option value="elder">Elder</option></select>
+</div>
+<button class="btn btn-primary" onclick="addElder()">Create Profile</button>
+<button class="btn btn-outline" onclick="closeModal('elderModal')">Cancel</button>
+</div></div>
+
+
+<div id="photoLightbox" class="modal-overlay" onclick="if(event.target===this)closeModal('photoLightbox')"><div class="modal" style="max-width:420px;text-align:center;padding:1rem">
+<img id="photoLightboxImg" alt="Photo" style="max-width:100%;max-height:70vh;border-radius:12px;object-fit:contain">
+<button class="btn btn-outline" style="margin-top:.75rem" onclick="closeModal('photoLightbox')">Close</button>
+</div></div>
+
 <div id="sharedVaultView" class="view container">
 <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
 <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
@@ -737,6 +791,37 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="sharedDocsContainer"><p class="sub">Loading…</p></div>
 </div>
 </div>
+
+<div id="elderVaultView" class="view container">
+<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+<button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
+<h2 id="evTitle" style="margin:0">Elder Vault</h2>
+</div>
+<div class="card" style="padding:.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem">
+  <div style="position:relative">
+    <img id="evPhotoImg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--primary-soft);cursor:pointer" alt="Photo" onclick="viewProfilePhoto(this.src)">
+    <div id="evPhotoFallback" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#64748b,#334155);color:#fff;font-weight:800;font-size:1.2rem;cursor:pointer" onclick="document.getElementById('elderPhotoInput').click()">E</div>
+    <button type="button" title="Change or remove photo" onclick="event.stopPropagation();elderPhotoMenu()" style="position:absolute;bottom:-2px;right:-2px;background:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.25);font-size:11px;border:1px solid #cbd5e1;padding:0;cursor:pointer">📷</button>
+  </div>
+  <div>
+    <h3 id="evNameDisplay" style="margin:0;font-size:1.05rem">Elder</h3>
+    <p class="sub" style="margin:0;font-size:.75rem">Tap photo to view · camera to change/remove</p>
+  </div>
+  <input type="file" id="elderPhotoInput" accept="image/*" style="display:none" onchange="uploadElderPhoto(this.files[0])">
+</div>
+<div class="card">
+<div class="card-header"><h3>Documents</h3></div>
+<p class="sub">Upload Aadhaar, PAN and medical cards as photos.</p>
+<div class="icon-grid">
+<div class="icon-tile" onclick="elderUploadDoc('aadhaar')"><div class="icon-box">🪪</div><span>Aadhaar</span></div>
+<div class="icon-tile" onclick="elderUploadDoc('pan')"><div class="icon-box">💳</div><span>PAN</span></div>
+<div class="icon-tile" onclick="elderUploadDoc('medical')"><div class="icon-box">🏥</div><span>Medical</span></div>
+</div>
+<div id="elderDocsList" style="margin-top:.75rem"></div>
+<input type="file" id="elderDocInput" accept="image/*" style="display:none" onchange="handleElderDocFile(this.files[0])">
+</div>
+</div>
+
 <div id="binView" class="view container">
 <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
 <button class="btn btn-outline btn-sm" onclick="openFamilyManager()">← Back</button>
@@ -767,19 +852,18 @@ body.dark .dropdown .email{color:var(--gray)}
 <h2 id="cvTitle" style="margin:0">Child Vault</h2>
 </div>
 <!-- Child Profile Card with Photo Upload -->
-<div class="card" style="padding:.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+<div class="card" style="padding:.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
   <div style="display:flex;align-items:center;gap:.85rem">
-    <div style="position:relative;cursor:pointer" onclick="document.getElementById('childPhotoInput').click()" title="Tap to upload profile picture">
-      <img id="cvPhotoImg" style="width:48px;height:48px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--primary-soft)" alt="Child photo">
-      <div id="cvPhotoFallback" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:800;font-size:1.15rem">C</div>
-      <div style="position:absolute;bottom:-2px;right:-2px;background:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.2);font-size:10px;border:1px solid #cbd5e1">📷</div>
+    <div style="position:relative">
+      <img id="cvPhotoImg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--primary-soft);cursor:pointer" alt="Child photo" onclick="viewProfilePhoto(this.src)">
+      <div id="cvPhotoFallback" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:800;font-size:1.2rem;cursor:pointer" onclick="document.getElementById('childPhotoInput').click()">C</div>
+      <button type="button" title="Change or remove photo" onclick="event.stopPropagation();childPhotoMenu()" style="position:absolute;bottom:-2px;right:-2px;background:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.25);font-size:11px;border:1px solid #cbd5e1;padding:0;cursor:pointer">📷</button>
     </div>
     <div>
       <h3 id="cvNameDisplay" style="margin:0;font-size:1.05rem">Child</h3>
-      <p class="sub" style="margin:0;font-size:.75rem">Tap photo to upload profile picture</p>
+      <p class="sub" style="margin:0;font-size:.75rem">Tap photo to view · camera to change/remove</p>
     </div>
   </div>
-  <button class="btn btn-outline btn-sm" onclick="document.getElementById('childPhotoInput').click()">Upload Photo</button>
   <input type="file" id="childPhotoInput" accept="image/*" style="display:none" onchange="uploadChildPhoto(this.files[0])">
 </div>
 <div class="card">
@@ -1060,7 +1144,7 @@ const SUPABASE_URL='https://ylxxxmrbsllrncwcpcmb.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
 let sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const VAPID_PUBLIC_KEY='PASTE_VAPID_PUBLIC_KEY_HERE';
-const SHARE_CAPTION='Shared via OneApp — trusted sharing, organised family vault';
+const SHARE_CAPTION='Shared via OneApp — trusted family vault. Open: https://oneapp-in.vercel.app';
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 let currentUser=null,familyMembers=[],currentChildId=null,currentChildName='';
 let shareContext=null,viewerCtx=null;
@@ -2146,12 +2230,13 @@ function shareWhatsApp(){if(!lastPos){alert('Wait for fix.');return;}window.open
 async function saveSOS(){if(!lastPos){alert('Wait for fix.');return;}const{data:{session}}=await sb.auth.getSession();if(!session){alert('Sign in first.');return;}const{error}=await sb.from('sos_events').insert({user_id:session.user.id,lat:lastPos.coords.latitude,lng:lastPos.coords.longitude,accuracy:lastPos.coords.accuracy});alert(error?'❌ '+error.message:'✅ Saved.');}
 function showView(id){
 document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+const el=document.getElementById(id); if(el) el.classList.add('active');
 document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
-const m={reminders:'nav-auto'};
-if(m[id] && document.getElementById(m[id]))document.getElementById(m[id]).classList.add('active');
+const map={vault:'nav-vault',reminders:'nav-auto',career:'nav-career',otherDocsView:'nav-vault'};
+if(map[id]){const n=document.getElementById(map[id]); if(n)n.classList.add('active');}
 window.scrollTo(0,0);
-if(id === 'otherDocsView') loadOtherDocs();
+if(id==='otherDocsView') loadOtherDocs();
+if(id==='career'){loadCareerProfile();loadCareerAssets();}
 }
 function clearPdfViewer(){
 const viewer=document.getElementById('fileViewerPdf');
@@ -2996,22 +3081,33 @@ async function loadFamilyMembers(){
   let all=[...(outgoing||[]),...(incoming||[])];
   all=all.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
 
+  // Stamp my avatar onto every link I'm on (so spouse/siblings see each other)
   if(myAvatar){
-    all.forEach(async f=>{
+    for(const f of all){
+      if(f.is_minor)continue;
       let perms=(typeof f.permissions==='object'&&f.permissions)?{...f.permissions}:{};
       let changed=false;
       if(f.owner_id===uid&&perms.owner_avatar!==myAvatar){perms.owner_avatar=myAvatar;changed=true;}
       if(f.member_user_id===uid&&perms.member_avatar!==myAvatar){perms.member_avatar=myAvatar;changed=true;}
-      if(changed){f.permissions=perms;await sb.from('family_links').update({permissions:perms}).eq('id',f.id);}
-    });
+      // also mirror under generic keys for older rows
+      if(f.owner_id===uid&&perms.inviter_avatar!==myAvatar){perms.inviter_avatar=myAvatar;changed=true;}
+      if(changed){f.permissions=perms;try{await sb.from('family_links').update({permissions:perms}).eq('id',f.id);}catch(e){}}
+    }
   }
 
-  // A child belongs to both parents: borrow minors owned by connected adults
+  // Child + elder profiles belong to both spouses: borrow those owned by connected adults
   const adultIds=all.filter(f=>f.status==='accepted'&&!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
   let borrowed=[];
   if(adultIds.length){
     const{data:kids}=await sb.from('family_links').select('*').in('owner_id',adultIds).eq('is_minor',true);
     borrowed=(kids||[]).filter(k=>!all.find(a=>a.id===k.id));
+    const{data:elders}=await sb.from('family_links').select('*').in('owner_id',adultIds).eq('status','accepted');
+    const more=(elders||[]).filter(e=>{
+      if(all.find(a=>a.id===e.id)||borrowed.find(a=>a.id===e.id))return false;
+      const p=(typeof e.permissions==='object'&&e.permissions)?e.permissions:{};
+      return p.is_elder||['elder','father','mother','parent'].includes(e.relation_type);
+    });
+    borrowed=borrowed.concat(more);
   }
   familyMembers=[...all,...borrowed];
   renderFamilyList();
@@ -3032,15 +3128,17 @@ function renderFamilyList(){
     const initials=name.substring(0,2).toUpperCase();
     let statusBadge=fm.status==='pending'?'<span class="badge badge-warn">Pending</span>':(fm.status==='accepted'?'<span class="badge badge-ok">Connected</span>':'');
     const deleteBtn=(isOwner&&fm.status==='pending')?`<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')"> Cancel</button>`:'';
-    const clickAction=fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}','${fm.owner_id}')`:(fm.status==='accepted'?`openSharedVault('${familyOtherUserId(fm)}','${name.replace(/'/g,"\\'")}')`:`alert('This family member is still pending.')`);
+    const isElder=!!((fm.permissions&&fm.permissions.is_elder)||(['elder','father','mother','parent'].includes(fm.relation_type)&&!fm.is_minor&&!familyOtherUserId(fm)));
+    const clickAction=fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\'")}','${fm.owner_id}')`:(isElder?`openElderVault('${fm.id}','${name.replace(/'/g,"\'")}','${fm.owner_id}')`:(fm.status==='accepted'?`openSharedVault('${familyOtherUserId(fm)}','${name.replace(/'/g,"\'")}')`:`alert('This family member is still pending.')`));
 
     let avatarUrl='';
     const perms=(typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
-    if(fm.is_minor){
+    if(fm.is_minor||fm.relation_type==='elder'||fm.relation_type==='father'||fm.relation_type==='mother'||fm.relation_type==='parent'||perms.is_elder){
       avatarUrl=perms.signed_photo_url||perms.photo_url||'';
     }else{
-      if(isOwner) avatarUrl=perms.member_avatar||perms.avatar_url||'';
-      else avatarUrl=perms.owner_avatar||perms.inviter_avatar||perms.avatar_url||'';
+      // Show the OTHER person's photo: if I own the link, show member; if I joined, show owner
+      if(isOwner) avatarUrl=perms.member_avatar||perms.avatar_url||perms.picture||'';
+      else avatarUrl=perms.owner_avatar||perms.inviter_avatar||perms.avatar_url||perms.picture||'';
     }
 
     const avatarHtml=avatarUrl
@@ -3126,6 +3224,197 @@ async function loadChildDocs(){
   childDocs=data||[];
   await renderChildDocs();
 }
+
+
+/* ===== PROFILE PHOTO HELPERS ===== */
+function viewProfilePhoto(url){
+  if(!url)return;
+  const img=document.getElementById('photoLightboxImg');
+  if(img){img.src=url;openModal('photoLightbox');}
+}
+function childPhotoMenu(){
+  const img=document.getElementById('cvPhotoImg');
+  const has=img&&img.style.display!=='none'&&img.src;
+  const choice=has?prompt('Type U to upload new photo, R to remove photo, or Cancel','U'):'U';
+  if(!choice)return;
+  if(choice.toUpperCase()==='R'){removeChildPhoto();return;}
+  document.getElementById('childPhotoInput').click();
+}
+async function removeChildPhoto(){
+  if(!currentChildId||!confirm('Remove profile photo?'))return;
+  const fm=familyMembers.find(f=>f.id===currentChildId);
+  let perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?{...fm.permissions}:{};
+  delete perms.photo_url; delete perms.signed_photo_url; delete perms.storage_path;
+  await sb.from('family_links').update({permissions:perms}).eq('id',currentChildId);
+  if(fm)fm.permissions=perms;
+  updateChildPhotoUI('',currentChildName);
+  renderFamilyList();
+}
+
+/* ===== ELDER ===== */
+let currentElderId=null,currentElderName='',currentElderOwnerId=null,elderDocKind='aadhaar';
+function openAddElderModal(){if(!currentUser){alert('Sign in first.');return;}openModal('elderModal');}
+async function addElder(){
+  const name=(document.getElementById('elderName').value||'').trim();
+  const rel=document.getElementById('elderRelation').value||'parent';
+  if(!name)return alert('Enter name');
+  const inviterName=currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||'Family';
+  const{error}=await sb.from('family_links').insert({
+    owner_id:currentUser.id,
+    member_email:'elder_'+Date.now()+'@internal',
+    relation_type:rel,
+    is_minor:false,
+    status:'accepted',
+    display_name:name,
+    inviter_name:inviterName,
+    permissions:{is_elder:true,name:name}
+  });
+  if(error)alert(error.message);
+  else{alert('✅ '+name+"'s profile created. Spouse can access these documents.");closeModal('elderModal');loadFamilyMembers();}
+}
+function openElderVault(id,name,ownerId){
+  currentElderId=id; currentElderName=name;
+  const fm=(familyMembers||[]).find(f=>f.id===id);
+  currentElderOwnerId=ownerId||(fm&&fm.owner_id)||currentUser.id;
+  document.getElementById('evTitle').textContent=name+"'s Documents";
+  document.getElementById('evNameDisplay').textContent=name;
+  const perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
+  const url=perms.signed_photo_url||perms.photo_url||'';
+  const img=document.getElementById('evPhotoImg'),fb=document.getElementById('evPhotoFallback');
+  if(url){img.src=url;img.style.display='block';fb.style.display='none';}
+  else{img.style.display='none';fb.style.display='flex';fb.textContent=(name||'E').charAt(0).toUpperCase();}
+  closeModal('familyManagerModal');
+  showView('elderVaultView');
+  loadElderDocs();
+}
+function elderPhotoMenu(){
+  const img=document.getElementById('evPhotoImg');
+  const has=img&&img.style.display!=='none'&&img.src;
+  const choice=has?prompt('Type U to upload new photo, R to remove','U'):'U';
+  if(!choice)return;
+  if(choice.toUpperCase()==='R'){removeElderPhoto();return;}
+  document.getElementById('elderPhotoInput').click();
+}
+async function uploadElderPhoto(file){
+  if(!file||!currentElderId)return;
+  try{
+    const compressed=await compressImage(file,400,0.8);
+    const path=`${currentUser.id}/elders/${currentElderId}/profile_${Date.now()}.jpg`;
+    const{error:upErr}=await sb.storage.from('vault').upload(path,compressed,{contentType:'image/jpeg',upsert:true});
+    if(upErr)throw upErr;
+    const{data:signData}=await sb.storage.from('vault').createSignedUrl(path,60*60*24*365);
+    const photoUrl=signData?.signedUrl||'';
+    const fm=familyMembers.find(f=>f.id===currentElderId);
+    let perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?{...fm.permissions}:{is_elder:true};
+    perms.photo_url=photoUrl; perms.signed_photo_url=photoUrl; perms.storage_path=path; perms.is_elder=true;
+    await sb.from('family_links').update({permissions:perms}).eq('id',currentElderId);
+    if(fm)fm.permissions=perms;
+    const img=document.getElementById('evPhotoImg'),fb=document.getElementById('evPhotoFallback');
+    img.src=photoUrl; img.style.display='block'; fb.style.display='none';
+    renderFamilyList();
+    alert('✅ Photo updated');
+  }catch(e){alert('Photo upload failed: '+e.message);}
+}
+async function removeElderPhoto(){
+  if(!currentElderId||!confirm('Remove photo?'))return;
+  const fm=familyMembers.find(f=>f.id===currentElderId);
+  let perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?{...fm.permissions}:{is_elder:true};
+  delete perms.photo_url; delete perms.signed_photo_url; delete perms.storage_path;
+  await sb.from('family_links').update({permissions:perms}).eq('id',currentElderId);
+  if(fm)fm.permissions=perms;
+  const img=document.getElementById('evPhotoImg'),fb=document.getElementById('evPhotoFallback');
+  img.style.display='none'; fb.style.display='flex';
+  renderFamilyList();
+}
+function elderUploadDoc(kind){elderDocKind=kind;document.getElementById('elderDocInput').value='';document.getElementById('elderDocInput').click();}
+async function handleElderDocFile(file){
+  if(!file||!currentElderId||!currentUser)return;
+  if(!file.type.startsWith('image/')){alert('Please upload a photo (not PDF) for elder documents.');return;}
+  try{
+    const compressed=await compressImage(file,1200,0.85);
+    const path=`${currentUser.id}/elders/${currentElderId}/${elderDocKind}_${Date.now()}.jpg`;
+    const{error:upErr}=await sb.storage.from('vault').upload(path,compressed,{contentType:'image/jpeg'});
+    if(upErr)throw upErr;
+    const labels={aadhaar:'Aadhaar',pan:'PAN',medical:'Medical'};
+    const{error:dbErr}=await sb.from('documents').insert({
+      user_id:currentUser.id,
+      document_type:'elder_'+currentElderId+'_'+elderDocKind,
+      document_name:(labels[elderDocKind]||elderDocKind)+' ('+currentElderName+')',
+      file_url:path,
+      is_critical:true,
+      deleted_at:null
+    });
+    if(dbErr)throw dbErr;
+    alert('✅ Saved');
+    loadElderDocs();
+  }catch(e){alert('Upload failed: '+e.message);}
+}
+async function loadElderDocs(){
+  const box=document.getElementById('elderDocsList');
+  if(!box||!currentElderId)return;
+  box.innerHTML='<p class="sub">Loading…</p>';
+  const owner=currentElderOwnerId||currentUser.id;
+  const adultIds=(familyMembers||[]).filter(f=>!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
+  const allowed=Array.from(new Set([currentUser.id,owner,...adultIds].filter(Boolean)));
+  let q=sb.from('documents').select('*').is('deleted_at',null).ilike('document_type','elder_'+currentElderId+'_%').order('created_at',{ascending:false});
+  if(allowed.length>1)q=q.in('user_id',allowed); else q=q.eq('user_id',currentUser.id);
+  const{data,error}=await q;
+  if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">'+error.message+'</p>';return;}
+  if(!data||!data.length){box.innerHTML='<p class="sub">No documents yet. Upload Aadhaar, PAN or medical as photo.</p>';return;}
+  box.innerHTML=data.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
+    <button class="btn btn-outline btn-sm" onclick="viewElderDoc('${d.id}','${escHtml(d.file_url)}')">View</button></div>`).join('');
+}
+async function viewElderDoc(id,path){
+  try{
+    const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
+    if(data?.signedUrl) viewProfilePhoto(data.signedUrl);
+    else alert('Could not open file');
+  }catch(e){alert(e.message);}
+}
+
+/* ===== CAREER JS ===== */
+let careerAssetKind='certificate';
+function careerProfileKey(){return currentUser?('oneapp_career_'+currentUser.id):null;}
+function loadCareerProfile(){
+  const key=careerProfileKey(); if(!key)return;
+  let p={}; try{p=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('careerDob',p.dob);set('careerGender',p.gender);set('careerCategory',p.category);
+  set('careerState',p.state);set('careerQual',p.qual);set('careerBranch',p.branch);
+  set('careerPct',p.pct);set('careerLang',p.lang);set('careerSkills',p.skills);set('careerStreams',p.streams);
+}
+async function saveCareerProfile(){
+  if(!currentUser){alert('Sign in first');return;}
+  const p={dob:document.getElementById('careerDob').value,gender:document.getElementById('careerGender').value,category:document.getElementById('careerCategory').value,state:document.getElementById('careerState').value.trim(),qual:document.getElementById('careerQual').value.trim(),branch:document.getElementById('careerBranch').value.trim(),pct:document.getElementById('careerPct').value.trim(),lang:document.getElementById('careerLang').value.trim(),skills:document.getElementById('careerSkills').value.trim(),streams:document.getElementById('careerStreams').value.trim(),updatedAt:new Date().toISOString()};
+  localStorage.setItem(careerProfileKey(),JSON.stringify(p));
+  try{await sb.auth.updateUser({data:{career_profile:p}});}catch(e){}
+  alert('Career profile saved');
+}
+function careerUploadAsset(kind){if(!currentUser){alert('Sign in first');return;}careerAssetKind=kind;document.getElementById('careerAssetInput').value='';document.getElementById('careerAssetInput').click();}
+async function handleCareerAssetFile(file){
+  if(!file||!currentUser)return;
+  const typeMap={photo:'Career Photo',signature:'Career Signature',certificate:'Career Certificate'};
+  const docType=typeMap[careerAssetKind]||'Career Certificate';
+  let uploadFile=file;
+  if(file.type&&file.type.startsWith('image/')&&typeof compressImage==='function'){try{uploadFile=await compressImage(file,800,0.8);}catch(e){}}
+  const path=`${currentUser.id}/career/${careerAssetKind}_${Date.now()}_${file.name.replace(/[^a-z0-9.]+/gi,'_')}`;
+  try{
+    const{error:upErr}=await sb.storage.from('vault').upload(path,uploadFile,{contentType:uploadFile.type||file.type});
+    if(upErr)throw upErr;
+    const{error:dbErr}=await sb.from('documents').insert({user_id:currentUser.id,document_type:docType,document_name:file.name.replace(/\.[^.]+$/,'')||docType,file_url:path,deleted_at:null});
+    if(dbErr)throw dbErr;
+    alert(docType+' saved'); loadCareerAssets();
+  }catch(e){alert(e.message);}
+}
+async function loadCareerAssets(){
+  const box=document.getElementById('careerAssetsList'); if(!box||!currentUser){if(box)box.innerHTML='';return;}
+  try{
+    const{data}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).in('document_type',['Career Photo','Career Signature','Career Certificate']).order('created_at',{ascending:false});
+    if(!data||!data.length){box.innerHTML='<p class="sub">No career documents yet.</p>';return;}
+    box.innerHTML=data.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4><p>${escHtml(d.document_type)}</p></div></div>`).join('');
+  }catch(e){box.innerHTML='<p class="sub">Could not load.</p>';}
+}
+
 
 /* hook: after sign-in, subscribe for push + start watching spouse alerts */
 sb.auth.onAuthStateChange((ev,s)=>{
