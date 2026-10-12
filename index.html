@@ -1700,6 +1700,12 @@ if(act==='delete'){aaDelete();}
 }else if(c.kind==='childaadhaar'){
 if(act==='update'){closeModal('fileViewerModal');openChildAaModal('update');}
 if(act==='share'){shareChildAadhaar();}
+if(act==='download'){
+  const img=document.getElementById('fileViewerImg');
+  if(img&&img.src){
+    const a=document.createElement('a');a.href=img.src;a.download=`Aadhaar-${currentChildName||'Child'}.jpg`;a.click();
+  }
+}
 if(act==='familyShare'){openFamilyShareModal(c.id||childAaRow?.id||null);}
 if(act==='delete'){deleteChildAadhaar();}
 }else if(c.kind==='childfile'){
@@ -1735,7 +1741,13 @@ openModal('fileViewerModal');
 }
 let childDocs=[],childAaCache={side:null,front:null,back:null,full:null},childAaRow=null,childAaFile=null;
 const TYPE_LABELS={aadhaar:'Aadhaar Card',birth_cert:'Birth Certificate',vaccine:'Vaccination Sheet',other:'Other Document'};
-function parseTypeFromUrl(url){const seg=url.split('/').pop()||'';return seg.split('-')[0]||'other';}
+function parseTypeFromUrl(url){
+const seg=(url||'').split('/').pop()||'';
+const prefix=(seg.split('-')[0]||'').toLowerCase();
+if(prefix.includes('aadhaar'))return 'aadhaar';
+if(prefix.includes('birth'))return 'birth_cert';
+return prefix||'other';
+}
 function setChildDocTileStatus(type,saved){
 const isAadhaar=type==='aadhaar';
 const badge=document.getElementById(isAadhaar?'childAadhaarIndicator':'childBirthCertIndicator');
@@ -1747,28 +1759,15 @@ function activateChildTile(event,type){
 if(event.key==='Enter'||event.key===' '){event.preventDefault();openChildDocument(type);}
 }
 function openChildDocument(type){
-const row=childDocs.find(d=>parseTypeFromUrl(d.file_url)===type);
+const row=childDocs.find(d=>parseTypeFromUrl(d.file_url)===type)||(type==='aadhaar'?childAaRow:null);
 if(!row){triggerChildUpload(type);return;}
-if(type==='aadhaar'){viewChildAadhaar();return;}
+if(type==='aadhaar'){childAaRow=row;viewChildAadhaar();return;}
 const path=row.file_url,ext=(path.split('.').pop()||'').toLowerCase();
 return viewChildFile(row.id,path,ext,type);
 }
-function openChildVault(id,name){currentChildId=id;currentChildName=name;document.getElementById('cvTitle').textContent=name+"'s Vault";document.getElementById('cvNameDisplay').textContent=name;closeModal('familyManagerModal');showView('childVaultView');loadChildDocs();}
-async function loadChildDocs(){
-const list=document.getElementById('childActiveDocs');
-list.innerHTML='<p class="sub">Loading…</p>';
-document.getElementById('childDupCard').style.display='none';
-childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
-setChildDocTileStatus('aadhaar',false);setChildDocTileStatus('birth_cert',false);
-if(!currentUser||!currentChildId)return;
-const{data,error}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
-if(error){list.innerHTML='<p class="sub" style="color:var(--danger)"> '+error.message+'</p>';return;}
-childDocs=data||[];
-await renderChildDocs();
-}
 async function renderChildDocs(){
 const list=document.getElementById('childActiveDocs');
-setChildDocTileStatus('aadhaar',childDocs.some(r=>parseTypeFromUrl(r.file_url)==='aadhaar'));
+setChildDocTileStatus('aadhaar',childDocs.some(r=>parseTypeFromUrl(r.file_url)==='aadhaar')||!!childAaRow);
 setChildDocTileStatus('birth_cert',childDocs.some(r=>parseTypeFromUrl(r.file_url)==='birth_cert'));
 if(!childDocs.length){list.innerHTML='<p class="sub">No documents uploaded yet. Use the tiles above.</p>';return;}
 const types=['aadhaar','birth_cert','vaccine','other'];
@@ -1797,23 +1796,64 @@ document.getElementById('childDupDocs').innerHTML=dups.map(d=>{const fname=d.fil
 }
 }
 async function loadChildAaCache(){
-const uid=currentUser.id,base=uid+'/children/'+currentChildId+'/aadhaar-';
-const get=async n=>{const{data}=await sb.storage.from('vault').download(base+n);if(!data)return null;try{const b=await createImageBitmap(data);const c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);return c;}catch(e){return null;}};
+const fm=(familyMembers||[]).find(f=>f.id===currentChildId);
+const uid=(childAaRow&&childAaRow.user_id)||currentChildOwnerId||(fm&&fm.owner_id)||currentUser.id;
+let base=uid+'/children/'+currentChildId+'/aadhaar-';
+if(childAaRow&&childAaRow.file_url){
+base=childAaRow.file_url.replace(/[^/]+$/,'aadhaar-');
+}
+const get=async n=>{
+const fullPath=base.endsWith('aadhaar-')?(base+n):(base+'aadhaar-'+n);
+try{
+const{data}=await sb.storage.from('vault').download(fullPath);
+let blob=data;
+if(!blob){
+const{data:sData}=await sb.storage.from('vault').createSignedUrl(fullPath,180);
+if(sData?.signedUrl){
+const res=await fetch(sData.signedUrl);
+if(res.ok)blob=await res.blob();
+}
+}
+if(!blob)return null;
+const b=await createImageBitmap(blob);
+const c=document.createElement('canvas');
+c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);
+return c;
+}catch(e){return null;}
+};
 childAaCache.side=await get('side.jpg');
 childAaCache.front=await get('front.jpg');
 childAaCache.back=await get('back.jpg');
 childAaCache.full=await get('full.jpg');
 }
-function viewChildAadhaar(){
-const img=childAaCache.full||childAaCache.side;
-if(!img){alert('Not loaded yet.');return;}
+async function viewChildAadhaar(){
+let img=childAaCache.full||childAaCache.side;
+if(!img){
+await loadChildAaCache();
+img=childAaCache.full||childAaCache.side;
+}
 clearPdfViewer();
 viewerCtx={kind:'childaadhaar'};
 document.getElementById('fileViewerTitle').textContent='Aadhaar — '+currentChildName;
 const viewerImg=document.getElementById('fileViewerImg');
-viewerImg.src=img.toDataURL('image/jpeg',0.92);viewerImg.style.display='block';
-document.getElementById('rotateControls').style.display = 'none';
+document.getElementById('rotateControls').style.display='none';
+if(img){
+viewerImg.src=img.toDataURL('image/jpeg',0.92);
+viewerImg.style.display='block';
 openModal('fileViewerModal');
+}else if(childAaRow?.file_url){
+try{
+const{data,error}=await sb.storage.from('vault').createSignedUrl(childAaRow.file_url,300);
+if(error)throw error;
+viewerImg.src=data.signedUrl;
+viewerImg.style.display='block';
+openModal('fileViewerModal');
+}catch(e){
+alert('Failed to load Aadhaar: '+e.message);
+}
+}else{
+alert('Aadhaar not found or still loading.');
+}
 }
 async function renderPdfInViewer(url,label='Document'){
 const host=document.getElementById('fileViewerPdf');
@@ -3028,11 +3068,13 @@ function updateChildPhotoUI(url,name){
   }
 }
 function openChildVault(id,name,ownerId){
-  currentChildId=id;currentChildName=name;currentChildOwnerId=ownerId||currentUser.id;
+  currentChildId=id;
+  currentChildName=name;
+  const fm=(familyMembers||[]).find(f=>f.id===id);
+  currentChildOwnerId=ownerId||(fm&&fm.owner_id)||currentUser.id;
   document.getElementById('cvTitle').textContent=name+"'s Vault";
   const nameEl=document.getElementById('cvNameDisplay');
   if(nameEl)nameEl.textContent=name;
-  const fm=familyMembers.find(f=>f.id===id);
   const perms=(fm&&typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
   updateChildPhotoUI(perms.signed_photo_url||perms.photo_url||'',name);
   closeModal('familyManagerModal');
@@ -3069,10 +3111,16 @@ async function loadChildDocs(){
   childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
   setChildDocTileStatus('aadhaar',false);setChildDocTileStatus('birth_cert',false);
   if(!currentUser||!currentChildId)return;
+  const fm=(familyMembers||[]).find(f=>f.id===currentChildId);
+  const owner=currentChildOwnerId||(fm&&fm.owner_id)||currentUser.id;
+  const adultIds=(familyMembers||[]).filter(f=>!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
+  const allowedUids=Array.from(new Set([currentUser.id, owner, (fm&&fm.owner_id), ...adultIds].filter(Boolean)));
   let q=sb.from('documents').select('*').is('deleted_at',null).ilike('file_url','%children/'+currentChildId+'/%').order('created_at',{ascending:false});
-  const owner=currentChildOwnerId||currentUser.id;
-  if(owner!==currentUser.id)q=q.or('user_id.eq.'+currentUser.id+',user_id.eq.'+owner);
-  else q=q.eq('user_id',currentUser.id);
+  if(allowedUids.length>1){
+    q=q.in('user_id',allowedUids);
+  }else{
+    q=q.eq('user_id',currentUser.id);
+  }
   const{data,error}=await q;
   if(error){list.innerHTML='<p class="sub" style="color:var(--danger)"> '+error.message+'</p>';return;}
   childDocs=data||[];
