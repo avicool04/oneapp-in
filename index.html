@@ -1211,6 +1211,7 @@ alert('Error: Login modal not found');
 }
 async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
+let _initUid=null;
 sb.auth.onAuthStateChange((ev,s)=>{
 const btn=document.getElementById('authBtn'),area=document.getElementById('userArea');
 if(s){
@@ -1220,13 +1221,17 @@ document.getElementById('userEmail').textContent=s.user.email||'';
 const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback'),pic=m.avatar_url||m.picture;
 if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
 btn.style.display='none';area.style.display='block';
+if(_initUid!==s.user.id){
+_initUid=s.user.id;
 loadSavedAadhaar(s.user.id);
 loadGenericDocsStatus();
 setupRealTimeFamily();
 checkForInvite();
 loadFamilyMembers();
 }
+}
 else{
+_initUid=null;
 currentUser=null;familyMembers=[];
 btn.style.display='';area.style.display='none';
 document.getElementById('userDropdown').classList.remove('show');
@@ -1306,12 +1311,18 @@ closeModal('consentModal');
 window.history.pushState({},'',window.location.pathname);
 pendingInviteId = null;
 }
+let _famDebounce=null;
+function _reloadFamilySoon(){
+if(!document.getElementById('familyManagerModal').classList.contains('show'))return;
+clearTimeout(_famDebounce);
+_famDebounce=setTimeout(()=>{loadFamilyMembers();},400);
+}
 function setupRealTimeFamily(){
 if(!currentUser) return;
 if(familyChannel) sb.removeChannel(familyChannel);
 familyChannel = sb.channel('family_changes')
-.on('postgres_changes', { event: '*', schema: 'public', table: 'family_links', filter: `owner_id=eq.${currentUser.id}` }, () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); })
-.on('postgres_changes', { event: '*', schema: 'public', table: 'family_links', filter: `member_user_id=eq.${currentUser.id}` }, () => { if(document.getElementById('familyManagerModal').classList.contains('show')) loadFamilyMembers(); })
+.on('postgres_changes', { event: '*', schema: 'public', table: 'family_links', filter: `owner_id=eq.${currentUser.id}` }, () => { _reloadFamilySoon(); })
+.on('postgres_changes', { event: '*', schema: 'public', table: 'family_links', filter: `member_user_id=eq.${currentUser.id}` }, () => { _reloadFamilySoon(); })
 .on('postgres_changes', { event: '*', schema: 'public', table: 'document_shares', filter: `recipient_user_id=eq.${currentUser.id}` }, () => { if(sharedVaultContext) loadSharedVault(); })
 .subscribe();
 }
@@ -1375,7 +1386,14 @@ div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" oncli
 cont.appendChild(div);
 });
 }
-async function openFamilyManager(){if(!currentUser){alert('Sign in first.');return;}try{await loadFamilyMembers();}catch(e){console.warn(e);}try{if(typeof forceSyncMyFamilyAvatar==='function')await forceSyncMyFamilyAvatar();}catch(e){console.warn(e);}try{await loadFamilyMembers();}catch(e){console.warn(e);}openModal('familyManagerModal');}
+async function openFamilyManager(){
+  if(!currentUser){alert('Sign in first.');return;}
+  // Open immediately; show what we already have, then refresh once in the background
+  if(familyMembers&&familyMembers.length){try{renderFamilyList();}catch(e){console.warn(e);}}
+  else{const c=document.getElementById('familyListContainer');if(c)c.innerHTML='<p class="sub">Loading…</p>';}
+  openModal('familyManagerModal');
+  try{await loadFamilyMembers();}catch(e){console.warn(e);}
+}
 function deleteMember(id){if(!confirm('Cancel this request?'))return;sb.from('family_links').delete().eq('id',id).then(({error})=>{if(error)alert('❌ '+error.message);else{alert('✅ Cancelled.');loadFamilyMembers();}});}
 function setInviteTab(tab){['email','whatsapp','sms'].forEach(t=>{document.getElementById('inviteContent-'+t).style.display=t===tab?'block':'none';});document.querySelectorAll('.invite-tab').forEach(el=>el.classList.remove('active'));event.target.classList.add('active');}
 function openInviteModal(){openModal('inviteModal');}
@@ -3107,15 +3125,15 @@ function bellSendAlert(){
 }
 
 /* ================= SPOUSE SIDE: POLL FOR INCOMING ALERTS ================= */
-let alertPollTimer=null,dismissedAlertId=null,soundingAlertId=null;
-function startAlertPolling(){stopAlertPolling();alertPollTimer=setInterval(checkIncomingAlerts,20000);checkIncomingAlerts();}
+let alertPollTimer=null,dismissedAlertId=null,soundingAlertId=null,alertsUnavailable=false;
+function startAlertPolling(){if(alertsUnavailable)return;stopAlertPolling();alertPollTimer=setInterval(checkIncomingAlerts,20000);checkIncomingAlerts();}
 function stopAlertPolling(){if(alertPollTimer)clearInterval(alertPollTimer);alertPollTimer=null;hideIncomingAlert();}
 async function checkIncomingAlerts(){
   if(!currentUser)return;
   const famIds=(familyMembers||[]).filter(f=>f.status==='accepted'&&!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
   if(!famIds.length){hideIncomingAlert();return;}
   let row=null;
-  try{const{data}=await sb.from('alert_events').select('*').in('user_id',famIds).eq('status','active').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(1);row=data&&data[0];}catch(e){}
+  try{const{data,error}=await sb.from('alert_events').select('*').in('user_id',famIds).eq('status','active').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(1);if(error&&(error.code==='PGRST205'||error.code==='42P01')){alertsUnavailable=true;stopAlertPolling();return;}row=data&&data[0];}catch(e){}
   if(!row){hideIncomingAlert();return;}
   if(dismissedAlertId===row.id)return;
   showIncomingAlert(row);
@@ -3150,17 +3168,33 @@ async function setupPush(){
 
 /* ================= FAMILY: CHILD VISIBLE TO BOTH PARENTS ================= */
 let currentChildOwnerId=null;
+let _famLoadPromise=null,_famLoadQueued=false;
 async function loadFamilyMembers(){
   if(!currentUser)return;
+  // Coalesce overlapping calls: one load at a time, plus one re-run if another call arrived meanwhile
+  if(_famLoadPromise){_famLoadQueued=true;return _famLoadPromise;}
+  _famLoadPromise=(async()=>{
+    try{await _loadFamilyMembersOnce();}
+    finally{_famLoadPromise=null;}
+    if(_famLoadQueued){_famLoadQueued=false;return loadFamilyMembers();}
+  })();
+  return _famLoadPromise;
+}
+async function _loadFamilyMembersOnce(){
   const uid=currentUser.id;
   const md=currentUser.user_metadata||{};
   const myAvatar=md.avatar_url||md.picture||md.avatar||md.profile_picture||(md.picture===undefined&&currentUser.identities&&currentUser.identities[0]&&currentUser.identities[0].identity_data&&(currentUser.identities[0].identity_data.avatar_url||currentUser.identities[0].identity_data.picture))||'';
-  const{data:outgoing}=await sb.from('family_links').select('*').eq('owner_id',uid).in('status',['accepted','pending']);
-  const{data:incoming}=await sb.from('family_links').select('*').eq('member_user_id',uid).in('status',['accepted','pending']);
+  // Both queries in parallel (was one after the other)
+  const[{data:outgoing},{data:incoming}]=await Promise.all([
+    sb.from('family_links').select('*').eq('owner_id',uid).in('status',['accepted','pending']),
+    sb.from('family_links').select('*').eq('member_user_id',uid).in('status',['accepted','pending'])
+  ]);
   let all=[...(outgoing||[]),...(incoming||[])];
   all=all.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
 
-  // Stamp my Google/profile photo onto every adult link so the other person can see it
+  // Stamp my Google/profile photo onto every adult link so the other person can see it.
+  // Local objects are updated now; the database writes run in parallel in the background.
+  const stampWrites=[];
   if(myAvatar){
     for(const f of all){
       if(f.is_minor)continue;
@@ -3178,7 +3212,7 @@ async function loadFamilyMembers(){
       }
       if(changed){
         f.permissions=perms;
-        try{await sb.from('family_links').update({permissions:perms}).eq('id',f.id);}catch(e){}
+        stampWrites.push(Promise.resolve(sb.from('family_links').update({permissions:perms}).eq('id',f.id)).catch(()=>{}));
       }
     }
   }
@@ -3187,9 +3221,12 @@ async function loadFamilyMembers(){
   const adultIds=all.filter(f=>f.status==='accepted'&&!f.is_minor&&familyOtherUserId(f)).map(f=>familyOtherUserId(f));
   let borrowed=[];
   if(adultIds.length){
-    const{data:kids}=await sb.from('family_links').select('*').in('owner_id',adultIds).eq('is_minor',true);
+    // Both queries in parallel (was one after the other)
+    const[{data:kids},{data:elders}]=await Promise.all([
+      sb.from('family_links').select('*').in('owner_id',adultIds).eq('is_minor',true),
+      sb.from('family_links').select('*').in('owner_id',adultIds).eq('status','accepted')
+    ]);
     borrowed=(kids||[]).filter(k=>!all.find(a=>a.id===k.id));
-    const{data:elders}=await sb.from('family_links').select('*').in('owner_id',adultIds).eq('status','accepted');
     const more=(elders||[]).filter(e=>{
       if(all.find(a=>a.id===e.id)||borrowed.find(a=>a.id===e.id))return false;
       const p=(typeof e.permissions==='object'&&e.permissions)?e.permissions:{};
@@ -3199,6 +3236,7 @@ async function loadFamilyMembers(){
   }
   familyMembers=[...all,...borrowed];
   renderFamilyList();
+  if(stampWrites.length)Promise.all(stampWrites).catch(()=>{});
 }
 function familyDisplayName(f){
   if(f.is_minor)return f.display_name||'Child';
@@ -3620,9 +3658,10 @@ async function loadCareerAssets(){
 
 
 /* hook: after sign-in, subscribe for push + start watching spouse alerts */
+let _pushUid=null;
 sb.auth.onAuthStateChange((ev,s)=>{
-  if(s&&s.user){setupPush();startAlertPolling();}
-  else{stopAlertPolling();stopAlertSound();}
+  if(s&&s.user){if(_pushUid!==s.user.id){_pushUid=s.user.id;setupPush();startAlertPolling();}}
+  else{_pushUid=null;stopAlertPolling();stopAlertSound();}
 });
 
 </script>
