@@ -1285,7 +1285,18 @@ if(!pendingInviteId || !currentUser) return;
 if(allow){
 let { error } = await sb.rpc('accept_invite', { invite_id: pendingInviteId });
 if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'accepted', member_user_id: currentUser.id }).eq('id', pendingInviteId).eq('status', 'pending'); error = upErr; }
-if(error){ alert(' Error accepting: ' + error.message); } else { alert('✅ You have joined the family group!'); loadFamilyMembers(); }
+if(error){ alert(' Error accepting: ' + error.message); } else {
+  try{
+    const md=currentUser.user_metadata||{};
+    const pic=md.avatar_url||md.picture||md.avatar||'';
+    if(pic){
+      const {data:row}=await sb.from('family_links').select('permissions').eq('id',pendingInviteId).maybeSingle();
+      const perms={...(typeof row?.permissions==='object'&&row.permissions?row.permissions:{}), member_avatar:pic, avatar_url:pic};
+      await sb.from('family_links').update({permissions:perms, member_user_id:currentUser.id, status:'accepted'}).eq('id',pendingInviteId);
+    }
+  }catch(e){}
+  alert('✅ You have joined the family group!'); loadFamilyMembers();
+}
 } else {
 let { error } = await sb.rpc('reject_invite', { invite_id: pendingInviteId });
 if(error){ const { error: upErr } = await sb.from('family_links').update({ status: 'rejected' }).eq('id', pendingInviteId); error = upErr; }
@@ -1330,7 +1341,7 @@ const deleteBtn = (isOwner && fm.status === 'pending') ? `<button class="btn btn
 const clickAction = fm.is_minor ? `openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')` : (fm.status === 'accepted' ? `openSharedVault('${familyOtherUserId(fm)}','${name.replace(/'/g,"\\'")}')` : `alert('This family member is still pending.')`);
 const div=document.createElement('div');
 div.className='family-list-item';
-div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}<br><small style="color:var(--gray)">${((fm.permissions&&fm.permissions.elder_label)||fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':((fm.permissions&&fm.permissions.is_elder)?' • Elder':'')} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
+div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}<br><small style="color:var(--gray)">${relLabel} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
 cont.appendChild(div);
 });
 }
@@ -3112,23 +3123,33 @@ let currentChildOwnerId=null;
 async function loadFamilyMembers(){
   if(!currentUser)return;
   const uid=currentUser.id;
-  const myAvatar=currentUser.user_metadata?.avatar_url||currentUser.user_metadata?.picture||'';
+  const md=currentUser.user_metadata||{};
+  const myAvatar=md.avatar_url||md.picture||md.avatar||md.profile_picture||(md.picture===undefined&&currentUser.identities&&currentUser.identities[0]&&currentUser.identities[0].identity_data&&(currentUser.identities[0].identity_data.avatar_url||currentUser.identities[0].identity_data.picture))||'';
   const{data:outgoing}=await sb.from('family_links').select('*').eq('owner_id',uid).in('status',['accepted','pending']);
   const{data:incoming}=await sb.from('family_links').select('*').eq('member_user_id',uid).in('status',['accepted','pending']);
   let all=[...(outgoing||[]),...(incoming||[])];
   all=all.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
 
-  // Stamp my avatar onto every link I'm on (so spouse/siblings see each other)
+  // Stamp my Google/profile photo onto every adult link so the other person can see it
   if(myAvatar){
     for(const f of all){
       if(f.is_minor)continue;
-      let perms=(typeof f.permissions==='object'&&f.permissions)?{...f.permissions}:{};
+      const p0=(typeof f.permissions==='object'&&f.permissions)?f.permissions:{};
+      if(p0.is_elder)continue;
+      let perms={...p0};
       let changed=false;
-      if(f.owner_id===uid&&perms.owner_avatar!==myAvatar){perms.owner_avatar=myAvatar;changed=true;}
-      if(f.member_user_id===uid&&perms.member_avatar!==myAvatar){perms.member_avatar=myAvatar;changed=true;}
-      // also mirror under generic keys for older rows
-      if(f.owner_id===uid&&perms.inviter_avatar!==myAvatar){perms.inviter_avatar=myAvatar;changed=true;}
-      if(changed){f.permissions=perms;try{await sb.from('family_links').update({permissions:perms}).eq('id',f.id);}catch(e){}}
+      if(f.owner_id===uid){
+        if(perms.owner_avatar!==myAvatar){perms.owner_avatar=myAvatar;changed=true;}
+        if(perms.inviter_avatar!==myAvatar){perms.inviter_avatar=myAvatar;changed=true;}
+      }
+      if(f.member_user_id===uid){
+        if(perms.member_avatar!==myAvatar){perms.member_avatar=myAvatar;changed=true;}
+        if(perms.avatar_url!==myAvatar){perms.avatar_url=myAvatar;changed=true;}
+      }
+      if(changed){
+        f.permissions=perms;
+        try{await sb.from('family_links').update({permissions:perms}).eq('id',f.id);}catch(e){}
+      }
     }
   }
 
@@ -3161,30 +3182,58 @@ function renderFamilyList(){
   familyMembers.forEach(fm=>{
     const isOwner=fm.owner_id===currentUser.id;
     const isMe=fm.member_user_id===currentUser.id;
-    let name=fm.is_minor?(fm.display_name||'Child'):(isOwner?(fm.display_name||(fm.member_email?fm.member_email.split('@')[0]:'Member')):(fm.inviter_name||'Family Member'));
+    const perms0=(typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
+    const isElder=!!(perms0.is_elder||(['elder','father','mother','parent'].includes(fm.relation_type)&&!fm.is_minor&&!familyOtherUserId(fm)));
+    // Elders & minors always show their own display_name (not inviter name)
+    let name;
+    if(fm.is_minor||isElder){
+      name=fm.display_name||perms0.name||(isElder?'Elder':'Child');
+    }else if(isOwner){
+      name=fm.display_name||(fm.member_email?fm.member_email.split('@')[0]:'Member');
+    }else{
+      name=fm.inviter_name||fm.display_name||'Family Member';
+    }
     const initials=name.substring(0,2).toUpperCase();
     let statusBadge=fm.status==='pending'?'<span class="badge badge-warn">Pending</span>':(fm.status==='accepted'?'<span class="badge badge-ok">Connected</span>':'');
     const deleteBtn=(isOwner&&fm.status==='pending')?`<button class="btn btn-danger btn-sm" onclick="deleteMember('${fm.id}')"> Cancel</button>`:'';
-    const isElder=!!((fm.permissions&&fm.permissions.is_elder)||(['elder','father','mother','parent'].includes(fm.relation_type)&&!fm.is_minor&&!familyOtherUserId(fm)));
     const clickAction=fm.is_minor?`openChildVault('${fm.id}','${name.replace(/'/g,"\'")}','${fm.owner_id}')`:(isElder?`openElderVault('${fm.id}','${name.replace(/'/g,"\'")}','${fm.owner_id}')`:(fm.status==='accepted'?`openSharedVault('${familyOtherUserId(fm)}','${name.replace(/'/g,"\'")}')`:`alert('This family member is still pending.')`));
 
     let avatarUrl='';
-    const perms=(typeof fm.permissions==='object'&&fm.permissions)?fm.permissions:{};
+    const perms=perms0;
+    // Relation label: spouse of the person who added an elder sees in-laws
+    let relLabel='';
+    if(fm.is_minor){relLabel='CHILD • Minor';}
+    else if(isElder){
+      const raw=(perms.elder_label||fm.relation_type||'parent').toLowerCase();
+      const iAmSpouseOfOwner=familyMembers.some(x=>x.status==='accepted'&&!x.is_minor&&(x.relation_type==='spouse')&&((x.owner_id===currentUser.id&&x.member_user_id===fm.owner_id)||(x.member_user_id===currentUser.id&&x.owner_id===fm.owner_id)));
+      if(iAmSpouseOfOwner&&!isOwner){
+        if(raw==='father')relLabel='FATHER-IN-LAW • Elder';
+        else if(raw==='mother')relLabel='MOTHER-IN-LAW • Elder';
+        else relLabel='PARENT-IN-LAW • Elder';
+      }else{
+        if(raw==='father')relLabel='FATHER • Elder';
+        else if(raw==='mother')relLabel='MOTHER • Elder';
+        else relLabel=(raw||'parent').toUpperCase()+' • Elder';
+      }
+    }else{
+      relLabel=(fm.relation_type||'').toUpperCase();
+    }
+
     if(fm.is_minor||fm.relation_type==='elder'||fm.relation_type==='father'||fm.relation_type==='mother'||fm.relation_type==='parent'||perms.is_elder){
       avatarUrl=perms.signed_photo_url||perms.photo_url||'';
     }else{
-      // Show the OTHER person's photo: if I own the link, show member; if I joined, show owner
-      if(isOwner) avatarUrl=perms.member_avatar||perms.avatar_url||perms.picture||'';
-      else avatarUrl=perms.owner_avatar||perms.inviter_avatar||perms.avatar_url||perms.picture||'';
+      // Show the OTHER person's Google/profile photo
+      if(isOwner) avatarUrl=perms.member_avatar||perms.avatar_url||perms.picture||perms.photo_url||'';
+      else avatarUrl=perms.owner_avatar||perms.inviter_avatar||perms.avatar_url||perms.picture||perms.photo_url||'';
     }
 
     const avatarHtml=avatarUrl
-      ? `<img src="${escHtml(avatarUrl)}" class="family-avatar-sm" style="object-fit:cover;border:1.5px solid #cbd5e1" alt="${escHtml(name)}" onerror="this.outerHTML='<div class=\\'family-avatar-sm\\'>${initials}</div>'">`
+      ? `<img src="${escHtml(avatarUrl)}" class="family-avatar-sm" style="object-fit:cover;border:1.5px solid #cbd5e1" referrerpolicy="no-referrer" alt="${escHtml(name)}" onerror="this.outerHTML='<div class=\\'family-avatar-sm\\'>${initials}</div>'">`
       : `<div class="family-avatar-sm">${initials}</div>`;
 
     const div=document.createElement('div');
     div.className='family-list-item';
-    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">${avatarHtml}<div><strong>${name}</strong> ${isMe&&!isOwner?'<span class="badge badge-ok">(You joined)</span>':''}<br><small style="color:var(--gray)">${((fm.permissions&&fm.permissions.elder_label)||fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':((fm.permissions&&fm.permissions.is_elder)?' • Elder':'')} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
+    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">${avatarHtml}<div><strong>${name}</strong> ${isMe&&!isOwner?'<span class="badge badge-ok">(You joined)</span>':''}<br><small style="color:var(--gray)">${relLabel} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
     cont.appendChild(div);
   });
 }
