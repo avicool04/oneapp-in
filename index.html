@@ -183,10 +183,33 @@ footer{text-align:center;padding:1.6rem 1rem;color:var(--gray);font-size:.72rem;
 @keyframes toastOut{to{opacity:0;transform:translateY(20px)}}
 
 /* ---------- SCAN FAB ---------- */
-#scanFab{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);width:66px;height:66px;border-radius:50%;background:transparent;border:none;padding:0;box-shadow:0 10px 28px rgba(27,35,64,.32);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:90;transition:transform .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
-#scanFab:active{transform:translateX(-50%) scale(.9)}
+/* Bottom navigation: Career | Scan | Reminders */
+#bottomNav{
+  position:fixed;left:0;right:0;bottom:0;z-index:90;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 1.1rem calc(0.55rem + env(safe-area-inset-bottom,0px));
+  pointer-events:none;
+  background:linear-gradient(to top, rgba(244,245,251,.98) 55%, rgba(244,245,251,0));
+  min-height:76px;
+}
+#bottomNav .bnav-side{
+  pointer-events:auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.15rem;min-width:72px;padding:.45rem .5rem .35rem;
+  border:none;background:transparent;cursor:pointer;
+  color:var(--text-2);font-weight:700;font-size:.68rem;
+  border-radius:14px;-webkit-tap-highlight-color:transparent;
+}
+#bottomNav .bnav-side svg{width:24px;height:24px;display:block;opacity:.85}
+#bottomNav .bnav-side.active{color:var(--primary)}
+#bottomNav .bnav-side.active svg{opacity:1}
+#bottomNav .bnav-center{pointer-events:auto;width:78px;height:78px;display:flex;align-items:center;justify-content:center;margin-bottom:.35rem}
+#scanFab{position:relative;bottom:auto;left:auto;transform:none;width:66px;height:66px;border-radius:50%;background:transparent;border:none;padding:0;box-shadow:0 10px 28px rgba(27,35,64,.32);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:91;transition:transform .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
+#scanFab:active{transform:scale(.9)}
 #scanFab:hover{box-shadow:0 12px 32px rgba(27,35,64,.4)}
 #scanFab svg{width:66px;height:66px;display:block;border-radius:50%}
+body{padding-bottom:92px}
+.container{padding-bottom:0.5rem}
 
 /* ---------- SMART SCANNER (bottom sheet) ---------- */
 #smartScanModal{z-index:500}
@@ -357,7 +380,6 @@ body.dark .dropdown .email{color:var(--gray)}
 <nav>
 <div class="logo" id="logoBtn" onclick="showView('vault')" role="button" tabindex="0" title="My Vault">One<span>App</span>.in</div>
 <div class="nav-links">
-<button id="nav-auto" onclick="showView('reminders')">Reminders</button>
 <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Dark mode" aria-label="Toggle dark mode">🌙</button>
 <button class="btn-emg" onclick="openEmergencyBell()" aria-label="Emergency" title="Emergency">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -383,6 +405,13 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 </div>
 </nav>
+
+<div id="bottomNav" role="navigation" aria-label="Main">
+<button type="button" class="bnav-side" id="bnav-career" onclick="showView('career')" aria-label="Career">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V5a2 2 0 0 1 2-2h8l6 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+<span>Career</span>
+</button>
+<div class="bnav-center">
 <button id="scanFab" aria-label="Open camera scanner" title="Scan document" onclick="startScanFlow()">
 <svg viewBox="0 0 100 100" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -430,6 +459,13 @@ body.dark .dropdown .email{color:var(--gray)}
   <circle cx="50" cy="50" r="11" fill="none" stroke="#334155" stroke-width="1"/>
 </svg>
 </button>
+</div>
+<button type="button" class="bnav-side" id="bnav-reminders" onclick="showView('reminders')" aria-label="Reminders">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+<span>Reminders</span>
+</button>
+</div>
+
 <div id="vault" class="view active container">
 <h2>My Secure Vault</h2>
 <p class="sub">Encrypted mirrors of your official documents.</p>
@@ -1294,7 +1330,7 @@ const deleteBtn = (isOwner && fm.status === 'pending') ? `<button class="btn btn
 const clickAction = fm.is_minor ? `openChildVault('${fm.id}','${name.replace(/'/g,"\\'")}')` : (fm.status === 'accepted' ? `openSharedVault('${familyOtherUserId(fm)}','${name.replace(/'/g,"\\'")}')` : `alert('This family member is still pending.')`);
 const div=document.createElement('div');
 div.className='family-list-item';
-div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}<br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
+div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}"><div class="family-avatar-sm">${initials}</div><div><strong>${name}</strong> ${isMe && !isOwner ? '<span class="badge badge-ok">(You joined)</span>' : ''}<br><small style="color:var(--gray)">${((fm.permissions&&fm.permissions.elder_label)||fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':((fm.permissions&&fm.permissions.is_elder)?' • Elder':'')} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
 cont.appendChild(div);
 });
 }
@@ -2232,8 +2268,9 @@ function showView(id){
 document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
 const el=document.getElementById(id); if(el) el.classList.add('active');
 document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
-const map={vault:'nav-vault',reminders:'nav-auto',career:'nav-career',otherDocsView:'nav-vault'};
-if(map[id]){const n=document.getElementById(map[id]); if(n)n.classList.add('active');}
+document.querySelectorAll('#bottomNav .bnav-side').forEach(b=>b.classList.remove('active'));
+if(id==='career'){const n=document.getElementById('bnav-career'); if(n)n.classList.add('active');}
+if(id==='reminders'){const n=document.getElementById('bnav-reminders'); if(n)n.classList.add('active');}
 window.scrollTo(0,0);
 if(id==='otherDocsView') loadOtherDocs();
 if(id==='career'){loadCareerProfile();loadCareerAssets();}
@@ -3147,7 +3184,7 @@ function renderFamilyList(){
 
     const div=document.createElement('div');
     div.className='family-list-item';
-    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">${avatarHtml}<div><strong>${name}</strong> ${isMe&&!isOwner?'<span class="badge badge-ok">(You joined)</span>':''}<br><small style="color:var(--gray)">${(fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':''} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
+    div.innerHTML=`<div style="display:flex;align-items:center;cursor:pointer" onclick="${clickAction}">${avatarHtml}<div><strong>${name}</strong> ${isMe&&!isOwner?'<span class="badge badge-ok">(You joined)</span>':''}<br><small style="color:var(--gray)">${((fm.permissions&&fm.permissions.elder_label)||fm.relation_type||'').toUpperCase()}${fm.is_minor?' • Minor':((fm.permissions&&fm.permissions.is_elder)?' • Elder':'')} ${statusBadge}</small></div></div><div style="display:flex;gap:.3rem">${deleteBtn}</div>`;
     cont.appendChild(div);
   });
 }
@@ -3256,8 +3293,10 @@ let currentElderId=null,currentElderName='',currentElderOwnerId=null,elderDocKin
 function openAddElderModal(){if(!currentUser){alert('Sign in first.');return;}openModal('elderModal');}
 async function addElder(){
   const name=(document.getElementById('elderName').value||'').trim();
-  const rel=document.getElementById('elderRelation').value||'parent';
+  const label=(document.getElementById('elderRelation').value||'parent');
   if(!name)return alert('Enter name');
+  // DB check constraint only allows existing relation_type values (e.g. parent, child, spouse, sibling)
+  const rel='parent';
   const inviterName=currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||'Family';
   const{error}=await sb.from('family_links').insert({
     owner_id:currentUser.id,
@@ -3267,7 +3306,7 @@ async function addElder(){
     status:'accepted',
     display_name:name,
     inviter_name:inviterName,
-    permissions:{is_elder:true,name:name}
+    permissions:{is_elder:true,name:name,elder_label:label}
   });
   if(error)alert(error.message);
   else{alert('✅ '+name+"'s profile created. Spouse can access these documents.");closeModal('elderModal');loadFamilyMembers();}
