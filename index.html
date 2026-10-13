@@ -110,6 +110,7 @@ h3{font-size:.98rem;font-weight:700}
 #genericShareModal{z-index:450}
 #fileViewerModal{z-index:250}
 #aadhaarModal{z-index:250}
+#aadhaarFactsModal{z-index:260}
 #consentModal{z-index:400}
 #profileModal{z-index:350}
 #uploadMethodModal{z-index:450}
@@ -612,10 +613,16 @@ body.dark .dropdown .email{color:var(--gray)}
   <p class="sub">Save certificates once. Opportunities that fully match you come to your inbox.</p>
   <div class="card">
     <div class="card-header"><h3>Your profile</h3><span class="badge badge-ok">Matching</span></div>
+    <button class="btn btn-outline" onclick="careerFillFromAadhaar()">📄 Fill from my Aadhaar (stays on your phone)</button>
+    <input id="careerAadhaarInput" type="file" accept="application/pdf" style="display:none" onchange="careerAadhaarOnFile(this.files[0]);this.value=''">
+    <div class="field"><label>First name</label><input id="careerFirst" type="text"></div>
+    <div class="field"><label>Last name</label><input id="careerLast" type="text"></div>
     <div class="field"><label>Date of birth</label><input id="careerDob" type="date"></div>
     <div class="field"><label>Gender</label><select id="careerGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
     <div class="field"><label>Category</label><select id="careerCategory"><option value="">Select</option><option>General</option><option>OBC</option><option>SC</option><option>ST</option><option>EWS</option></select></div>
     <div class="field"><label>State</label><input id="careerState" type="text" placeholder="e.g. Jharkhand"></div>
+    <div class="field"><label>District</label><input id="careerDistrict" type="text"></div>
+    <div class="field"><label>PIN code</label><input id="careerPin" type="text" inputmode="numeric" maxlength="6"></div>
     <div class="field"><label>Qualification</label><input id="careerQual" type="text" placeholder="e.g. B.E."></div>
     <div class="field"><label>Branch</label><input id="careerBranch" type="text" placeholder="e.g. EEE"></div>
     <div class="field"><label>% / CGPA</label><input id="careerPct" type="text"></div>
@@ -704,6 +711,19 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
 <div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
 <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="viewer-img" alt="preview"><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
+</div></div>
+<!-- AADHAAR FACTS (P3): confirm what was read before it goes into the Career profile -->
+<div id="aadhaarFactsModal" class="modal-overlay"><div class="modal">
+<h3>Fill my profile from Aadhaar</h3>
+<p class="sub" id="afNote">Read on your phone only. Your 12-digit number was ignored and nothing was uploaded.</p>
+<div class="field"><label>Full name (as on Aadhaar)</label><input id="afName" type="text"></div>
+<div class="field"><label>Date of birth</label><input id="afDob" type="date"></div>
+<div class="field"><label>Gender</label><select id="afGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+<div class="field"><label>State</label><input id="afState" type="text"></div>
+<div class="field"><label>District</label><input id="afDistrict" type="text"></div>
+<div class="field"><label>PIN code</label><input id="afPin" type="text" inputmode="numeric" maxlength="6"></div>
+<button class="btn btn-primary" onclick="applyAadhaarFacts()">Use for my career profile</button>
+<button class="btn btn-outline" onclick="aaCloseFacts()">Cancel</button>
 </div></div>
 <!-- AADHAAR SHARE MODAL (5 options) -->
 <div id="shareModal" class="modal-overlay"><div class="modal">
@@ -2220,6 +2240,7 @@ const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadha
 let pdf;
 try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
 catch(err){if(err&&err.name==='PasswordException'){document.getElementById('aaPassRow').style.display='block';st.textContent='Password required — enter once, we remember it.';return;}st.textContent=' '+err.message;return;}
+aaFacts=null;try{aaFacts=await extractAadhaarFacts(pdf);}catch(e){}
 try{
 const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
 await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -2277,7 +2298,8 @@ if(aaFile){(e=await sb.storage.from('vault').upload(uid+'/aadhaar-original.pdf',
 const{data:ex}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').limit(1);
 let err;if(ex&&ex.length)({error:err}=await sb.from('documents').update({file_url:uid+'/aadhaar-full.jpg',is_critical:true,deleted_at:null}).eq('id',ex[0].id));else({error:err}=await sb.from('documents').insert({user_id:uid,document_type:'Aadhaar Card (Wallet)',document_name:'aadhaar-card',file_url:uid+'/aadhaar-full.jpg',is_critical:true,deleted_at:null}));
 if(err){alert('❌ '+err.message);return;}
-aaHasOrig=true;setSaved('Wallet card saved');closeModal('aadhaarModal');alert('✅ Saved!');}
+aaHasOrig=true;setSaved('Wallet card saved');closeModal('aadhaarModal');alert('✅ Saved!');
+if(aaFacts&&aaFactsCount(aaFacts)){setTimeout(function(){openAadhaarFacts(aaFacts);},50);}}
 function setSaved(t){document.getElementById('aadhaarIndicator').classList.add('show');}
 function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;aaRowId=null;document.getElementById('aadhaarIndicator').classList.remove('show');}
 async function loadSavedAadhaar(uid){
@@ -3619,16 +3641,19 @@ function careerProfileKey(){return currentUser?('oneapp_career_'+currentUser.id)
 function loadCareerProfile(){
   const key=careerProfileKey(); if(!key)return;
   let p={}; try{p=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
+  if(!Object.keys(p).length&&currentUser.user_metadata&&currentUser.user_metadata.career_profile)p=Object.assign({},currentUser.user_metadata.career_profile);
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('careerFirst',p.first);set('careerLast',p.last);set('careerDistrict',p.district);set('careerPin',p.pin);
   set('careerDob',p.dob);set('careerGender',p.gender);set('careerCategory',p.category);
   set('careerState',p.state);set('careerQual',p.qual);set('careerBranch',p.branch);
   set('careerPct',p.pct);set('careerLang',p.lang);set('careerSkills',p.skills);set('careerStreams',p.streams);
 }
 async function saveCareerProfile(){
   if(!currentUser){alert('Sign in first');return;}
-  const p={dob:document.getElementById('careerDob').value,gender:document.getElementById('careerGender').value,category:document.getElementById('careerCategory').value,state:document.getElementById('careerState').value.trim(),qual:document.getElementById('careerQual').value.trim(),branch:document.getElementById('careerBranch').value.trim(),pct:document.getElementById('careerPct').value.trim(),lang:document.getElementById('careerLang').value.trim(),skills:document.getElementById('careerSkills').value.trim(),streams:document.getElementById('careerStreams').value.trim(),updatedAt:new Date().toISOString()};
+  const p={first:document.getElementById('careerFirst').value.trim(),last:document.getElementById('careerLast').value.trim(),district:document.getElementById('careerDistrict').value.trim(),pin:document.getElementById('careerPin').value.trim(),dob:document.getElementById('careerDob').value,gender:document.getElementById('careerGender').value,category:document.getElementById('careerCategory').value,state:document.getElementById('careerState').value.trim(),qual:document.getElementById('careerQual').value.trim(),branch:document.getElementById('careerBranch').value.trim(),pct:document.getElementById('careerPct').value.trim(),lang:document.getElementById('careerLang').value.trim(),skills:document.getElementById('careerSkills').value.trim(),streams:document.getElementById('careerStreams').value.trim(),updatedAt:new Date().toISOString()};
+  try{const old=JSON.parse(localStorage.getItem(careerProfileKey())||'{}');if(old.sources)p.sources=old.sources;if(old.name)p.name=old.name;}catch(e){}
   localStorage.setItem(careerProfileKey(),JSON.stringify(p));
-  try{await sb.auth.updateUser({data:{career_profile:p}});}catch(e){}
+  try{const pm=Object.assign({},p);delete pm.pin;await sb.auth.updateUser({data:{career_profile:pm}});}catch(e){}
   alert('Career profile saved');
 }
 function careerUploadAsset(kind){if(!currentUser){alert('Sign in first');return;}careerAssetKind=kind;document.getElementById('careerAssetInput').value='';document.getElementById('careerAssetInput').click();}
@@ -3664,6 +3689,128 @@ sb.auth.onAuthStateChange((ev,s)=>{
   else{_pushUid=null;stopAlertPolling();stopAlertSound();}
 });
 
+
+/* ===== P3 · Aadhaar → profile facts. Runs 100% in this browser. Nothing is uploaded; the 12-digit number is discarded. ===== */
+const IN_STATES=['Andaman and Nicobar Islands','Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chandigarh','Chhattisgarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Ladakh','Lakshadweep','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Puducherry','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal'];
+const IN_STATE_ALIASES={'orissa':'Odisha','pondicherry':'Puducherry','uttaranchal':'Uttarakhand','nct of delhi':'Delhi','new delhi':'Delhi','andaman and nicobar':'Andaman and Nicobar Islands','dadra and nagar haveli':'Dadra and Nagar Haveli and Daman and Diu','daman and diu':'Dadra and Nagar Haveli and Daman and Diu'};
+function aaNormTxt(s){return String(s||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z ]+/g,' ').replace(/\s+/g,' ').trim();}
+function aaMatchState(str){
+  const n=' '+aaNormTxt(str)+' ';let best='',bestLen=0;
+  for(const st of IN_STATES){const k=' '+aaNormTxt(st)+' ';if(n.includes(k)&&k.length>bestLen){best=st;bestLen=k.length;}}
+  for(const al in IN_STATE_ALIASES){const k=' '+al+' ';if(n.includes(k)&&k.length>bestLen){best=IN_STATE_ALIASES[al];bestLen=k.length;}}
+  return best;
+}
+// Remove 16-digit VID and 12-digit Aadhaar numbers before anything else touches the text
+function aaScrub(s){return String(s||'').replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,' ').replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,' ');}
+const AA_NAME_RE=/^[A-Za-z][A-Za-z .'\-]{1,60}$/;
+const AA_BAD_RE=/\b(government|india|aadhaar|aadhar|unique|identification|authority|address|download|downloaded|issued|enrol|enrolment|enrollment|mobile|virtual|uidai|www|digitally|signed|male|female|transgender|dob|birth|help|verify|authentication|offline|signature|valid|details|information|proof|citizenship|date|district|state|pin|code|vtc|post|sub|house|road|street|to|from|name|gender|year)\b/i;
+function aaTitleCase(s){return s.toLowerCase().replace(/\b[a-z]/g,function(c){return c.toUpperCase();});}
+function parseAadhaarItems(raw){
+  const items=raw.map(function(i){return{s:aaScrub(i.s).replace(/\s+/g,' ').trim(),x:i.x,y:i.y};}).filter(function(i){return i.s;});
+  items.sort(function(a,b){return (Math.round(b.y/3)-Math.round(a.y/3))||(a.x-b.x);});
+  const joined=items.map(function(i){return i.s;}).join(' ');
+  const f={name:'',dob:'',yob:'',gender:'',state:'',district:'',pin:''};
+  // Date of birth
+  let dobItem=null;
+  const dobRe=/(?:DOB|D\.O\.B|Date of Birth)\s*[:\-\/]*\s*(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/i;
+  const dobReHi=/जन्म\s*तिथि[^0-9]{0,12}(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/;
+  function okDob(m){const d=+m[1],mo=+m[2],y=+m[3];return mo>=1&&mo<=12&&d>=1&&d<=31&&y>=1900&&y<=new Date().getFullYear()?y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'):'';}
+  for(const it of items){const m=it.s.match(dobRe)||it.s.match(dobReHi);if(m){const v=okDob(m);if(v){f.dob=v;dobItem=it;break;}}}
+  if(!f.dob){const m=joined.match(dobRe)||joined.match(dobReHi);if(m){const v=okDob(m);if(v){f.dob=v;dobItem=items.find(function(i){return /DOB|Birth|जन्म/i.test(i.s);})||null;}}}
+  if(!f.dob){const m=joined.match(/Year of Birth\s*[:\-]?\s*(\d{4})/i)||joined.match(/जन्म\s*वर्ष[^0-9]{0,12}(\d{4})/);if(m)f.yob=m[1];dobItem=dobItem||items.find(function(i){return /DOB|Birth|जन्म/i.test(i.s);})||null;}
+  // Gender
+  const gm=joined.match(/\b(FEMALE|MALE|TRANSGENDER)\b/i);
+  if(gm){const g=gm[1].toUpperCase();f.gender=g==='FEMALE'?'Female':g==='MALE'?'Male':'Other';}
+  else if(/महिला/.test(joined))f.gender='Female';else if(/पुरुष/.test(joined))f.gender='Male';
+  // PIN, state, district
+  const pm=joined.match(/PIN\s*Code\s*[:\-]?\s*(\d{6})/i)||joined.match(/State\s*[:\-]?[^,\d]{2,45}[-–,]?\s*(\d{6})\b/i)||joined.match(/\b([1-9]\d{5})\b/);
+  if(pm)f.pin=pm[1];
+  const sm=joined.match(/State\s*[:\-]?\s*([A-Za-z&. ]{3,45})/i);
+  if(sm)f.state=aaMatchState(sm[1]);
+  if(!f.state&&f.pin){const ix=joined.indexOf(f.pin);f.state=aaMatchState(joined.slice(Math.max(0,ix-220),ix+10));}
+  const dre=/District\s*[:\-]?\s*([A-Za-z][A-Za-z .'\-]{1,40}?)(?=\s*(?:,|State|PIN|Mobile|VTC|PO\b|Sub[\s-]*District|$))/gi;
+  let dm;while((dm=dre.exec(joined))){const pre=joined.slice(Math.max(0,dm.index-5),dm.index);if(/sub\s*-?\s*$/i.test(pre))continue;f.district=dm[1].trim();break;}
+  // Name: English line just above the DOB line on the card, else the line after "To" in the letter
+  let name='';
+  if(dobItem){
+    const above=items.filter(function(i){return i.y>dobItem.y&&i.y-dobItem.y<90&&Math.abs(i.x-dobItem.x)<90&&AA_NAME_RE.test(i.s)&&!AA_BAD_RE.test(i.s);});
+    above.sort(function(a,b){return (a.y-dobItem.y)-(b.y-dobItem.y);});
+    if(above.length)name=above[0].s;
+  }
+  if(!name){const ti=items.findIndex(function(i){return /^to$/i.test(i.s);});if(ti>=0){const nx=items.slice(ti+1,ti+9).find(function(i){return AA_NAME_RE.test(i.s)&&!AA_BAD_RE.test(i.s);});if(nx)name=nx.s;}}
+  if(name&&name===name.toUpperCase())name=aaTitleCase(name);
+  f.name=name.trim();
+  return f;
+}
+async function extractAadhaarFacts(pdf){
+  const pg=await pdf.getPage(1);
+  const tc=await pg.getTextContent();
+  const raw=(tc.items||[]).filter(function(i){return i.str&&i.str.trim();}).map(function(i){return{s:i.str,x:i.transform[4],y:i.transform[5]};});
+  return parseAadhaarItems(raw);
+}
+let aaFacts=null;
+function aaFactsCount(f){return f?['name','dob','gender','state','district','pin'].filter(function(k){return f[k];}).length:0;}
+function openAadhaarFacts(f){
+  aaFacts=f;
+  const set=function(id,v){const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('afName',f.name);set('afDob',f.dob);set('afGender',f.gender);set('afState',f.state);set('afDistrict',f.district);set('afPin',f.pin);
+  const n=aaFactsCount(f),note=document.getElementById('afNote');
+  if(note){
+    let t=n?('Read '+n+' of 6 details on your phone. Your 12-digit number was ignored and nothing was uploaded. Check each line, fix anything wrong, then save.'):'I could not read text from this PDF, so please type the details below. Nothing was uploaded.';
+    if(!f.dob&&f.yob)t+=' Only your year of birth ('+f.yob+') is printed, so please enter the full date of birth.';
+    note.textContent=t;
+  }
+  openModal('aadhaarFactsModal');
+}
+function aaCloseFacts(){aaFacts=null;closeModal('aadhaarFactsModal');}
+async function applyAadhaarFacts(){
+  if(!currentUser){alert('Sign in first');return;}
+  const g=function(id){return (document.getElementById(id).value||'').trim();};
+  const nf={name:g('afName'),dob:g('afDob'),gender:g('afGender'),state:g('afState'),district:g('afDistrict'),pin:g('afPin')};
+  if(nf.pin&&!/^[1-9]\d{5}$/.test(nf.pin)){alert('PIN code should be 6 digits.');return;}
+  const key=careerProfileKey();
+  let p={};try{p=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
+  if(!Object.keys(p).length&&currentUser.user_metadata&&currentUser.user_metadata.career_profile)p=Object.assign({},currentUser.user_metadata.career_profile);
+  p.sources=p.sources||{};
+  const parts=nf.name.split(/\s+/).filter(Boolean);
+  const upd={first:parts[0]||'',last:parts.length>1?parts[parts.length-1]:'',dob:nf.dob,gender:nf.gender,state:nf.state,district:nf.district,pin:nf.pin};
+  const LABEL={first:'First name',last:'Last name',dob:'Date of birth',gender:'Gender',state:'State',district:'District',pin:'PIN code'};
+  let filled=0;const kept=[];
+  for(const k of Object.keys(upd)){
+    const nv=upd[k];if(!nv)continue;
+    const ov=p[k];
+    if(ov&&String(ov).trim().toLowerCase()!==String(nv).trim().toLowerCase()){
+      if(!confirm('Your profile says '+LABEL[k]+': '+ov+'\nAadhaar says: '+nv+'\n\nUse the Aadhaar value?')){kept.push(LABEL[k]);continue;}
+    }
+    if(p[k]!==nv)filled++;
+    p[k]=nv;p.sources[k]='aadhaar';
+  }
+  if(nf.name&&(!p.name||(!kept.includes('First name')&&!kept.includes('Last name'))))p.name=nf.name;
+  p.updatedAt=new Date().toISOString();
+  try{localStorage.setItem(key,JSON.stringify(p));}catch(e){}
+  try{const pm=Object.assign({},p);delete pm.pin;await sb.auth.updateUser({data:{career_profile:pm}});}catch(e){}
+  aaCloseFacts();
+  loadCareerProfile();
+  alert('✅ '+filled+' detail'+(filled===1?'':'s')+' filled in your Career profile.'+(kept.length?'\nKept your existing: '+kept.join(', ')+'.':''));
+}
+function careerFillFromAadhaar(){if(!currentUser){alert('Sign in first');return;}document.getElementById('careerAadhaarInput').click();}
+async function careerAadhaarOnFile(file){
+  if(!file||!currentUser)return;
+  const uid=currentUser.id;
+  let pw=getSavedPdfPassword(uid,'aadhaar')||undefined,pdf=null,typed=false;
+  for(let tries=0;tries<3&&!pdf;tries++){
+    try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
+    catch(err){
+      if(err&&err.name==='PasswordException'){
+        const entered=prompt('Enter your e-Aadhaar PDF password\n(first 4 letters of your name in CAPITALS + birth year, e.g. RAHU1990)');
+        if(!entered)return;pw=entered.trim();typed=true;
+      }else{alert('Could not open this PDF: '+(err&&err.message||err));return;}
+    }
+  }
+  if(!pdf){alert('That password did not work. Please try again.');return;}
+  if(typed)savePdfPassword(uid,'aadhaar',pw);
+  try{openAadhaarFacts(await extractAadhaarFacts(pdf));}catch(e){alert('Could not read details from this PDF. You can type them in manually.');}
+}
 </script>
 </body>
 </html>
