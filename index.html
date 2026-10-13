@@ -3730,15 +3730,32 @@ function parseAadhaarItems(raw){
   if(!f.state&&f.pin){const ix=joined.indexOf(f.pin);f.state=aaMatchState(joined.slice(Math.max(0,ix-220),ix+10));}
   const dre=/District\s*[:\-]?\s*([A-Za-z][A-Za-z .'\-]{1,40}?)(?=\s*(?:,|State|PIN|Mobile|VTC|PO\b|Sub[\s-]*District|$))/gi;
   let dm;while((dm=dre.exec(joined))){const pre=joined.slice(Math.max(0,dm.index-5),dm.index);if(/sub\s*-?\s*$/i.test(pre))continue;f.district=dm[1].trim();break;}
-  // Name: English line just above the DOB line on the card, else the line after "To" in the letter
-  let name='';
-  if(dobItem){
-    const above=items.filter(function(i){return i.y>dobItem.y&&i.y-dobItem.y<90&&Math.abs(i.x-dobItem.x)<90&&AA_NAME_RE.test(i.s)&&!AA_BAD_RE.test(i.s);});
-    above.sort(function(a,b){return (a.y-dobItem.y)-(b.y-dobItem.y);});
-    if(above.length)name=above[0].s;
+  // Name: English line just above the DOB line on the card, else the line after "To" in the letter.
+  // Names are often split into one text item per word, so rebuild the whole row (first + last name).
+  function isNameTok(i){return AA_NAME_RE.test(i.s)&&!AA_BAD_RE.test(i.s);}
+  function rowFrom(start){
+    const row=items.filter(function(i){return Math.abs(i.y-start.y)<=3&&i.x>=start.x-1&&i.x-start.x<=200;}).sort(function(a,b){return a.x-b.x;});
+    const out=[];
+    for(const it of row){if(!isNameTok(it))break;out.push(it.s);}
+    return out.join(' ').replace(/\s+/g,' ').trim();
   }
-  if(!name){const ti=items.findIndex(function(i){return /^to$/i.test(i.s);});if(ti>=0){const nx=items.slice(ti+1,ti+9).find(function(i){return AA_NAME_RE.test(i.s)&&!AA_BAD_RE.test(i.s);});if(nx)name=nx.s;}}
-  if(name&&name===name.toUpperCase())name=aaTitleCase(name);
+  let cardName='',toName='';
+  if(dobItem){
+    const above=items.filter(function(i){return i.y>dobItem.y&&i.y-dobItem.y<90&&Math.abs(i.x-dobItem.x)<90&&isNameTok(i);});
+    if(above.length){
+      const dy=Math.min.apply(null,above.map(function(i){return i.y-dobItem.y;}));
+      const line=above.filter(function(i){return (i.y-dobItem.y)-dy<=3;}).sort(function(a,b){return a.x-b.x;});
+      cardName=rowFrom(line[0]);
+    }
+  }
+  const ti=items.findIndex(function(i){return /^to$/i.test(i.s);});
+  if(ti>=0){const nx=items.slice(ti+1,ti+9).find(isNameTok);if(nx)toName=rowFrom(nx);}
+  let name=cardName||toName;
+  if(cardName&&toName){
+    const ct=aaNormTxt(cardName).split(' '),tt=aaNormTxt(toName).split(' ');
+    if(tt.length>ct.length&&ct.every(function(w){return tt.indexOf(w)>=0;}))name=toName;
+  }
+  name=name.split(' ').map(function(w){return w===w.toUpperCase()?aaTitleCase(w):w;}).join(' ');
   f.name=name.trim();
   return f;
 }
@@ -3758,6 +3775,7 @@ function openAadhaarFacts(f){
   if(note){
     let t=n?('Read '+n+' of 6 details on your phone. Your 12-digit number was ignored and nothing was uploaded. Check each line, fix anything wrong, then save.'):'I could not read text from this PDF, so please type the details below. Nothing was uploaded.';
     if(!f.dob&&f.yob)t+=' Only your year of birth ('+f.yob+') is printed, so please enter the full date of birth.';
+    if(f.name&&f.name.indexOf(' ')<0)t+=' I found only one name word, so please check your full name.';
     note.textContent=t;
   }
   openModal('aadhaarFactsModal');
