@@ -111,6 +111,7 @@ h3{font-size:.98rem;font-weight:700}
 #fileViewerModal{z-index:250}
 #aadhaarModal{z-index:250}
 #aadhaarFactsModal{z-index:260}
+#marksheetFactsModal{z-index:260}
 #consentModal{z-index:400}
 #profileModal{z-index:350}
 #uploadMethodModal{z-index:450}
@@ -611,6 +612,12 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="career" class="view container">
   <h2>Career</h2>
   <p class="sub">Save certificates once. Opportunities that fully match you come to your inbox.</p>
+  <div class="card" id="careerLadderCard">
+    <div class="card-header"><h3>Profile strength</h3><span class="badge badge-ok" id="ladderPct">0%</span></div>
+    <div style="background:#e2e8f0;border-radius:99px;height:10px;overflow:hidden"><div id="ladderBar" style="height:10px;width:0%;background:#4f46e5;transition:width .3s"></div></div>
+    <p class="sub" id="ladderNote" style="margin-top:.5rem">Fill your profile from your Aadhaar to get started.</p>
+    <button class="btn btn-primary" id="ladderBtn" style="display:none" onclick="ladderAct()">Next step</button>
+  </div>
   <div class="card">
     <div class="card-header"><h3>Your profile</h3><span class="badge badge-ok">Matching</span></div>
     <button class="btn btn-outline" onclick="careerFillFromAadhaar()">📄 Fill from my saved Aadhaar (stays on your phone)</button>
@@ -627,6 +634,7 @@ body.dark .dropdown .email{color:var(--gray)}
     <div class="field"><label>Branch</label><input id="careerBranch" type="text" placeholder="e.g. EEE"></div>
     <div class="field"><label>% / CGPA</label><input id="careerPct" type="text"></div>
     <div class="field"><label>Languages</label><input id="careerLang" type="text" placeholder="Hindi, English"></div>
+    <div class="field"><label>Willing to relocate?</label><select id="careerReloc"><option value="">Select</option><option>Anywhere in India</option><option>Within my state</option><option>No</option></select></div>
     <div class="field"><label>Skills</label><input id="careerSkills" type="text"></div>
     <div class="field"><label>Interest streams</label><input id="careerStreams" type="text" placeholder="SSC, banking, state jobs"></div>
     <button class="btn btn-primary" onclick="saveCareerProfile()">Save profile</button>
@@ -637,13 +645,34 @@ body.dark .dropdown .email{color:var(--gray)}
       <div class="icon-tile" onclick="careerUploadAsset('photo')"><div class="icon-box">📷</div><span>Photo</span></div>
       <div class="icon-tile" onclick="careerUploadAsset('signature')"><div class="icon-box">✍️</div><span>Signature</span></div>
       <div class="icon-tile" onclick="careerUploadAsset('certificate')"><div class="icon-box">📄</div><span>Certificate</span></div>
+      <div class="icon-tile" onclick="careerUploadAsset('marksheet')"><div class="icon-box">🎓</div><span>Marksheet</span></div>
     </div>
     <div id="careerAssetsList" style="margin-top:.5rem"></div>
     <input type="file" id="careerAssetInput" accept="image/*,application/pdf" style="display:none" onchange="handleCareerAssetFile(this.files[0])">
   </div>
+  <div class="card" id="mediaPrepCard">
+    <div class="card-header"><h3>Photo and signature for forms</h3></div>
+    <p class="sub">Choose what the form asks for. I resize your saved originals on your phone. Nothing is uploaded.</p>
+    <div class="field"><label>Size asked by the form</label><select id="mpPreset" onchange="mpToggleCustom()">
+      <option value="photo|200|230|50">Photo 200×230 px, up to 50 KB</option>
+      <option value="photo|350|450|100">Photo 350×450 px, up to 100 KB</option>
+      <option value="photo|413|531|200">Photo 413×531 px, up to 200 KB</option>
+      <option value="signature|140|60|20">Signature 140×60 px, up to 20 KB</option>
+      <option value="signature|200|80|50">Signature 200×80 px, up to 50 KB</option>
+      <option value="custom">Other size…</option>
+    </select></div>
+    <div id="mpCustom" style="display:none">
+      <div class="field"><label>This is a</label><select id="mpKind"><option value="photo">Photo</option><option value="signature">Signature</option></select></div>
+      <div class="field"><label>Width (px)</label><input id="mpW" type="number" inputmode="numeric"></div>
+      <div class="field"><label>Height (px)</label><input id="mpH" type="number" inputmode="numeric"></div>
+      <div class="field"><label>Maximum size (KB)</label><input id="mpKB" type="number" inputmode="numeric"></div>
+    </div>
+    <button class="btn btn-primary" onclick="mediaPrepare()">Prepare and download</button>
+    <p class="sub" id="mpResult" style="margin-top:.5rem"></p>
+  </div>
   <div class="card">
-    <div class="card-header"><h3>Opportunities inbox</h3><span class="badge">0 matches</span></div>
-    <p class="sub">Only full matches on qualification, skills, age, location and language will appear here.</p>
+    <div class="card-header"><h3>Opportunities inbox</h3><span class="badge" id="oppBadge">0 eligible</span></div>
+    <p class="sub">Notifications are checked against your documents. Matching the stated requirements is not the same as being selected.</p>
     <div id="careerInbox"><div class="doc-row"><div class="doc-info"><h4>No matched opportunities yet</h4><p>Save your profile to start matching.</p></div></div></div>
   </div>
 </div>
@@ -672,6 +701,8 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-primary" onclick="saveProfile()"> Save Changes</button>
 <button class="btn btn-outline" onclick="closeModal('profileModal')">Cancel</button>
 <hr style="border:0;border-top:1px solid var(--border);margin:.75rem 0">
+<button class="btn btn-outline" onclick="exportMyData()">⬇️ Download my data</button>
+<p class="sub" style="margin-top:.4rem">A copy of your profile, document list and family links. To delete your account and data, contact support.</p>
 </div></div>
 <!-- UPLOAD METHOD MODAL -->
 <div id="uploadMethodModal" class="modal-overlay"><div class="modal">
@@ -711,6 +742,20 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
 <div id="aaStep2" style="display:none"><h3>Bring your Aadhaar in (PDF or photo)</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf,image/*" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
 <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="viewer-img" alt="preview"><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
+</div></div>
+<!-- MARKSHEET FACTS (P5): confirm what was read before it goes into the Career profile -->
+<div id="marksheetFactsModal" class="modal-overlay"><div class="modal">
+<h3>Check your marksheet details</h3>
+<p class="sub" id="msNote">Read on your phone only.</p>
+<div class="field"><label>Level</label><select id="msLevel"><option value="">Select</option><option>10th</option><option>12th</option><option>Graduation</option></select></div>
+<div class="field"><label>Board or university</label><input id="msBoard" type="text"></div>
+<div class="field"><label>Year of passing</label><input id="msYear" type="text" inputmode="numeric" maxlength="4"></div>
+<div class="field"><label>Percentage (%)</label><input id="msPct" type="text" inputmode="decimal"></div>
+<div class="field"><label>CGPA (if no percentage)</label><input id="msCgpa" type="text" inputmode="decimal"></div>
+<div class="field"><label>Stream (12th) or branch (degree)</label><input id="msStream" type="text"></div>
+<div class="field"><label>Degree (graduation only, e.g. B.Tech)</label><input id="msDegree" type="text"></div>
+<button class="btn btn-primary" onclick="applyMarksheetFacts()">Save to my career profile</button>
+<button class="btn btn-outline" onclick="msFacts=null;closeModal('marksheetFactsModal')">Cancel</button>
 </div></div>
 <!-- AADHAAR FACTS (P3): confirm what was read before it goes into the Career profile -->
 <div id="aadhaarFactsModal" class="modal-overlay"><div class="modal">
@@ -2390,7 +2435,7 @@ if(id==='career'){const n=document.getElementById('bnav-career'); if(n)n.classLi
 if(id==='reminders'){const n=document.getElementById('bnav-reminders'); if(n)n.classList.add('active');}
 window.scrollTo(0,0);
 if(id==='otherDocsView') loadOtherDocs();
-if(id==='career'){loadCareerProfile();loadCareerAssets();careerAutoAadhaar();}
+if(id==='career'){loadCareerProfile();loadCareerAssets();careerAutoAadhaar();refreshCareerPanels();}
 }
 function clearPdfViewer(){
 const viewer=document.getElementById('fileViewerPdf');
@@ -3226,7 +3271,7 @@ async function setupPush(){
 
 /* ================= FAMILY: CHILD VISIBLE TO BOTH PARENTS ================= */
 let currentChildOwnerId=null;
-let _famLoadPromise=null,_famLoadQueued=false;
+let _famLoadPromise=null,_famLoadQueued=false,_avatarPublishedFor='';
 async function loadFamilyMembers(){
   if(!currentUser)return;
   // Coalesce overlapping calls: one load at a time, plus one re-run if another call arrived meanwhile
@@ -3250,29 +3295,11 @@ async function _loadFamilyMembersOnce(){
   let all=[...(outgoing||[]),...(incoming||[])];
   all=all.filter((v,i,a)=>a.findIndex(t=>t.id===v.id)===i);
 
-  // Stamp my Google/profile photo onto every adult link so the other person can see it.
-  // Local objects are updated now; the database writes run in parallel in the background.
-  const stampWrites=[];
-  if(myAvatar){
-    for(const f of all){
-      if(f.is_minor)continue;
-      const p0=(typeof f.permissions==='object'&&f.permissions)?f.permissions:{};
-      if(p0.is_elder)continue;
-      let perms={...p0};
-      let changed=false;
-      if(f.owner_id===uid){
-        if(perms.owner_avatar!==myAvatar){perms.owner_avatar=myAvatar;changed=true;}
-        if(perms.inviter_avatar!==myAvatar){perms.inviter_avatar=myAvatar;changed=true;}
-      }
-      if(f.member_user_id===uid){
-        if(perms.member_avatar!==myAvatar){perms.member_avatar=myAvatar;changed=true;}
-        if(perms.avatar_url!==myAvatar){perms.avatar_url=myAvatar;changed=true;}
-      }
-      if(changed){
-        f.permissions=perms;
-        stampWrites.push(Promise.resolve(sb.from('family_links').update({permissions:perms}).eq('id',f.id)).catch(()=>{}));
-      }
-    }
+  // Publish my profile picture to my family links so the other person can see it.
+  // Done by a server function that can only change the picture fields (members cannot edit links directly).
+  if(myAvatar&&_avatarPublishedFor!==uid+'|'+myAvatar){
+    _avatarPublishedFor=uid+'|'+myAvatar;
+    Promise.resolve(sb.rpc('oneapp_set_my_avatar',{p_url:myAvatar})).then(function(r){if(r&&r.error)_avatarPublishedFor='';},function(){_avatarPublishedFor='';});
   }
 
   // Child + elder profiles belong to both spouses: borrow those owned by connected adults
@@ -3294,7 +3321,6 @@ async function _loadFamilyMembersOnce(){
   }
   familyMembers=[...all,...borrowed];
   renderFamilyList();
-  if(stampWrites.length)Promise.all(stampWrites).catch(()=>{});
 }
 function familyDisplayName(f){
   if(f.is_minor)return f.display_name||'Child';
@@ -3726,39 +3752,41 @@ function loadCareerProfile(){
   let p={}; try{p=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
   if(!Object.keys(p).length&&currentUser.user_metadata&&currentUser.user_metadata.career_profile)p=Object.assign({},currentUser.user_metadata.career_profile);
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
-  set('careerFirst',p.first);set('careerLast',p.last);set('careerDistrict',p.district);set('careerPin',p.pin);
+  set('careerFirst',p.first);set('careerLast',p.last);set('careerDistrict',p.district);set('careerPin',p.pin);set('careerReloc',p.reloc);
   set('careerDob',p.dob);set('careerGender',p.gender);set('careerCategory',p.category);
   set('careerState',p.state);set('careerQual',p.qual);set('careerBranch',p.branch);
   set('careerPct',p.pct);set('careerLang',p.lang);set('careerSkills',p.skills);set('careerStreams',p.streams);
 }
 async function saveCareerProfile(){
   if(!currentUser){alert('Sign in first');return;}
-  const p={first:document.getElementById('careerFirst').value.trim(),last:document.getElementById('careerLast').value.trim(),district:document.getElementById('careerDistrict').value.trim(),pin:document.getElementById('careerPin').value.trim(),dob:document.getElementById('careerDob').value,gender:document.getElementById('careerGender').value,category:document.getElementById('careerCategory').value,state:document.getElementById('careerState').value.trim(),qual:document.getElementById('careerQual').value.trim(),branch:document.getElementById('careerBranch').value.trim(),pct:document.getElementById('careerPct').value.trim(),lang:document.getElementById('careerLang').value.trim(),skills:document.getElementById('careerSkills').value.trim(),streams:document.getElementById('careerStreams').value.trim(),updatedAt:new Date().toISOString()};
-  try{const old=JSON.parse(localStorage.getItem(careerProfileKey())||'{}');if(old.sources)p.sources=old.sources;if(old.name)p.name=old.name;}catch(e){}
+  const p={reloc:(document.getElementById('careerReloc')||{}).value||'',first:document.getElementById('careerFirst').value.trim(),last:document.getElementById('careerLast').value.trim(),district:document.getElementById('careerDistrict').value.trim(),pin:document.getElementById('careerPin').value.trim(),dob:document.getElementById('careerDob').value,gender:document.getElementById('careerGender').value,category:document.getElementById('careerCategory').value,state:document.getElementById('careerState').value.trim(),qual:document.getElementById('careerQual').value.trim(),branch:document.getElementById('careerBranch').value.trim(),pct:document.getElementById('careerPct').value.trim(),lang:document.getElementById('careerLang').value.trim(),skills:document.getElementById('careerSkills').value.trim(),streams:document.getElementById('careerStreams').value.trim(),updatedAt:new Date().toISOString()};
+  try{const old=JSON.parse(localStorage.getItem(careerProfileKey())||'{}');if(old.sources)p.sources=old.sources;if(old.name)p.name=old.name;if(old.edu)p.edu=old.edu;if(old.experience_years)p.experience_years=old.experience_years;}catch(e){}
   localStorage.setItem(careerProfileKey(),JSON.stringify(p));
   try{const pm=Object.assign({},p);delete pm.pin;await sb.auth.updateUser({data:{career_profile:pm}});}catch(e){}
+  refreshCareerPanels();
   alert('Career profile saved');
 }
 function careerUploadAsset(kind){if(!currentUser){alert('Sign in first');return;}careerAssetKind=kind;document.getElementById('careerAssetInput').value='';document.getElementById('careerAssetInput').click();}
 async function handleCareerAssetFile(file){
   if(!file||!currentUser)return;
-  const typeMap={photo:'Career Photo',signature:'Career Signature',certificate:'Career Certificate'};
+  const typeMap={photo:'Career Photo',signature:'Career Signature',certificate:'Career Certificate',marksheet:'Career Marksheet'};
   const docType=typeMap[careerAssetKind]||'Career Certificate';
   let uploadFile=file;
-  if(file.type&&file.type.startsWith('image/')&&typeof compressImage==='function'){try{uploadFile=await compressImage(file,800,0.8);}catch(e){}}
+  if(file.type&&file.type.startsWith('image/')&&typeof compressImage==='function'&&(careerAssetKind==='certificate'||careerAssetKind==='marksheet')){try{uploadFile=await compressImage(file,careerAssetKind==='marksheet'?1800:800,careerAssetKind==='marksheet'?0.9:0.8);}catch(e){}}
   const path=`${currentUser.id}/career/${careerAssetKind}_${Date.now()}_${file.name.replace(/[^a-z0-9.]+/gi,'_')}`;
   try{
     const{error:upErr}=await sb.storage.from('vault').upload(path,uploadFile,{contentType:uploadFile.type||file.type});
     if(upErr)throw upErr;
     const{error:dbErr}=await sb.from('documents').insert({user_id:currentUser.id,document_type:docType,document_name:file.name.replace(/\.[^.]+$/,'')||docType,file_url:path,deleted_at:null});
     if(dbErr)throw dbErr;
-    alert(docType+' saved'); loadCareerAssets();
+    loadCareerAssets();refreshCareerPanels();
+    if(careerAssetKind==='marksheet'){startMarksheetRead(file);}else{alert(docType+' saved');}
   }catch(e){alert(e.message);}
 }
 async function loadCareerAssets(){
   const box=document.getElementById('careerAssetsList'); if(!box||!currentUser){if(box)box.innerHTML='';return;}
   try{
-    const{data}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).in('document_type',['Career Photo','Career Signature','Career Certificate']).order('created_at',{ascending:false});
+    const{data}=await sb.from('documents').select('*').eq('user_id',currentUser.id).is('deleted_at',null).in('document_type',['Career Photo','Career Signature','Career Certificate','Career Marksheet']).order('created_at',{ascending:false});
     if(!data||!data.length){box.innerHTML='<p class="sub">No career documents yet.</p>';return;}
     box.innerHTML=data.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4><p>${escHtml(d.document_type)}</p></div></div>`).join('');
   }catch(e){box.innerHTML='<p class="sub">Could not load.</p>';}
@@ -3891,7 +3919,7 @@ async function applyAadhaarFacts(){
   try{localStorage.setItem(key,JSON.stringify(p));}catch(e){}
   try{const pm=Object.assign({},p);delete pm.pin;await sb.auth.updateUser({data:{career_profile:pm}});}catch(e){}
   aaCloseFacts();
-  loadCareerProfile();
+  loadCareerProfile();refreshCareerPanels();
   alert('✅ '+filled+' detail'+(filled===1?'':'s')+' filled in your Career profile.'+(kept.length?'\nKept your existing: '+kept.join(', ')+'.':''));
 }
 async function careerFillFromAadhaar(auto){
@@ -3932,6 +3960,372 @@ async function careerAadhaarOnFile(file,auto){
   if(!pdf){if(!auto)alert('That password did not work. Please try again.');return;}
   if(typed)savePdfPassword(uid,'aadhaar',pw);
   try{openAadhaarFacts(await extractAadhaarFacts(pdf));}catch(e){if(!auto)alert('Could not read details from this PDF. You can type them in manually.');}
+}
+
+/* ===== P4–P8 · Marksheets, profile strength, eligibility, photo & signature prep, data export ===== */
+function getCareerProfile(){
+  let p={};try{p=JSON.parse(localStorage.getItem(careerProfileKey())||'{}');}catch(e){}
+  if(!Object.keys(p).length&&currentUser&&currentUser.user_metadata&&currentUser.user_metadata.career_profile)p=Object.assign({},currentUser.user_metadata.career_profile);
+  return p;
+}
+function saveCareerProfileObj(p){
+  p.updatedAt=new Date().toISOString();
+  try{localStorage.setItem(careerProfileKey(),JSON.stringify(p));}catch(e){}
+  try{const pm=Object.assign({},p);delete pm.pin;return sb.auth.updateUser({data:{career_profile:pm}});}catch(e){return Promise.resolve();}
+}
+
+/* ---------- P5 · Marksheet reading (PDF text, or on-phone OCR for photos) ---------- */
+function parseMarksheetText(raw){
+  const t=aaScrub(String(raw||'')).replace(/\s+/g,' ').trim();
+  const up=t.toUpperCase();
+  const f={level:'',board:'',year:'',pct:'',cgpa:'',stream:'',degree:'',branch:''};
+  const grad=/SEMESTER|BACHELOR OF|MASTER OF|B\.?\s?TECH|M\.?\s?TECH|DEGREE EXAMINATION|CONVOCATION/;
+  const s12=/SENIOR SCHOOL CERTIFICATE|SENIOR SECONDARY|CLASS\s*(XII|12)\b|HIGHER SECONDARY|INTERMEDIATE|\bHSC\b/;
+  const s10=/SECONDARY SCHOOL (EXAMINATION|CERTIFICATE)|CLASS\s*(X|10)\b|MATRICULATION|\bSSC\b|HIGH SCHOOL|\bAISSE\b/;
+  if(grad.test(up))f.level='Graduation';
+  else if(s12.test(up))f.level='12th';
+  else if(s10.test(up))f.level='10th';
+  else if(/UNIVERSITY/.test(up))f.level='Graduation';
+  // Board / university
+  const bd=[[/CENTRAL BOARD OF SECONDARY EDUCATION|\bCBSE\b/,'CBSE'],[/COUNCIL FOR THE INDIAN SCHOOL CERTIFICATE|\bCISCE\b|\bICSE\b|\bISC\b/,'CISCE'],[/NATIONAL INSTITUTE OF OPEN SCHOOLING|\bNIOS\b/,'NIOS'],[/BIHAR SCHOOL EXAMINATION BOARD|\bBSEB\b/,'BSEB'],[/JHARKHAND ACADEMIC COUNCIL|\bJAC\b/,'JAC']];
+  if(f.level!=='Graduation'){for(const b of bd){if(b[0].test(up)){f.board=b[1];break;}}}
+  if(!f.board&&f.level!=='Graduation'){const m=up.match(/(BOARD OF [A-Z ]{3,45}?)(?= (?:EXAMINATION|CERTIFICATE|MARKS|SECONDARY|SENIOR|HIGHER|\d)|$)/);if(m)f.board=aaTitleCase(m[1]);}
+  if(f.level==='Graduation'){
+    const m=up.match(/((?:[A-Z]+ ){0,4}[A-Z]+ UNIVERSITY)/);
+    if(m)f.board=aaTitleCase(m[1].replace(/^(?:(?:OF|THE|FROM|AT|TO|BY|AND|IS|THIS|CERTIFY|THAT|ISSUED|AWARDED) )+/,'').trim());
+  }
+  // Year of examination
+  const nowY=new Date().getFullYear();
+  let ym=up.match(/(?:EXAMINATION|EXAM|SESSION|HELD IN|YEAR OF PASSING|PASSING YEAR|MONTH & YEAR OF PASSING)[^0-9]{0,30}(19[89]\d|20[0-4]\d)\b/);
+  if(ym&&+ym[1]<=nowY)f.year=ym[1];
+  else{const ys=Array.from(new Set((up.match(/\b(19[89]\d|20[0-4]\d)\b/g)||[]).filter(function(y){return +y<=nowY;})));if(ys.length===1)f.year=ys[0];}
+  // Marks
+  let pm=up.match(/PERCENTAGE(?: OF MARKS)?[^0-9]{0,15}(\d{2,3}(?:\.\d{1,2})?)/)||up.match(/(\d{2,3}(?:\.\d{1,2})?)\s?%/);
+  if(pm){const v=parseFloat(pm[1]);if(v>0&&v<=100)f.pct=String(v);}
+  if(!f.pct){const tm=up.match(/TOTAL[^0-9]{0,30}(\d{2,4})\s*(?:OUT OF|\/|OF)\s*(\d{2,4})/);if(tm){const a=+tm[1],b=+tm[2];if(b>0&&a<=b)f.pct=String(Math.round(a/b*10000)/100);}}
+  const cm=up.match(/(?:^|[^A-Z])CGPA[^0-9]{0,15}(\d{1,2}(?:\.\d{1,3})?)/);
+  if(cm){const v=parseFloat(cm[1]);if(v>0&&v<=10)f.cgpa=String(v);}
+  // Stream (12th) or degree + branch (graduation)
+  if(f.level==='12th'){
+    if(/PHYSICS/.test(up)&&/CHEMISTRY/.test(up)&&/MATHEMATICS/.test(up))f.stream='Science (PCM)';
+    else if(/PHYSICS/.test(up)&&/CHEMISTRY/.test(up)&&/BIOLOGY/.test(up))f.stream='Science (PCB)';
+    else if(/ACCOUNTANCY|BUSINESS STUDIES/.test(up))f.stream='Commerce';
+    else{const sm=up.match(/\b(SCIENCE|COMMERCE|ARTS|HUMANITIES)\b/);if(sm)f.stream=aaTitleCase(sm[1]);}
+  }
+  if(f.level==='Graduation'){
+    const dg=[[/B\.?\s?TECH/,'B.Tech'],[/\bB\.E\b|BACHELOR OF ENGINEERING/,'B.E.'],[/M\.?\s?TECH/,'M.Tech'],[/BACHELOR OF SCIENCE|\bB\.?\s?SC\b/,'B.Sc'],[/BACHELOR OF COMMERCE|\bB\.?\s?COM\b/,'B.Com'],[/BACHELOR OF COMPUTER APPLICATIONS?|\bBCA\b/,'BCA'],[/MASTER OF COMPUTER APPLICATIONS?|\bMCA\b/,'MCA'],[/MASTER OF BUSINESS ADMINISTRATION|\bMBA\b/,'MBA'],[/BACHELOR OF ARTS/,'B.A.'],[/DIPLOMA/,'Diploma']];
+    for(const d of dg){if(d[0].test(up)){f.degree=d[1];break;}}
+    let bm=up.match(/(?:BRANCH|DISCIPLINE|PROGRAMME|PROGRAM|SPECIALI[SZ]ATION|STREAM)\s*[:\-]?\s*((?:[A-Z&]+ ){0,5}(?:ENGINEERING|SCIENCES?|TECHNOLOGY|COMMERCE|APPLICATIONS?))/);
+    if(!bm)bm=up.match(/((?:[A-Z]+ (?:AND |& )?){1,4}ENGINEERING)\b/);
+    if(bm)f.branch=aaTitleCase(bm[1].replace(/^(?:IN |OF )+/,'').replace(/^B\.?\s?TECH /,'').trim());
+  }
+  return f;
+}
+function loadTesseract(){
+  if(window.Tesseract)return Promise.resolve();
+  return new Promise(function(res,rej){
+    const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js';
+    s.onload=res;s.onerror=function(){rej(new Error('OCR could not load'));};document.head.appendChild(s);
+  });
+}
+async function ocrCanvas(c){await loadTesseract();const r=await Tesseract.recognize(c,'eng');return (r&&r.data&&r.data.text)||'';}
+async function marksheetText(file){
+  const isPdf=file.type==='application/pdf'||/\.pdf$/i.test(file.name||'');
+  if(isPdf){
+    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+    let t='';
+    for(let i=1;i<=Math.min(3,pdf.numPages);i++){const pg=await pdf.getPage(i);const tc=await pg.getTextContent();t+=tc.items.map(function(x){return x.str;}).join(' ')+'\n';}
+    if(t.replace(/\s/g,'').length>80)return t;
+    const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    return await ocrCanvas(c);
+  }
+  return await ocrCanvas(await fileToCanvas(file,2200));
+}
+let msFacts=null;
+function openMarksheetFacts(f,note){
+  msFacts=f||{};
+  const set=function(id,v){const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('msLevel',f.level);set('msBoard',f.board);set('msYear',f.year);set('msPct',f.pct);set('msCgpa',f.cgpa);
+  set('msStream',f.level==='Graduation'?f.branch:f.stream);set('msDegree',f.degree);
+  const n=['level','board','year','pct','cgpa'].filter(function(k){return f[k];}).length;
+  const el=document.getElementById('msNote');
+  if(el)el.textContent=note||(n?'Read on your phone. Please check every line and fix anything wrong before saving.':'I could not read this marksheet automatically. Please type the details below.');
+  openModal('marksheetFactsModal');
+}
+async function startMarksheetRead(file){
+  openMarksheetFacts({}, 'Reading your marksheet on your phone…');
+  try{
+    const text=await marksheetText(file);
+    const f=parseMarksheetText(text);
+    openMarksheetFacts(f);
+  }catch(e){openMarksheetFacts({}, 'I could not read this file automatically ('+(e&&e.message||'error')+'). Please type the details below.');}
+}
+async function applyMarksheetFacts(){
+  if(!currentUser){alert('Sign in first');return;}
+  const g=function(id){return (document.getElementById(id).value||'').trim();};
+  const lv=g('msLevel');if(!lv){alert('Please choose the level (10th, 12th or Graduation).');return;}
+  const pct=g('msPct'),cg=g('msCgpa');
+  if(pct&&!(parseFloat(pct)>0&&parseFloat(pct)<=100)){alert('Percentage should be between 1 and 100.');return;}
+  if(cg&&!(parseFloat(cg)>0&&parseFloat(cg)<=10)){alert('CGPA should be between 1 and 10.');return;}
+  if(!pct&&!cg){alert('Please enter the percentage or the CGPA.');return;}
+  const p=getCareerProfile();p.edu=p.edu||{};p.sources=p.sources||{};
+  const key=lv==='10th'?'tenth':lv==='12th'?'twelfth':'grad';
+  const old=p.edu[key];
+  if(old&&(old.pct||old.cgpa)&&(String(old.pct||'')!==pct||String(old.cgpa||'')!==cg)){
+    if(!confirm('You already saved '+lv+': '+(old.pct?old.pct+'%':'CGPA '+old.cgpa)+'.\nReplace it with '+(pct?pct+'%':'CGPA '+cg)+'?'))return;
+  }
+  const rec={board:g('msBoard'),year:g('msYear'),pct:pct,cgpa:cg};
+  if(key==='twelfth')rec.stream=g('msStream');
+  if(key==='grad'){rec.degree=g('msDegree');rec.branch=g('msStream');}
+  p.edu[key]=rec;p.sources['edu_'+key]='marksheet';
+  if(key==='grad'){ // keep the simple profile fields in step with the highest qualification
+    if(rec.degree)p.qual=rec.degree;if(rec.branch)p.branch=rec.branch;p.pct=pct||cg;
+  }
+  await saveCareerProfileObj(p);
+  msFacts=null;closeModal('marksheetFactsModal');
+  loadCareerProfile();refreshCareerPanels();
+  alert('✅ '+lv+' details saved to your Career profile.');
+}
+
+/* ---------- P6 · Profile strength (precision ladder) ---------- */
+function computeLadder(p,a){
+  p=p||{};const e=p.edu||{};a=a||{};
+  const steps=[
+    {pct:20,ok:!!(p.dob&&p.gender&&p.state),unlock:'age, gender and state based matches',next:'Fill your profile from your Aadhaar',action:'aadhaar'},
+    {pct:45,ok:!!(e.tenth&&(e.tenth.pct||e.tenth.cgpa)),unlock:'date of birth proof and basic eligibility',next:'Upload your 10th marksheet',action:'marksheet'},
+    {pct:70,ok:!!(e.twelfth&&(e.twelfth.pct||e.twelfth.cgpa)&&e.twelfth.stream),unlock:'SSC, banking, railways and state PSC',next:'Upload your 12th marksheet',action:'marksheet'},
+    {pct:90,ok:!!(e.grad&&(e.grad.pct||e.grad.cgpa)&&e.grad.branch),unlock:'UPSC, CGL and GATE/PSU',next:'Upload your degree marksheet',action:'marksheet'},
+    {pct:95,ok:!!(p.category&&p.lang&&p.reloc),unlock:'precise filtering',next:'Pick your category, languages and relocation',action:'form'},
+    {pct:100,ok:!!(a.photo&&a.signature),unlock:'applying today',next:'Add your photo and signature',action:'assets'}
+  ];
+  let level=0,next=null;
+  for(const s of steps){if(s.ok)level=s.pct;else{next=s;break;}}
+  return {level:level,next:next,steps:steps};
+}
+let _ladderAction=null;
+function renderLadder(l){
+  const bar=document.getElementById('ladderBar'),pc=document.getElementById('ladderPct'),note=document.getElementById('ladderNote'),btn=document.getElementById('ladderBtn');
+  if(!bar)return;
+  bar.style.width=l.level+'%';pc.textContent=l.level+'%';
+  if(l.next){
+    note.textContent='Next: '+l.next.next.toLowerCase()+'. This unlocks '+l.next.unlock+'.';
+    btn.textContent=l.next.next;btn.style.display='';_ladderAction=l.next.action;
+  }else{note.textContent='Your profile is complete. You can apply today.';btn.style.display='none';_ladderAction=null;}
+}
+function ladderAct(){
+  const a=_ladderAction;
+  if(a==='aadhaar')careerFillFromAadhaar();
+  else if(a==='marksheet')careerUploadAsset('marksheet');
+  else if(a==='assets')careerUploadAsset('photo');
+  else if(a==='form'){const el=document.getElementById('careerCategory');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.focus();}}
+}
+
+/* ---------- P8 · Eligibility engine (plain rules, no AI guessing) ---------- */
+function elgAge(dobStr,cutoff){
+  const m=String(dobStr||'').match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;
+  let y=cutoff.getFullYear()-(+m[1]);
+  const cm=cutoff.getMonth()+1,cd=cutoff.getDate();
+  if(cm<(+m[2])||(cm===(+m[2])&&cd<(+m[3])))y--;
+  return y;
+}
+function elgNorm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');}
+function elgPct(p){
+  const g=(p.edu&&p.edu.grad)||{};
+  if(g.pct&&parseFloat(g.pct)>0)return {v:parseFloat(g.pct),src:'degree marksheet'};
+  if(p.pct){const n=parseFloat(p.pct);if(n>10&&n<=100)return {v:n,src:(p.sources&&p.sources.edu_grad)?'degree marksheet':'your profile'};}
+  return null;
+}
+function elgHasCgpaOnly(p){
+  const g=(p.edu&&p.edu.grad)||{};
+  if(g.cgpa&&!g.pct)return true;
+  if(p.pct){const n=parseFloat(p.pct);if(n>0&&n<=10)return true;}
+  return false;
+}
+function evaluateEligibility(p,opp,now){
+  p=p||{};const r=(opp&&opp.rules)||{},today=now||new Date(),checks=[];
+  const add=function(id,label,status,evidence,next){checks.push({id:id,label:label,status:status,evidence:evidence||'',next:next||''});};
+  const needAadhaar='Fill your profile from your Aadhaar';
+  const dl=opp&&opp.deadline?new Date(opp.deadline):null;
+  if(dl){
+    if(dl<today)add('deadline','Deadline','fail','Closed on '+dl.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),'This notification has closed.');
+    else add('deadline','Deadline','pass','Open until '+dl.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}));
+  }
+  if(r.age){
+    const cutoff=new Date(r.age.cutoff_date||(opp&&opp.deadline)||today);
+    const age=elgAge(p.dob,cutoff);
+    if(age===null)add('age','Age','unknown','Date of birth not known yet',needAadhaar);
+    else{
+      const relax=(r.age.relax&&p.category&&r.age.relax[p.category])||0;
+      const max=r.age.max!=null?r.age.max+relax:null,min=r.age.min!=null?r.age.min:null;
+      const src=(p.sources&&p.sources.dob)==='aadhaar'?'from your Aadhaar':'from your profile';
+      if(min!==null&&age<min)add('age','Age','fail','You are '+age+' on the cutoff date ('+src+'); minimum is '+min);
+      else if(max!==null&&age>max)add('age','Age','fail','You are '+age+' on the cutoff date ('+src+'); maximum is '+max+(relax?' including '+relax+' years relaxation':''));
+      else add('age','Age','pass','You are '+age+' on the cutoff date ('+src+')'+(relax?', with '+relax+' years relaxation':''));
+    }
+  }
+  if(r.gender&&r.gender.length){
+    if(!p.gender)add('gender','Gender','unknown','Gender not known yet',needAadhaar);
+    else if(r.gender.indexOf(p.gender)<0)add('gender','Gender','fail','Open to '+r.gender.join(' / ')+' only');
+    else add('gender','Gender','pass','Matches');
+  }
+  if(r.qualification_any&&r.qualification_any.length){
+    const have=elgNorm(p.qual);
+    if(!have)add('qualification','Qualification','unknown','Qualification not known yet','Upload your degree marksheet');
+    else if(!r.qualification_any.some(function(q){return have.indexOf(elgNorm(q))>=0;}))add('qualification','Qualification','fail','Needs '+r.qualification_any.join(' / ')+'; you have '+p.qual);
+    else add('qualification','Qualification','pass','You have '+p.qual);
+  }
+  if(r.branch_any&&r.branch_any.length){
+    const hb=elgNorm(p.branch);
+    if(!hb)add('branch','Branch','unknown','Branch not known yet','Upload your degree marksheet');
+    else if(!r.branch_any.some(function(b){return hb.indexOf(elgNorm(b))>=0;}))add('branch','Branch','fail','Needs '+r.branch_any.join(' / ')+'; you have '+p.branch);
+    else add('branch','Branch','pass','You have '+p.branch);
+  }
+  if(r.min_pct!=null){
+    const pc=elgPct(p);
+    if(pc){
+      if(pc.v<r.min_pct)add('pct','Marks','fail','Needs '+r.min_pct+'%; you have '+pc.v+'% (from '+pc.src+')');
+      else add('pct','Marks','pass','Needs '+r.min_pct+'%; you have '+pc.v+'% (from '+pc.src+')');
+    }else if(elgHasCgpaOnly(p)&&r.cgpa_needs_certificate){
+      add('pct','Marks','unknown','You have a CGPA. This notification needs a university-issued percentage conversion certificate.','Get the percentage conversion certificate from your university and upload it');
+    }else if(elgHasCgpaOnly(p)){
+      add('pct','Marks','unknown','Only a CGPA is saved; the notification asks for '+r.min_pct+'%','Upload a percentage conversion certificate or marksheet showing percentage');
+    }else add('pct','Marks','unknown','Marks not known yet','Upload your degree marksheet');
+  }
+  if(r.experience_min_years!=null){
+    const ex=p.experience_years;
+    if(ex==null||ex==='')add('experience','Experience','unknown','Experience not known yet','Upload your experience certificates');
+    else if(parseFloat(ex)<r.experience_min_years)add('experience','Experience','fail','Needs '+r.experience_min_years+' years; you have '+ex);
+    else add('experience','Experience','pass','Needs '+r.experience_min_years+' years; you have '+ex);
+  }
+  if(r.categories_allowed&&r.categories_allowed.length){
+    if(!p.category)add('category','Category','unknown','Category not set','Pick your category in your profile');
+    else if(r.categories_allowed.indexOf(p.category)<0)add('category','Category','fail','Open to '+r.categories_allowed.join(' / ')+' only');
+    else add('category','Category','pass','Matches');
+  }
+  if(r.states&&r.states.length){
+    if(!p.state)add('domicile','Domicile','unknown','State not known yet',needAadhaar);
+    else if(!r.states.some(function(s){return elgNorm(s)===elgNorm(p.state);}))add('domicile','Domicile','fail','Open to residents of '+r.states.join(', ')+'; your Aadhaar state is '+p.state);
+    else add('domicile','Domicile','pass','Your state is '+p.state);
+  }
+  if(r.languages_any&&r.languages_any.length){
+    const have=String(p.lang||'').split(/[,/;]+/).map(elgNorm).filter(Boolean);
+    if(!have.length)add('language','Language','unknown','Languages not set','Add your languages in your profile');
+    else if(!r.languages_any.some(function(l){return have.indexOf(elgNorm(l))>=0;}))add('language','Language','fail','Needs '+r.languages_any.join(' / '));
+    else add('language','Language','pass','You know the required language');
+  }
+  if(r.media){
+    const bits=[];if(r.media.photo)bits.push('photo: '+r.media.photo);if(r.media.resume)bits.push('resume: '+r.media.resume);
+    if(bits.length)add('media','Files to prepare','info',bits.join('; '));
+  }
+  if(r.separate_application_per_post)add('perpost','One application per post','info','Apply separately for each post.');
+  let verdict='ELIGIBLE';
+  if(checks.some(function(c){return c.status==='fail';}))verdict='NOT_ELIGIBLE';
+  else if(checks.some(function(c){return c.status==='unknown';}))verdict='NEEDS_INFO';
+  return {verdict:verdict,checks:checks};
+}
+function renderOpportunities(list,p){
+  const box=document.getElementById('careerInbox'),badge=document.getElementById('oppBadge');
+  if(!box)return;
+  if(!list||!list.length){box.innerHTML='<div class="doc-row"><div class="doc-info"><h4>No notifications yet</h4><p>Real notifications will appear here once official sources are connected.</p></div></div>';if(badge)badge.textContent='0 eligible';return;}
+  let ok=0;
+  const chip={ELIGIBLE:['#16a34a','Eligible'],NOT_ELIGIBLE:['#dc2626','Not eligible'],NEEDS_INFO:['#d97706','Needs info']};
+  box.innerHTML=list.map(function(o){
+    const r=evaluateEligibility(p,o);if(r.verdict==='ELIGIBLE')ok++;
+    const c=chip[r.verdict];
+    const rows=r.checks.filter(function(x){return x.status!=='pass';}).map(function(x){
+      const icon=x.status==='fail'?'❌':x.status==='unknown'?'❓':'ℹ️';
+      return '<li>'+icon+' <strong>'+escHtml(x.label)+':</strong> '+escHtml(x.evidence)+(x.next?'<br><small>'+escHtml(x.next)+'</small>':'')+'</li>';
+    }).join('');
+    return '<div class="doc-row" style="display:block"><div class="doc-info"><h4>'+escHtml(o.title)+(o.is_example?' <span class="badge">Example only</span>':'')+'</h4><p>'+escHtml([o.org,o.post].filter(Boolean).join(' · '))+'</p></div>'
+      +'<div style="margin:.35rem 0"><span style="background:'+c[0]+';color:#fff;border-radius:99px;padding:.15rem .6rem;font-size:.75rem">'+c[1]+'</span></div>'
+      +(rows?'<ul style="margin:.25rem 0 .25rem 1rem;padding:0;font-size:.8rem">'+rows+'</ul>':'')
+      +(o.official_url?'<small><a href="'+escHtml(o.official_url)+'" target="_blank" rel="noopener">Official website</a></small>':'')
+      +'<br><small style="color:var(--gray)">Matching the stated requirements does not mean you will be selected. Always read the official notification.</small></div>';
+  }).join('');
+  if(badge)badge.textContent=ok+' eligible';
+}
+let _oppCache=null;
+async function refreshCareerPanels(){
+  if(!currentUser)return;
+  const p=getCareerProfile();
+  const a={photo:false,signature:false};
+  try{
+    const r=await sb.from('documents').select('document_type').eq('user_id',currentUser.id).is('deleted_at',null).in('document_type',['Career Photo','Career Signature']);
+    (r.data||[]).forEach(function(d){if(d.document_type==='Career Photo')a.photo=true;if(d.document_type==='Career Signature')a.signature=true;});
+  }catch(e){}
+  renderLadder(computeLadder(p,a));
+  try{if(!_oppCache){const r=await sb.from('opportunities').select('*').order('deadline',{ascending:false});_oppCache=r.data||[];}}catch(e){_oppCache=_oppCache||[];}
+  renderOpportunities(_oppCache,p);
+}
+
+/* ---------- P4 · Photo & signature for application forms (resized on this phone, originals untouched) ---------- */
+async function fitToKb(encodeAt,maxBytes){
+  // encodeAt(scale,quality) -> Blob-like with .size. Shrinks quality first, then dimensions.
+  for(let step=0;step<8;step++){
+    const scale=Math.pow(0.9,step);
+    const top=await encodeAt(scale,0.95);
+    if(top.size<=maxBytes)return {blob:top,scale:scale,q:0.95};
+    const low=await encodeAt(scale,0.3);
+    if(low.size>maxBytes)continue;
+    let lo=0.3,hi=0.95,best={blob:low,scale:scale,q:0.3};
+    for(let i=0;i<8;i++){const mid=(lo+hi)/2;const b=await encodeAt(scale,mid);if(b.size<=maxBytes){best={blob:b,scale:scale,q:mid};lo=mid;}else hi=mid;}
+    return best;
+  }
+  return null;
+}
+function mpPresetInfo(){
+  const v=(document.getElementById('mpPreset')||{}).value||'';
+  if(v==='custom'){
+    return {kind:document.getElementById('mpKind').value,w:+document.getElementById('mpW').value,h:+document.getElementById('mpH').value,kb:+document.getElementById('mpKB').value};
+  }
+  const a=v.split('|');return {kind:a[0],w:+a[1],h:+a[2],kb:+a[3]};
+}
+function mpToggleCustom(){const c=document.getElementById('mpCustom');if(c)c.style.display=document.getElementById('mpPreset').value==='custom'?'block':'none';}
+async function mediaPrepare(){
+  if(!currentUser){alert('Sign in first');return;}
+  const info=mpPresetInfo(),out=document.getElementById('mpResult');
+  if(!(info.w>0&&info.h>0&&info.kb>0)){out.textContent='Please enter width, height and the maximum KB.';return;}
+  const docType=info.kind==='signature'?'Career Signature':'Career Photo';
+  out.textContent='Preparing…';
+  try{
+    const r=await sb.from('documents').select('file_url').eq('user_id',currentUser.id).eq('document_type',docType).is('deleted_at',null).order('created_at',{ascending:false}).limit(1);
+    if(!r.data||!r.data.length){out.textContent='Upload your '+(info.kind==='signature'?'signature':'photo')+' first (Career documents above).';return;}
+    const dl=await sb.storage.from('vault').download(r.data[0].file_url);
+    if(!dl.data){out.textContent='Could not open your saved file.';return;}
+    const bmp=await createImageBitmap(dl.data);
+    // centre crop to the target shape (a little higher than centre so faces are kept)
+    const ar=info.w/info.h;let sw=bmp.width,sh=bmp.height;
+    if(sw/sh>ar)sw=Math.round(sh*ar);else sh=Math.round(sw/ar);
+    const sx=Math.round((bmp.width-sw)/2),sy=info.kind==='photo'?Math.round((bmp.height-sh)*0.25):Math.round((bmp.height-sh)/2);
+    const enc=function(scale,q){return new Promise(function(res){
+      const c=document.createElement('canvas');c.width=Math.max(1,Math.round(info.w*scale));c.height=Math.max(1,Math.round(info.h*scale));
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,sx,sy,sw,sh,0,0,c.width,c.height);
+      c.toBlob(res,'image/jpeg',q);});};
+    const fit=await fitToKb(enc,info.kb*1024);
+    if(!fit){out.textContent='I could not get this under '+info.kb+' KB. Try a larger limit or a different photo.';return;}
+    const kb=Math.round(fit.blob.size/1024);
+    const a=document.createElement('a');a.href=URL.createObjectURL(fit.blob);a.download=info.kind+'_'+info.w+'x'+info.h+'_'+kb+'KB.jpg';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    out.textContent='Ready: '+Math.round(info.w*fit.scale)+'×'+Math.round(info.h*fit.scale)+' px, '+kb+' KB'+(fit.scale<1?' (shrunk slightly to fit the limit)':'')+'. Tip: stand against a plain light wall; I do not remove backgrounds.';
+  }catch(e){out.textContent='Could not prepare this file: '+(e&&e.message||e);}
+}
+
+/* ---------- Download my data (DPDP) ---------- */
+async function exportMyData(){
+  if(!currentUser){alert('Sign in first');return;}
+  try{
+    const uid=currentUser.id;
+    const [docs,links,prof]=await Promise.all([
+      sb.from('documents').select('id,document_type,document_name,doc_category,file_url,created_at,deleted_at').eq('user_id',uid),
+      sb.from('family_links').select('id,relation_type,status,is_minor,display_name,member_email,created_at').or('owner_id.eq.'+uid+',member_user_id.eq.'+uid),
+      sb.from('profiles').select('*').eq('id',uid)
+    ]);
+    const dump={exported_at:new Date().toISOString(),account:{id:uid,email:currentUser.email||''},career_profile:getCareerProfile(),profile:prof.data||[],documents:docs.data||[],family_links:links.data||[],note:'Document files are not inside this file. Open each document in the app to download it.'};
+    const blob=new Blob([JSON.stringify(dump,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='oneapp-my-data-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  }catch(e){alert('Could not export: '+(e&&e.message||e));}
 }
 </script>
 </body>
