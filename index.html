@@ -180,18 +180,6 @@ footer{text-align:center;padding:1.6rem 1rem;color:var(--gray);font-size:.72rem;
 .toast.success{background:linear-gradient(135deg,#34d399,#10b981)}
 .toast.danger{background:linear-gradient(135deg,#fb7185,#f43f5e)}
 .toast.warn{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
-.counselor-msg{margin:.4rem 0;padding:.55rem .7rem;border-radius:12px;line-height:1.45}
-.counselor-msg.bot{background:#fff;border:1px solid var(--border)}
-.counselor-msg.user{background:var(--primary-soft);margin-left:1.5rem}
-.opp-card{border:1.5px solid var(--border);border-radius:14px;padding:.85rem;margin-bottom:.55rem;background:#fff}
-.opp-card h4{margin:0 0 .25rem;font-size:.92rem}
-.verdict-eligible{color:#047857;font-weight:800}
-.verdict-not{color:#9f1239;font-weight:800}
-.verdict-needs{color:#92400e;font-weight:800}
-.pl-step{display:flex;justify-content:space-between;gap:.5rem;padding:.35rem .5rem;border-radius:10px;background:#f8f9fd}
-.pl-step.done{background:#ecfdf5}
-.pl-step.miss{background:#fff7ed}
-
 @keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes toastOut{to{opacity:0;transform:translateY(20px)}}
 
@@ -622,32 +610,7 @@ body.dark .dropdown .email{color:var(--gray)}
 
 <div id="career" class="view container">
   <h2>Career</h2>
-  <p class="sub">Upload documents once. OneApp matches official rules only — never fake listings.</p>
-
-  <div class="card" id="precisionLadderCard">
-    <div class="card-header"><h3>Precision ladder</h3><span class="badge badge-ok" id="plPctBadge">0%</span></div>
-    <p class="sub" id="plHint">Fill profile from Aadhaar and certificates to unlock matching.</p>
-    <div style="height:10px;background:#eef0f7;border-radius:999px;overflow:hidden;margin:.5rem 0 1rem">
-      <div id="plBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary-2));transition:width .35s"></div>
-    </div>
-    <div id="plSteps" style="display:grid;gap:.4rem;font-size:.78rem"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h3>Opportunities inbox</h3><span class="badge badge-warn">Official rules</span></div>
-    <p class="sub">Deterministic match only (L4). Includes C-DAC BLR regression fixture — labelled demo, not a live vacancy.</p>
-    <div id="oppInbox"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h3>Career counselor</h3><span class="badge badge-ok">Elder brother</span></div>
-    <p class="sub">Uses your saved profile + rules. Does not interview you. Does not invent jobs.</p>
-    <div id="counselorLog" style="max-height:220px;overflow-y:auto;background:#f8f9fd;border:1px solid var(--border);border-radius:14px;padding:.75rem;margin-bottom:.6rem;font-size:.82rem"></div>
-    <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem" id="counselorQuick"></div>
-    <div class="field" style="margin:0"><input id="counselorInput" type="text" placeholder="Ask: am I eligible? what is missing?" onkeydown="if(event.key==='Enter')counselorSend()"></div>
-    <button class="btn btn-primary btn-sm" style="width:auto;margin-top:.45rem" onclick="counselorSend()">Send</button>
-  </div>
-
+  <p class="sub">Save certificates once. Opportunities that fully match you come to your inbox.</p>
   <div class="card">
     <div class="card-header"><h3>Your profile</h3><span class="badge badge-ok">Matching</span></div>
     <button class="btn btn-outline" onclick="careerFillFromAadhaar()">📄 Fill from my saved Aadhaar (stays on your phone)</button>
@@ -746,7 +709,7 @@ body.dark .dropdown .email{color:var(--gray)}
 </div></div>
 <div id="aadhaarModal" class="modal-overlay"><div class="modal">
 <div id="aaStep1"><h3>Aadhaar Wallet Card</h3><p class="sub">OneApp never asks for your Aadhaar number.</p><button class="btn btn-primary" onclick="aaGoPortal()">Download fresh from UIDAI</button><button class="btn btn-outline" onclick="aaDirect()">Upload new / updated PDF</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Cancel</button></div>
-<div id="aaStep2" style="display:none"><h3>Bring the PDF in</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
+<div id="aaStep2" style="display:none"><h3>Bring your Aadhaar in (PDF or photo)</h3><p class="sub" id="aaStep2Sub">myAadhaar portal opened.</p><div id="aaCoach"><ol style="margin:0 0 .5rem 1rem;font-size:.8rem"><li>Enter Aadhaar number → OTP</li><li>Enter OTP + captcha → Download PDF</li><li>Password hint: First 4 letters CAPS + Birth Year</li></ol></div><div class="field"><label>Select PDF</label><input id="aaFile" type="file" accept="application/pdf,image/*" onchange="aaOnFile(this.files[0])"></div><div id="aaPassRow" class="field" style="display:none"><label>PDF password</label><input id="aaPass" type="text" placeholder="e.g. ABHI1989"><button class="btn btn-primary" style="margin-top:.3rem" onclick="aaUnlock()">Unlock & Convert</button></div><div id="aaStatus" class="sos-box">Waiting...</div><button class="btn btn-outline" onclick="showAa('aaStep1')">Back</button></div>
 <div id="aaStep3" style="display:none"><h3>FRONT left · BACK right</h3><p class="sub" id="aaCutInfo">Detecting scissors line…</p><img id="aaPreview" class="viewer-img" alt="preview"><button class="btn btn-success" onclick="aaSave()">Save to my Vault</button><button class="btn btn-outline" onclick="closeModal('aadhaarModal')">Close</button></div>
 </div></div>
 <!-- AADHAAR FACTS (P3): confirm what was read before it goes into the Career profile -->
@@ -911,7 +874,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="elderMedicalTile" class="icon-tile" onclick="openElderDocument('medical')"><div class="icon-box">🏥<div id="elderMedicalIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Medical</span></div>
 </div>
 <div id="elderDocsList" style="margin-top:.75rem"></div>
-<input type="file" id="elderDocInput" accept="image/*" style="display:none" onchange="handleElderDocFile(this.files[0])">
+<input type="file" id="elderDocInput" accept="image/*,application/pdf" style="display:none" onchange="handleElderDocFile(this.files[0])">
 </div>
 </div>
 
@@ -981,9 +944,9 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="childAaModal" class="modal-overlay"><div class="modal">
 <h3 id="childAaTitle">Upload Aadhaar</h3>
 <p class="sub">Same scissors-cut as your own Aadhaar. Password remembered per child.</p>
-<div class="field"><label>Select e-Aadhaar PDF</label><input id="childAaFile" type="file" accept="application/pdf" onchange="childAaOnFile(this.files[0])"></div>
+<div class="field"><label>Select e-Aadhaar PDF or a photo of the card</label><input id="childAaFile" type="file" accept="application/pdf,image/*" onchange="childAaOnFile(this.files[0])"></div>
 <div id="childAaPassRow" class="field" style="display:none"><label>PDF password</label><input id="childAaPass" type="text" placeholder="e.g. ARYA2015"><button class="btn btn-primary" style="margin-top:.3rem" onclick="childAaUnlock()">Unlock & Convert</button></div>
-<div id="childAaStatus" class="sos-box">Waiting for PDF…</div>
+<div id="childAaStatus" class="sos-box">Waiting for file…</div>
 <img id="childAaPreview" class="viewer-img" style="display:none" alt="child aadhaar preview">
 <button id="childAaSaveBtn" class="btn btn-success" style="display:none" onclick="childAaSave()">Save to Child Vault</button>
 <button class="btn btn-outline" onclick="closeModal('childAaModal')">Close</button>
@@ -1949,6 +1912,11 @@ if(act==='update'){closeModal('fileViewerModal');pickChildFile(c.type,c.id);}
 if(act==='share'){shareChildFile(c.path,c.label);}
 if(act==='familyShare'){openFamilyShareModal(c.id||null);}
 if(act==='delete'){closeModal('fileViewerModal');deleteChildOther(c.id,c.path);}
+}else if(c.kind==='elderfile'){
+if(act==='update'){closeModal('fileViewerModal');elderUploadDoc(c.elderKind||'aadhaar');}
+if(act==='share'){shareChildFile(c.path,c.label);}
+if(act==='familyShare'){openFamilyShareModal(c.id||null);}
+if(act==='delete'){closeModal('fileViewerModal');deleteElderFile(c.id);}
 }else if(c.kind==='shared'){
 const p=c.permissions||{};
 if(act==='update'){if(p.edit===false)alert('Edit permission is not granted.');else{closeModal('fileViewerModal');updateSharedDocument(c);}}
@@ -2207,7 +2175,19 @@ openModal('childAaModal');
 }
 function childAaUnlock(){if(!childAaFile){alert('Select PDF first.');return;}childAaOnFile(childAaFile);}
 async function childAaOnFile(file){
-if(!file)return;childAaFile=file;
+if(!file)return;
+if((file.type||'').indexOf('image/')===0){
+  childAaFile=null;const st0=document.getElementById('childAaStatus');st0.textContent='Reading photo…';
+  try{
+    const c=await fileToCanvas(file,2400);
+    childAaCache={side:c,front:c,back:c,full:c};
+    const im=document.getElementById('childAaPreview');im.src=c.toDataURL('image/jpeg',0.92);im.style.display='block';
+    document.getElementById('childAaSaveBtn').style.display='';
+    st0.textContent='📷 Photo saved as it is (no cutting needed).';
+  }catch(e){st0.textContent='❌ Could not read this photo: '+e.message;}
+  return;
+}
+childAaFile=file;
 const st=document.getElementById('childAaStatus');st.textContent='Reading PDF…';
 const uid=currentUser.id;
 const pw=document.getElementById('childAaPass').value||getSavedPdfPassword(uid,'child_'+currentChildId)||undefined;
@@ -2270,8 +2250,27 @@ openModal('aadhaarModal');
 function aaGoPortal(){window.open('https://myaadhaar.uidai.gov.in/','_blank');document.getElementById('aaCoach').style.display='';document.getElementById('aaStep2Sub').textContent='myAadhaar portal opened. Services → Download e-Aadhaar.';showAa('aaStep2');}
 function aaDirect(){document.getElementById('aaCoach').style.display='none';document.getElementById('aaStep2Sub').textContent='Upload your e-Aadhaar PDF — converts on your device.';showAa('aaStep2');}
 function aaUnlock(){if(!aaFile){alert('Select PDF first.');return;}aaOnFile(aaFile);}
+async function fileToCanvas(file,maxDim){
+  const bmp=await createImageBitmap(file);
+  const sc=Math.min(1,maxDim/Math.max(bmp.width,bmp.height));
+  const w=Math.round(bmp.width*sc),h=Math.round(bmp.height*sc);
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  c.getContext('2d').drawImage(bmp,0,0,w,h);
+  return c;
+}
+async function aaOnImage(file){
+  const st=document.getElementById('aaStatus');st.textContent='Reading photo…';
+  try{
+    const c=await fileToCanvas(file,2400);
+    aaFile=null;aaFacts=null;aaFull=aaSide=aaFront=aaBack=c;
+    document.getElementById('aaCutInfo').textContent='📷 Photo saved as it is (no cutting needed).';
+    refreshPreview();showAa('aaStep3');
+  }catch(e){st.textContent='❌ Could not read this photo: '+e.message;}
+}
 async function aaOnFile(file){
-if(!file)return;aaFile=file;const st=document.getElementById('aaStatus');st.textContent='Reading PDF…';
+if(!file)return;
+if((file.type||'').indexOf('image/')===0){await aaOnImage(file);return;}
+aaFile=file;const st=document.getElementById('aaStatus');st.textContent='Reading PDF…';
 const uid=currentUser?currentUser.id:'guest';
 const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadhaar')||undefined;
 let pdf;
@@ -2387,7 +2386,7 @@ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
 const el=document.getElementById(id); if(el) el.classList.add('active');
 document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
 document.querySelectorAll('#bottomNav .bnav-side').forEach(b=>b.classList.remove('active'));
-if(id==='career'){const n=document.getElementById('bnav-career'); if(n)n.classList.add('active');try{loadCareerProfile();loadCareerAssets();refreshCareerHub();}catch(e){console.warn(e);}}
+if(id==='career'){const n=document.getElementById('bnav-career'); if(n)n.classList.add('active');}
 if(id==='reminders'){const n=document.getElementById('bnav-reminders'); if(n)n.classList.add('active');}
 window.scrollTo(0,0);
 if(id==='otherDocsView') loadOtherDocs();
@@ -3566,11 +3565,21 @@ async function removeElderPhoto(){
 function elderUploadDoc(kind){elderDocKind=kind;document.getElementById('elderDocInput').value='';document.getElementById('elderDocInput').click();}
 async function handleElderDocFile(file){
   if(!file||!currentElderId||!currentUser)return;
-  if(!file.type.startsWith('image/')){alert('Please upload a photo (not PDF) for elder documents.');return;}
+  const isPdf=file.type==='application/pdf'||/\.pdf$/i.test(file.name||'');
+  const isImg=(file.type||'').startsWith('image/');
+  if(!isPdf&&!isImg){alert('Please choose a photo or a PDF.');return;}
   try{
-    const compressed=await compressImage(file,1200,0.85);
-    const path=`${currentUser.id}/elders/${currentElderId}/${elderDocKind}_${Date.now()}.jpg`;
-    const{error:upErr}=await sb.storage.from('vault').upload(path,compressed,{contentType:'image/jpeg'});
+    let body,ext,ctype;
+    if(isImg){body=await compressImage(file,1200,0.85);ext='jpg';ctype='image/jpeg';}
+    else{
+      if(file.size>15*1024*1024){alert('This PDF is too large (limit 15 MB).');return;}
+      if(elderDocKind==='aadhaar'){
+        // Aadhaar PDFs are locked: unlock on this phone and save the card as a picture, like your own Aadhaar
+        body=await elderAadhaarPdfToImage(file);if(!body)return;ext='jpg';ctype='image/jpeg';
+      }else{body=file;ext='pdf';ctype='application/pdf';}
+    }
+    const path=`${currentUser.id}/elders/${currentElderId}/${elderDocKind}_${Date.now()}.${ext}`;
+    const{error:upErr}=await sb.storage.from('vault').upload(path,body,{contentType:ctype});
     if(upErr)throw upErr;
     const labels={aadhaar:'Aadhaar',pan:'PAN',medical:'Medical'};
     const{data:ins,error:dbErr}=await sb.from('documents').insert({
@@ -3605,6 +3614,27 @@ async function handleElderDocFile(file){
     alert('✅ Saved (shared with connected spouse/siblings)');
     loadElderDocs();
   }catch(e){alert('Upload failed: '+e.message);}
+}
+async function elderAadhaarPdfToImage(file){
+  const uid=currentUser.id,tag='elder_'+currentElderId;
+  let pw=getSavedPdfPassword(uid,tag)||undefined,pdf=null,typed=false;
+  for(let tries=0;tries<3&&!pdf;tries++){
+    try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
+    catch(err){
+      if(err&&err.name==='PasswordException'){
+        const entered=prompt('This Aadhaar PDF is locked.\nEnter its password (first 4 letters of the name in CAPITALS + birth year, e.g. RAME1955)');
+        if(!entered)return null;pw=entered.trim();typed=true;
+      }else{alert('Could not open this PDF: '+(err&&err.message||err));return null;}
+    }
+  }
+  if(!pdf){alert('That password did not work. Please try again.');return null;}
+  if(typed)savePdfPassword(uid,tag,pw);
+  const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');
+  c.width=vp.width;c.height=vp.height;
+  await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+  // e-Aadhaar has a scissors line above the card: keep only the card strip. Otherwise keep the full page.
+  const out=(findScissorsRow(c)>0)?computeCards(c).side:c;
+  return await new Promise(function(res){out.toBlob(res,'image/jpeg',0.9);});
 }
 let elderDocsCache=[];
 function setElderDocTileStatus(kind,saved){
@@ -3660,16 +3690,32 @@ async function loadElderDocs(){
   setElderDocTileStatus('aadhaar',has.aadhaar);
   setElderDocTileStatus('pan',has.pan);
   setElderDocTileStatus('medical',has.medical);
-  if(!rows.length){box.innerHTML='<p class="sub">No documents yet. Tap Aadhaar / PAN / Medical to upload a photo.</p>';return;}
+  if(!rows.length){box.innerHTML='<p class="sub">No documents yet. Tap Aadhaar / PAN / Medical to upload a photo or PDF.</p>';return;}
   box.innerHTML=rows.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
     <button class="btn btn-outline btn-sm" onclick="viewElderDoc('${d.id}','${escHtml(d.file_url)}')">View</button></div>`).join('');
 }
 async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
-    if(data?.signedUrl) viewProfilePhoto(data.signedUrl);
-    else alert('Could not open file');
+    if(!data||!data.signedUrl){alert('Could not open file');return;}
+    if(/\.pdf$/i.test(path)){
+      clearPdfViewer();
+      const img=document.getElementById('fileViewerImg');img.style.display='none';img.removeAttribute('src');
+      document.getElementById('fileViewerPdf').style.display='block';
+      document.getElementById('rotateControls').style.display='none';
+      const kind=((path.split('/').pop()||'').split('_')[0])||'aadhaar';
+      viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:'Document'};
+      document.getElementById('fileViewerTitle').textContent='Document — '+(currentElderName||'Parent');
+      openModal('fileViewerModal');
+      await renderPdfInViewer(data.signedUrl,(currentElderName||'Parent')+' document');
+    }else viewProfilePhoto(data.signedUrl);
   }catch(e){alert(e.message);}
+}
+async function deleteElderFile(id){
+  if(!confirm('Move this document to Bin? You can restore it for 30 days.'))return;
+  const{error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id);
+  if(error){alert('Failed: '+error.message);return;}
+  loadElderDocs();
 }
 
 /* ===== CAREER JS ===== */
@@ -3691,7 +3737,7 @@ async function saveCareerProfile(){
   try{const old=JSON.parse(localStorage.getItem(careerProfileKey())||'{}');if(old.sources)p.sources=old.sources;if(old.name)p.name=old.name;}catch(e){}
   localStorage.setItem(careerProfileKey(),JSON.stringify(p));
   try{const pm=Object.assign({},p);delete pm.pin;await sb.auth.updateUser({data:{career_profile:pm}});}catch(e){}
-  alert('Career profile saved');try{refreshCareerHub();}catch(e){}
+  alert('Career profile saved');
 }
 function careerUploadAsset(kind){if(!currentUser){alert('Sign in first');return;}careerAssetKind=kind;document.getElementById('careerAssetInput').value='';document.getElementById('careerAssetInput').click();}
 async function handleCareerAssetFile(file){
@@ -3725,215 +3771,6 @@ sb.auth.onAuthStateChange((ev,s)=>{
   if(s&&s.user){if(_pushUid!==s.user.id){_pushUid=s.user.id;setupPush();startAlertPolling();}}
   else{_pushUid=null;stopAlertPolling();stopAlertSound();}
 });
-
-
-
-/* ===== CAREER HUB: Precision Ladder + Deterministic matcher + Counselor (L1–L7, L10) ===== */
-function getCareerProfileObj(){
-  const key=typeof careerProfileKey==='function'?careerProfileKey():null;
-  let p={};
-  try{if(key)p=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
-  if(!Object.keys(p).length&&currentUser&&currentUser.user_metadata&&currentUser.user_metadata.career_profile)
-    p=Object.assign({},currentUser.user_metadata.career_profile);
-  return p||{};
-}
-function ageOn(dobStr, onDate){
-  if(!dobStr)return null;
-  const d=new Date(dobStr+'T00:00:00'), on=onDate?new Date(onDate+'T00:00:00'):new Date();
-  if(isNaN(d)||isNaN(on))return null;
-  let a=on.getFullYear()-d.getFullYear();
-  const m=on.getMonth()-d.getMonth();
-  if(m<0||(m===0&&on.getDate()<d.getDate()))a--;
-  return a;
-}
-function precisionLadder(p){
-  p=p||getCareerProfileObj();
-  const steps=[
-    {pct:20,key:'aadhaar',label:'Aadhaar basics (name/DOB/gender/state)',ok:!!(p.dob&&p.first&&p.gender&&p.state)},
-    {pct:45,key:'tenth',label:'10th / DOB proof fields',ok:!!(p.dob&&(p.qual||p.pct))},
-    {pct:70,key:'twelfth',label:'12th / stream',ok:!!(p.qual&&(p.branch||p.streams||p.pct))},
-    {pct:90,key:'degree',label:'Degree + branch',ok:!!(p.qual&&p.branch&&p.pct)},
-    {pct:95,key:'category',label:'Category + language + location',ok:!!(p.category&&p.lang&&(p.state||p.district))},
-    {pct:100,key:'media',label:'Photo / signature assets',ok:false}
-  ];
-  // media: check DOM list text if present
-  try{
-    const box=document.getElementById('careerAssetsList');
-    const txt=box?box.innerText:'';
-    steps[5].ok=/Career Photo/i.test(txt)||/photo/i.test(txt);
-  }catch(e){}
-  let best=0;
-  steps.forEach(s=>{if(s.ok)best=Math.max(best,s.pct);});
-  // if partial early steps only
-  if(!steps[0].ok)best=Math.min(best,10);
-  return {steps,best};
-}
-function renderPrecisionLadder(){
-  const p=getCareerProfileObj();
-  const {steps,best}=precisionLadder(p);
-  const bar=document.getElementById('plBar'), badge=document.getElementById('plPctBadge'), hint=document.getElementById('plHint'), box=document.getElementById('plSteps');
-  if(bar)bar.style.width=best+'%';
-  if(badge)badge.textContent=best+'%';
-  if(hint)hint.textContent=best>=95?'Profile is precise enough for tight filters.':best>=70?'Add category, languages and media for sharper matches.':best>=45?'Add 12th/degree details to unlock more exams.':'Start with Aadhaar fill — stays on your phone.';
-  if(box)box.innerHTML=steps.map(s=>`<div class="pl-step ${s.ok?'done':'miss'}"><span>${s.ok?'✓':'○'} ${s.label}</span><strong>${s.pct}%</strong></div>`).join('');
-}
-
-/** Official-style fixture only (C-DAC BLR Advt regression). Labelled demo — L10. */
-const OPP_FIXTURES=[{
-  id:'cdac-blr-02-2026',
-  title:'C-DAC Bengaluru — Project / technical posts (fixture)',
-  source:'https://www.cdac.in',
-  source_type:'demo_fixture',
-  notice:'C-DAC/BLR/02/2026',
-  deadline:'2026-06-20T23:55:00+05:30',
-  age_cutoff_date:'2026-06-20',
-  max_age_fresher:30,
-  min_pct:60,
-  photo_max_kb:400,
-  resume_max_kb:500,
-  notes:[
-    'Deadline 20 June 2026 23:55 IST — EXPIRED as of Oct 2026',
-    'CGPA applicants need university % conversion certificate',
-    'Separate application per post',
-    'Photo JPG max 400KB · Resume PDF max 500KB'
-  ],
-  rules:{min_pct:60, require_degree:true, cgpa_conversion_blocker:true}
-}];
-
-function evaluateOpportunity(opp, profile){
-  const evidence=[];
-  let verdict='ELIGIBLE';
-  const need=[];
-  const p=profile||getCareerProfileObj();
-  // deadline
-  const now=Date.now();
-  const dl=opp.deadline?Date.parse(opp.deadline):null;
-  if(dl&&now>dl){
-    verdict='NOT_ELIGIBLE';
-    evidence.push({check:'deadline',result:'fail',detail:'Deadline has passed ('+(opp.deadline||'')+').'});
-  }else if(dl){
-    evidence.push({check:'deadline',result:'pass',detail:'Deadline still open.'});
-  }
-  // age
-  if(opp.age_cutoff_date||opp.max_age_fresher){
-    const age=ageOn(p.dob, (opp.age_cutoff_date||'').slice(0,10));
-    if(age==null){
-      if(verdict==='ELIGIBLE')verdict='NEEDS_INFO';
-      need.push('Upload Aadhaar / enter DOB');
-      evidence.push({check:'age',result:'unknown',detail:'DOB missing.'});
-    }else if(opp.max_age_fresher!=null&&age>opp.max_age_fresher){
-      verdict='NOT_ELIGIBLE';
-      evidence.push({check:'age',result:'fail',detail:'Age '+age+' on cutoff exceeds max '+opp.max_age_fresher+'.'});
-    }else{
-      evidence.push({check:'age',result:'pass',detail:'Age '+age+' within limit.'});
-    }
-  }
-  // qualification / pct
-  if(opp.rules&&opp.rules.require_degree){
-    if(!p.qual){
-      if(verdict==='ELIGIBLE')verdict='NEEDS_INFO';
-      need.push('Add qualification / degree');
-      evidence.push({check:'qualification',result:'unknown',detail:'Degree not on profile.'});
-    }else{
-      evidence.push({check:'qualification',result:'pass',detail:'Profile has: '+p.qual});
-    }
-  }
-  if(opp.rules&&opp.rules.min_pct!=null){
-    const pct=parseFloat(p.pct);
-    if(isNaN(pct)){
-      if(verdict==='ELIGIBLE')verdict='NEEDS_INFO';
-      need.push('Add percentage / CGPA on profile');
-      evidence.push({check:'percentage',result:'unknown',detail:'% missing.'});
-    }else if(pct<opp.rules.min_pct){
-      verdict='NOT_ELIGIBLE';
-      evidence.push({check:'percentage',result:'fail',detail:pct+'% < required '+opp.rules.min_pct+'%.'});
-    }else{
-      evidence.push({check:'percentage',result:'pass',detail:pct+'% meets minimum '+opp.rules.min_pct+'%.'});
-    }
-  }
-  if(opp.rules&&opp.rules.cgpa_conversion_blocker){
-    evidence.push({check:'cgpa_trap',result:'info',detail:'If your marksheet is CGPA-only, university % conversion certificate is mandatory.'});
-  }
-  return {verdict,evidence,need,opp};
-}
-
-function renderOppInbox(){
-  const box=document.getElementById('oppInbox');
-  if(!box)return;
-  const p=getCareerProfileObj();
-  const cards=OPP_FIXTURES.map(opp=>{
-    const r=evaluateOpportunity(opp,p);
-    const vc=r.verdict==='ELIGIBLE'?'verdict-eligible':(r.verdict==='NOT_ELIGIBLE'?'verdict-not':'verdict-needs');
-    const ev=r.evidence.map(e=>`<li><strong>${e.check}</strong>: ${e.detail}</li>`).join('');
-    const needs=r.need.length?`<p class="sub">Next: ${r.need.join(' · ')}</p>`:'';
-    return `<div class="opp-card">
-      <h4>${escHtml(opp.title)}</h4>
-      <p class="sub" style="margin:0 0 .35rem">${escHtml(opp.notice||'')} · <span class="${vc}">${r.verdict}</span>
-      ${opp.source_type==='demo_fixture'?' · <em>demo fixture</em>':''}</p>
-      <ul style="margin:.25rem 0 .35rem 1.1rem;font-size:.78rem;color:var(--text-2)">${ev}</ul>
-      ${needs}
-      <p class="sub" style="margin:0">Source allowlist: ${escHtml(opp.source||'')}</p>
-    </div>`;
-  }).join('');
-  box.innerHTML=cards||'<p class="sub">No fixtures loaded.</p>';
-}
-
-function counselorAppend(role,text){
-  const log=document.getElementById('counselorLog'); if(!log)return;
-  const div=document.createElement('div');
-  div.className='counselor-msg '+(role==='user'?'user':'bot');
-  div.textContent=text;
-  log.appendChild(div);
-  log.scrollTop=log.scrollHeight;
-}
-function counselorReply(q){
-  const p=getCareerProfileObj();
-  const {best}=precisionLadder(p);
-  const ql=(q||'').toLowerCase();
-  // Match against fixtures
-  const results=OPP_FIXTURES.map(o=>evaluateOpportunity(o,p));
-  if(/eligible|match|cdac|job|vacancy|apply/.test(ql)){
-    const lines=results.map(r=>{
-      const name=r.opp.title;
-      if(r.verdict==='ELIGIBLE')return name+': ELIGIBLE for stated rules (still not a job offer).';
-      if(r.verdict==='NOT_ELIGIBLE')return name+': NOT ELIGIBLE — '+r.evidence.filter(e=>e.result==='fail').map(e=>e.detail).join(' ');
-      return name+': NEEDS INFO — '+(r.need.join(', ')||'complete profile');
-    });
-    return 'Straight answer:\n'+lines.join('\n')+'\n\nEligibility ≠ selection. Demo fixture only until live official ingestion is on.';
-  }
-  if(/missing|gap|what.*need|precision|ladder|profile/.test(ql)){
-    return 'Precision ladder is at '+best+'%. Upload marksheet/degree and set %/branch/category/languages. I only ask for documents (L1), not random forms.';
-  }
-  if(/photo|kb|signature|resume/.test(ql)){
-    return 'Keep one original photo. For C-DAC fixture: JPG ≤400KB, resume PDF ≤500KB. Use Career → assets to store photo/signature/certificates.';
-  }
-  if(/hello|hi|namaste|help/.test(ql)){
-    return 'I already see your saved career profile where possible. Ask “am I eligible for C-DAC fixture?” or “what is missing?”. I will not interview you or invent openings.';
-  }
-  return 'I can explain eligibility for the official-rule fixtures, your precision ladder, or document gaps. Try: “am I eligible?” — I will not fabricate jobs (L10).';
-}
-function counselorSend(){
-  const inp=document.getElementById('counselorInput');
-  const q=(inp&&inp.value||'').trim();
-  if(!q)return;
-  if(inp)inp.value='';
-  counselorAppend('user',q);
-  counselorAppend('bot',counselorReply(q));
-}
-function counselorBoot(){
-  const log=document.getElementById('counselorLog');
-  if(log&&!log.dataset.booted){
-    log.dataset.booted='1';
-    counselorAppend('bot','I am your career elder brother here — document-first, honest verdicts only: ELIGIBLE / NOT_ELIGIBLE / NEEDS_INFO.');
-  }
-  const q=document.getElementById('counselorQuick');
-  if(q)q.innerHTML=['Am I eligible?','What is missing?','Photo/resume limits'].map(t=>`<button type="button" class="btn btn-outline btn-sm" style="width:auto" onclick="document.getElementById('counselorInput').value='${t}';counselorSend()">${t}</button>`).join('');
-}
-function refreshCareerHub(){
-  renderPrecisionLadder();
-  renderOppInbox();
-  counselorBoot();
-}
 
 
 /* ===== P3 · Aadhaar → profile facts. Runs 100% in this browser. Nothing is uploaded; the 12-digit number is discarded. ===== */
@@ -4055,7 +3892,6 @@ async function applyAadhaarFacts(){
   try{const pm=Object.assign({},p);delete pm.pin;await sb.auth.updateUser({data:{career_profile:pm}});}catch(e){}
   aaCloseFacts();
   loadCareerProfile();
-  try{refreshCareerHub();}catch(e){}
   alert('✅ '+filled+' detail'+(filled===1?'':'s')+' filled in your Career profile.'+(kept.length?'\nKept your existing: '+kept.join(', ')+'.':''));
 }
 async function careerFillFromAadhaar(auto){
