@@ -613,7 +613,7 @@ body.dark .dropdown .email{color:var(--gray)}
   <p class="sub">Save certificates once. Opportunities that fully match you come to your inbox.</p>
   <div class="card">
     <div class="card-header"><h3>Your profile</h3><span class="badge badge-ok">Matching</span></div>
-    <button class="btn btn-outline" onclick="careerFillFromAadhaar()">📄 Fill from my Aadhaar (stays on your phone)</button>
+    <button class="btn btn-outline" onclick="careerFillFromAadhaar()">📄 Fill from my saved Aadhaar (stays on your phone)</button>
     <input id="careerAadhaarInput" type="file" accept="application/pdf" style="display:none" onchange="careerAadhaarOnFile(this.files[0]);this.value=''">
     <div class="field"><label>First name</label><input id="careerFirst" type="text"></div>
     <div class="field"><label>Last name</label><input id="careerLast" type="text"></div>
@@ -2354,7 +2354,7 @@ if(id==='career'){const n=document.getElementById('bnav-career'); if(n)n.classLi
 if(id==='reminders'){const n=document.getElementById('bnav-reminders'); if(n)n.classList.add('active');}
 window.scrollTo(0,0);
 if(id==='otherDocsView') loadOtherDocs();
-if(id==='career'){loadCareerProfile();loadCareerAssets();}
+if(id==='career'){loadCareerProfile();loadCareerAssets();careerAutoAadhaar();}
 }
 function clearPdfViewer(){
 const viewer=document.getElementById('fileViewerPdf');
@@ -3793,8 +3793,28 @@ async function applyAadhaarFacts(){
   loadCareerProfile();
   alert('✅ '+filled+' detail'+(filled===1?'':'s')+' filled in your Career profile.'+(kept.length?'\nKept your existing: '+kept.join(', ')+'.':''));
 }
-function careerFillFromAadhaar(){if(!currentUser){alert('Sign in first');return;}document.getElementById('careerAadhaarInput').click();}
-async function careerAadhaarOnFile(file){
+async function careerFillFromAadhaar(auto){
+  if(!currentUser){if(!auto)alert('Sign in first');return;}
+  // Use the Aadhaar PDF already saved in the vault. It is opened on this phone only.
+  try{
+    const r=await sb.storage.from('vault').download(currentUser.id+'/aadhaar-original.pdf');
+    if(r&&r.data&&!r.error){await careerAadhaarOnFile(r.data,auto);return;}
+  }catch(e){}
+  if(auto)return;
+  alert('I could not find the original Aadhaar PDF in your vault, so please pick it once on the next screen.');
+  document.getElementById('careerAadhaarInput').click();
+}
+async function careerAutoAadhaar(){
+  // Once per user: when Career opens with an empty profile and an Aadhaar is already saved, offer to fill it
+  if(!currentUser)return;
+  const flag='oneapp_aa_autoask_'+currentUser.id;
+  try{if(localStorage.getItem(flag))return;}catch(e){return;}
+  let p={};try{p=JSON.parse(localStorage.getItem(careerProfileKey())||'{}');}catch(e){}
+  if(p.dob&&p.first&&p.state)return;
+  try{localStorage.setItem(flag,'1');}catch(e){}
+  await careerFillFromAadhaar(true);
+}
+async function careerAadhaarOnFile(file,auto){
   if(!file||!currentUser)return;
   const uid=currentUser.id;
   let pw=getSavedPdfPassword(uid,'aadhaar')||undefined,pdf=null,typed=false;
@@ -3802,14 +3822,15 @@ async function careerAadhaarOnFile(file){
     try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
     catch(err){
       if(err&&err.name==='PasswordException'){
+        if(auto)return;
         const entered=prompt('Enter your e-Aadhaar PDF password\n(first 4 letters of your name in CAPITALS + birth year, e.g. RAHU1990)');
         if(!entered)return;pw=entered.trim();typed=true;
-      }else{alert('Could not open this PDF: '+(err&&err.message||err));return;}
+      }else{if(!auto)alert('Could not open this PDF: '+(err&&err.message||err));return;}
     }
   }
-  if(!pdf){alert('That password did not work. Please try again.');return;}
+  if(!pdf){if(!auto)alert('That password did not work. Please try again.');return;}
   if(typed)savePdfPassword(uid,'aadhaar',pw);
-  try{openAadhaarFacts(await extractAadhaarFacts(pdf));}catch(e){alert('Could not read details from this PDF. You can type them in manually.');}
+  try{openAadhaarFacts(await extractAadhaarFacts(pdf));}catch(e){if(!auto)alert('Could not read details from this PDF. You can type them in manually.');}
 }
 </script>
 </body>
