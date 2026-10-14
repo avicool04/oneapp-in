@@ -1972,7 +1972,8 @@ if(act==='familyShare'){openFamilyShareModal(c.id||null);}
 if(act==='delete'){closeModal('fileViewerModal');deleteChildOther(c.id,c.path);}
 }else if(c.kind==='elderfile'){
 if(act==='update'){closeModal('fileViewerModal');elderUploadDoc(c.elderKind||'aadhaar');}
-if(act==='share'||act==='familyShare'){closeModal('fileViewerModal');openFamilyShareModal(c.id||null);}
+if(act==='share'){closeModal('fileViewerModal');shareElderDocumentFormats(c);}
+if(act==='familyShare'){closeModal('fileViewerModal');openFamilyShareModal(c.id||null);}
 if(act==='delete'){closeModal('fileViewerModal');deleteElderFile(c.id);}
 }else if(c.kind==='shared'){
 const p=c.permissions||{};
@@ -2415,14 +2416,16 @@ async function aaShare(fmt,layout){
 closeModal('shareModal');
 const isChild=!!shareContext&&shareContext.kind==='child';
 const isShared=!!shareContext&&shareContext.kind==='shared';
-const cache=isShared?sharedAaCache:(isChild?childAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull});
+const isElder=!!shareContext&&shareContext.kind==='elder';
+const cache=isShared?sharedAaCache:(isChild?childAaCache:(isElder?elderAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull}));
 const sendFile=async f=>{
 if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Aadhaar Card',text:SHARE_CAPTION});}catch(e){}}
 else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually. Opens WITHOUT password.');}
 };
 if(fmt==='a4pdf'){
+if(isElder&&elderAaCache.pdfBlob){sendFile(new File([elderAaCache.pdfBlob],'aadhaar-uidai.pdf',{type:'application/pdf'}));return;}
 if(cache.full){sendFile(new File([makeA4Pdf(cache.full).output('blob')],'aadhaar-a4.pdf',{type:'application/pdf'}));return;}
-if(!isChild&&aaFile){sendFile(aaFile);return;}
+if(!isChild&&!isElder&&aaFile){sendFile(aaFile);return;}
 alert('No full page available.');return;
 }
 const c=composeCanvasFor(layout,cache);if(!c)return;
@@ -3873,11 +3876,7 @@ async function loadElderDocs(){
       <div style="display:flex;flex-wrap:wrap;gap:.3rem">${btns.join('')}</div></div>`;
   }).join('');
 }
-function shareElderDoc(docId){
-  if(!docId){alert('Document not found');return;}
-  if(typeof openFamilyShareModal==='function')openFamilyShareModal(docId);
-  else alert('Share is not available');
-}
+
 async function downloadElderDoc(path){
   if(!path)return;
   try{
@@ -3887,6 +3886,76 @@ async function downloadElderDoc(path){
     document.body.appendChild(a);a.click();a.remove();
   }catch(e){alert(e.message||e);}
 }
+
+let elderAaCache={side:null,front:null,back:null,full:null,pdfBlob:null};
+async function loadElderAaCacheFromPath(path){
+  elderAaCache={side:null,front:null,back:null,full:null,pdfBlob:null};
+  if(!path)throw new Error('No file path');
+  const {data,error}=await sb.storage.from('vault').download(path);
+  if(error)throw error;
+  const isPdf=/\.pdf$/i.test(path);
+  if(isPdf){
+    if(typeof pdfjsLib==='undefined')throw new Error('PDF engine not loaded');
+    const buf=await data.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const pages=[];
+    for(let n=1;n<=Math.min(pdf.numPages,2);n++){
+      const page=await pdf.getPage(n);
+      const viewport=page.getViewport({scale:2});
+      const canvas=document.createElement('canvas');
+      canvas.width=viewport.width;canvas.height=viewport.height;
+      await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+      pages.push(canvas);
+    }
+    elderAaCache.full=pages[0]||null;
+    elderAaCache.front=pages[0]||null;
+    elderAaCache.back=pages[1]||null;
+    elderAaCache.side=pages[0]||null;
+    elderAaCache.pdfBlob=data;
+    return elderAaCache;
+  }
+  const url=URL.createObjectURL(data);
+  try{
+    const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url;});
+    const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
+    c.getContext('2d').drawImage(img,0,0);
+    elderAaCache.full=c;elderAaCache.front=c;elderAaCache.side=c;
+    return elderAaCache;
+  }finally{URL.revokeObjectURL(url);}
+}
+async 
+function shareElderDoc(docId){
+  if(!docId){alert('Document not found');return;}
+  const row=(elderDocsCache||[]).find(d=>d.id===docId);
+  if(!row){if(typeof openFamilyShareModal==='function')openFamilyShareModal(docId);return;}
+  const path=row.file_url||'';
+  const kind=((row.document_type||'')+' '+path).toLowerCase();
+  const elderKind=/aadhaar|aadhar/.test(kind)?'aadhaar':(/pan/.test(kind)?'pan':'medical');
+  shareElderDocumentFormats({id:docId,path:path,elderKind:elderKind,label:row.document_name||row.document_type||'Document'});
+}
+
+async function shareElderDocumentFormats(c){
+  if(!c||!c.path){alert('Document not available');return;}
+  const path=c.path;
+  const isPdf=/\.pdf$/i.test(path);
+  const blob=String(c.elderKind||'')+' '+String(c.label||'')+' '+path;
+  const isAa=/aadhaar|aadhar/i.test(blob);
+  // Aadhaar PDF (UIDAI download) → same 5 format options as your vault Aadhaar
+  if(isAa&&isPdf){
+    try{
+      await loadElderAaCacheFromPath(path);
+      shareContext={kind:'elder',id:c.id,path:path};
+      openModal('shareModal');
+    }catch(e){alert('Could not prepare Aadhaar for share: '+(e.message||e));}
+    return;
+  }
+  // Aadhaar JPG (single side) OR non-Aadhaar → like PAN: JPG / PDF share
+  viewerCtx={kind:'generic',id:c.id,path:path,actualPath:path,label:c.label||(isAa?'Aadhaar':'Document'),isImage:!isPdf,isPdf:!!isPdf,documentType:isAa?'Aadhaar':(c.elderKind||'Document')};
+  document.getElementById('genericShareImageOptions').style.display=isPdf?'none':'block';
+  document.getElementById('genericSharePdfOptions').style.display=isPdf?'block':'none';
+  openModal('genericShareModal');
+}
+
 async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
