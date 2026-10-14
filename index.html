@@ -776,7 +776,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <!-- BACK SIDE PROMPT: front photo first, back photo optional -->
 <div id="backSideModal" class="modal-overlay"><div class="modal">
 <h3>Add the back side?</h3>
-<p class="sub">Front side added. If you also have a photo of the back, add it and I will join them for sharing (side by side or top and bottom).</p>
+<p class="sub">Front side added. Choose the back-side JPG/PNG as a separate file. OneApp will combine both sides and offer side-by-side JPG, stacked JPG, side-by-side PDF, and stacked PDF. Or skip to keep one side only.</p>
 <input type="file" id="backSideInput" accept="image/*" style="display:none" onchange="backSideGot(this.files[0])">
 <button class="btn btn-primary" onclick="backSideChoose()">📷 Add back side</button>
 <button class="btn btn-outline" onclick="backSideSkip()">Skip, front only</button>
@@ -942,7 +942,7 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 <div class="card">
 <div class="card-header"><h3>Documents</h3></div>
-<p class="sub">Tap an icon to upload a photo or PDF. Green tick = saved. Tap again to open it; share, update and delete are inside.</p>
+<p class="sub">Open Aadhaar, PAN or Medical to view files and use View, Download or Share inside that folder. Other documents belong in Additional folders. Green tick = saved.</p>
 <div class="icon-grid">
 <div id="elderAadhaarTile" class="icon-tile" onclick="openElderDocument('aadhaar')"><div class="icon-box">🪪<div id="elderAadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Aadhaar</span></div>
 <div id="elderPanTile" class="icon-tile" onclick="openElderDocument('pan')"><div class="icon-box">💳<div id="elderPanIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN</span></div>
@@ -3859,9 +3859,9 @@ async function openElderDocument(kind){
   if(!(elderDocsCache&&elderDocsCache.length)&&typeof loadElderDocs==='function'){
     try{await loadElderDocs();}catch(e){}
   }
-  const row=(elderDocsCache||[]).find(d=>(d.document_type||'')==='elder_'+currentElderId+'_'+kind||((d.file_url||'').includes('/'+kind+'_')));
-  if(row){viewElderDoc(row.id,row.file_url);return;}
-  elderUploadDoc(kind);
+  // Identity documents live inside their own folders. Never jump straight
+  // into a file viewer from the root tiles, even when the folder has one file.
+  openElderFolder(kind);
 }
 async function loadElderDocs(){
   const box=document.getElementById('elderDocsList');
@@ -3942,9 +3942,15 @@ async function elderAadhaarPdfToCache(file){
   const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');
   c.width=vp.width;c.height=vp.height;
   await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
-  // UIDAI PDFs have a scissors line above the card: cut it into front, back and side by side
-  if(findScissorsRow(c)>0){const r=computeCards(c);return {front:r.front,back:r.back,side:r.side,full:c};}
-  return {front:c,back:null,side:null,full:null};
+  // Always retain the full UIDAI page for the A4-PDF option. computeCards()
+  // uses the scissors line when found and a fallback card-strip crop otherwise.
+  // Previously we returned only `front` when the line detector missed, which
+  // made a valid UIDAI PDF look like a single JPG and hid the other 3 formats.
+  const r=computeCards(c);
+  if(!r||!r.front||!r.back){
+    return {front:c,back:null,side:null,full:c,pdfBlob:null};
+  }
+  return {front:r.front,back:r.back,side:r.side||composeCanvasFor('side',{front:r.front,back:r.back}),full:c,pdfBlob:null};
 }
 async function elderAadhaarPhotosToCache(file){
   const front=await fileToCanvas(file,2400);
@@ -3997,12 +4003,20 @@ function createElderFolder(){
 }
 function openElderFolder(kind){
   elderFolderOpenKind=kind;
-  const name=elderFolderNames[kind]||kind.slice(2);
+  const fixedNames={aadhaar:'Aadhaar',pan:'PAN Card',medical:'Medical'};
+  const name=elderFolderNames[kind]||fixedNames[kind]||kind.slice(2);
   document.getElementById('efTitle').textContent=name;
   const rows=(elderDocsCache||[]).filter(function(d){return elderKindOf(d.file_url,d.document_type)===kind;});
   document.getElementById('efList').innerHTML=rows.length?rows.map(function(d){
-    return '<div class="doc-row"><div class="doc-info"><h4>'+escHtml(d.document_name||name)+'</h4><p>'+new Date(d.created_at).toLocaleDateString('en-IN')+'</p></div><div><button class="btn btn-outline btn-sm" onclick="closeModal(\'elderFolderModal\');viewElderDoc(\''+d.id+'\',\''+escHtml(d.file_url)+'\')">Open</button></div></div>';
-  }).join(''):'<p class="sub">This folder is empty.</p>';
+    const id=String(d.id||'').replace(/[^a-zA-Z0-9_-]/g,'');
+    const path=String(d.file_url||'');
+    const safePath=path.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return '<div class="doc-row"><div class="doc-info"><h4>'+escHtml(d.document_name||name)+'</h4><p>'+new Date(d.created_at).toLocaleDateString('en-IN')+'</p></div><div class="shared-doc-actions" style="display:flex;gap:.3rem;flex-wrap:wrap">'+
+      '<button class="btn btn-outline btn-sm" onclick="closeModal(\'elderFolderModal\');viewElderDoc(\''+id+'\',\''+safePath+'\')">View</button>'+
+      '<button class="btn btn-outline btn-sm" onclick="downloadElderDoc(\''+safePath+'\')">Download</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="shareElderDoc(\''+id+'\')">Share</button>'+
+      '</div></div>';
+  }).join(''):'<p class="sub">This folder is empty. Use Add file to upload a document.</p>';
   openModal('elderFolderModal');
 }
 let elderAaCache={side:null,front:null,back:null,full:null,pdfBlob:null};
