@@ -1972,8 +1972,7 @@ if(act==='familyShare'){openFamilyShareModal(c.id||null);}
 if(act==='delete'){closeModal('fileViewerModal');deleteChildOther(c.id,c.path);}
 }else if(c.kind==='elderfile'){
 if(act==='update'){closeModal('fileViewerModal');elderUploadDoc(c.elderKind||'aadhaar');}
-if(act==='share'){shareChildFile(c.path,c.label);}
-if(act==='familyShare'){openFamilyShareModal(c.id||null);}
+if(act==='share'||act==='familyShare'){closeModal('fileViewerModal');openFamilyShareModal(c.id||null);}
 if(act==='delete'){closeModal('fileViewerModal');deleteElderFile(c.id);}
 }else if(c.kind==='shared'){
 const p=c.permissions||{};
@@ -3811,8 +3810,11 @@ function setElderDocTileStatus(kind,saved){
   const badge=document.getElementById(ids[0]);
   if(badge)badge.classList.toggle('show',!!saved);
 }
-function openElderDocument(kind){
-  const row=(elderDocsCache||[]).find(d=>(d.document_type||'').endsWith('_'+kind)|| (d.document_type||'').includes('_'+kind));
+async function openElderDocument(kind){
+  if(!(elderDocsCache&&elderDocsCache.length)&&typeof loadElderDocs==='function'){
+    try{await loadElderDocs();}catch(e){}
+  }
+  const row=(elderDocsCache||[]).find(d=>(d.document_type||'').endsWith('_'+kind)|| (d.document_type||'').includes('_'+kind)||((d.file_url||'').includes('/'+kind+'_')));
   if(row){viewElderDoc(row.id,row.file_url);return;}
   elderUploadDoc(kind);
 }
@@ -3859,25 +3861,62 @@ async function loadElderDocs(){
   setElderDocTileStatus('pan',has.pan);
   setElderDocTileStatus('medical',has.medical);
   if(!rows.length){box.innerHTML='<p class="sub">No documents yet. Tap Aadhaar / PAN / Medical to upload a photo or PDF.</p>';return;}
-  box.innerHTML=rows.map(d=>`<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
-    <button class="btn btn-outline btn-sm" onclick="viewElderDoc('${d.id}','${escHtml(d.file_url)}')">View</button></div>`).join('');
+  const iOwn=currentUser&&(currentElderOwnerId===currentUser.id||!currentElderOwnerId||currentElderOwnerId===currentUser.id);
+  box.innerHTML=rows.map(d=>{
+    const mine=iOwn||(d.user_id===currentUser.id);
+    const btns=[`<button class="btn btn-outline btn-sm" onclick="viewElderDoc('${d.id}','${escHtml(d.file_url)}')">View</button>`];
+    if(mine){
+      btns.push(`<button class="btn btn-outline btn-sm" onclick="downloadElderDoc('${escHtml(d.file_url)}')">Download</button>`);
+      btns.push(`<button class="btn btn-primary btn-sm" onclick="shareElderDoc('${d.id}')">Share</button>`);
+    }
+    return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem">${btns.join('')}</div></div>`;
+  }).join('');
+}
+function shareElderDoc(docId){
+  if(!docId){alert('Document not found');return;}
+  if(typeof openFamilyShareModal==='function')openFamilyShareModal(docId);
+  else alert('Share is not available');
+}
+async function downloadElderDoc(path){
+  if(!path)return;
+  try{
+    const{data}=await sb.storage.from('vault').createSignedUrl(path,300);
+    if(!data?.signedUrl){alert('Could not download');return;}
+    const a=document.createElement('a');a.href=data.signedUrl;a.target='_blank';a.rel='noopener';a.download='';
+    document.body.appendChild(a);a.click();a.remove();
+  }catch(e){alert(e.message||e);}
 }
 async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
     if(!data||!data.signedUrl){alert('Could not open file');return;}
-    if(/\.pdf$/i.test(path)){
+    const kind=((path.split('/').pop()||'').match(/(aadhaar|pan|medical)/i)||['aadhaar'])[0].toLowerCase();
+    viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:(currentElderName||'Parent')+' '+(kind||'document')};
+    document.getElementById('fileViewerTitle').textContent=(currentElderName||'Parent')+' — '+(kind||'Document');
+    const isPdf=/\.pdf($|\?)/i.test(path||'')||/\.pdf($|\?)/i.test(data.signedUrl||'');
+    if(isPdf){
       clearPdfViewer();
-      const img=document.getElementById('fileViewerImg');img.style.display='none';img.removeAttribute('src');
-      document.getElementById('fileViewerPdf').style.display='block';
-      document.getElementById('rotateControls').style.display='none';
-      const kind=((path.split('/').pop()||'').split('_')[0])||'aadhaar';
-      viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:'Document'};
-      document.getElementById('fileViewerTitle').textContent='Document — '+(currentElderName||'Parent');
+      const img=document.getElementById('fileViewerImg');
+      if(img){img.style.display='none';img.removeAttribute('src');}
+      const pdfBox=document.getElementById('fileViewerPdf');
+      if(pdfBox)pdfBox.style.display='block';
+      const rot=document.getElementById('rotateControls');
+      if(rot)rot.style.display='none';
       openModal('fileViewerModal');
-      await renderPdfInViewer(data.signedUrl,(currentElderName||'Parent')+' document');
-    }else viewProfilePhoto(data.signedUrl);
-  }catch(e){alert(e.message);}
+      if(typeof renderPdfInViewer==='function')await renderPdfInViewer(data.signedUrl,(currentElderName||'Parent')+' document');
+      else window.open(data.signedUrl,'_blank');
+    }else{
+      clearPdfViewer();
+      const pdfBox=document.getElementById('fileViewerPdf');
+      if(pdfBox){pdfBox.style.display='none';pdfBox.innerHTML='';}
+      const img=document.getElementById('fileViewerImg');
+      if(img){img.style.display='block';img.src=data.signedUrl;}
+      const rot=document.getElementById('rotateControls');
+      if(rot)rot.style.display='flex';
+      openModal('fileViewerModal');
+    }
+  }catch(e){alert(e.message||e);}
 }
 async function deleteElderFile(id){
   if(!confirm('Move this document to Bin? You can restore it for 30 days.'))return;
