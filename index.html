@@ -471,6 +471,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="vault" class="view active container">
 <h2>My Secure Vault</h2>
 <p class="sub">Encrypted mirrors of your official documents.</p>
+<p class="sub" style="margin-top:.35rem"><button type="button" class="btn btn-outline btn-sm" style="width:auto" onclick="openMergeDualModal()">Merge two sides → one file (JPG/PDF)</button></p>
 <div class="card" style="padding:.7rem 1rem;margin-bottom:.75rem">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap">
 <strong style="font-size:.78rem">Site last updated</strong>
@@ -886,9 +887,21 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
 <h2 id="svTitle" style="margin:0">Family Vault</h2>
 </div>
-<p class="sub" id="svSub">Documents shared with you.</p>
+<p class="sub" id="svSub">Documents shared with you — same folders as your vault.</p>
 <div class="card">
-<div class="card-header"><h3>Shared Documents</h3><span class="badge badge-ok">Live access</span></div>
+<div class="card-header"><h3>Folders</h3><span class="badge badge-ok">Shared access</span></div>
+<p class="sub">Tap a folder to open documents they shared (with the rights they gave you).</p>
+<div class="icon-grid" id="svFolderGrid">
+<div class="icon-tile" onclick="openSharedFolder('aadhaar')"><div class="icon-box">🪪<div id="svBadgeAadhaar" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Aadhaar</span></div>
+<div class="icon-tile" onclick="openSharedFolder('pan')"><div class="icon-box">💳<div id="svBadgePan" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN</span></div>
+<div class="icon-tile" onclick="openSharedFolder('passport')"><div class="icon-box">🛂<div id="svBadgePassport" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Passport</span></div>
+<div class="icon-tile" onclick="openSharedFolder('license')"><div class="icon-box">🚗<div id="svBadgeLicense" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>License</span></div>
+<div class="icon-tile" onclick="openSharedFolder('other')"><div class="icon-box">📁<div id="svBadgeOther" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Others</span></div>
+</div>
+</div>
+<div class="card" id="svFolderCard" style="display:none">
+<div class="card-header"><h3 id="svFolderTitle">Folder</h3>
+<button type="button" class="btn btn-outline btn-sm" onclick="closeSharedFolder()">All folders</button></div>
 <div id="sharedDocsContainer"><p class="sub">Loading…</p></div>
 </div>
 </div>
@@ -2545,7 +2558,7 @@ closeModal('familyShareModal');
 async function openSharedVault(userId,name){
 sharedVaultContext={kind:'adult',userId,name};
 document.getElementById('svTitle').textContent=name+"'s Shared Vault";
-document.getElementById('svSub').textContent='Documents '+name+' has shared with you. Access is controlled document-by-document.';
+document.getElementById('svSub').textContent='Folders for documents '+name+' shared with you (view / download / update / delete as permitted).';
 closeModal('familyManagerModal');
 showView('sharedVaultView');
 await loadSharedVault();
@@ -2558,27 +2571,156 @@ closeModal('familyManagerModal');
 showView('sharedVaultView');
 await loadSharedVault();
 }
+let sharedVaultRowsCache=[];
+let sharedVaultFolder=null;
+function classifySharedDoc(d){
+  const t=((d&&d.document_type)||'')+' '+((d&&d.document_name)||'')+' '+((d&&d.file_url)||'');
+  const u=t.toLowerCase();
+  if(/aadhaar|aadhar/.test(u))return 'aadhaar';
+  if(/\bpan\b|permanent account/.test(u))return 'pan';
+  if(/passport/.test(u))return 'passport';
+  if(/license|licence|driving/.test(u))return 'license';
+  return 'other';
+}
+function setSvFolderBadges(rows){
+  const counts={aadhaar:0,pan:0,passport:0,license:0,other:0};
+  (rows||[]).forEach(s=>{const k=classifySharedDoc(s.documents);if(counts[k]!=null)counts[k]++;});
+  const map={aadhaar:'svBadgeAadhaar',pan:'svBadgePan',passport:'svBadgePassport',license:'svBadgeLicense',other:'svBadgeOther'};
+  Object.keys(map).forEach(k=>{const el=document.getElementById(map[k]);if(el)el.classList.toggle('show',counts[k]>0);});
+}
+function openSharedFolder(folder){
+  sharedVaultFolder=folder;
+  const titles={aadhaar:'Aadhaar',pan:'PAN',passport:'Passport',license:'Driving License',other:'Others'};
+  const card=document.getElementById('svFolderCard');
+  const grid=document.getElementById('svFolderGrid');
+  if(card)card.style.display='block';
+  if(grid)grid.style.display='none';
+  const ft=document.getElementById('svFolderTitle');
+  if(ft)ft.textContent=titles[folder]||folder;
+  renderSharedFolderDocs();
+}
+function closeSharedFolder(){
+  sharedVaultFolder=null;
+  const card=document.getElementById('svFolderCard');
+  const grid=document.getElementById('svFolderGrid');
+  if(card)card.style.display='none';
+  if(grid)grid.style.display='grid';
+}
+function renderSharedFolderDocs(){
+  const box=document.getElementById('sharedDocsContainer');
+  if(!box)return;
+  const folder=sharedVaultFolder;
+  let rows=sharedVaultRowsCache||[];
+  if(folder)rows=rows.filter(s=>classifySharedDoc(s.documents)===folder);
+  if(!rows.length){box.innerHTML='<p class="sub">No shared documents in this folder yet.</p>';return;}
+  box.innerHTML=rows.map(s=>{
+    const d=s.documents,p=s.permissions||{};
+    const actions=[];
+    if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
+    if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
+    if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
+    if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
+    if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
+    const rights=['view','download','edit','share','delete'].filter(k=>p[k]||(k==='view'&&p.view!==false)||(k==='download'&&p.download!==false)).join(' · ');
+    return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4><p style="font-size:.72rem;color:var(--gray)">${escHtml(rights||'view')}</p></div><div class="shared-doc-actions" style="display:flex;flex-wrap:wrap;gap:.3rem">${actions.join('')}</div></div>`;
+  }).join('');
+}
+
+function openMergeDualModal(){openModal('mergeDualModal');}
+async function fileToImageBitmap(file){
+  if(file.type==='application/pdf'||/\.pdf$/i.test(file.name||'')){
+    if(typeof pdfjsLib==='undefined')throw new Error('PDF engine not loaded');
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const page=await pdf.getPage(1);
+    const viewport=page.getViewport({scale:2});
+    const canvas=document.createElement('canvas');
+    canvas.width=viewport.width;canvas.height=viewport.height;
+    await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+    return canvas;
+  }
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url;});
+    const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
+    c.getContext('2d').drawImage(img,0,0);return c;
+  }finally{URL.revokeObjectURL(url);}
+}
+async function doMergeDualSave(){
+  if(!currentUser){alert('Sign in first');return;}
+  const f1=document.getElementById('mergeFront').files[0];
+  const f2=document.getElementById('mergeBack').files[0];
+  if(!f1||!f2){alert('Choose front and back files');return;}
+  const docType=document.getElementById('mergeDocType').value||'Aadhaar';
+  const fmt=document.getElementById('mergeFormat').value||'jpg-stacked';
+  const side=fmt.includes('side');
+  const asPdf=fmt.startsWith('pdf');
+  try{
+    const c1=await fileToImageBitmap(f1);
+    const c2=await fileToImageBitmap(f2);
+    const w1=c1.width,h1=c1.height,w2=c2.width,h2=c2.height;
+    const out=document.createElement('canvas');
+    const ctx=out.getContext('2d');
+    if(side){
+      const h=Math.max(h1,h2);
+      const s1=h/h1,s2=h/h2;
+      out.width=Math.round(w1*s1+w2*s2);out.height=h;
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);
+      ctx.drawImage(c1,0,0,Math.round(w1*s1),h);
+      ctx.drawImage(c2,Math.round(w1*s1),0,Math.round(w2*s2),h);
+    }else{
+      const w=Math.max(w1,w2);
+      const s1=w/w1,s2=w/w2;
+      out.width=w;out.height=Math.round(h1*s1+h2*s2);
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);
+      ctx.drawImage(c1,0,0,w,Math.round(h1*s1));
+      ctx.drawImage(c2,0,Math.round(h1*s1),w,Math.round(h2*s2));
+    }
+    let blob,contentType,ext;
+    if(asPdf&&window.jspdf&&window.jspdf.jsPDF){
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({orientation:out.width>out.height?'l':'p',unit:'pt',format:[out.width,out.height]});
+      const data=out.toDataURL('image/jpeg',0.92);
+      pdf.addImage(data,'JPEG',0,0,out.width,out.height);
+      blob=pdf.output('blob');contentType='application/pdf';ext='pdf';
+    }else{
+      blob=await new Promise(r=>out.toBlob(r,'image/jpeg',0.92));
+      contentType='image/jpeg';ext='jpg';
+    }
+    const layout=side?'side-by-side':'stacked';
+    const path=`${currentUser.id}/${docType.toLowerCase().replace(/\s+/g,'_')}_dual_${layout}_${Date.now()}.${ext}`;
+    const{error:upErr}=await sb.storage.from('vault').upload(path,blob,{contentType});
+    if(upErr)throw upErr;
+    const name=`${docType} both sides (${layout}, ${ext.toUpperCase()})`;
+    const{error:dbErr}=await sb.from('documents').insert({
+      user_id:currentUser.id,document_type:docType,document_name:name,file_url:path,is_critical:true,deleted_at:null,
+      permissions:{dual:true,layout,format:ext}
+    });
+    if(dbErr)throw dbErr;
+    closeModal('mergeDualModal');
+    alert('✅ Saved: '+name+'. You can share it from your vault like other Aadhaar docs.');
+    if(typeof loadGenericDocsStatus==='function')loadGenericDocsStatus(true);
+    if(typeof loadOtherDocs==='function')loadOtherDocs();
+  }catch(e){alert('Merge failed: '+(e.message||e));}
+}
+
+
 async function loadSharedVault(){
-const box=document.getElementById('sharedDocsContainer');
-box.innerHTML='<p class="sub">Loading…</p>';
-if(!currentUser||!sharedVaultContext)return;
-let q=sb.from('document_shares').select('*,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
-const {data,error}=await q;
-if(error){box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
-let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
-if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
-else rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
-if(!rows.length){box.innerHTML='<p class="sub">No documents have been shared with you yet.</p>';return;}
-box.innerHTML=rows.map(s=>{
-const d=s.documents,p=s.permissions||{};
-const actions=[];
-if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
-if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
-if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
-if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
-if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
-return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4></div><div class="shared-doc-actions">${actions.join('')}</div></div>`;
-}).join('');
+  const box=document.getElementById('sharedDocsContainer');
+  if(box)box.innerHTML='<p class="sub">Loading…</p>';
+  sharedVaultRowsCache=[];
+  sharedVaultFolder=null;
+  closeSharedFolder();
+  if(!currentUser||!sharedVaultContext)return;
+  let q=sb.from('document_shares').select('*,documents(*)').eq('recipient_user_id',currentUser.id).eq('status','active');
+  const {data,error}=await q;
+  if(error){if(box)box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
+  let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
+  if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
+  else if(sharedVaultContext.kind==='child')rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
+  sharedVaultRowsCache=rows;
+  setSvFolderBadges(rows);
+  if(box)box.innerHTML='<p class="sub">Open a folder above. '+(rows.length?rows.length+' document(s) shared with you.':'Nothing shared yet.')+'</p>';
 }
 async function getSharedRecord(docId){
 const {data,error}=await sb.from('document_shares').select('*,documents(*)').eq('document_id',docId).eq('recipient_user_id',currentUser.id).eq('status','active').maybeSingle();
@@ -4328,5 +4470,31 @@ async function exportMyData(){
   }catch(e){alert('Could not export: '+(e&&e.message||e));}
 }
 </script>
+
+<div class="modal-overlay" id="mergeDualModal">
+  <div class="modal" style="max-width:420px">
+    <h3>Merge two sides into one</h3>
+    <p class="sub">Pick front and back (JPG/PNG/PDF pages as images). Save as one Aadhaar/Passport-style document.</p>
+    <div class="field"><label>Document type</label>
+      <select id="mergeDocType"><option value="Aadhaar">Aadhaar</option><option value="Passport">Passport</option><option value="Driving License">Driving License</option><option value="Voter ID">Voter ID</option><option value="Other">Other</option></select>
+    </div>
+    <div class="field"><label>Front side</label><input type="file" id="mergeFront" accept="image/*,application/pdf,.pdf"></div>
+    <div class="field"><label>Back side</label><input type="file" id="mergeBack" accept="image/*,application/pdf,.pdf"></div>
+    <div class="field"><label>Layout</label>
+      <select id="mergeLayout"><option value="stacked">Stacked (top–bottom)</option><option value="side">Side by side</option></select>
+    </div>
+    <div class="field"><label>Save as</label>
+      <select id="mergeFormat">
+        <option value="jpg-stacked">JPG stacked</option>
+        <option value="jpg-side">JPG side by side</option>
+        <option value="pdf-stacked">PDF stacked</option>
+        <option value="pdf-side">PDF side by side</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="doMergeDualSave()">Save merged document</button>
+    <button class="btn btn-outline" onclick="closeModal('mergeDualModal')">Cancel</button>
+  </div>
+</div>
+
 </body>
 </html>
