@@ -112,6 +112,8 @@ h3{font-size:.98rem;font-weight:700}
 #aadhaarModal{z-index:250}
 #aadhaarFactsModal{z-index:260}
 #marksheetFactsModal{z-index:260}
+#backSideModal{z-index:270}
+#elderFolderModal{z-index:240}
 #consentModal{z-index:400}
 #profileModal{z-index:350}
 #uploadMethodModal{z-index:450}
@@ -771,10 +773,25 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-primary" onclick="applyAadhaarFacts()">Use for my career profile</button>
 <button class="btn btn-outline" onclick="aaCloseFacts()">Cancel</button>
 </div></div>
+<!-- BACK SIDE PROMPT: front photo first, back photo optional -->
+<div id="backSideModal" class="modal-overlay"><div class="modal">
+<h3>Add the back side?</h3>
+<p class="sub">Front side added. If you also have a photo of the back, add it and I will join them for sharing (side by side or top and bottom).</p>
+<input type="file" id="backSideInput" accept="image/*" style="display:none" onchange="backSideGot(this.files[0])">
+<button class="btn btn-primary" onclick="backSideChoose()">📷 Add back side</button>
+<button class="btn btn-outline" onclick="backSideSkip()">Skip, front only</button>
+</div></div>
+<!-- ELDER FOLDER (additional folders in the parents' vault) -->
+<div id="elderFolderModal" class="modal-overlay"><div class="modal">
+<h3 id="efTitle">Folder</h3>
+<div id="efList"></div>
+<button class="btn btn-primary" onclick="closeModal('elderFolderModal');elderUploadDoc(elderFolderOpenKind)">➕ Add file</button>
+<button class="btn btn-outline" onclick="closeModal('elderFolderModal')">Close</button>
+</div></div>
 <!-- AADHAAR SHARE MODAL (5 options) -->
 <div id="shareModal" class="modal-overlay"><div class="modal">
 <h3>Share Aadhaar as…</h3>
-<button class="btn btn-outline" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
+<button class="btn btn-outline" id="shareA4Btn" onclick="aaShare('a4pdf')">📄 A4 Aadhaar PDF</button>
 <button class="btn btn-primary" onclick="aaShare('jpg','side')">🖼️ ID Card JPG — side by side</button>
 <button class="btn btn-primary" onclick="aaShare('jpg','stack')">🖼️ ID Card JPG — top & bottom</button>
 <button class="btn btn-outline" onclick="aaShare('pdf','side')"> ID Card PDF — side by side</button>
@@ -925,13 +942,16 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 <div class="card">
 <div class="card-header"><h3>Documents</h3></div>
-<p class="sub">Tap empty icon to upload photo. Green tick = saved. Tap again to view.</p>
+<p class="sub">Tap an icon to upload a photo or PDF. Green tick = saved. Tap again to open it; share, update and delete are inside.</p>
 <div class="icon-grid">
 <div id="elderAadhaarTile" class="icon-tile" onclick="openElderDocument('aadhaar')"><div class="icon-box">🪪<div id="elderAadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Aadhaar</span></div>
 <div id="elderPanTile" class="icon-tile" onclick="openElderDocument('pan')"><div class="icon-box">💳<div id="elderPanIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN</span></div>
 <div id="elderMedicalTile" class="icon-tile" onclick="openElderDocument('medical')"><div class="icon-box">🏥<div id="elderMedicalIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Medical</span></div>
 </div>
-<div id="elderDocsList" style="margin-top:.75rem"></div>
+<div id="elderDocsList" style="display:none"></div>
+<h4 style="margin:1rem 0 .25rem">Additional folders</h4>
+<p class="sub">Any other document goes in its own folder.</p>
+<div class="icon-grid" id="elderFolderGrid"></div>
 <input type="file" id="elderDocInput" accept="image/*,application/pdf" style="display:none" onchange="handleElderDocFile(this.files[0])">
 </div>
 </div>
@@ -2238,10 +2258,12 @@ if((file.type||'').indexOf('image/')===0){
   childAaFile=null;const st0=document.getElementById('childAaStatus');st0.textContent='Reading photo…';
   try{
     const c=await fileToCanvas(file,2400);
-    childAaCache={side:c,front:c,back:c,full:c};
-    const im=document.getElementById('childAaPreview');im.src=c.toDataURL('image/jpeg',0.92);im.style.display='block';
+    const bf=await askBackSide();
+    if(bf){const bc=await fileToCanvas(bf,2400);childAaCache={front:c,back:bc,side:composeCanvasFor('side',{front:c,back:bc}),full:composeCanvasFor('stack',{front:c,back:bc})};}
+    else childAaCache={side:c,front:c,back:c,full:c};
+    const im=document.getElementById('childAaPreview');im.src=childAaCache.side.toDataURL('image/jpeg',0.92);im.style.display='block';
     document.getElementById('childAaSaveBtn').style.display='';
-    st0.textContent='📷 Photo saved as it is (no cutting needed).';
+    st0.textContent=bf?'📷 Front and back photos joined.':'📷 Single side saved as it is.';
   }catch(e){st0.textContent='❌ Could not read this photo: '+e.message;}
   return;
 }
@@ -2320,8 +2342,16 @@ async function aaOnImage(file){
   const st=document.getElementById('aaStatus');st.textContent='Reading photo…';
   try{
     const c=await fileToCanvas(file,2400);
-    aaFile=null;aaFacts=null;aaFull=aaSide=aaFront=aaBack=c;
-    document.getElementById('aaCutInfo').textContent='📷 Photo saved as it is (no cutting needed).';
+    aaFile=null;aaFacts=null;
+    const bf=await askBackSide();
+    if(bf){
+      const bc=await fileToCanvas(bf,2400);
+      aaFront=c;aaBack=bc;aaSide=composeCanvasFor('side',{front:c,back:bc});aaFull=composeCanvasFor('stack',{front:c,back:bc});
+      document.getElementById('aaCutInfo').textContent='📷 Front and back photos joined.';
+    }else{
+      aaFull=aaSide=aaFront=aaBack=c;
+      document.getElementById('aaCutInfo').textContent='📷 Single side saved as it is.';
+    }
     refreshPreview();showAa('aaStep3');
   }catch(e){st.textContent='❌ Could not read this photo: '+e.message;}
 }
@@ -2456,7 +2486,10 @@ function clearPdfViewer(){
 const viewer=document.getElementById('fileViewerPdf');
 if(viewer){viewer.replaceChildren();viewer.style.display='none';}
 }
-function openModal(id){document.getElementById(id).classList.add('show')}
+function openModal(id){
+if(id==='shareModal'){const b=document.getElementById('shareA4Btn');if(b){const el=shareContext&&shareContext.kind==='elder';b.style.display=(el&&!elderAaCache.full)?'none':'';}}
+document.getElementById(id).classList.add('show');
+}
 function closeModal(id){
 document.getElementById(id).classList.remove('show');
 if(id==='fileViewerModal')clearPdfViewer();
@@ -3739,23 +3772,32 @@ async function handleElderDocFile(file){
   const isImg=(file.type||'').startsWith('image/');
   if(!isPdf&&!isImg){alert('Please choose a photo or a PDF.');return;}
   try{
-    let body,ext,ctype;
-    if(isImg){body=await compressImage(file,1200,0.85);ext='jpg';ctype='image/jpeg';}
-    else{
-      if(file.size>15*1024*1024){alert('This PDF is too large (limit 15 MB).');return;}
-      if(elderDocKind==='aadhaar'){
-        // Aadhaar PDFs are locked: unlock on this phone and save the card as a picture, like your own Aadhaar
-        body=await elderAadhaarPdfToImage(file);if(!body)return;ext='jpg';ctype='image/jpeg';
-      }else{body=file;ext='pdf';ctype='application/pdf';}
+    let path;
+    if(elderDocKind==='aadhaar'){
+      // Aadhaar: keep front, back, side by side (and the full page for UIDAI PDFs) so all share options work
+      let cache;
+      if(isPdf){
+        if(file.size>15*1024*1024){alert('This PDF is too large (limit 15 MB).');return;}
+        cache=await elderAadhaarPdfToCache(file);
+      }else cache=await elderAadhaarPhotosToCache(file);
+      if(!cache)return;
+      path=await elderSaveAadhaarBundle(cache);
+    }else{
+      let body,ext,ctype;
+      if(isImg){body=await compressImage(file,1200,0.85);ext='jpg';ctype='image/jpeg';}
+      else{
+        if(file.size>15*1024*1024){alert('This PDF is too large (limit 15 MB).');return;}
+        body=file;ext='pdf';ctype='application/pdf';
+      }
+      path=`${currentUser.id}/elders/${currentElderId}/${elderDocKind}_${Date.now()}.${ext}`;
+      const{error:upErr}=await sb.storage.from('vault').upload(path,body,{contentType:ctype});
+      if(upErr)throw upErr;
     }
-    const path=`${currentUser.id}/elders/${currentElderId}/${elderDocKind}_${Date.now()}.${ext}`;
-    const{error:upErr}=await sb.storage.from('vault').upload(path,body,{contentType:ctype});
-    if(upErr)throw upErr;
     const labels={aadhaar:'Aadhaar',pan:'PAN',medical:'Medical'};
     const{data:ins,error:dbErr}=await sb.from('documents').insert({
       user_id:currentUser.id,
       document_type:'elder_'+currentElderId+'_'+elderDocKind,
-      document_name:(labels[elderDocKind]||elderDocKind)+' ('+currentElderName+')',
+      document_name:(labels[elderDocKind]||elderFolderNames[elderDocKind]||elderDocKind)+' ('+currentElderName+')',
       file_url:path,
       is_critical:true,
       deleted_at:null
@@ -3817,7 +3859,7 @@ async function openElderDocument(kind){
   if(!(elderDocsCache&&elderDocsCache.length)&&typeof loadElderDocs==='function'){
     try{await loadElderDocs();}catch(e){}
   }
-  const row=(elderDocsCache||[]).find(d=>(d.document_type||'').endsWith('_'+kind)|| (d.document_type||'').includes('_'+kind)||((d.file_url||'').includes('/'+kind+'_')));
+  const row=(elderDocsCache||[]).find(d=>(d.document_type||'')==='elder_'+currentElderId+'_'+kind||((d.file_url||'').includes('/'+kind+'_')));
   if(row){viewElderDoc(row.id,row.file_url);return;}
   elderUploadDoc(kind);
 }
@@ -3863,18 +3905,8 @@ async function loadElderDocs(){
   setElderDocTileStatus('aadhaar',has.aadhaar);
   setElderDocTileStatus('pan',has.pan);
   setElderDocTileStatus('medical',has.medical);
-  if(!rows.length){box.innerHTML='<p class="sub">No documents yet. Tap Aadhaar / PAN / Medical to upload a photo or PDF.</p>';return;}
-  const iOwn=currentUser&&(currentElderOwnerId===currentUser.id||!currentElderOwnerId||currentElderOwnerId===currentUser.id);
-  box.innerHTML=rows.map(d=>{
-    const mine=iOwn||(d.user_id===currentUser.id);
-    const btns=[`<button class="btn btn-outline btn-sm" onclick="viewElderDoc('${d.id}','${escHtml(d.file_url)}')">View</button>`];
-    if(mine){
-      btns.push(`<button class="btn btn-outline btn-sm" onclick="downloadElderDoc('${escHtml(d.file_url)}')">Download</button>`);
-      btns.push(`<button class="btn btn-primary btn-sm" onclick="shareElderDoc('${d.id}')">Share</button>`);
-    }
-    return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(d.document_name||d.document_type)}</h4></div>
-      <div style="display:flex;flex-wrap:wrap;gap:.3rem">${btns.join('')}</div></div>`;
-  }).join('');
+  box.innerHTML='';
+  renderElderFolders(rows);
 }
 
 async function downloadElderDoc(path){
@@ -3887,6 +3919,92 @@ async function downloadElderDoc(path){
   }catch(e){alert(e.message||e);}
 }
 
+/* ===== Two-sided Aadhaar: front photo first, back photo optional ===== */
+let _backResolve=null;
+function askBackSide(){return new Promise(function(res){_backResolve=res;document.getElementById('backSideInput').value='';openModal('backSideModal');});}
+function backSideChoose(){document.getElementById('backSideInput').click();}
+function backSideGot(f){if(!f)return;closeModal('backSideModal');const r=_backResolve;_backResolve=null;if(r)r(f);}
+function backSideSkip(){closeModal('backSideModal');const r=_backResolve;_backResolve=null;if(r)r(null);}
+async function elderAadhaarPdfToCache(file){
+  const uid=currentUser.id,tag='elder_'+currentElderId;
+  let pw=getSavedPdfPassword(uid,tag)||undefined,pdf=null,typed=false;
+  for(let tries=0;tries<3&&!pdf;tries++){
+    try{pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),password:pw}).promise;}
+    catch(err){
+      if(err&&err.name==='PasswordException'){
+        const entered=prompt('This Aadhaar PDF is locked.\nEnter its password (first 4 letters of the name in CAPITALS + birth year, e.g. RAME1955)');
+        if(!entered)return null;pw=entered.trim();typed=true;
+      }else{alert('Could not open this PDF: '+(err&&err.message||err));return null;}
+    }
+  }
+  if(!pdf){alert('That password did not work. Please try again.');return null;}
+  if(typed)savePdfPassword(uid,tag,pw);
+  const pg=await pdf.getPage(1),vp=pg.getViewport({scale:2.2}),c=document.createElement('canvas');
+  c.width=vp.width;c.height=vp.height;
+  await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+  // UIDAI PDFs have a scissors line above the card: cut it into front, back and side by side
+  if(findScissorsRow(c)>0){const r=computeCards(c);return {front:r.front,back:r.back,side:r.side,full:c};}
+  return {front:c,back:null,side:null,full:null};
+}
+async function elderAadhaarPhotosToCache(file){
+  const front=await fileToCanvas(file,2400);
+  const bf=await askBackSide();
+  if(!bf)return {front:front,back:null,side:null,full:null};
+  const back=await fileToCanvas(bf,2400);
+  return {front:front,back:back,side:composeCanvasFor('side',{front:front,back:back}),full:null};
+}
+async function elderSaveAadhaarBundle(cache){
+  const base=currentUser.id+'/elders/'+currentElderId+'/aadhaar_'+Date.now();
+  const jb=function(c){return new Promise(function(res){c.toBlob(res,'image/jpeg',0.9);});};
+  for(const k of ['front','back','side','full']){
+    if(!cache[k])continue;
+    const r=await sb.storage.from('vault').upload(base+'_'+k+'.jpg',await jb(cache[k]),{contentType:'image/jpeg'});
+    if(r.error)throw r.error;
+  }
+  return base+(cache.side?'_side.jpg':'_front.jpg');
+}
+async function loadElderAaBundle(path){
+  const m=String(path||'').match(/^(.*\/aadhaar_\d+)_(front|back|side|full)\.jpg$/i);
+  if(!m)return null;
+  const base=m[1];
+  const get=async function(k){try{const r=await sb.storage.from('vault').download(base+'_'+k+'.jpg');if(r.error||!r.data)return null;return await fileToCanvas(r.data,3000);}catch(e){return null;}};
+  const parts=await Promise.all([get('front'),get('back'),get('side'),get('full')]);
+  return {front:parts[0],back:parts[1],side:parts[2],full:parts[3],pdfBlob:null,frontPath:base+'_front.jpg'};
+}
+let elderFolderNames={},elderFolderOpenKind=null;
+function elderKindOf(path,type){
+  const m=String(path||'').match(/\/(aadhaar|pan|medical|f_[a-z0-9-]+)_\d{10,}/i);
+  if(m)return m[1].toLowerCase();
+  const m2=String(type||'').toLowerCase().match(/_(aadhaar|pan|medical|f_[a-z0-9-]+)$/);
+  return m2?m2[1]:'other';
+}
+function renderElderFolders(rows){
+  const grid=document.getElementById('elderFolderGrid');if(!grid)return;
+  const seen={};
+  (rows||[]).forEach(function(d){
+    const k=elderKindOf(d.file_url,d.document_type);
+    if(k.indexOf('f_')===0&&!seen[k]){const nm=(d.document_name||'').replace(/\s*\(.*\)\s*$/,'')||k.slice(2);seen[k]=nm;elderFolderNames[k]=nm;}
+  });
+  const tiles=Object.keys(seen).map(function(k){return '<div class="icon-tile" onclick="openElderFolder(\''+k+'\')"><div class="icon-box">📁</div><span>'+escHtml(seen[k])+'</span></div>';});
+  tiles.push('<div class="icon-tile" onclick="createElderFolder()"><div class="icon-box">➕</div><span>New folder</span></div>');
+  grid.innerHTML=tiles.join('');
+}
+function createElderFolder(){
+  const name=(prompt('Folder name (for example: Insurance, Property)')||'').trim();
+  if(!name)return;
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,20)||'folder';
+  const kind='f_'+slug;elderFolderNames[kind]=name;elderUploadDoc(kind);
+}
+function openElderFolder(kind){
+  elderFolderOpenKind=kind;
+  const name=elderFolderNames[kind]||kind.slice(2);
+  document.getElementById('efTitle').textContent=name;
+  const rows=(elderDocsCache||[]).filter(function(d){return elderKindOf(d.file_url,d.document_type)===kind;});
+  document.getElementById('efList').innerHTML=rows.length?rows.map(function(d){
+    return '<div class="doc-row"><div class="doc-info"><h4>'+escHtml(d.document_name||name)+'</h4><p>'+new Date(d.created_at).toLocaleDateString('en-IN')+'</p></div><div><button class="btn btn-outline btn-sm" onclick="closeModal(\'elderFolderModal\');viewElderDoc(\''+d.id+'\',\''+escHtml(d.file_url)+'\')">Open</button></div></div>';
+  }).join(''):'<p class="sub">This folder is empty.</p>';
+  openModal('elderFolderModal');
+}
 let elderAaCache={side:null,front:null,back:null,full:null,pdfBlob:null};
 async function loadElderAaCacheFromPath(path){
   elderAaCache={side:null,front:null,back:null,full:null,pdfBlob:null};
@@ -3923,14 +4041,13 @@ async function loadElderAaCacheFromPath(path){
     return elderAaCache;
   }finally{URL.revokeObjectURL(url);}
 }
-async 
 function shareElderDoc(docId){
   if(!docId){alert('Document not found');return;}
   const row=(elderDocsCache||[]).find(d=>d.id===docId);
   if(!row){if(typeof openFamilyShareModal==='function')openFamilyShareModal(docId);return;}
   const path=row.file_url||'';
   const kind=((row.document_type||'')+' '+path).toLowerCase();
-  const elderKind=/aadhaar|aadhar/.test(kind)?'aadhaar':(/pan/.test(kind)?'pan':'medical');
+  const ek=elderKindOf(path,row.document_type);const elderKind=(ek==='aadhaar'||ek==='pan'||ek==='medical')?ek:'other';
   shareElderDocumentFormats({id:docId,path:path,elderKind:elderKind,label:row.document_name||row.document_type||'Document'});
 }
 
@@ -3939,19 +4056,20 @@ async function shareElderDocumentFormats(c){
   const path=c.path||c.actualPath||'';
   if(!path){alert('Document path missing');return;}
   const text=(String(c.elderKind||'')+' '+String(c.label||'')+' '+String(c.documentType||'')+' '+path).toLowerCase();
-  const isAa=/aadhaar|aadhar/.test(text) || c.elderKind==='aadhaar';
+  const isAa=c.elderKind?c.elderKind==='aadhaar':/aadhaar|aadhar/.test(text);
   const looksImage=/\.(jpe?g|png|webp|gif)($|\?)/i.test(path);
   const isPdf=c.isPdf===true || /\.pdf($|\?)/i.test(path) || (!looksImage && isAa);
-  // Parent Aadhaar full PDF (UIDAI) → SAME 5 options as vault Aadhaar
-  if(isAa && isPdf){
-    try{ await loadElderAaCacheFromPath(path); }catch(e){ console.warn('elder aa cache', e); }
-    shareContext={kind:'elder',id:c.id,path:path};
-    openModal('shareModal');
-    return;
-  }
-  // Parent Aadhaar single JPG → like PAN
-  if(isAa && looksImage){
-    viewerCtx={kind:'generic',id:c.id,path:path,actualPath:path,label:c.label||'Aadhaar',isImage:true,isPdf:false,documentType:'Aadhaar'};
+  if(isAa){
+    const bundle=await loadElderAaBundle(path);
+    if(bundle&&bundle.front&&bundle.back){
+      // two sides (UIDAI PDF gives 5 options, two photos give 4)
+      elderAaCache=bundle;shareContext={kind:'elder',id:c.id,path:path};
+      openModal('shareModal');return;
+    }
+    if(!bundle&&isPdf){alert('This Aadhaar was saved as a plain PDF. Open the Aadhaar folder, choose Update and upload it again to get all sharing options.');return;}
+    // single side or an older single picture: same as PAN (JPG or PDF)
+    const single=(bundle&&bundle.frontPath)||path;
+    viewerCtx={kind:'generic',id:c.id,path:single,actualPath:single,label:c.label||'Aadhaar',isImage:true,isPdf:false,documentType:'Aadhaar'};
     document.getElementById('genericShareImageOptions').style.display='block';
     document.getElementById('genericSharePdfOptions').style.display='none';
     openModal('genericShareModal');
@@ -3971,9 +4089,9 @@ async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
     if(!data||!data.signedUrl){alert('Could not open file');return;}
-    const kind=((path.split('/').pop()||'').match(/(aadhaar|pan|medical)/i)||['aadhaar'])[0].toLowerCase();
+    const kind=elderKindOf(path,'')==='other'?'aadhaar':elderKindOf(path,'');
     viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:(currentElderName||'Parent')+' '+(kind||'document'),isPdf:/\.pdf($|\?)/i.test(path||'')};
-    document.getElementById('fileViewerTitle').textContent=(currentElderName||'Parent')+' — '+(kind||'Document');
+    document.getElementById('fileViewerTitle').textContent=(currentElderName||'Parent')+' — '+(elderFolderNames[kind]||kind||'Document');
     const isPdf=/\.pdf($|\?)/i.test(path||'')||/\.pdf($|\?)/i.test(data.signedUrl||'');
     if(isPdf){
       clearPdfViewer();
