@@ -2189,7 +2189,7 @@ const exists=childDocs.some(r=>parseTypeFromUrl(r.file_url)===type);
 if(exists&&!confirm('Upload a new copy of '+TYPE_LABELS[type]+'? Old copy moves to duplicates.'))return;
 pickChildFile(type,null);
 }
-function pickChildFile(type,rowId){
+async function pickChildFile(type,rowId){
 const input=document.createElement('input');input.type='file';input.accept='image/*,application/pdf';
 input.onchange=async e=>{
 const file=e.target.files[0];if(!file)return;
@@ -2867,7 +2867,7 @@ document.getElementById('bellStep2').classList.remove('active');
 document.getElementById('bellStep1').classList.add('active');
 document.querySelectorAll('#bellDots .step-dot').forEach((d,i)=>d.classList.toggle('active',i===0));
 }
-function bellSendAlert(){
+async function bellSendAlert(){
 if(!bellDuration){alert('Please select a duration.');return;}
 const sevLabel=bellSeverity==='severe'?'SEVERE':'NORMAL';
 closeModal('emergencyBellModal');
@@ -3324,7 +3324,7 @@ function showActiveAlertBar(sev,mins){
   };
   tick(); cdTimer=setInterval(tick,1000);
 }
-function startLiveTracking(alertId,mins){
+async function startLiveTracking(alertId,mins){
   if(liveStopTimer)clearTimeout(liveStopTimer);
   liveStopTimer=setTimeout(()=>stopActiveAlert(),mins*60000+1500);
   if(!navigator.geolocation)return;
@@ -3345,7 +3345,7 @@ async function stopActiveAlert(){
 }
 
 /* ================= SENDER: EMERGENCY SEND (sound + location + notify spouse) ================= */
-function bellSendAlert(){
+async function bellSendAlert(){
   if(!bellDuration){alert('Please select a duration.');return;}
   if(!currentUser){alert('Sign in first.');return;}
   const durMap={'15 Mins':15,'1 Hour':60,'3 Hours':180};
@@ -3935,33 +3935,44 @@ function shareElderDoc(docId){
 }
 
 async function shareElderDocumentFormats(c){
-  if(!c||!c.path){alert('Document not available');return;}
-  const path=c.path;
-  const isPdf=/\.pdf$/i.test(path);
-  const blob=String(c.elderKind||'')+' '+String(c.label||'')+' '+path;
-  const isAa=/aadhaar|aadhar/i.test(blob);
-  // Aadhaar PDF (UIDAI download) → same 5 format options as your vault Aadhaar
-  if(isAa&&isPdf){
-    try{
-      await loadElderAaCacheFromPath(path);
-      shareContext={kind:'elder',id:c.id,path:path};
-      openModal('shareModal');
-    }catch(e){alert('Could not prepare Aadhaar for share: '+(e.message||e));}
+  if(!c){alert('Document not available');return;}
+  const path=c.path||c.actualPath||'';
+  if(!path){alert('Document path missing');return;}
+  const text=(String(c.elderKind||'')+' '+String(c.label||'')+' '+String(c.documentType||'')+' '+path).toLowerCase();
+  const isAa=/aadhaar|aadhar/.test(text) || c.elderKind==='aadhaar';
+  const looksImage=/\.(jpe?g|png|webp|gif)($|\?)/i.test(path);
+  const isPdf=c.isPdf===true || /\.pdf($|\?)/i.test(path) || (!looksImage && isAa);
+  // Parent Aadhaar full PDF (UIDAI) → SAME 5 options as vault Aadhaar
+  if(isAa && isPdf){
+    try{ await loadElderAaCacheFromPath(path); }catch(e){ console.warn('elder aa cache', e); }
+    shareContext={kind:'elder',id:c.id,path:path};
+    openModal('shareModal');
     return;
   }
-  // Aadhaar JPG (single side) OR non-Aadhaar → like PAN: JPG / PDF share
-  viewerCtx={kind:'generic',id:c.id,path:path,actualPath:path,label:c.label||(isAa?'Aadhaar':'Document'),isImage:!isPdf,isPdf:!!isPdf,documentType:isAa?'Aadhaar':(c.elderKind||'Document')};
-  document.getElementById('genericShareImageOptions').style.display=isPdf?'none':'block';
-  document.getElementById('genericSharePdfOptions').style.display=isPdf?'block':'none';
+  // Parent Aadhaar single JPG → like PAN
+  if(isAa && looksImage){
+    viewerCtx={kind:'generic',id:c.id,path:path,actualPath:path,label:c.label||'Aadhaar',isImage:true,isPdf:false,documentType:'Aadhaar'};
+    document.getElementById('genericShareImageOptions').style.display='block';
+    document.getElementById('genericSharePdfOptions').style.display='none';
+    openModal('genericShareModal');
+    return;
+  }
+  // PAN / Medical
+  const isPdf2=/\.pdf($|\?)/i.test(path)||c.isPdf===true;
+  viewerCtx={kind:'generic',id:c.id,path:path,actualPath:path,label:c.label||'Document',isImage:!isPdf2,isPdf:!!isPdf2,documentType:c.elderKind||'Document'};
+  document.getElementById('genericShareImageOptions').style.display=isPdf2?'none':'block';
+  document.getElementById('genericSharePdfOptions').style.display=isPdf2?'block':'none';
   openModal('genericShareModal');
 }
+
+
 
 async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
     if(!data||!data.signedUrl){alert('Could not open file');return;}
     const kind=((path.split('/').pop()||'').match(/(aadhaar|pan|medical)/i)||['aadhaar'])[0].toLowerCase();
-    viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:(currentElderName||'Parent')+' '+(kind||'document')};
+    viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:(currentElderName||'Parent')+' '+(kind||'document'),isPdf:/\.pdf($|\?)/i.test(path||'')};
     document.getElementById('fileViewerTitle').textContent=(currentElderName||'Parent')+' — '+(kind||'Document');
     const isPdf=/\.pdf($|\?)/i.test(path||'')||/\.pdf($|\?)/i.test(data.signedUrl||'');
     if(isPdf){
