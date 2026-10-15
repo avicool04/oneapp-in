@@ -4067,10 +4067,13 @@ function openElderFolder(kind){
     const id=String(d.id||'').replace(/[^a-zA-Z0-9_-]/g,'');
     const path=String(d.file_url||'');
     const safePath=path.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    if(kind==='aadhaar'){
+      return '<div class="doc-row aadhaar-folder-item" role="button" tabindex="0" style="cursor:pointer" onclick="closeModal(\\'elderFolderModal\\');viewElderDoc(\\''+id+'\\',\\''+safePath+'\\')"><div class="doc-info"><h4>Aadhaar Card</h4></div><span aria-hidden="true">›</span></div>';
+    }
     return '<div class="doc-row"><div class="doc-info"><h4>'+escHtml(d.document_name||name)+'</h4><p>'+new Date(d.created_at).toLocaleDateString('en-IN')+'</p></div><div class="shared-doc-actions" style="display:flex;gap:.3rem;flex-wrap:wrap">'+
-      '<button class="btn btn-outline btn-sm" onclick="closeModal(\'elderFolderModal\');viewElderDoc(\''+id+'\',\''+safePath+'\')">View</button>'+
-      '<button class="btn btn-outline btn-sm" onclick="downloadElderDoc(\''+safePath+'\')">Download</button>'+
-      '<button class="btn btn-primary btn-sm" onclick="shareElderDoc(\''+id+'\')">Share</button>'+
+      '<button class="btn btn-outline btn-sm" onclick="closeModal(\\'elderFolderModal\\');viewElderDoc(\\''+id+'\\',\\''+safePath+'\\')">View</button>'+
+      '<button class="btn btn-outline btn-sm" onclick="downloadElderDoc(\\''+safePath+'\\')">Download</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="shareElderDoc(\\''+id+'\\')">Share</button>'+
       '</div></div>';
   }).join(''):'<p class="sub">This folder is empty. Use Add file to upload a document.</p>';
   openModal('elderFolderModal');
