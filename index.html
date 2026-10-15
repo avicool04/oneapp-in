@@ -1302,7 +1302,7 @@ let savedGenericDocs = {};
 let currentRotation = 0;
 let passportPage1File = null;
 let passportPage1Path = null;
-async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
+async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://oneapp-in.vercel.app/'}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 // ✅ FIXED: Login button function
@@ -4907,7 +4907,7 @@ async function exportMyData(){
   window.signInWithGoogle=async function(){
     try{
       var client=await getLoginClient();
-      var result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});
+      var result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://oneapp-in.vercel.app/'}});
       if(result.error) throw result.error;
     }catch(error){window.showMsg(error&&error.message?error.message:'Unable to start Google sign-in.');}
   };
