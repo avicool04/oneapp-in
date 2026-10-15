@@ -4846,5 +4846,75 @@ async function exportMyData(){
   </div>
 </div>
 
+
+<script>
+// Independent login fallback: keep authentication usable even if another app script fails.
+(function(){
+  var authClientPromise = null;
+  function loadSupabase(){
+    if(window.supabase && window.supabase.createClient) return Promise.resolve(window.supabase);
+    if(authClientPromise) return authClientPromise;
+    authClientPromise = new Promise(function(resolve,reject){
+      var existing=document.querySelector('script[data-oneapp-supabase-fallback]');
+      if(existing){
+        existing.addEventListener('load',function(){window.supabase?resolve(window.supabase):reject(new Error('Supabase library unavailable'));},{once:true});
+        existing.addEventListener('error',function(){reject(new Error('Could not load the sign-in service. Check your connection and try again.'));},{once:true});
+        return;
+      }
+      var sc=document.createElement('script');
+      sc.src='https://unpkg.com/@supabase/supabase-js@2';
+      sc.async=true;sc.dataset.oneappSupabaseFallback='1';
+      sc.onload=function(){window.supabase&&window.supabase.createClient?resolve(window.supabase):reject(new Error('Sign-in service did not load.'));};
+      sc.onerror=function(){reject(new Error('Could not load the sign-in service. Check your connection and try again.'));};
+      document.head.appendChild(sc);
+    });
+    return authClientPromise;
+  }
+  function getLoginClient(){
+    return loadSupabase().then(function(lib){
+      if(!window.__oneAppLoginClient) window.__oneAppLoginClient=lib.createClient(
+        'https://ylxxxmrbsllrncwcpcmb.supabase.co',
+        'sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7'
+      );
+      return window.__oneAppLoginClient;
+    });
+  }
+  window.handleAuthClick=function(){
+    var modal=document.getElementById('authModal');
+    if(modal) modal.classList.add('show');
+    var msg=document.getElementById('authMsg');
+    if(msg){msg.style.display='none';msg.textContent='';}
+  };
+  window.showMsg=function(message){
+    var el=document.getElementById('authMsg');
+    if(el){el.textContent=String(message||'Sign-in failed.');el.style.display='block';}
+    else alert(String(message||'Sign-in failed.'));
+  };
+  window.submitAuth=async function(){
+    var email=(document.getElementById('authEmail')||{}).value||'';
+    var password=(document.getElementById('authPass')||{}).value||'';
+    if(!email.trim()||!password){window.showMsg('Enter email and password.');return;}
+    var button=document.querySelector('#authModal button[onclick="submitAuth()"]');
+    if(button){button.disabled=true;button.textContent='Signing in…';}
+    try{
+      var client=await getLoginClient();
+      var result=await client.auth.signInWithPassword({email:email.trim(),password:password});
+      if(result.error) throw result.error;
+      window.location.reload();
+    }catch(error){window.showMsg(error&&error.message?error.message:'Unable to sign in. Please try again.');}
+    finally{if(button){button.disabled=false;button.textContent='Sign In';}}
+  };
+  window.signInWithGoogle=async function(){
+    try{
+      var client=await getLoginClient();
+      var result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});
+      if(result.error) throw result.error;
+    }catch(error){window.showMsg(error&&error.message?error.message:'Unable to start Google sign-in.');}
+  };
+  if(!window.closeModal) window.closeModal=function(id){
+    var el=document.getElementById(id);if(el)el.classList.remove('show');
+  };
+})();
+</script>
 </body>
 </html>
