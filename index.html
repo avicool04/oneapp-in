@@ -1302,21 +1302,11 @@ let savedGenericDocs = {};
 let currentRotation = 0;
 let passportPage1File = null;
 let passportPage1Path = null;
-async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
+async async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
-async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
+async async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 // ✅ FIXED: Login button function
-async function handleAuthClick(){
-console.log('Login button clicked');
-const modal = document.getElementById('authModal');
-if(modal){
-modal.classList.add('show');
-console.log('Auth modal opened');
-} else {
-console.error('Auth modal not found');
-alert('Error: Login modal not found');
-}
-}
+function handleAuthClick(){openModal('authModal');}
 async function doSignOut(){await sb.auth.signOut();}
 function toggleUserMenu(e){e.stopPropagation();document.getElementById('userDropdown').classList.toggle('show');}
 let _initUid=null;
@@ -3350,10 +3340,20 @@ async function updateSiteLastUpdated(){
     const r=await fetch(window.location.href,{method:'HEAD',cache:'no-store'});
     lastModified=r.headers.get('last-modified')||'';
   }catch(e){}
+  if(!lastModified){
+    try{
+      const r2=await fetch(window.location.href,{method:'GET',cache:'no-store'});
+      lastModified=r2.headers.get('last-modified')||'';
+    }catch(e2){}
+  }
   if(!lastModified)lastModified=document.lastModified||'';
   const d=new Date(lastModified);
   if(!isNaN(d.getTime())){
-    el.textContent=d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    try{
+      el.textContent=d.toLocaleString('en-IN',{timeZone:'Asia/Kolkata',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'})+' IST';
+    }catch(e){
+      el.textContent=d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
   }else{
     el.textContent='Unavailable';
   }
