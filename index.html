@@ -4246,13 +4246,24 @@ async function elderSaveAadhaarBundle(cache){
   }
   return base+(cache.side?'_side.jpg':'_front.jpg');
 }
+function splitElderAadhaarIfCombined(front,back,side){
+  if(!front||back)return {front:front,back:back,side:side};
+  // Some full-page PDFs are stored as one wide image containing both card faces.
+  // Split that image so the viewer can show and flip between individual sides.
+  if(front.width/Math.max(1,front.height)<2.15)return {front:front,back:back,side:side};
+  const mid=Math.round(front.width/2),pad=Math.round(front.width*0.008);
+  const left=rc(front,0,0,Math.max(1,mid-pad),front.height);
+  const right=rc(front,Math.min(front.width-1,mid+pad),0,Math.max(1,front.width-mid-pad),front.height);
+  return {front:autoCrop(left),back:autoCrop(right),side:side||front};
+}
 async function loadElderAaBundle(path){
   const m=String(path||'').match(/^(.*\/aadhaar_\d+)_(front|back|side|full)\.jpg$/i);
   if(!m)return null;
   const base=m[1];
   const get=async function(k){try{const r=await sb.storage.from('vault').download(base+'_'+k+'.jpg');if(r.error||!r.data)return null;return await fileToCanvas(r.data,3000);}catch(e){return null;}};
   const parts=await Promise.all([get('front'),get('back'),get('side'),get('full')]);
-  return {front:parts[0],back:parts[1],side:parts[2],full:parts[3],pdfBlob:null,frontPath:base+'_front.jpg'};
+  const faces=splitElderAadhaarIfCombined(parts[0],parts[1],parts[2]);
+  return {front:faces.front,back:faces.back,side:faces.side,full:parts[3],pdfBlob:null,frontPath:base+'_front.jpg'};
 }
 let elderFolderNames={},elderFolderOpenKind=null;
 function elderKindOf(path,type){
@@ -4365,11 +4376,20 @@ async function flipElderAadhaar(){
   if(!elderFlipCache)return;
   if(!elderFlipCache.back){alert('Only one side is saved for this Aadhaar. Upload the back side to enable flipping.');return;}
   const card=document.getElementById('aadhaarFlipCard');
+  const img=document.getElementById('fileViewerImg');
   const back=document.getElementById('aadhaarFlipBack');
-  if(!card||!back)return;
-  back.src=elderFlipCache.back.toDataURL('image/jpeg',0.92);back.style.display='block';
-  elderFlipSide=elderFlipSide==='front'?'back':'front';
-  card.classList.toggle('is-flipped',elderFlipSide==='back');
+  if(!card||!img||!back)return;
+  const next=elderFlipSide==='front'?'back':'front';
+  const nextCanvas=elderFlipCache[next];
+  if(!nextCanvas)return;
+  back.removeAttribute('src');back.style.display='none';
+  card.classList.remove('is-flipped');
+  card.style.transition='transform .34s cubic-bezier(.2,.72,.18,1)';
+  card.style.transform='rotateY(90deg)';
+  await new Promise(resolve=>setTimeout(resolve,170));
+  img.src=nextCanvas.toDataURL('image/jpeg',0.92);
+  elderFlipSide=next;
+  card.style.transform='rotateY(0deg)';
   const label=document.getElementById('elderAadhaarFlipLabel');
   if(label)label.textContent=elderFlipSide==='front'?'Back':'Front';
 }
