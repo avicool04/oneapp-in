@@ -2019,9 +2019,12 @@ if(act==='familyShare'){openFamilyShareModal(c.id||null);}
 function openViewerPersonal(){
 if(!aaFull){alert('No Aadhaar saved yet.');return;}
 viewerCtx={kind:'personal',id:aaRowId};
-document.getElementById('fileViewerTitle').textContent='Aadhaar Card — Full Page';
-document.getElementById('fileViewerImg').src=aaFull.toDataURL('image/jpeg',0.92);
-document.getElementById('rotateControls').style.display = 'none';
+document.getElementById('fileViewerTitle').textContent='Aadhaar Card';
+elderFlipCache={front:aaFront||aaFull,back:aaBack||null};elderFlipSide='front';
+document.getElementById('fileViewerImg').src=(elderFlipCache.front).toDataURL('image/jpeg',0.92);
+document.getElementById('rotateControls').style.display='none';
+const fc=document.getElementById('elderAadhaarFlipControls');if(fc)fc.style.display='flex';
+const fl=document.getElementById('elderAadhaarFlipLabel');if(fl)fl.textContent=elderFlipCache.back?'Back':'Back (not uploaded)';
 openModal('fileViewerModal');
 }
 let childDocs=[],childAaCache={side:null,front:null,back:null,full:null},childAaRow=null,childAaFile=null;
@@ -2112,10 +2115,10 @@ childAaCache.back=await get('back.jpg');
 childAaCache.full=await get('full.jpg');
 }
 async function viewChildAadhaar(){
-let img=childAaCache.full||childAaCache.side;
+let img=childAaCache.front||childAaCache.full||childAaCache.side;
 if(!img){
 await loadChildAaCache();
-img=childAaCache.full||childAaCache.side;
+img=childAaCache.front||childAaCache.full||childAaCache.side;
 }
 clearPdfViewer();
 viewerCtx={kind:'childaadhaar'};
@@ -2123,6 +2126,9 @@ document.getElementById('fileViewerTitle').textContent='Aadhaar — '+currentChi
 const viewerImg=document.getElementById('fileViewerImg');
 document.getElementById('rotateControls').style.display='none';
 if(img){
+elderFlipCache={front:childAaCache.front||img,back:childAaCache.back||null};elderFlipSide='front';
+const fc=document.getElementById('elderAadhaarFlipControls');if(fc)fc.style.display='flex';
+const fl=document.getElementById('elderAadhaarFlipLabel');if(fl)fl.textContent=elderFlipCache.back?'Back':'Back (not uploaded)';
 viewerImg.src=img.toDataURL('image/jpeg',0.92);
 viewerImg.style.display='block';
 openModal('fileViewerModal');
@@ -2137,6 +2143,7 @@ openModal('fileViewerModal');
 alert('Failed to load Aadhaar: '+e.message);
 }
 }else{
+const fc=document.getElementById('elderAadhaarFlipControls');if(fc)fc.style.display='none';
 alert('Aadhaar not found or still loading.');
 }
 }
@@ -2775,7 +2782,19 @@ const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300
 if(error)throw error;
 viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
 document.getElementById('fileViewerTitle').textContent=docLabel(d);
-document.getElementById('fileViewerImg').src=data.signedUrl;
+const flipControls=document.getElementById('elderAadhaarFlipControls');if(flipControls)flipControls.style.display='none';
+elderFlipCache=null;elderFlipSide='front';
+if(/aadhaar|aadhar/i.test((d.document_type||'')+' '+(d.document_name||'')+' '+(d.file_url||''))){
+  try{
+    elderFlipCache=await loadElderAaBundle(d.file_url);
+    if(!elderFlipCache||!elderFlipCache.front)elderFlipCache=await loadElderAaCacheFromPath(d.file_url);
+  }catch(e){elderFlipCache=null;}
+  if(elderFlipCache&&elderFlipCache.front){
+    document.getElementById('fileViewerImg').src=elderFlipCache.front.toDataURL('image/jpeg',0.92);
+    if(flipControls)flipControls.style.display='flex';
+    const fl=document.getElementById('elderAadhaarFlipLabel');if(fl)fl.textContent=elderFlipCache.back?'Back':'Back (not uploaded)';
+  }else document.getElementById('fileViewerImg').src=data.signedUrl;
+}else document.getElementById('fileViewerImg').src=data.signedUrl;
 document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
 if(document.getElementById('fileViewerImg').style.display==='none')window.open(data.signedUrl,'_blank');
 else openModal('fileViewerModal');
