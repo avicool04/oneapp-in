@@ -3545,6 +3545,8 @@ async function makeScannedBlob(){
 }
 async function scanAcceptCrop(){
   try{
+    // Manual Voter ID corners also define a perspective-correction quadrilateral.
+    if(window._oneAppCropForVoterUpload)scanDetectedQuad=true;
     const cropped=await makeScannedBlob();
     closeModal('scanCropModal');
     if(window._oneAppCropForVoterUpload){
