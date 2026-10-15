@@ -4120,7 +4120,7 @@ async function shareElderDocumentFormats(c){
 
 
 
-async let elderFlipCache=null,elderFlipSide='front';
+let elderFlipCache=null,elderFlipSide='front';
 async function flipElderAadhaar(){
   if(!elderFlipCache)return;
   if(!elderFlipCache.back){alert('Only one side is saved for this Aadhaar. Upload the back side to enable flipping.');return;}
