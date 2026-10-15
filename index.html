@@ -167,7 +167,7 @@ h3{font-size:.98rem;font-weight:700}
 /* ---------- VIEWER ---------- */
 .viewer-img{width:100%;max-width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:14px;border:1px solid var(--border);margin:.5rem 0;background:#f8f9fd;display:block}
 /* Real two-face Aadhaar card flip: rotate the card, not the image slide. */
-#aadhaarFlipCard{position:relative;width:100%;max-width:100%;perspective:1200px;transform-style:preserve-3d;transition:transform .72s cubic-bezier(.2,.72,.18,1);will-change:transform;}
+#aadhaarFlipCard{position:relative;width:100%;max-width:100%;perspective:1600px;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.22,.72,.16,1);transform-origin:center center;will-change:transform;cursor:pointer;touch-action:manipulation;}
 #aadhaarFlipCard.is-flipped{transform:rotateY(180deg)}
 #aadhaarFlipCard img{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
 #aadhaarFlipCard #fileViewerImg{position:relative}
@@ -911,10 +911,10 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
 <h2 id="svTitle" style="margin:0">Family Vault</h2>
 </div>
-<p class="sub" id="svSub">Documents shared with you — same folders as your vault.</p>
+
 <div class="card">
 <div class="card-header"><h3>Folders</h3><span class="badge badge-ok">Shared access</span></div>
-<p class="sub">Tap a folder to open documents they shared (with the rights they gave you).</p>
+
 <div class="icon-grid" id="svFolderGrid">
 <div class="icon-tile" onclick="openSharedFolder('aadhaar')"><div class="icon-box">🪪<div id="svBadgeAadhaar" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Aadhaar</span></div>
 <div class="icon-tile" onclick="openSharedFolder('pan')"><div class="icon-box">💳<div id="svBadgePan" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN</span></div>
@@ -949,7 +949,7 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 <div class="card">
 <div class="card-header"><h3>Documents</h3></div>
-<p class="sub">Open Aadhaar, PAN or Medical to view files and use View, Download or Share inside that folder. Other documents belong in Additional folders. Green tick = saved.</p>
+
 <div class="icon-grid">
 <div id="elderAadhaarTile" class="icon-tile" onclick="openElderDocument('aadhaar')"><div class="icon-box">🪪<div id="elderAadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Aadhaar</span></div>
 <div id="elderPanTile" class="icon-tile" onclick="openElderDocument('pan')"><div class="icon-box">💳<div id="elderPanIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN</span></div>
@@ -1054,7 +1054,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-outline btn-sm" onclick="flipElderAadhaar()">↻ Flip to <span id="elderAadhaarFlipLabel">Back</span></button>
 </div>
 <div id="fileViewerStage" style="width:100%;display:flex;justify-content:center;align-items:center;overflow:auto">
-<div id="aadhaarFlipCard"><img id="fileViewerImg" class="viewer-img" alt="document front"><img id="aadhaarFlipBack" class="viewer-img" alt="document back" style="display:none"></div>
+<div id="aadhaarFlipCard" onclick="flipElderAadhaar()" title="Tap card to flip front/back"><img id="fileViewerImg" class="viewer-img" alt="Aadhaar front side"><img id="aadhaarFlipBack" class="viewer-img" alt="Aadhaar back side" style="display:none"></div>
 <div id="fileViewerPdf" class="pdf-viewer-pages" style="display:none" aria-label="PDF document pages"></div>
 </div>
 <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
@@ -2678,6 +2678,10 @@ function renderSharedFolderDocs(){
   if(!rows.length){box.innerHTML='<p class="sub">No shared documents in this folder yet.</p>';return;}
   box.innerHTML=rows.map(s=>{
     const d=s.documents,p=s.permissions||{};
+    if(folder==='aadhaar'){
+      const allowed=p.view!==false;
+      return `<div class="doc-row aadhaar-folder-item" role="button" tabindex="0" style="cursor:${allowed?'pointer':'default'}" ${allowed?`onclick="openSharedDocument('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSharedDocument('${d.id}');}"`:''}><div class="doc-info"><h4>Aadhaar Card</h4></div>${allowed?'<span aria-hidden="true">›</span>':''}</div>`;
+    }
     const actions=[];
     if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
     if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
