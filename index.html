@@ -166,6 +166,13 @@ h3{font-size:.98rem;font-weight:700}
 
 /* ---------- VIEWER ---------- */
 .viewer-img{width:100%;max-width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:14px;border:1px solid var(--border);margin:.5rem 0;background:#f8f9fd;display:block}
+/* Real two-face Aadhaar card flip: rotate the card, not the image slide. */
+#aadhaarFlipCard{position:relative;width:100%;max-width:100%;perspective:1200px;transform-style:preserve-3d;transition:transform .72s cubic-bezier(.2,.72,.18,1);will-change:transform;}
+#aadhaarFlipCard.is-flipped{transform:rotateY(180deg)}
+#aadhaarFlipCard img{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+#aadhaarFlipCard #fileViewerImg{position:relative;z-index:1}
+#aadhaarFlipCard #aadhaarFlipBack{position:absolute;inset:0;width:100%;height:100%;margin:0;object-fit:contain;transform:rotateY(180deg);}
+@media(prefers-reduced-motion:reduce){#aadhaarFlipCard{transition:none}}
 .pdf-viewer-pages{width:100%;max-height:68vh;overflow:auto;margin:.5rem 0;background:#f8f9fd;border:1px solid var(--border);border-radius:14px}
 .pdf-viewer-pages canvas{display:block;width:100%;height:auto;margin:0 auto .5rem}
 .viewer-head{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:.25rem}
@@ -1047,7 +1054,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-outline btn-sm" onclick="flipElderAadhaar()">↻ Flip to <span id="elderAadhaarFlipLabel">Back</span></button>
 </div>
 <div id="fileViewerStage" style="width:100%;display:flex;justify-content:center;align-items:center;overflow:auto">
-<img id="fileViewerImg" class="viewer-img" alt="document">
+<div id="aadhaarFlipCard"><img id="fileViewerImg" class="viewer-img" alt="document front"><img id="aadhaarFlipBack" class="viewer-img" alt="document back" style="display:none"></div>
 <div id="fileViewerPdf" class="pdf-viewer-pages" style="display:none" aria-label="PDF document pages"></div>
 </div>
 <button class="btn btn-outline" onclick="closeModal('fileViewerModal')">Close</button>
@@ -2001,7 +2008,13 @@ if(act==='delete'){closeModal('fileViewerModal');deleteElderFile(c.id);}
 }else if(c.kind==='shared'){
 const p=c.permissions||{};
 if(act==='update'){if(p.edit===false)alert('Edit permission is not granted.');else{closeModal('fileViewerModal');updateSharedDocument(c);}}
-if(act==='share'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocument(c);}
+if(act==='share'){
+if(p.share===false){alert('Share permission is not granted.');return;}
+if(/aadhaar|aadhar/i.test((c.document?.document_type||'')+' '+(c.document?.document_name||'')+' '+(c.path||''))){
+ closeModal('fileViewerModal');
+ (async()=>{try{let cache=await loadElderAaBundle(c.path);if(!cache||!cache.front)cache=await loadElderAaCacheFromPath(c.path);if(!cache||!cache.front)throw new Error('Aadhaar preview could not be prepared');sharedAaCache={side:cache.side||null,front:cache.front||null,back:cache.back||null,full:cache.full||null,pdfBlob:cache.pdfBlob||null};shareContext={kind:'shared',id:c.id,path:c.path};openModal('shareModal');}catch(e){alert('Could not prepare Aadhaar sharing: '+e.message);}})();
+}else shareSharedDocument(c);
+}
 if(act==='familyShare'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocumentById(c.id);}
 if(act==='delete'){if(p.delete===false)alert('Delete permission is not granted.');else deleteSharedDocument(c);}
 }else if(c.kind==='generic'){
@@ -2465,6 +2478,7 @@ else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.downloa
 };
 if(fmt==='a4pdf'){
 if(isElder&&elderAaCache.pdfBlob){sendFile(new File([elderAaCache.pdfBlob],'aadhaar-uidai.pdf',{type:'application/pdf'}));return;}
+if(isShared&&sharedAaCache.pdfBlob){sendFile(new File([sharedAaCache.pdfBlob],'aadhaar-uidai.pdf',{type:'application/pdf'}));return;}
 if(cache.full){sendFile(new File([makeA4Pdf(cache.full).output('blob')],'aadhaar-a4.pdf',{type:'application/pdf'}));return;}
 if(!isChild&&!isElder&&aaFile){sendFile(aaFile);return;}
 alert('No full page available.');return;
@@ -2496,9 +2510,11 @@ if(id==='career'){loadCareerProfile();loadCareerAssets();careerAutoAadhaar();ref
 function clearPdfViewer(){
 const viewer=document.getElementById('fileViewerPdf');
 if(viewer){viewer.replaceChildren();viewer.style.display='none';}
+const card=document.getElementById('aadhaarFlipCard');if(card)card.classList.remove('is-flipped');
+const back=document.getElementById('aadhaarFlipBack');if(back){back.style.display='none';back.removeAttribute('src');}
 }
 function openModal(id){
-if(id==='shareModal'){const b=document.getElementById('shareA4Btn');if(b){const el=shareContext&&shareContext.kind==='elder';b.style.display=(el&&!elderAaCache.full)?'none':'';}}
+if(id==='shareModal'){const b=document.getElementById('shareA4Btn');if(b){const ctx=shareContext&&shareContext.kind;const cache=ctx==='elder'?elderAaCache:(ctx==='shared'?sharedAaCache:null);b.style.display=((ctx==='elder'||ctx==='shared')&&cache&&!cache.full)?'none':'';}}
 document.getElementById(id).classList.add('show');
 }
 function closeModal(id){
@@ -4140,9 +4156,12 @@ let elderFlipCache=null,elderFlipSide='front';
 async function flipElderAadhaar(){
   if(!elderFlipCache)return;
   if(!elderFlipCache.back){alert('Only one side is saved for this Aadhaar. Upload the back side to enable flipping.');return;}
+  const card=document.getElementById('aadhaarFlipCard');
+  const back=document.getElementById('aadhaarFlipBack');
+  if(!card||!back)return;
+  back.src=elderFlipCache.back.toDataURL('image/jpeg',0.92);back.style.display='block';
   elderFlipSide=elderFlipSide==='front'?'back':'front';
-  const c=elderFlipCache[elderFlipSide],img=document.getElementById('fileViewerImg');
-  if(img&&c)img.src=c.toDataURL('image/jpeg',0.92);
+  card.classList.toggle('is-flipped',elderFlipSide==='back');
   const label=document.getElementById('elderAadhaarFlipLabel');
   if(label)label.textContent=elderFlipSide==='front'?'Back':'Front';
 }
