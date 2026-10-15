@@ -1429,7 +1429,7 @@ body.dark .dropdown .email{color:var(--gray)}
   </div>
   <button class="btn btn-outline" style="margin-top:.7rem" onclick="closeModal('scanSideChoiceModal')">Cancel</button>
 </div></div>
-<div id="scanSaveModal" class="modal-overlay"><div class="modal"><h3>Save Scanned Document</h3><p class="sub">Choose where this document belongs.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem"><button class="btn btn-primary" onclick="scanSaveTo('Aadhaar')">Aadhaar</button><button class="btn btn-primary" onclick="scanSaveTo('PAN Card')">PAN</button><button class="btn btn-primary" onclick="scanSaveTo('Driving License')">License</button><button class="btn btn-primary" onclick="scanSaveTo('Passport')">Passport</button><button class="btn btn-outline" onclick="scanSaveTo('Other')">Other</button></div><button class="btn btn-outline" style="margin-top:.7rem" onclick="closeModal('scanSaveModal')">Cancel</button></div></div>
+<div id="scanSaveModal" class="modal-overlay"><div class="modal"><h3>Save Scanned Document</h3><p class="sub">Choose where this document belongs.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem"><button class="btn btn-primary" onclick="scanSaveTo('Aadhaar')">Aadhaar</button><button class="btn btn-primary" onclick="scanSaveTo('PAN Card')">PAN</button><button class="btn btn-primary" onclick="scanSaveTo('Voter Card')">Voter ID</button><button class="btn btn-primary" onclick="scanSaveTo('Driving License')">License</button><button class="btn btn-primary" onclick="scanSaveTo('Passport')">Passport</button><button class="btn btn-outline" onclick="scanSaveTo('Other')">Other</button></div><button class="btn btn-outline" style="margin-top:.7rem" onclick="closeModal('scanSaveModal')">Cancel</button></div></div>
 <!-- EMERGENCY BELL FLOW MODAL -->
 <div id="emergencyBellModal" class="modal-overlay"><div class="modal">
 <div class="step-dots" id="bellDots"><div class="step-dot active"></div><div class="step-dot"></div></div>
@@ -2012,6 +2012,7 @@ const ext = fileToUpload.name.split('.').pop().toLowerCase();
 if(docType === 'PAN Card'){ path = `${uid}/pan_card_${timestamp}.${ext}`; }
 else if (docType === 'Driving License') { path = `${uid}/driving_license_${timestamp}.${ext}`; }
 else if (docType === 'Passport') { path = `${uid}/passport_${timestamp}.${ext}`; }
+else if (docType === 'Voter Card') { path = `${uid}/voter_card_${timestamp}.${ext}`; docName = customName || 'Voter ID'; }
 else { path = `${uid}/other/${docName.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.${ext}`; docType = 'Other'; }
 try {
 const { error: uploadError } = await sb.storage.from('vault').upload(path, fileToUpload, { contentType: fileToUpload.type });
