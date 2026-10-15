@@ -911,6 +911,11 @@ body.dark .dropdown .email{color:var(--gray)}
 <button class="btn btn-outline btn-sm" onclick="showView('vault')">← Back</button>
 <h2 id="svTitle" style="margin:0">Family Vault</h2>
 </div>
+<div id="svSpouseProfileCard" class="card" style="padding:.75rem 1rem;margin-bottom:1rem;display:none;align-items:center;gap:1rem">
+  <img id="svSpousePhotoImg" alt="Spouse profile photo" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--primary-soft);cursor:pointer" onclick="viewProfilePhoto(this.src)">
+  <div id="svSpousePhotoFallback" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:800;font-size:1.2rem">S</div>
+  <h3 id="svSpouseNameDisplay" style="margin:0;font-size:1.05rem">Spouse</h3>
+</div>
 <p class="sub" id="svSub">Documents shared with you — same folders as your vault.</p>
 <div class="card">
 <div class="card-header"><h3>Folders</h3><span class="badge badge-ok">Shared access</span></div>
@@ -1039,7 +1044,7 @@ body.dark .dropdown .email{color:var(--gray)}
   </div>
   <div>
     <h3 id="evNameDisplay" style="margin:0;font-size:1.05rem">Elder</h3>
-    <p class="sub" style="margin:0;font-size:.75rem">Tap photo to view · camera to change/remove</p>
+    
   </div>
   <input type="file" id="elderPhotoInput" accept="image/*" style="display:none" onchange="uploadElderPhoto(this.files[0])">
 </div>
@@ -1178,7 +1183,7 @@ body.dark .dropdown .email{color:var(--gray)}
     </div>
     <div>
       <h3 id="cvNameDisplay" style="margin:0;font-size:1.05rem">Child</h3>
-      <p class="sub" style="margin:0;font-size:.75rem">Tap photo to view · camera to change/remove</p>
+      
     </div>
   </div>
   <input type="file" id="childPhotoInput" accept="image/*" style="display:none" onchange="uploadChildPhoto(this.files[0])">
@@ -2797,12 +2802,27 @@ alert(`✅ Family access updated for ${ok} document(s).`);
 closeModal('familyShareModal');
 }
 async function openSharedVault(userId,name){
-const isSpouse=(familyMembers||[]).some(f=>f.status==='accepted'&&f.relation_type==='spouse'&&familyOtherUserId(f)===userId);
+const spouseLink=(familyMembers||[]).find(f=>f.status==='accepted'&&f.relation_type==='spouse'&&familyOtherUserId(f)===userId);
+const isSpouse=!!spouseLink;
 sharedVaultContext={kind:isSpouse?'spouse':'adult',userId,name};
 document.getElementById('svTitle').textContent=name+"'s Shared Vault";
 document.getElementById('svTitle').style.display=isSpouse?'none':'';
 document.getElementById('svSub').textContent=isSpouse?'':'Folders for documents '+name+' shared with you (view / download / update / delete as permitted).';
 document.getElementById('svSub').style.display=isSpouse?'none':'';
+const spouseProfile=document.getElementById('svSpouseProfileCard');
+if(spouseProfile)spouseProfile.style.display=isSpouse?'flex':'none';
+if(isSpouse){
+  const nameEl=document.getElementById('svSpouseNameDisplay');
+  if(nameEl)nameEl.textContent=name;
+  const p=(spouseLink&&typeof spouseLink.permissions==='object'&&spouseLink.permissions)?spouseLink.permissions:{};
+  const photo=spouseLink.owner_id===currentUser.id?(p.member_avatar||p.avatar_url||p.picture||p.photo_url||''):(p.owner_avatar||p.inviter_avatar||p.avatar_url||p.picture||p.photo_url||'');
+  const img=document.getElementById('svSpousePhotoImg');
+  const fallback=document.getElementById('svSpousePhotoFallback');
+  if(img&&fallback){
+    if(photo){img.src=photo;img.style.display='block';fallback.style.display='none';}
+    else{img.removeAttribute('src');img.style.display='none';fallback.style.display='flex';fallback.textContent=(name||'S').charAt(0).toUpperCase();}
+  }
+}
 const standardGrid=document.getElementById('svFolderGrid');
 const spouseGrid=document.getElementById('svSpouseFolderGrid');
 if(standardGrid)standardGrid.style.display=isSpouse?'none':'grid';
