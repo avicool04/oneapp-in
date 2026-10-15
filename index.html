@@ -5244,8 +5244,8 @@ async function exportMyData(){
     if(!originals.has(node)) originals.set(node,node.nodeValue);
     const original=originals.get(node), key=normalize(original);
     const entry=phrases[key], translated=entry && entry[activeLanguage];
-    if(translated){const lead=(original.match(/^\s*/)||[''])[0],trail=(original.match(/\s*$/)||[''])[0];node.nodeValue=lead+translated+trail;}
-    else if(activeLanguage==='en') node.nodeValue=original;
+    if(translated){const lead=(original.match(/^\s*/)||[''])[0],trail=(original.match(/\s*$/)||[''])[0],next=lead+translated+trail;if(node.nodeValue!==next) node.nodeValue=next;}
+    else if(activeLanguage==='en' && node.nodeValue!==original) node.nodeValue=original;
   }
   function translateAttributes(root){
     const els=[root,...(root.querySelectorAll?root.querySelectorAll('[placeholder],[title],[aria-label]'):[])].filter(Boolean);
@@ -5286,7 +5286,7 @@ async function exportMyData(){
     }
   });
   window.addEventListener('load',()=>{
-    if(window.currentUser && currentUser.user_metadata) window.applyAppLanguage(currentUser.user_metadata.app_language||'en');
+    if(typeof currentUser!=='undefined' && currentUser && currentUser.user_metadata) window.applyAppLanguage(currentUser.user_metadata.app_language||'en');
     observer.observe(document.body,{childList:true,subtree:true,characterData:true});
   });
 })();
