@@ -2774,30 +2774,46 @@ if(error||!data||!data.documents||data.documents.deleted_at)return null;
 return data;
 }
 async function openSharedDocument(docId){
-const s=await getSharedRecord(docId); if(!s){alert('Access is no longer available.');return;}
-const d=s.documents,p=s.permissions||{};
+const record=await getSharedRecord(docId); if(!record){alert('Access is no longer available.');return;}
+const d=record.documents,p=record.permissions||{};
 if(p.view===false){alert('View permission is not granted.');return;}
 try{
-const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);
-if(error)throw error;
-viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
-document.getElementById('fileViewerTitle').textContent=docLabel(d);
-const flipControls=document.getElementById('elderAadhaarFlipControls');if(flipControls)flipControls.style.display='none';
-elderFlipCache=null;elderFlipSide='front';
-if(/aadhaar|aadhar/i.test((d.document_type||'')+' '+(d.document_name||'')+' '+(d.file_url||''))){
-  try{
-    elderFlipCache=await loadElderAaBundle(d.file_url);
-    if(!elderFlipCache||!elderFlipCache.front)elderFlipCache=await loadElderAaCacheFromPath(d.file_url);
-  }catch(e){elderFlipCache=null;}
-  if(elderFlipCache&&elderFlipCache.front){
-    document.getElementById('fileViewerImg').src=elderFlipCache.front.toDataURL('image/jpeg',0.92);
-    if(flipControls)flipControls.style.display='flex';
-    const fl=document.getElementById('elderAadhaarFlipLabel');if(fl)fl.textContent=elderFlipCache.back?'Back':'Back (not uploaded)';
-  }else document.getElementById('fileViewerImg').src=data.signedUrl;
-}else document.getElementById('fileViewerImg').src=data.signedUrl;
-document.getElementById('fileViewerImg').style.display=['jpg','jpeg','png','webp'].includes((d.file_url.split('.').pop()||'').toLowerCase())?'block':'none';
-if(document.getElementById('fileViewerImg').style.display==='none')window.open(data.signedUrl,'_blank');
-else openModal('fileViewerModal');
+  const {data,error}=await sb.storage.from('vault').createSignedUrl(d.file_url,300);
+  if(error)throw error;
+  clearPdfViewer();
+  viewerCtx={kind:'shared',id:d.id,path:d.file_url,label:docLabel(d),permissions:p,ownerId:d.user_id,document:d};
+  document.getElementById('fileViewerTitle').textContent=docLabel(d);
+  const flipControls=document.getElementById('elderAadhaarFlipControls');
+  if(flipControls)flipControls.style.display='none';
+  elderFlipCache=null;elderFlipSide='front';
+  const img=document.getElementById('fileViewerImg');
+  const backImg=document.getElementById('aadhaarFlipBack');
+  const isAa=/aadhaar|aadhar/i.test((d.document_type||'')+' '+(d.document_name||'')+' '+(d.file_url||''));
+  if(isAa){
+    let cache=null;
+    try{cache=await loadElderAaBundle(d.file_url);if(!cache||!cache.front)cache=await loadElderAaCacheFromPath(d.file_url);}catch(e){cache=null;}
+    if(cache&&cache.front){
+      sharedAaCache={side:cache.side||null,front:cache.front||null,back:cache.back||null,full:cache.full||null,pdfBlob:cache.pdfBlob||null};
+      elderFlipCache={front:sharedAaCache.front,back:sharedAaCache.back};
+      shareContext={kind:'shared',id:d.id,path:d.file_url};
+      img.src=sharedAaCache.front.toDataURL('image/jpeg',0.92);img.style.display='block';
+      if(backImg){backImg.removeAttribute('src');backImg.style.display='none';}
+      if(flipControls)flipControls.style.display='flex';
+      const fl=document.getElementById('elderAadhaarFlipLabel');if(fl)fl.textContent=sharedAaCache.back?'Back':'Back (not uploaded)';
+      const rot=document.getElementById('rotateControls');if(rot)rot.style.display='none';
+      openModal('fileViewerModal');return;
+    }
+  }
+  shareContext=null;
+  const ext=(d.file_url.split('.').pop()||'').toLowerCase();
+  if(['jpg','jpeg','png','webp','gif'].includes(ext)){
+    img.src=data.signedUrl;img.style.display='block';
+    if(backImg){backImg.removeAttribute('src');backImg.style.display='none';}
+    openModal('fileViewerModal');
+  }else{
+    img.style.display='none';img.removeAttribute('src');
+    window.open(data.signedUrl,'_blank');
+  }
 }catch(err){alert('Failed: '+err.message);}
 }
 async function downloadSharedDocument(docId){
