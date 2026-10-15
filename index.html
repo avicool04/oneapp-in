@@ -3342,20 +3342,24 @@ async function scanFinishGuided(){
 window.addEventListener('resize',()=>{if(document.getElementById('scanCropModal').classList.contains('show'))positionScanCorners();});
 
 // ===== SITE LAST UPDATED =====
+// Do not leave the label stuck on "Checking…" if the host does not answer HEAD requests.
 async function updateSiteLastUpdated(){
   const el=document.getElementById('siteLastUpdated');
   if(!el)return;
-  let lastModified='';
+  el.textContent='Live site loaded (timestamp unavailable)';
+  const controller=new AbortController();
+  const timeout=window.setTimeout(()=>controller.abort(),2500);
   try{
-    const r=await fetch(window.location.href,{method:'HEAD',cache:'no-store'});
-    lastModified=r.headers.get('last-modified')||'';
-  }catch(e){}
-  if(!lastModified)lastModified=document.lastModified||'';
-  const d=new Date(lastModified);
-  if(!isNaN(d.getTime())){
-    el.textContent=d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }else{
-    el.textContent='Unavailable';
+    const r=await fetch(window.location.href,{method:'HEAD',cache:'no-store',signal:controller.signal});
+    const lastModified=r.headers.get('last-modified')||'';
+    const d=new Date(lastModified);
+    if(lastModified&&!isNaN(d.getTime())){
+      el.textContent=d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+  }catch(e){
+    // Keep the immediate fallback message; HEAD may be unsupported or slow on static hosts.
+  }finally{
+    window.clearTimeout(timeout);
   }
 }
 updateSiteLastUpdated();
