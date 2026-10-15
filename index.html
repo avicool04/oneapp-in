@@ -720,6 +720,21 @@ body.dark .dropdown .email{color:var(--gray)}
 <hr style="border:0;border-top:1px solid var(--border);margin:.75rem 0">
 <button class="btn btn-outline" onclick="exportMyData()">⬇️ Download my data</button>
 <p class="sub" style="margin-top:.4rem">A copy of your profile, document list and family links. To delete your account and data, contact support.</p>
+
+<div class="field"><label for="profileLanguage">App Language</label><select id="profileLanguage"><option value="en">English</option><option value="hi">हिन्दी — Hindi</option><option value="or">ଓଡ଼ିଆ — Odia</option><option value="bn">বাংলা — Bengali</option><option value="te">తెలుగు — Telugu</option><option value="ta">தமிழ் — Tamil</option><option value="mr">मराठी — Marathi</option><option value="gu">ગુજરાતી — Gujarati</option><option value="kn">ಕನ್ನಡ — Kannada</option><option value="ml">മലയാളം — Malayalam</option></select></div>
+<button class="btn btn-outline" onclick="openFeedbackModal()">💬 Feedback, Suggestions & Complaints</button>
+</div></div>
+<!-- FEEDBACK MODAL -->
+<div id="feedbackModal" class="modal-overlay"><div class="modal">
+<h3>💬 Feedback & Support</h3><p class="sub">Share an idea, suggestion, concern or complaint with the OneApp team.</p>
+<div class="field"><label for="feedbackCategory">Type</label><select id="feedbackCategory"><option>Suggestion</option><option>Feedback</option><option>Idea</option><option>Concern</option><option>Complaint</option></select></div>
+<div class="field"><label for="feedbackSubject">Subject</label><input id="feedbackSubject" maxlength="160" placeholder="Briefly describe your message"></div>
+<div class="field"><label for="feedbackMessage">Message</label><textarea id="feedbackMessage" maxlength="5000" rows="5" placeholder="Tell us what you would like us to know..." style="width:100%;padding:.7rem;border:1.5px solid var(--border);border-radius:11px;font-size:.88rem;background:#fbfcff;color:var(--dark)"></textarea></div>
+<div id="feedbackResult" class="sos-box" style="display:none;word-break:break-word"></div>
+<button id="feedbackSubmitBtn" class="btn btn-primary" onclick="submitFeedback()">Submit securely</button>
+<button class="btn btn-outline" onclick="closeModal('feedbackModal')">Close</button>
+<hr style="border:0;border-top:1px solid var(--border);margin:.75rem 0">
+<h3 style="font-size:.9rem;margin-bottom:.4rem">My submissions</h3><div id="myFeedbackList"><p class="sub">Your submitted reference numbers will appear here.</p></div>
 </div></div>
 <!-- UPLOAD METHOD MODAL -->
 <div id="uploadMethodModal" class="modal-overlay"><div class="modal">
@@ -1538,13 +1553,15 @@ const m=currentUser.user_metadata||{};
 document.getElementById('profileName').value = m.full_name || m.name || '';
 document.getElementById('profileEmail').value = currentUser.email || '';
 document.getElementById('profilePhone').value = m.phone || '';
+document.getElementById('profileLanguage').value = m.app_language || 'en';
 openModal('profileModal');
 }
 async function saveProfile(){
 const name = document.getElementById('profileName').value.trim();
 const phone = document.getElementById('profilePhone').value.trim();
+const appLanguage = document.getElementById('profileLanguage').value || 'en';
 if(!name) return alert('Name is required');
-const { error } = await sb.auth.updateUser({ data: { full_name: name, phone: phone } });
+const { error } = await sb.auth.updateUser({ data: { full_name: name, phone: phone, app_language: appLanguage } });
 if(error) alert('❌ Error updating: '+error.message);
 else {
 alert('✅ Profile updated!');
@@ -1554,6 +1571,52 @@ const fb = document.getElementById('userAvatarFallback');
 fb.textContent = (newFull.charAt(0)||'U').toUpperCase();
 }
 }
+
+// ===== USER FEEDBACK / SUGGESTIONS =====
+function openFeedbackModal(){
+  if(!currentUser){ alert('Please sign in to submit feedback.'); return; }
+  document.getElementById('feedbackResult').style.display='none';
+  document.getElementById('feedbackSubject').value='';
+  document.getElementById('feedbackMessage').value='';
+  openModal('feedbackModal');
+  loadMyFeedback();
+}
+async function submitFeedback(){
+  if(!currentUser){alert('Please sign in to submit feedback.');return;}
+  const category=document.getElementById('feedbackCategory').value;
+  const subject=document.getElementById('feedbackSubject').value.trim();
+  const message=document.getElementById('feedbackMessage').value.trim();
+  if(subject.length<3){alert('Please enter a subject of at least 3 characters.');return;}
+  if(message.length<10){alert('Please enter a message of at least 10 characters.');return;}
+  const btn=document.getElementById('feedbackSubmitBtn');btn.disabled=true;btn.textContent='Submitting…';
+  try{
+    const {data,error}=await sb.from('user_feedback').insert({
+      user_id:currentUser.id,user_email:currentUser.email,category,subject,message
+    }).select('reference_number,created_at,status').single();
+    if(error)throw error;
+    const result=document.getElementById('feedbackResult');
+    result.style.display='block';
+    result.textContent='Submitted successfully. Your reference number is '+data.reference_number+'. Status: '+data.status+'. Keep this number for future follow-up.';
+    document.getElementById('feedbackSubject').value='';
+    document.getElementById('feedbackMessage').value='';
+    await loadMyFeedback();
+    // Email notification is handled server-side; never expose the support inbox in the client.
+    const {error:mailError}=await sb.functions.invoke('notify-feedback',{body:{reference_number:data.reference_number}});
+    if(mailError)console.warn('Feedback saved; email notification is not yet configured or failed.',mailError.message);
+  }catch(e){alert('Could not submit feedback: '+(e.message||'Please try again.'));}
+  finally{btn.disabled=false;btn.textContent='Submit securely';}
+}
+async function loadMyFeedback(){
+  if(!currentUser)return;
+  const host=document.getElementById('myFeedbackList');
+  host.innerHTML='<p class="sub">Loading submissions…</p>';
+  const {data,error}=await sb.from('user_feedback').select('reference_number,category,subject,status,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+  if(error){host.innerHTML='<p class="sub">Unable to load submissions right now.</p>';return;}
+  if(!data||!data.length){host.innerHTML='<p class="sub">No submissions yet.</p>';return;}
+  host.innerHTML=data.map(x=>'<div class="doc-row"><div class="doc-info"><h4>'+escapeFeedbackText(x.subject)+'</h4><p>'+escapeFeedbackText(x.category)+' · '+escapeFeedbackText(x.reference_number)+'</p></div><span class="badge badge-ok">'+escapeFeedbackText(x.status)+'</span></div>').join('');
+}
+function escapeFeedbackText(value){return String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 async function checkForInvite(){
 if(!currentUser) return;
 const params = new URLSearchParams(window.location.search);
