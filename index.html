@@ -1400,7 +1400,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <!-- CROP PREVIEW — 4 dots + dashed edge lines -->
 <div id="scanCropModal" class="modal-overlay"><div class="modal" style="max-width:620px">
   <h3 id="scanCropTitle">Adjust crop</h3>
-  <p class="sub">Drag the four corners so the dashed line hugs the document edges.</p>
+  <p class="sub">Pinch with two fingers to rotate/straighten the photo. Drag the four corners to fit the document edges.</p>
   <div id="scanCropStage" style="position:relative;width:100%;background:#111827;border-radius:12px;overflow:hidden;touch-action:none">
     <canvas id="scanCropCanvas" style="display:block;width:100%;height:auto"></canvas>
     <svg id="scanCropDash" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -1414,13 +1414,10 @@ body.dark .dropdown .email{color:var(--gray)}
     <button class="btn btn-outline btn-sm" onclick="scanReadText()">🔎 Read text (OCR)</button>
   </div>
   <div style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-top:.65rem">
-    <strong style="font-size:.82rem">Straighten</strong>
-    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(-5)">−5°</button>
-    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(-1)">−1°</button>
+    <strong style="font-size:.82rem">Rotation</strong>
     <span id="scanRotationLabel" style="font-size:.82rem;min-width:42px;text-align:center">0°</span>
-    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(1)">+1°</button>
-    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(5)">+5°</button>
     <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateReset()">Reset</button>
+    <span style="font-size:.78rem;color:var(--text-2)">Use two fingers on the photo</span>
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:.65rem;flex-wrap:wrap">
     <label style="font-weight:700;font-size:.82rem">Filter <select id="scanFilter" style="max-width:170px;padding:.4rem;border-radius:8px;border:1px solid #cbd5e1"><option value="enhanced">Enhanced colour</option><option value="original">Original colour</option><option value="gray">Grayscale</option><option value="bw">Black &amp; white</option><option value="light">Lighten</option><option value="dark">Darken</option></select></label>
@@ -3516,7 +3513,46 @@ function scanCreateRotatedCanvas(img,angle){
 }
 var scanRotationDeg=0,scanRotationSource=null;
 function scanRotateBy(delta){if(!scanSourceFile)return;scanRotationDeg=Math.max(-45,Math.min(45,Math.round((scanRotationDeg+delta)*10)/10));openScanCropFor(scanSourceFile);}
-function scanRotateReset(){scanRotationDeg=0;if(scanSourceFile)openScanCropFor(scanSourceFile);}
+function scanRotateReset(){scanRotationDeg=0;if(scanSourceFile)scanRedrawRotatedPreview();}
+function scanRedrawRotatedPreview(){
+ if(!scanSourceFile)return;
+ const url=URL.createObjectURL(scanSourceFile),img=new Image();
+ img.onload=function(){
+  try{
+   const c=document.getElementById('scanCropCanvas'),rot=scanCreateRotatedCanvas(img,scanRotationDeg);
+   const scale=Math.min(1,1200/rot.width);
+   c.width=Math.max(1,Math.round(rot.width*scale));c.height=Math.max(1,Math.round(rot.height*scale));
+   c.getContext('2d').drawImage(rot,0,0,c.width,c.height);
+   const label=document.getElementById('scanRotationLabel');if(label)label.textContent=(scanRotationDeg>0?'+':'')+scanRotationDeg.toFixed(1)+'°';
+   positionScanCorners();
+  }finally{URL.revokeObjectURL(url);}
+ };
+ img.onerror=function(){URL.revokeObjectURL(url);};
+ img.src=url;
+}
+(function installScanPinchRotation(){
+ const stage=document.getElementById('scanCropStage');if(!stage||stage.dataset.pinchRotateInstalled)return;
+ stage.dataset.pinchRotateInstalled='1';
+ let startAngle=null,lastAngle=null,startRotation=0,active=false;
+ function angle(t1,t2){return Math.atan2(t2.clientY-t1.clientY,t2.clientX-t1.clientX)*180/Math.PI;}
+ stage.addEventListener('touchstart',function(e){
+  if(e.touches.length===2){
+   active=true;startAngle=angle(e.touches[0],e.touches[1]);lastAngle=startAngle;startRotation=scanRotationDeg;e.preventDefault();
+  }
+ },{passive:false});
+ stage.addEventListener('touchmove',function(e){
+  if(!active||e.touches.length!==2)return;
+  e.preventDefault();
+  let a=angle(e.touches[0],e.touches[1]),delta=a-lastAngle;
+  while(delta>180)delta-=360;while(delta< -180)delta+=360;
+  if(Math.abs(delta)>.05){
+   scanRotationDeg=Math.max(-45,Math.min(45,Math.round((scanRotationDeg+delta)*10)/10));
+   lastAngle=a;scanRedrawRotatedPreview();
+  }
+ },{passive:false});
+ function end(e){if(e.touches.length<2){active=false;startAngle=null;lastAngle=null;}}
+ stage.addEventListener('touchend',end,{passive:true});stage.addEventListener('touchcancel',end,{passive:true});
+})();
 function openScanCropFor(file){
   if(file!==scanRotationSource){scanRotationSource=file;scanRotationDeg=0;}
   scanSourceFile=file;
@@ -5447,8 +5483,8 @@ function scanLoadOpenCV(){
 async function scanAutoDetectEdges(){
  scanSetStatus("Detecting document edges…");
  try{var cv=await scanLoadOpenCV(),canvas=document.getElementById("scanCropCanvas"),src=cv.imread(canvas),gray=new cv.Mat(),blur=new cv.Mat(),edges=new cv.Mat(),contours=new cv.MatVector(),hierarchy=new cv.Mat();
-  cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);cv.GaussianBlur(gray,blur,new cv.Size(5,5),0);cv.Canny(blur,edges,50,150);cv.findContours(edges,contours,hierarchy,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE);
-  var best=null,bestArea=0;for(var i=0;i<contours.size();i++){var cnt=contours.get(i),peri=cv.arcLength(cnt,true),approx=new cv.Mat();cv.approxPolyDP(cnt,approx,.02*peri,true);if(approx.rows===4){var area=Math.abs(cv.contourArea(approx));if(area>bestArea&&area>canvas.width*canvas.height*.08){bestArea=area;best=[];for(var j=0;j<4;j++)best.push([approx.data32S[j*2],approx.data32S[j*2+1]]);}}approx.delete();cnt.delete();}
+  cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);cv.GaussianBlur(gray,blur,new cv.Size(5,5),0);cv.Canny(blur,edges,35,120);cv.dilate(edges,edges,cv.Mat.ones(3,3,cv.CV_8U));cv.findContours(edges,contours,hierarchy,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+  var best=null,bestScore=0;for(var i=0;i<contours.size();i++){var cnt=contours.get(i),peri=cv.arcLength(cnt,true),approx=new cv.Mat();cv.approxPolyDP(cnt,approx,.025*peri,true);if(approx.rows===4&&cv.isContourConvex(approx)){var area=Math.abs(cv.contourArea(approx)),ratio=area/(canvas.width*canvas.height);if(ratio>.06&&ratio<.97&&area>bestScore){bestScore=area;best=[];for(var j=0;j<4;j++)best.push([approx.data32S[j*2],approx.data32S[j*2+1]]);}}approx.delete();cnt.delete();}
   src.delete();gray.delete();blur.delete();edges.delete();contours.delete();hierarchy.delete();if(!best)throw new Error("No clear document outline found. Drag the corners manually.");
   var sums=best.map(function(p){return p[0]+p[1];}),diffs=best.map(function(p){return p[0]-p[1];});var tl=best[sums.indexOf(Math.min.apply(null,sums))],br=best[sums.indexOf(Math.max.apply(null,sums))],tr=best[diffs.indexOf(Math.max.apply(null,diffs))],bl=best[diffs.indexOf(Math.min.apply(null,diffs))];
   scanCorners=[[tl[0]/canvas.width,tl[1]/canvas.height],[tr[0]/canvas.width,tr[1]/canvas.height],[br[0]/canvas.width,br[1]/canvas.height],[bl[0]/canvas.width,bl[1]/canvas.height]];scanDetectedQuad=true;positionScanCorners();scanSetStatus("Edges detected. Check the corners, then accept the crop.");
