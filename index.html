@@ -1405,6 +1405,7 @@ body.dark .dropdown .email{color:var(--gray)}
     <svg id="scanCropDash" viewBox="0 0 100 100" preserveAspectRatio="none">
       <polygon id="scanCropPoly" points="8,8 92,8 92,92 8,92" fill="rgba(37,99,235,.12)" stroke="#60a5fa" stroke-width="0.6" stroke-dasharray="2.5 1.8" vector-effect="non-scaling-stroke"/>
     </svg>
+    <div id="scanMagnifier" aria-hidden="true" style="display:none;position:absolute;z-index:8;width:132px;height:132px;border:3px solid #fff;border-radius:50%;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.55);pointer-events:none;background:#111827"><canvas id="scanMagnifierCanvas" width="264" height="264" style="width:100%;height:100%;display:block"></canvas><span style="position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);border:1px solid #ef4444;border-radius:50%;box-shadow:0 0 0 1px #fff"></span></div>
     <div class="scan-corner" data-corner="0"></div><div class="scan-corner" data-corner="1"></div><div class="scan-corner" data-corner="2"></div><div class="scan-corner" data-corner="3"></div>
   </div>
   <div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.8rem">
@@ -1899,6 +1900,14 @@ closeModal('uploadMethodModal');
 async function handleGenericFileSelect(file){
 if(!file) return;
 tempFile = file;
+// Voter ID images must go through the same edge-adjustable crop editor as scans.
+if(tempUploadType === 'Voter Card' && file.type && file.type.startsWith('image/')){
+  window._oneAppCropForVoterUpload = true;
+  scanCurrentSide = 'front';
+  scanDetectedQuad = false;
+  openScanCropFor(file);
+  return;
+}
 if(tempUploadType === 'Other'){ openModal('customNameModal'); }
 else if (tempUploadType === 'Driving License') { openModal('expiryDateModal'); }
 else if (tempUploadType === 'Passport') {
@@ -3471,21 +3480,38 @@ function positionScanCorners(){
     poly.setAttribute('points',pts);
   }
 }
+function scanUpdateMagnifier(clientX,clientY){
+  const stage=document.getElementById('scanCropStage'),img=document.getElementById('scanCropCanvas'),mag=document.getElementById('scanMagnifier'),zoom=document.getElementById('scanMagnifierCanvas');
+  if(!stage||!img||!mag||!zoom||!img.width||!img.height)return;
+  const r=img.getBoundingClientRect(),sr=stage.getBoundingClientRect();
+  const px=Math.max(0,Math.min(img.width,(clientX-r.left)*img.width/r.width));
+  const py=Math.max(0,Math.min(img.height,(clientY-r.top)*img.height/r.height));
+  const z=zoom.getContext('2d'),sw=Math.min(img.width,Math.max(40,img.width*.14)),sh=Math.min(img.height,Math.max(40,img.height*.14));
+  z.clearRect(0,0,zoom.width,zoom.height);z.imageSmoothingEnabled=false;
+  z.drawImage(img,Math.max(0,Math.min(img.width-sw,px-sw/2)),Math.max(0,Math.min(img.height-sh,py-sh/2)),sw,sh,0,0,zoom.width,zoom.height);
+  z.imageSmoothingEnabled=true;
+  const left=Math.max(4,Math.min(stage.clientWidth-136,(clientX-sr.left)-66));
+  const top=Math.max(4,Math.min(stage.clientHeight-136,(clientY-sr.top)-150));
+  mag.style.left=left+'px';mag.style.top=top+'px';mag.style.display='block';
+}
+function scanHideMagnifier(){const m=document.getElementById('scanMagnifier');if(m)m.style.display='none';}
 function initScanCornerDrag(){
   document.querySelectorAll('.scan-corner').forEach((el,i)=>{
     el.onpointerdown=e=>{
       e.preventDefault();
       el.setPointerCapture(e.pointerId);
+      scanUpdateMagnifier(e.clientX,e.clientY);
       const move=ev=>{
-        const r=document.getElementById('scanCropStage').getBoundingClientRect();
-        const ch=document.getElementById('scanCropCanvas').clientHeight;
+        const r=document.getElementById('scanCropCanvas').getBoundingClientRect();
         scanCorners[i][0]=Math.max(0,Math.min(1,(ev.clientX-r.left)/r.width));
-        scanCorners[i][1]=Math.max(0,Math.min(1,(ev.clientY-r.top)/ch));
+        scanCorners[i][1]=Math.max(0,Math.min(1,(ev.clientY-r.top)/r.height));
         positionScanCorners();
+        scanUpdateMagnifier(ev.clientX,ev.clientY);
       };
-      const up=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);};
+      const up=()=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);scanHideMagnifier();};
       el.addEventListener('pointermove',move);
       el.addEventListener('pointerup',up);
+      el.addEventListener('pointercancel',up);
     };
   });
 }
@@ -3521,14 +3547,19 @@ async function scanAcceptCrop(){
   try{
     const cropped=await makeScannedBlob();
     closeModal('scanCropModal');
+    if(window._oneAppCropForVoterUpload){
+      window._oneAppCropForVoterUpload=false;
+      tempFile=new File([cropped], 'OneApp-Voter-ID-'+Date.now()+'.jpg',{type:'image/jpeg'});
+      await saveGenericDocument(null);
+      return;
+    }
     if(scanCurrentSide==='front'||!scanFrontBlob){
       scanFrontBlob=cropped;
       scanBackBlob=null;
-      // Offer: save one side OR add other side
+      // Offer: save one side OR add the other side.
       openModal('scanSideChoiceModal');
     }else{
       scanBackBlob=cropped;
-      // Both sides ready → one document save flow
       scanPrepareSaveBoth();
     }
   }catch(e){alert('Crop failed: '+e.message);}
@@ -5362,6 +5393,14 @@ async function makeScannedBlob(){
  return await new Promise(function(resolve){out.toBlob(resolve,"image/jpeg",.94);});
 }
 
+document.addEventListener('pointermove',function(e){
+  const stage=document.getElementById('scanCropStage'),modal=document.getElementById('scanCropModal');
+  if(!stage||!modal||!modal.classList.contains('show'))return;
+  if(e.target&&e.target.classList&&e.target.classList.contains('scan-corner'))return;
+  const r=stage.getBoundingClientRect();
+  if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)scanUpdateMagnifier(e.clientX,e.clientY);
+});
+document.addEventListener('pointerleave',scanHideMagnifier);
 var oneAppOriginalOpenScanCropFor=openScanCropFor;
 openScanCropFor=function(file){scanDetectedQuad=false;oneAppOriginalOpenScanCropFor(file);};
 </script>
