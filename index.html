@@ -1253,6 +1253,7 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 </div>
 <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
+<button class="btn btn-primary btn-sm" id="editExistingImageBtn" onclick="editExistingGenericImage()" style="margin-right:auto">✂️ Edit image</button>
 <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
 </div>
 <div id="elderAadhaarFlipControls" style="display:none;justify-content:center;gap:.5rem;margin:.35rem 0">
@@ -2143,6 +2144,50 @@ alert('Failed: '+err.message);
 function rotateImage(degrees){
 currentRotation=(currentRotation+degrees+360)%360;
 }
+async function editExistingGenericImage(){
+const c=viewerCtx;
+if(!c||c.kind!=='generic'||!c.isImage){alert('Editing is available for uploaded image documents.');return;}
+try{
+const {data,error}=await sb.storage.from('vault').download(c.actualPath||c.path);
+if(error)throw error;
+const file=new File([data],(c.label||'Document').replace(/[^a-z0-9._-]/gi,'_')+'.'+(getVaultFileExtension(c.actualPath||c.path)||'jpg'),{type:data.type||'image/jpeg'});
+window._oneAppEditExistingGeneric={id:c.id,path:c.path,actualPath:c.actualPath,label:c.label,isPassport:c.isPassport,passportData:c.passportData,documentType:c.documentType};
+window._oneAppCropForGenericUpload=true;
+window._oneAppEditExistingGeneric=true;
+scanCurrentSide='front';scanDetectedQuad=false;
+closeModal('fileViewerModal');
+openScanCropFor(file);
+}catch(err){alert('❌ Could not open image editor: '+err.message);}
+}
+async function saveEditedGenericImage(file){
+const edit=window._oneAppEditExistingGeneric;
+if(!edit||!currentUser)return;
+try{
+const blob=file instanceof Blob?file:new Blob([file],{type:'image/jpeg'});
+const newPath=`${currentUser.id}/edited-${edit.id}-${Date.now()}.jpg`;
+const {error:upErr}=await sb.storage.from('vault').upload(newPath,blob,{contentType:'image/jpeg',upsert:false});
+if(upErr)throw upErr;
+const dbPath=edit.isPassport&&edit.passportData?JSON.stringify({...edit.passportData,front:newPath}):newPath;
+const {data,error:dbErr}=await sb.from('documents').update({file_url:dbPath}).eq('id',edit.id).eq('user_id',currentUser.id).select('id').maybeSingle();
+if(dbErr||!data){await sb.storage.from('vault').remove([newPath]);throw dbErr||new Error('Document record was not updated.');}
+window._oneAppEditExistingGeneric=null;
+const loaded=await loadVaultImage(newPath);
+if(viewerCtx?.kind==='generic'&&viewerCtx.objectUrl)URL.revokeObjectURL(viewerCtx.objectUrl);
+viewerCtx={kind:'generic',id:edit.id,path:dbPath,actualPath:newPath,label:edit.label,isImage:true,isPdf:false,isPassport:!!edit.isPassport,passportData:edit.isPassport&&edit.passportData?JSON.parse(dbPath):null,documentType:edit.documentType,objectUrl:loaded.objectUrl};
+document.getElementById('fileViewerTitle').textContent=edit.label||'Document';
+document.getElementById('fileViewerImg').src=loaded.objectUrl;
+document.getElementById('fileViewerImg').style.display='block';
+document.getElementById('rotateControls').style.display='flex';
+document.getElementById('saveRotationBtn').style.display='inline-block';
+document.getElementById('editExistingImageBtn').style.display='inline-block';
+currentRotation=0;
+await loadGenericDocsStatus(true);
+if(edit.documentType==='Other')await loadOtherDocs();
+openModal('fileViewerModal');
+alert('✅ Image updated successfully.');
+}catch(err){alert('❌ Could not save edited image: '+err.message);}
+finally{window._oneAppEditExistingGeneric=null;}
+}
 async function rotateAndSaveImage(){
 const c=viewerCtx;
 if(!c||c.kind!=='generic'||!c.isImage)return;
@@ -2180,9 +2225,15 @@ await loadGenericDocsStatus(true);
 }
 async function deleteGenericDoc(id){
 if(!confirm('Move to Bin?')) return;
-const {error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id);
-if(error) alert('❌ '+error.message);
-else { alert('✅ Moved to Bin'); await loadGenericDocsStatus(true); loadOtherDocs(); }
+try{
+const {data,error}=await sb.from('documents').update({deleted_at:new Date().toISOString()}).eq('id',id).eq('user_id',currentUser.id).is('deleted_at',null).select('id,deleted_at').maybeSingle();
+if(error)throw error;
+if(!data||!data.deleted_at){alert('❌ The document was not moved to Bin. It may still be active or you may not have permission to delete it.');return;}
+if(viewerCtx?.kind==='generic'&&viewerCtx.id===id)closeModal('fileViewerModal');
+await loadGenericDocsStatus(true);
+await loadOtherDocs();
+alert('✅ Moved to Bin');
+}catch(err){alert('❌ Could not move document to Bin: '+err.message);}
 }
 async function buildGenericShareFile(fmt){
 const c=viewerCtx;
@@ -3569,10 +3620,11 @@ async function scanAcceptCrop(){
     if(!cropped)throw new Error('The crop could not be created. Please adjust the corners and try again.');
     closeModal('scanCropModal');
     if(window._oneAppCropForGenericUpload){
-      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage,wasAadhaarBack=!!window._oneAppCropForAadhaarBack;
-      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;window._oneAppCropForAadhaarBack=false;
+      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage,wasAadhaarBack=!!window._oneAppCropForAadhaarBack,wasEditExisting=!!window._oneAppEditExistingGeneric;
+      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;window._oneAppCropForAadhaarBack=false;window._oneAppEditExistingGeneric=false;
       const croppedFile=new File([cropped],(wasVoter?'OneApp-Voter-ID-':(wasAadhaarImage||wasAadhaarBack)?'OneApp-Aadhaar-':'OneApp-Scanned-')+Date.now()+'.jpg',{type:'image/jpeg'});
       if(wasAadhaarBack){const resolveBack=window._oneAppAadhaarBackResolve;window._oneAppAadhaarBackResolve=null;if(resolveBack)resolveBack(croppedFile);return;}
+      if(wasEditExisting){await saveEditedGenericImage(croppedFile);return;}
       if(wasAadhaarImage){tempFile=null;tempUploadType=null;await aaOnImage(croppedFile);return;}
       if(wasPassportPage2){await savePassportWithTwoPages(passportPage1File,croppedFile);passportPage1File=null;return;}
       tempFile=croppedFile;
