@@ -4247,7 +4247,7 @@ async function elderSaveAadhaarBundle(cache){
   return base+(cache.side?'_side.jpg':'_front.jpg');
 }
 function splitElderAadhaarIfCombined(front,back,side){
-  if(!front||back)return {front:front,back:back,side:side};
+  if(!front)return {front:front,back:back,side:side};
   // Some full-page PDFs are stored as one wide image containing both card faces.
   // Split that image so the viewer can show and flip between individual sides.
   if(front.width/Math.max(1,front.height)<2.15)return {front:front,back:back,side:side};
