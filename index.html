@@ -2779,8 +2779,11 @@ function closeSharedFolder(){
   sharedVaultFolder=null;
   const card=document.getElementById('svFolderCard');
   const grid=document.getElementById('svFolderGrid');
+  const spouseGrid=document.getElementById('svSpouseFolderGrid');
+  const isSpouse=sharedVaultContext&&sharedVaultContext.kind==='spouse';
   if(card)card.style.display='none';
-  if(grid)grid.style.display='grid';
+  if(grid)grid.style.display=isSpouse?'none':'grid';
+  if(spouseGrid)spouseGrid.style.display=isSpouse?'grid':'none';
 }
 function renderSharedFolderDocs(){
   const box=document.getElementById('sharedDocsContainer');
