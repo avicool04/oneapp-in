@@ -1407,12 +1407,18 @@ body.dark .dropdown .email{color:var(--gray)}
     </svg>
     <div class="scan-corner" data-corner="0"></div><div class="scan-corner" data-corner="1"></div><div class="scan-corner" data-corner="2"></div><div class="scan-corner" data-corner="3"></div>
   </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:.8rem">
-    <label style="font-weight:700;font-size:.82rem"><input id="scanEnhance" type="checkbox" checked> Enhance</label>
+  <div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.8rem">
+    <button class="btn btn-outline btn-sm" onclick="scanAutoDetectEdges()">✨ Auto-detect edges</button>
+    <button class="btn btn-outline btn-sm" onclick="scanReadText()">🔎 Read text (OCR)</button>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:.65rem;flex-wrap:wrap">
+    <label style="font-weight:700;font-size:.82rem">Filter <select id="scanFilter" style="max-width:170px;padding:.4rem;border-radius:8px;border:1px solid #cbd5e1"><option value="enhanced">Enhanced colour</option><option value="original">Original colour</option><option value="gray">Grayscale</option><option value="bw">Black &amp; white</option><option value="light">Lighten</option><option value="dark">Darken</option></select></label>
     <button class="btn btn-primary btn-sm" onclick="scanAcceptCrop()">Accept crop</button>
   </div>
+  <p id="scanUpgradeStatus" style="font-size:.78rem;color:var(--muted,#64748b);margin:.45rem 0 0">Move the four corners manually if needed. Auto-detection is best-effort.</p>
   <button class="btn btn-outline" style="margin-top:.6rem" onclick="scanRetakeCrop()">Retake photo</button>
 </div></div>
+<div id="scanOcrModal" class="modal-overlay"><div class="modal" style="max-width:620px"><h3>Extracted text</h3><p class="sub">OCR runs in your browser. Check the result before copying or saving it.</p><label style="display:block;margin:.5rem 0;font-weight:700">OCR language <select id="scanOcrLanguage" style="padding:.5rem;border-radius:8px"><option value="eng">English</option><option value="hin">Hindi</option><option value="ori">Odia</option><option value="ben">Bengali</option><option value="tel">Telugu</option><option value="tam">Tamil</option><option value="mar">Marathi</option><option value="guj">Gujarati</option><option value="kan">Kannada</option><option value="mal">Malayalam</option></select></label><textarea id="scanOcrText" rows="9" style="width:100%;box-sizing:border-box;margin-top:.5rem" placeholder="Extracted text will appear here"></textarea><div style="display:flex;gap:.5rem;margin-top:.7rem"><button class="btn btn-primary" onclick="scanCopyOcrText()">Copy text</button><button class="btn btn-outline" onclick="closeModal('scanOcrModal')">Close</button></div></div></div>
 <!-- After first side: save one side OR add other side -->
 <div id="scanSideChoiceModal" class="modal-overlay"><div class="modal">
   <h3>Side captured</h3>
