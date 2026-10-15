@@ -4029,13 +4029,28 @@ async function elderSaveAadhaarBundle(cache){
   }
   return base+(cache.side?'_side.jpg':'_front.jpg');
 }
+function splitElderAadhaarIfCombined(cache){
+  if(!cache||!cache.front)return cache;
+  const source=cache.front;
+  // Older uploads can have both Aadhaar faces baked into the saved "front".
+  // Split those wide previews into real front/back canvases before rendering.
+  if(source.width>0&&source.height>0&&source.width/source.height>2.15){
+    const mid=Math.round(source.width/2);
+    if(mid>0&&source.width-mid>0){
+      const front=autoCrop(rc(source,0,0,mid,source.height));
+      const back=autoCrop(rc(source,mid,0,source.width-mid,source.height));
+      return Object.assign({},cache,{front:front,back:back,side:cache.side||source,full:cache.full||source});
+    }
+  }
+  return cache;
+}
 async function loadElderAaBundle(path){
   const m=String(path||'').match(/^(.*\/aadhaar_\d+)_(front|back|side|full)\.jpg$/i);
   if(!m)return null;
   const base=m[1];
   const get=async function(k){try{const r=await sb.storage.from('vault').download(base+'_'+k+'.jpg');if(r.error||!r.data)return null;return await fileToCanvas(r.data,3000);}catch(e){return null;}};
   const parts=await Promise.all([get('front'),get('back'),get('side'),get('full')]);
-  return {front:parts[0],back:parts[1],side:parts[2],full:parts[3],pdfBlob:null,frontPath:base+'_front.jpg'};
+  return splitElderAadhaarIfCombined({front:parts[0],back:parts[1],side:parts[2],full:parts[3],pdfBlob:null,frontPath:base+'_front.jpg'});
 }
 let elderFolderNames={},elderFolderOpenKind=null;
 function elderKindOf(path,type){
@@ -4103,11 +4118,28 @@ async function loadElderAaCacheFromPath(path){
       pages.push(canvas);
     }
     elderAaCache.full=pages[0]||null;
-    elderAaCache.front=pages[0]||null;
-    elderAaCache.back=pages[1]||null;
-    elderAaCache.side=pages[0]||null;
+    // For a legacy full UIDAI PDF, extract the Aadhaar card strip from page 1
+    // and split its two faces instead of showing the entire side-by-side page.
+    if(pages[0]){
+      try{
+        const cards=computeCards(pages[0]);
+        if(cards&&cards.front&&cards.back){
+          elderAaCache.front=cards.front;
+          elderAaCache.back=cards.back;
+          elderAaCache.side=cards.side||pages[0];
+        }else{
+          elderAaCache.front=pages[0];
+          elderAaCache.back=pages[1]||null;
+          elderAaCache.side=pages[0];
+        }
+      }catch(e){
+        elderAaCache.front=pages[0];
+        elderAaCache.back=pages[1]||null;
+        elderAaCache.side=pages[0];
+      }
+    }
     elderAaCache.pdfBlob=data;
-    return elderAaCache;
+    return splitElderAadhaarIfCombined(elderAaCache);
   }
   const url=URL.createObjectURL(data);
   try{
@@ -4115,7 +4147,7 @@ async function loadElderAaCacheFromPath(path){
     const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
     c.getContext('2d').drawImage(img,0,0);
     elderAaCache.full=c;elderAaCache.front=c;elderAaCache.side=c;
-    return elderAaCache;
+    return splitElderAadhaarIfCombined(elderAaCache);
   }finally{URL.revokeObjectURL(url);}
 }
 function shareElderDoc(docId){
