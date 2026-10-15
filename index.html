@@ -1564,6 +1564,7 @@ if(!name) return alert('Name is required');
 const { error } = await sb.auth.updateUser({ data: { full_name: name, phone: phone, app_language: appLanguage } });
 if(error) alert('❌ Error updating: '+error.message);
 else {
+if(typeof window.applyAppLanguage==='function') window.applyAppLanguage(appLanguage);
 alert('✅ Profile updated!');
 closeModal('profileModal');
 const newFull = name;
@@ -5169,6 +5170,127 @@ async function exportMyData(){
     <button class="btn btn-outline" onclick="closeModal('mergeDualModal')">Cancel</button>
   </div>
 </div>
+
+
+<script>
+/* OneApp interface language support */
+(function(){
+  const phrases = {
+    "Sign In":{hi:"साइन इन",or:"ସାଇନ୍ ଇନ୍",bn:"সাইন ইন",te:"సైన్ ఇన్",ta:"உள்நுழைய",mr:"साइन इन",gu:"સાઇન ઇન",kn:"ಸೈನ್ ಇನ್",ml:"സൈൻ ഇൻ"},
+    "Profile Settings":{hi:"प्रोफ़ाइल सेटिंग्स",or:"ପ୍ରୋଫାଇଲ୍ ସେଟିଂ",bn:"প্রোফাইল সেটিংস",te:"ప్రొఫైల్ సెట్టింగ్‌లు",ta:"சுயவிவர அமைப்புகள்",mr:"प्रोफाइल सेटिंग्ज",gu:"પ્રોફાઇલ સેટિંગ્સ",kn:"ಪ್ರೊಫೈಲ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",ml:"പ്രൊഫൈൽ ക്രമീകരണങ്ങൾ"},
+    "Manage Family":{hi:"परिवार प्रबंधित करें",or:"ପରିବାର ପରିଚାଳନା",bn:"পরিবার পরিচালনা",te:"కుటుంబాన్ని నిర్వహించండి",ta:"குடும்பத்தை நிர்வகிக்கவும்",mr:"कुटुंब व्यवस्थापित करा",gu:"પરિવારનું સંચાલન",kn:"ಕುಟುಂಬ ನಿರ್ವಹಣೆ",ml:"കുടുംബം നിയന്ത്രിക്കുക"},
+    "Sign Out":{hi:"साइन आउट",or:"ସାଇନ୍ ଆଉଟ୍",bn:"সাইন আউট",te:"సైన్ అవుట్",ta:"வெளியேறு",mr:"साइन आउट",gu:"સાઇન આઉટ",kn:"ಸೈನ್ ಔಟ್",ml:"സൈൻ ഔട്ട്"},
+    "Career":{hi:"करियर",or:"କ୍ୟାରିୟର",bn:"ক্যারিয়ার",te:"కెరీర్",ta:"தொழில்",mr:"करिअर",gu:"કારકિર્દી",kn:"ವೃತ್ತಿ",ml:"കരിയർ"},
+    "Reminders":{hi:"रिमाइंडर",or:"ସ୍ମାରକ",bn:"রিমাইন্ডার",te:"రిమైండర్‌లు",ta:"நினைவூட்டல்கள்",mr:"स्मरणपत्रे",gu:"રીમાઇન્ડર",kn:"ಜ್ಞಾಪನೆಗಳು",ml:"ഓർമ്മപ്പെടുത്തലുകൾ"},
+    "My Secure Vault":{hi:"मेरी सुरक्षित तिजोरी",or:"ମୋ ସୁରକ୍ଷିତ ଭଲ୍ଟ",bn:"আমার সুরক্ষিত ভল্ট",te:"నా సురక్షిత వాల్ట్",ta:"எனது பாதுகாப்புப் பெட்டகம்",mr:"माझी सुरक्षित तिजोरी",gu:"મારી સુરક્ષિત તિજોરી",kn:"ನನ್ನ ಸುರಕ್ಷಿತ ವಾಲ್ಟ್",ml:"എന്റെ സുരക്ഷിത വോൾട്ട്"},
+    "Identity Documents":{hi:"पहचान दस्तावेज़",or:"ପରିଚୟ ଦଲିଲ",bn:"পরিচয়পত্র",te:"గుర్తింపు పత్రాలు",ta:"அடையாள ஆவணங்கள்",mr:"ओळखपत्रे",gu:"ઓળખ દસ્તાવેજો",kn:"ಗುರುತಿನ ದಾಖಲೆಗಳು",ml:"തിരിച്ചറിയൽ രേഖകൾ"},
+    "Aadhaar":{hi:"आधार",or:"ଆଧାର",bn:"আধার",te:"ఆధార్",ta:"ஆதார்",mr:"आधार",gu:"આધાર",kn:"ಆಧಾರ್",ml:"ആധാർ"},
+    "PAN Card":{hi:"पैन कार्ड",or:"ପାନ୍ କାର୍ଡ",bn:"প্যান কার্ড",te:"పాన్ కార్డ్",ta:"பான் அட்டை",mr:"पॅन कार्ड",gu:"પાન કાર્ડ",kn:"ಪ್ಯಾನ್ ಕಾರ್ಡ್",ml:"പാൻ കാർഡ്"},
+    "Voter Card":{hi:"मतदाता कार्ड",or:"ଭୋଟର କାର୍ଡ",bn:"ভোটার কার্ড",te:"ఓటర్ కార్డ్",ta:"வாக்காளர் அட்டை",mr:"मतदार कार्ड",gu:"મતદાર કાર્ડ",kn:"ಮತದಾರರ ಕಾರ್ಡ್",ml:"വോട്ടർ കാർഡ്"},
+    "Passport":{hi:"पासपोर्ट",or:"ପାସପୋର୍ଟ",bn:"পাসপোর্ট",te:"పాస్‌పోర్ట్",ta:"கடவுச்சீட்டு",mr:"पासपोर्ट",gu:"પાસપોર્ટ",kn:"ಪಾಸ್‌ಪೋರ್ಟ್",ml:"പാസ്‌പോർട്ട്"},
+    "Other Docs":{hi:"अन्य दस्तावेज़",or:"ଅନ୍ୟାନ୍ୟ ଦଲିଲ",bn:"অন্যান্য নথি",te:"ఇతర పత్రాలు",ta:"மற்ற ஆவணங்கள்",mr:"इतर कागदपत्रे",gu:"અન્ય દસ્તાવેજો",kn:"ಇತರೆ ದಾಖಲೆಗಳು",ml:"മറ്റ് രേഖകൾ"},
+    "Profile strength":{hi:"प्रोफ़ाइल की स्थिति",or:"ପ୍ରୋଫାଇଲ୍ ସ୍ଥିତି",bn:"প্রোফাইলের অবস্থা",te:"ప్రొఫైల్ స్థాయి",ta:"சுயவிவர நிலை",mr:"प्रोफाइल स्थिती",gu:"પ્રોફાઇલ સ્થિતિ",kn:"ಪ್ರೊಫೈಲ್ ಸ್ಥಿತಿ",ml:"പ്രൊഫൈൽ നില"},
+    "Your profile":{hi:"आपकी प्रोफ़ाइल",or:"ଆପଣଙ୍କ ପ୍ରୋଫାଇଲ୍",bn:"আপনার প্রোফাইল",te:"మీ ప్రొఫైల్",ta:"உங்கள் சுயவிவரம்",mr:"तुमची प्रोफाइल",gu:"તમારી પ્રોફાઇલ",kn:"ನಿಮ್ಮ ಪ್ರೊಫೈಲ್",ml:"നിങ്ങളുടെ പ്രൊഫൈൽ"},
+    "First name":{hi:"पहला नाम",or:"ପ୍ରଥମ ନାମ",bn:"নামের প্রথম অংশ",te:"మొదటి పేరు",ta:"முதல் பெயர்",mr:"पहिले नाव",gu:"પ્રથમ નામ",kn:"ಮೊದಲ ಹೆಸರು",ml:"ആദ്യ പേര്"},
+    "Last name":{hi:"अंतिम नाम",or:"ଶେଷ ନାମ",bn:"পদবি",te:"ఇంటి పేరు",ta:"கடைசி பெயர்",mr:"आडनाव",gu:"અટક",kn:"ಕೊನೆಯ ಹೆಸರು",ml:"കുടുംബപ്പേര്"},
+    "Date of birth":{hi:"जन्म तिथि",or:"ଜନ୍ମ ତାରିଖ",bn:"জন্ম তারিখ",te:"పుట్టిన తేదీ",ta:"பிறந்த தேதி",mr:"जन्मतारीख",gu:"જન્મ તારીખ",kn:"ಜನ್ಮ ದಿನಾಂಕ",ml:"ജനന തീയതി"},
+    "Gender":{hi:"लिंग",or:"ଲିଙ୍ଗ",bn:"লিঙ্গ",te:"లింగం",ta:"பாலினம்",mr:"लिंग",gu:"લિંગ",kn:"ಲಿಂಗ",ml:"ലിംഗം"},
+    "State":{hi:"राज्य",or:"ରାଜ୍ୟ",bn:"রাজ্য",te:"రాష్ట్రం",ta:"மாநிலம்",mr:"राज्य",gu:"રાજ્ય",kn:"ರಾಜ್ಯ",ml:"സംസ്ഥാനം"},
+    "District":{hi:"ज़िला",or:"ଜିଲ୍ଲା",bn:"জেলা",te:"జిల్లా",ta:"மாவட்டம்",mr:"जिल्हा",gu:"જિલ્લો",kn:"ಜಿಲ್ಲೆ",ml:"ജില്ല"},
+    "Save profile":{hi:"प्रोफ़ाइल सहेजें",or:"ପ୍ରୋଫାଇଲ୍ ସେଭ୍ କରନ୍ତୁ",bn:"প্রোফাইল সংরক্ষণ করুন",te:"ప్రొఫైల్‌ను సేవ్ చేయండి",ta:"சுயவிவரத்தைச் சேமி",mr:"प्रोफाइल जतन करा",gu:"પ્રોફાઇલ સાચવો",kn:"ಪ್ರೊಫೈಲ್ ಉಳಿಸಿ",ml:"പ്രൊഫൈൽ സംരക്ഷിക്കുക"},
+    "Email":{hi:"ईमेल",or:"ଇମେଲ୍",bn:"ইমেল",te:"ఇమెయిల్",ta:"மின்னஞ்சல்",mr:"ईमेल",gu:"ઈમેઇલ",kn:"ಇಮೇಲ್",ml:"ഇമെയിൽ"},
+    "Password":{hi:"पासवर्ड",or:"ପାସୱାର୍ଡ",bn:"পাসওয়ার্ড",te:"పాస్‌వర్డ్",ta:"கடவுச்சொல்",mr:"पासवर्ड",gu:"પાસવર્ડ",kn:"ಪಾಸ್‌ವರ್ಡ್",ml:"പാസ്‌വേഡ്"},
+    "Cancel":{hi:"रद्द करें",or:"ବାତିଲ୍",bn:"বাতিল",te:"రద్దు చేయండి",ta:"ரத்துசெய்",mr:"रद्द करा",gu:"રદ કરો",kn:"ರದ್ದುಮಾಡಿ",ml:"റദ്ദാക്കുക"},
+    "Save Changes":{hi:"बदलाव सहेजें",or:"ପରିବର୍ତ୍ତନ ସେଭ୍ କରନ୍ତୁ",bn:"পরিবর্তন সংরক্ষণ করুন",te:"మార్పులను సేవ్ చేయండి",ta:"மாற்றங்களைச் சேமி",mr:"बदल जतन करा",gu:"ફેરફારો સાચવો",kn:"ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ",ml:"മാറ്റങ്ങൾ സംരക്ഷിക്കുക"},
+    "Download my data":{hi:"मेरा डेटा डाउनलोड करें",or:"ମୋ ତଥ୍ୟ ଡାଉନଲୋଡ୍ କରନ୍ତୁ",bn:"আমার ডেটা ডাউনলোড করুন",te:"నా డేటాను డౌన్‌లోడ్ చేయండి",ta:"எனது தரவைப் பதிவிறக்கு",mr:"माझा डेटा डाउनलोड करा",gu:"મારો ડેટા ડાઉનલોડ કરો",kn:"ನನ್ನ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",ml:"എന്റെ ഡാറ്റ ഡൗൺലോഡ് ചെയ്യുക"},
+    "App Language":{hi:"ऐप की भाषा",or:"ଆପ୍ ଭାଷା",bn:"অ্যাপের ভাষা",te:"యాప్ భాష",ta:"செயலி மொழி",mr:"अॅपची भाषा",gu:"એપની ભાષા",kn:"ಆ್ಯಪ್ ಭಾಷೆ",ml:"ആപ്പിന്റെ ഭാഷ"},
+    "Feedback, Suggestions & Complaints":{hi:"प्रतिक्रिया, सुझाव और शिकायतें",or:"ମତାମତ, ପ୍ରସ୍ତାବ ଓ ଅଭିଯୋଗ",bn:"মতামত, পরামর্শ ও অভিযোগ",te:"అభిప్రాయాలు, సూచనలు & ఫిర్యాదులు",ta:"கருத்துகள், பரிந்துரைகள் & புகார்கள்",mr:"अभिप्राय, सूचना व तक्रारी",gu:"પ્રતિસાદ, સૂચનો અને ફરિયાદો",kn:"ಪ್ರತಿಕ್ರಿಯೆ, ಸಲಹೆಗಳು ಮತ್ತು ದೂರುಗಳು",ml:"അഭിപ്രായങ്ങൾ, നിർദ്ദേശങ്ങൾ, പരാതികൾ"},
+    "Feedback & Support":{hi:"प्रतिक्रिया और सहायता",or:"ମତାମତ ଓ ସହାୟତା",bn:"মতামত ও সহায়তা",te:"అభిప్రాయం & సహాయం",ta:"கருத்து & ஆதரவு",mr:"अभिप्राय व मदत",gu:"પ્રતિસાદ અને સહાય",kn:"ಪ್ರತಿಕ್ರಿಯೆ ಮತ್ತು ಸಹಾಯ",ml:"അഭിപ്രായവും പിന്തുണയും"},
+    "Share an idea, suggestion, concern or complaint with the OneApp team.":{hi:"OneApp टीम के साथ अपना विचार, सुझाव, चिंता या शिकायत साझा करें।",or:"OneApp ଟିମ୍ ସହିତ ଆପଣଙ୍କ ଧାରଣା, ପ୍ରସ୍ତାବ, ଚିନ୍ତା କିମ୍ବା ଅଭିଯୋଗ ଜଣାନ୍ତୁ।",bn:"OneApp টিমের সঙ্গে আপনার ধারণা, পরামর্শ, উদ্বেগ বা অভিযোগ জানান।",te:"మీ ఆలోచన, సూచన, ఆందోళన లేదా ఫిర్యాదును OneApp బృందంతో పంచుకోండి.",ta:"உங்கள் யோசனை, பரிந்துரை, கவலை அல்லது புகாரை OneApp குழுவுடன் பகிரவும்.",mr:"तुमची कल्पना, सूचना, चिंता किंवा तक्रार OneApp टीमसोबत शेअर करा.",gu:"તમારો વિચાર, સૂચન, ચિંતા અથવા ફરિયાદ OneApp ટીમ સાથે શેર કરો.",kn:"ನಿಮ್ಮ ಆಲೋಚನೆ, ಸಲಹೆ, ಕಳವಳ ಅಥವಾ ದೂರನ್ನು OneApp ತಂಡದೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಿ.",ml:"നിങ്ങളുടെ ആശയം, നിർദ്ദേശം, ആശങ്ക അല്ലെങ്കിൽ പരാതി OneApp ടീമുമായി പങ്കിടുക."},
+    "Type":{hi:"प्रकार",or:"ପ୍ରକାର",bn:"ধরন",te:"రకం",ta:"வகை",mr:"प्रकार",gu:"પ્રકાર",kn:"ಪ್ರಕಾರ",ml:"തരം"},
+    "Suggestion":{hi:"सुझाव",or:"ପ୍ରସ୍ତାବ",bn:"পরামর্শ",te:"సూచన",ta:"பரிந்துரை",mr:"सूचना",gu:"સૂચન",kn:"ಸಲಹೆ",ml:"നിർദ്ദേശം"},
+    "Feedback":{hi:"प्रतिक्रिया",or:"ମତାମତ",bn:"মতামত",te:"అభిప్రాయం",ta:"கருத்து",mr:"अभिप्राय",gu:"પ્રતિસાદ",kn:"ಪ್ರತಿಕ್ರಿಯೆ",ml:"അഭിപ്രായം"},
+    "Idea":{hi:"विचार",or:"ଧାରଣା",bn:"ধারণা",te:"ఆలోచన",ta:"யோசனை",mr:"कल्पना",gu:"વિચાર",kn:"ಆಲೋಚನೆ",ml:"ആശയം"},
+    "Concern":{hi:"चिंता",or:"ଚିନ୍ତା",bn:"উদ্বেগ",te:"ఆందోళన",ta:"கவலை",mr:"चिंता",gu:"ચિંતા",kn:"ಕಳವಳ",ml:"ആശങ്ക"},
+    "Complaint":{hi:"शिकायत",or:"ଅଭିଯୋଗ",bn:"অভিযোগ",te:"ఫిర్యాదు",ta:"புகார்",mr:"तक्रार",gu:"ફરિયાદ",kn:"ದೂರು",ml:"പരാതി"},
+    "Subject":{hi:"विषय",or:"ବିଷୟ",bn:"বিষয়",te:"విషయం",ta:"பொருள்",mr:"विषय",gu:"વિષય",kn:"ವಿಷಯ",ml:"വിഷയം"},
+    "Message":{hi:"संदेश",or:"ବାର୍ତ୍ତା",bn:"বার্তা",te:"సందేశం",ta:"செய்தி",mr:"संदेश",gu:"સંદેશ",kn:"ಸಂದೇಶ",ml:"സന്ദേശം"},
+    "Submit securely":{hi:"सुरक्षित रूप से भेजें",or:"ସୁରକ୍ଷିତ ଭାବେ ଦାଖଲ କରନ୍ତୁ",bn:"নিরাপদে জমা দিন",te:"సురక్షితంగా సమర్పించండి",ta:"பாதுகாப்பாகச் சமர்ப்பி",mr:"सुरक्षितपणे सबमिट करा",gu:"સુરક્ષિત રીતે સબમિટ કરો",kn:"ಸುರಕ್ಷಿತವಾಗಿ ಸಲ್ಲಿಸಿ",ml:"സുരക്ഷിതമായി സമർപ്പിക്കുക"},
+    "Close":{hi:"बंद करें",or:"ବନ୍ଦ କରନ୍ତୁ",bn:"বন্ধ করুন",te:"మూసివేయండి",ta:"மூடு",mr:"बंद करा",gu:"બંધ કરો",kn:"ಮುಚ್ಚಿ",ml:"അടയ്ക്കുക"},
+    "My submissions":{hi:"मेरी प्रस्तुतियाँ",or:"ମୋ ଦାଖଲ",bn:"আমার জমা",te:"నా సమర్పణలు",ta:"எனது சமர்ப்பிப்புகள்",mr:"माझे सबमिशन",gu:"મારી રજૂઆતો",kn:"ನನ್ನ ಸಲ್ಲಿಕೆಗಳು",ml:"എന്റെ സമർപ്പണങ്ങൾ"},
+    "Your submitted reference numbers will appear here.":{hi:"आपके सबमिशन के संदर्भ नंबर यहाँ दिखाई देंगे।",or:"ଆପଣଙ୍କ ଦାଖଲର ରେଫରେନ୍ସ ନମ୍ବର ଏଠାରେ ଦେଖାଯିବ।",bn:"আপনার জমার রেফারেন্স নম্বর এখানে দেখা যাবে।",te:"మీ సమర్పణల రిఫరెన్స్ నంబర్లు ఇక్కడ కనిపిస్తాయి.",ta:"உங்கள் சமர்ப்பிப்பு குறிப்பு எண்கள் இங்கே தோன்றும்.",mr:"तुमचे संदर्भ क्रमांक येथे दिसतील.",gu:"તમારા રેફરન્સ નંબર અહીં દેખાશે.",kn:"ನಿಮ್ಮ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",ml:"നിങ്ങളുടെ റഫറൻസ് നമ്പറുകൾ ഇവിടെ കാണിക്കും."},
+    "Share Documents":{hi:"दस्तावेज़ साझा करें",or:"ଦଲିଲ ସେୟାର୍ କରନ୍ତୁ",bn:"নথি শেয়ার করুন",te:"పత్రాలను షేర్ చేయండి",ta:"ஆவணங்களைப் பகிரவும்",mr:"कागदपत्रे शेअर करा",gu:"દસ્તાવેજો શેર કરો",kn:"ದಾಖಲೆಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",ml:"രേഖകൾ പങ്കിടുക"},
+    "Invite Adult":{hi:"वयस्क को आमंत्रित करें",or:"ବୟସ୍କଙ୍କୁ ଆମନ୍ତ୍ରଣ କରନ୍ତୁ",bn:"প্রাপ্তবয়স্ককে আমন্ত্রণ",te:"పెద్దవారిని ఆహ్వానించండి",ta:"வயது வந்தவரை அழைக்கவும்",mr:"प्रौढ व्यक्तीला आमंत्रित करा",gu:"પુખ્ત વ્યક્તિને આમંત્રિત કરો",kn:"ವಯಸ್ಕರನ್ನು ಆಹ್ವಾನಿಸಿ",ml:"മുതിർന്നയാളെ ക്ഷണിക്കുക"},
+    "Add Minor":{hi:"नाबालिग जोड़ें",or:"ନାବାଳକ ଯୋଡନ୍ତୁ",bn:"নাবালক যোগ করুন",te:"మైనర్‌ను జోడించండి",ta:"சிறாரைச் சேர்க்கவும்",mr:"अल्पवयीन जोडा",gu:"સગીર ઉમેરો",kn:"ಅಪ್ರಾಪ್ತರನ್ನು ಸೇರಿಸಿ",ml:"പ്രായപൂർത്തിയാകാത്തയാളെ ചേർക്കുക"},
+    "Add Elder":{hi:"बुज़ुर्ग जोड़ें",or:"ବୟସ୍କଙ୍କୁ ଯୋଡନ୍ତୁ",bn:"বয়স্ককে যোগ করুন",te:"పెద్దవారిని జోడించండి",ta:"முதியவரைச் சேர்க்கவும்",mr:"ज्येष्ठ व्यक्ती जोडा",gu:"વડીલ ઉમેરો",kn:"ಹಿರಿಯರನ್ನು ಸೇರಿಸಿ",ml:"മുതിർന്നയാളെ ചേർക്കുക"},
+    "Refresh List":{hi:"सूची रीफ़्रेश करें",or:"ତାଲିକା ରିଫ୍ରେସ୍ କରନ୍ତୁ",bn:"তালিকা রিফ্রেশ করুন",te:"జాబితాను రిఫ్రెష్ చేయండి",ta:"பட்டியலைப் புதுப்பி",mr:"यादी रिफ्रेश करा",gu:"યાદી રિફ્રેશ કરો",kn:"ಪಟ್ಟಿ ರಿಫ್ರೆಶ್ ಮಾಡಿ",ml:"പട്ടിക പുതുക്കുക"},
+    "Family Vault":{hi:"परिवार की तिजोरी",or:"ପରିବାର ଭଲ୍ଟ",bn:"পারিবারিক ভল্ট",te:"కుటుంబ వాల్ట్",ta:"குடும்பப் பெட்டகம்",mr:"कुटुंब तिजोरी",gu:"કુટુંબ તિજોરી",kn:"ಕುಟುಂಬ ವಾಲ್ಟ್",ml:"കുടുംബ വോൾട്ട്"},
+    "Folders":{hi:"फ़ोल्डर",or:"ଫୋଲ୍ଡର",bn:"ফোল্ডার",te:"ఫోల్డర్లు",ta:"கோப்புறைகள்",mr:"फोल्डर",gu:"ફોલ્ડર",kn:"ಫೋಲ್ಡರ್‌ಗಳು",ml:"ഫോൾഡറുകൾ"},
+    "Download":{hi:"डाउनलोड",or:"ଡାଉନଲୋଡ୍",bn:"ডাউনলোড",te:"డౌన్‌లోడ్",ta:"பதிவிறக்கு",mr:"डाउनलोड",gu:"ડાઉનલોડ",kn:"ಡೌನ್‌ಲೋಡ್",ml:"ഡൗൺലോഡ്"},
+    "Share":{hi:"साझा करें",or:"ସେୟାର୍ କରନ୍ତୁ",bn:"শেয়ার করুন",te:"షేర్ చేయండి",ta:"பகிரவும்",mr:"शेअर करा",gu:"શેર કરો",kn:"ಹಂಚಿಕೊಳ್ಳಿ",ml:"പങ്കിടുക"},
+    "Delete":{hi:"हटाएँ",or:"ଡିଲିଟ୍",bn:"মুছুন",te:"తొలగించండి",ta:"நீக்கு",mr:"हटवा",gu:"કાઢી નાખો",kn:"ಅಳಿಸಿ",ml:"ഇല്ലാതാക്കുക"},
+    "Upload File":{hi:"फ़ाइल अपलोड करें",or:"ଫାଇଲ୍ ଅପଲୋଡ୍ କରନ୍ତୁ",bn:"ফাইল আপলোড করুন",te:"ఫైల్ అప్‌లోడ్ చేయండి",ta:"கோப்பைப் பதிவேற்று",mr:"फाइल अपलोड करा",gu:"ફાઇલ અપલોડ કરો",kn:"ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",ml:"ഫയൽ അപ്‌ലോഡ് ചെയ്യുക"},
+    "Add Document":{hi:"दस्तावेज़ जोड़ें",or:"ଦଲିଲ ଯୋଡନ୍ତୁ",bn:"নথি যোগ করুন",te:"పత్రాన్ని జోడించండి",ta:"ஆவணத்தைச் சேர்",mr:"कागदपत्र जोडा",gu:"દસ્તાવેજ ઉમેરો",kn:"ದಾಖಲೆ ಸೇರಿಸಿ",ml:"രേഖ ചേർക്കുക"},
+    "Document Type":{hi:"दस्तावेज़ का प्रकार",or:"ଦଲିଲ ପ୍ରକାର",bn:"নথির ধরন",te:"పత్రం రకం",ta:"ஆவண வகை",mr:"कागदपत्राचा प्रकार",gu:"દસ્તાવેજનો પ્રકાર",kn:"ದಾಖಲೆಯ ಪ್ರಕಾರ",ml:"രേഖയുടെ തരം"},
+    "Name":{hi:"नाम",or:"ନାମ",bn:"নাম",te:"పేరు",ta:"பெயர்",mr:"नाव",gu:"નામ",kn:"ಹೆಸರು",ml:"പേര്"},
+    "Phone Number":{hi:"फ़ोन नंबर",or:"ଫୋନ୍ ନମ୍ବର",bn:"ফোন নম্বর",te:"ఫోన్ నంబర్",ta:"தொலைபேசி எண்",mr:"फोन नंबर",gu:"ફોન નંબર",kn:"ಫೋನ್ ಸಂಖ್ಯೆ",ml:"ഫോൺ നമ്പർ"}
+  };
+  let activeLanguage = 'en';
+  const originals = new WeakMap();
+  const attrOriginals = new WeakMap();
+  function normalize(v){ return (v||'').replace(/\s+/g,' ').trim(); }
+  function translateTextNode(node){
+    if(!node || !node.parentElement || /^(SCRIPT|STYLE|NOSCRIPT|OPTION)$/.test(node.parentElement.tagName)) return;
+    if(!originals.has(node)) originals.set(node,node.nodeValue);
+    const original=originals.get(node), key=normalize(original);
+    const entry=phrases[key], translated=entry && entry[activeLanguage];
+    if(translated){const lead=(original.match(/^\s*/)||[''])[0],trail=(original.match(/\s*$/)||[''])[0];node.nodeValue=lead+translated+trail;}
+    else if(activeLanguage==='en') node.nodeValue=original;
+  }
+  function translateAttributes(root){
+    const els=[root,...(root.querySelectorAll?root.querySelectorAll('[placeholder],[title],[aria-label]'):[])].filter(Boolean);
+    els.forEach(el=>{
+      ['placeholder','title','aria-label'].forEach(attr=>{
+        if(!el.hasAttribute || !el.hasAttribute(attr)) return;
+        let values=attrOriginals.get(el); if(!values){values={};attrOriginals.set(el,values);}
+        if(!(attr in values)) values[attr]=el.getAttribute(attr);
+        const original=values[attr], entry=phrases[normalize(original)];
+        if(entry && entry[activeLanguage]) el.setAttribute(attr,entry[activeLanguage]);
+        else if(activeLanguage==='en') el.setAttribute(attr,original);
+      });
+    });
+  }
+  function translatePage(){
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    let n;while((n=walker.nextNode())) translateTextNode(n);
+    translateAttributes(document.body);
+    document.documentElement.lang=activeLanguage;
+  }
+  window.applyAppLanguage=function(language){
+    activeLanguage=phrases && language ? language : 'en';
+    if(activeLanguage!=='en' && !['hi','or','bn','te','ta','mr','gu','kn','ml'].includes(activeLanguage)) activeLanguage='en';
+    translatePage();
+  };
+  const observer=new MutationObserver(mutations=>{
+    if(!document.body) return;
+    for(const m of mutations){
+      if(m.type==='childList') m.addedNodes.forEach(node=>{
+        if(node.nodeType===Node.TEXT_NODE) translateTextNode(node);
+        else if(node.nodeType===Node.ELEMENT_NODE){
+          const w=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let t;
+          while((t=w.nextNode())) translateTextNode(t);
+          translateAttributes(node);
+        }
+      });
+      else if(m.type==='characterData') translateTextNode(m.target);
+    }
+  });
+  window.addEventListener('load',()=>{
+    if(window.currentUser && currentUser.user_metadata) window.applyAppLanguage(currentUser.user_metadata.app_language||'en');
+    observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+  });
+})();
+</script>
 
 </body>
 </html>
