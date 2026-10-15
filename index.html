@@ -2112,6 +2112,7 @@ clearPdfViewer();
 const viewerImg=document.getElementById('fileViewerImg');
 viewerImg.style.display='none';viewerImg.removeAttribute('src');
 viewerCtx={kind:'generic',id,path,actualPath,label:name,isImage,isPdf,isPassport,passportData,documentType:documentType||name};
+const editBtn=document.getElementById('editExistingImageBtn');if(editBtn)editBtn.style.display=isImage?'inline-block':'none';
 document.getElementById('fileViewerTitle').textContent=name;
 document.getElementById('rotateControls').style.display='none';
 document.getElementById('saveRotationBtn').style.display='none';
@@ -2153,7 +2154,7 @@ if(error)throw error;
 const file=new File([data],(c.label||'Document').replace(/[^a-z0-9._-]/gi,'_')+'.'+(getVaultFileExtension(c.actualPath||c.path)||'jpg'),{type:data.type||'image/jpeg'});
 window._oneAppEditExistingGeneric={id:c.id,path:c.path,actualPath:c.actualPath,label:c.label,isPassport:c.isPassport,passportData:c.passportData,documentType:c.documentType};
 window._oneAppCropForGenericUpload=true;
-window._oneAppEditExistingGeneric=true;
+window._oneAppEditExistingGenericActive=true;
 scanCurrentSide='front';scanDetectedQuad=false;
 closeModal('fileViewerModal');
 openScanCropFor(file);
@@ -3620,8 +3621,8 @@ async function scanAcceptCrop(){
     if(!cropped)throw new Error('The crop could not be created. Please adjust the corners and try again.');
     closeModal('scanCropModal');
     if(window._oneAppCropForGenericUpload){
-      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage,wasAadhaarBack=!!window._oneAppCropForAadhaarBack,wasEditExisting=!!window._oneAppEditExistingGeneric;
-      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;window._oneAppCropForAadhaarBack=false;window._oneAppEditExistingGeneric=false;
+      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage,wasAadhaarBack=!!window._oneAppCropForAadhaarBack,wasEditExisting=!!window._oneAppEditExistingGenericActive;
+      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;window._oneAppCropForAadhaarBack=false;window._oneAppEditExistingGenericActive=false;
       const croppedFile=new File([cropped],(wasVoter?'OneApp-Voter-ID-':(wasAadhaarImage||wasAadhaarBack)?'OneApp-Aadhaar-':'OneApp-Scanned-')+Date.now()+'.jpg',{type:'image/jpeg'});
       if(wasAadhaarBack){const resolveBack=window._oneAppAadhaarBackResolve;window._oneAppAadhaarBackResolve=null;if(resolveBack)resolveBack(croppedFile);return;}
       if(wasEditExisting){await saveEditedGenericImage(croppedFile);return;}
