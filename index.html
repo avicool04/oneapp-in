@@ -2640,16 +2640,24 @@ async function fileToCanvas(file,maxDim){
   c.getContext('2d').drawImage(bmp,0,0,w,h);
   return c;
 }
+async function aaCropBackSide(file){
+  return new Promise(function(resolve){
+    window._oneAppAadhaarBackResolve=resolve;window._oneAppCropForAadhaarBack=true;window._oneAppCropForGenericUpload=true;
+    window._oneAppCropForAadhaarImage=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;
+    scanCurrentSide='back';scanDetectedQuad=false;openScanCropFor(file);
+  });
+}
 async function aaOnImage(file){
   const st=document.getElementById('aaStatus');st.textContent='Reading photo…';
   try{
-    const c=await fileToCanvas(file,2400);
-    aaFile=null;aaFacts=null;
+    const c=await fileToCanvas(file,2400);aaFile=null;aaFacts=null;
     const bf=await askBackSide();
     if(bf){
-      const bc=await fileToCanvas(bf,2400);
+      st.textContent='Adjust the back-side edges and straighten if needed…';
+      const croppedBack=await aaCropBackSide(bf);if(!croppedBack)return;
+      const bc=await fileToCanvas(croppedBack,2400);
       aaFront=c;aaBack=bc;aaSide=composeCanvasFor('side',{front:c,back:bc});aaFull=composeCanvasFor('stack',{front:c,back:bc});
-      document.getElementById('aaCutInfo').textContent='📷 Front and back photos joined.';
+      document.getElementById('aaCutInfo').textContent='📷 Front and back photos cropped and joined.';
     }else{
       aaFull=aaSide=aaFront=aaBack=c;
       document.getElementById('aaCutInfo').textContent='📷 Single side saved as it is.';
@@ -3561,9 +3569,10 @@ async function scanAcceptCrop(){
     if(!cropped)throw new Error('The crop could not be created. Please adjust the corners and try again.');
     closeModal('scanCropModal');
     if(window._oneAppCropForGenericUpload){
-      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage;
-      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;
-      const croppedFile=new File([cropped],(wasVoter?'OneApp-Voter-ID-':wasAadhaarImage?'OneApp-Aadhaar-':'OneApp-Scanned-')+Date.now()+'.jpg',{type:'image/jpeg'});
+      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage,wasAadhaarBack=!!window._oneAppCropForAadhaarBack;
+      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;window._oneAppCropForAadhaarBack=false;
+      const croppedFile=new File([cropped],(wasVoter?'OneApp-Voter-ID-':(wasAadhaarImage||wasAadhaarBack)?'OneApp-Aadhaar-':'OneApp-Scanned-')+Date.now()+'.jpg',{type:'image/jpeg'});
+      if(wasAadhaarBack){const resolveBack=window._oneAppAadhaarBackResolve;window._oneAppAadhaarBackResolve=null;if(resolveBack)resolveBack(croppedFile);return;}
       if(wasAadhaarImage){tempFile=null;tempUploadType=null;await aaOnImage(croppedFile);return;}
       if(wasPassportPage2){await savePassportWithTwoPages(passportPage1File,croppedFile);passportPage1File=null;return;}
       tempFile=croppedFile;
