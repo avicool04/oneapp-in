@@ -1526,6 +1526,7 @@ const btn=document.getElementById('authBtn'),area=document.getElementById('userA
 if(s){
 currentUser=s.user;
 const m=s.user.user_metadata||{},full=m.full_name||m.name||(s.user.email?s.user.email.split('@')[0]:'User');
+if(window.applyAppLanguage) window.applyAppLanguage(m.app_language||'en');
 document.getElementById('userEmail').textContent=s.user.email||'';
 const img=document.getElementById('userAvatar'),fb=document.getElementById('userAvatarFallback'),pic=m.avatar_url||m.picture;
 if(pic){img.src=pic;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='flex';fb.textContent=(full.charAt(0)||'U').toUpperCase();}
