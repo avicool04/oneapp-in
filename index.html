@@ -4134,7 +4134,8 @@ async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
     if(!data||!data.signedUrl){alert('Could not open file');return;}
-    const kind=elderKindOf(path,'')==='other'?'aadhaar':elderKindOf(path,'');
+    const detectedKind=elderKindOf(path,'');
+    const kind=(detectedKind==='other'&&/aadhaar|aadhar/i.test(path||''))?'aadhaar':detectedKind;
     viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:(currentElderName||'Parent')+' '+(kind||'document'),isPdf:/\.pdf($|\?)/i.test(path||'')};
     document.getElementById('fileViewerTitle').textContent=(currentElderName||'Parent')+' — '+(elderFolderNames[kind]||kind||'Document');
     const isPdf=/\.pdf($|\?)/i.test(path||'')||/\.pdf($|\?)/i.test(data.signedUrl||'');
