@@ -922,6 +922,102 @@ body.dark .dropdown .email{color:var(--gray)}
 <div class="icon-tile" onclick="openSharedFolder('license')"><div class="icon-box">🚗<div id="svBadgeLicense" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>License</span></div>
 <div class="icon-tile" onclick="openSharedFolder('other')"><div class="icon-box">📁<div id="svBadgeOther" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Others</span></div>
 </div>
+<div class="icon-grid" id="svSpouseFolderGrid" style="display:none"><div class="icon-tile" onclick="openSpouseSharedFolder('aadhaar')">
+<div class="icon-box">
+<svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="svAadhaarBg" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#ffffff"/>
+<stop offset="100%" stop-color="#f8fafc"/>
+</linearGradient>
+<linearGradient id="svTricolor" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" stop-color="#FF9933"/>
+<stop offset="50%" stop-color="#FFFFFF"/>
+<stop offset="100%" stop-color="#138808"/>
+</linearGradient>
+<radialGradient id="svHologram" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
+<stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/>
+</radialGradient>
+<filter id="svShadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+</filter>
+</defs>
+<rect x="3" y="11" width="58" height="42" rx="4" fill="url(#svAadhaarBg)" stroke="#cbd5e1" stroke-width="0.8" filter="url(#svShadow)"/>
+<rect x="3" y="11" width="58" height="9" rx="4" fill="url(#svTricolor)" opacity="0.95"/>
+<rect x="3" y="17" width="58" height="3" fill="#138808" opacity="0.9"/>
+<circle cx="54" cy="15" r="3.5" fill="url(#svHologram)" stroke="#f59e0b" stroke-width="0.5"/>
+<path d="M54 13c0 .8-.7 1.5-1.5 1.5S51 13.8 51 13s.7-1.5 1.5-1.5 1.5.7 1.5 1.5z" fill="#f59e0b"/>
+<rect x="7" y="24" width="15" height="17" rx="2" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
+<circle cx="14.5" cy="29" r="3.5" fill="#94a3b8"/>
+<path d="M10.5 37c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" fill="#94a3b8"/>
+<rect x="25" y="25" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/>
+<rect x="25" y="29" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/>
+<rect x="25" y="33" width="19" height="2.5" rx="1" fill="#475569" opacity="0.7"/>
+<text x="25" y="41" font-size="3" font-family="monospace" fill="#1e293b" font-weight="700">XXXX XXXX XXXX</text>
+<rect x="47" y="33" width="11" height="11" fill="#1e293b"/>
+<rect x="48" y="34" width="3" height="3" fill="#fff"/>
+<rect x="52" y="34" width="3" height="3" fill="#fff"/>
+<rect x="48" y="38" width="3" height="3" fill="#fff"/>
+<rect x="52" y="38" width="3" height="3" fill="#fff"/>
+<rect x="48" y="42" width="3" height="3" fill="#fff"/>
+<rect x="52" y="42" width="3" height="3" fill="#fff"/>
+<rect x="3" y="51" width="58" height="1.5" fill="#ef4444"/>
+<rect x="3" y="11" width="58" height="42" rx="4" fill="url(#svHologram)" opacity="0.05"/>
+</svg>
+<div id="svSpouseAadhaarIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+</div>
+<span>Aadhaar</span>
+</div>
+<div class="icon-tile" onclick="openSpouseSharedFolder('pan')">
+<div class="icon-box">
+<svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="svPanBg" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#f5d0e8"/>
+<stop offset="50%" stop-color="#d4a5d4"/>
+<stop offset="100%" stop-color="#a594d4"/>
+</linearGradient>
+<radialGradient id="svPanHolo" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#667eea" stop-opacity="0.5"/>
+<stop offset="100%" stop-color="#764ba2" stop-opacity="0.3"/>
+</radialGradient>
+<filter id="svPanShadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+</filter>
+</defs>
+<rect x="3" y="11" width="58" height="42" rx="4" fill="url(#svPanBg)" stroke="#c4b5d4" stroke-width="0.8" filter="url(#svPanShadow)"/>
+<text x="7" y="17" font-size="2.5" font-family="Arial" fill="#1e3a8a" font-weight="700">आयकर</text>
+<text x="7" y="19.5" font-size="1.3" font-family="Arial" fill="#1e3a8a">INCOME TAX</text>
+<text x="38" y="17" font-size="2.5" font-family="Arial" fill="#1e3a8a" font-weight="700">भारत</text>
+<text x="40" y="19.5" font-size="1.3" font-family="Arial" fill="#1e3a8a">GOVT</text>
+<circle cx="32" cy="17" r="2.5" fill="#1e3a8a" opacity="0.7"/>
+<text x="7" y="25" font-size="2.5" font-family="Arial" fill="#1e293b" font-weight="600">AMIT</text>
+<text x="7" y="28.5" font-size="1.8" font-family="Arial" fill="#475569">DOB:01/12</text>
+<text x="7" y="32" font-size="1.5" font-family="Arial" fill="#1e293b" font-weight="600">PAN</text>
+<text x="7" y="36" font-size="3.5" font-family="monospace" fill="#1e293b" font-weight="700" letter-spacing="0.5">XXXXXXXXX</text>
+<path d="M7 40 Q11 37 15 40 Q19 43 23 40" stroke="#1e293b" stroke-width="0.7" fill="none"/>
+<text x="7" y="44" font-size="1.2" font-family="Arial" fill="#475569">SIGN</text>
+<rect x="45" y="24" width="11" height="11" fill="#1e293b" opacity="0.9"/>
+<rect x="46" y="25" width="3" height="3" fill="#fff"/>
+<rect x="50" y="25" width="3" height="3" fill="#fff"/>
+<rect x="46" y="29" width="3" height="3" fill="#fff"/>
+<rect x="50" y="29" width="3" height="3" fill="#fff"/>
+<rect x="46" y="33" width="3" height="3" fill="#fff"/>
+<rect x="50" y="33" width="3" height="3" fill="#fff"/>
+<rect x="45" y="37" width="11" height="11" rx="1.5" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
+<circle cx="50.5" cy="41" r="2.5" fill="#94a3b8"/>
+<path d="M48 45c0-1.2 1.1-2 2.5-2s2.5.8 2.5 2" fill="#94a3b8"/>
+<circle cx="50.5" cy="29" r="4" fill="url(#svPanHolo)"/>
+<circle cx="50.5" cy="29" r="2" fill="#fff" opacity="0.5"/>
+<rect x="3" y="51" width="58" height="1" fill="#1e3a8a" opacity="0.5"/>
+<rect x="3" y="11" width="58" height="42" rx="4" fill="url(#svPanHolo)" opacity="0.08"/>
+</svg>
+<div id="svSpousePanIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+</div>
+<span>PAN Card</span>
+</div>
+</div>
 </div>
 <div class="card" id="svFolderCard" style="display:none">
 <div class="card-header"><h3 id="svFolderTitle">Folder</h3>
@@ -2618,12 +2714,30 @@ alert(`✅ Family access updated for ${ok} document(s).`);
 closeModal('familyShareModal');
 }
 async function openSharedVault(userId,name){
-sharedVaultContext={kind:'adult',userId,name};
+const isSpouse=(familyMembers||[]).some(f=>f.status==='accepted'&&f.relation_type==='spouse'&&familyOtherUserId(f)===userId);
+sharedVaultContext={kind:isSpouse?'spouse':'adult',userId,name};
 document.getElementById('svTitle').textContent=name+"'s Shared Vault";
-document.getElementById('svSub').textContent='Folders for documents '+name+' shared with you (view / download / update / delete as permitted).';
+document.getElementById('svTitle').style.display=isSpouse?'none':'';
+document.getElementById('svSub').textContent=isSpouse?'':'Folders for documents '+name+' shared with you (view / download / update / delete as permitted).';
+document.getElementById('svSub').style.display=isSpouse?'none':'';
+const standardGrid=document.getElementById('svFolderGrid');
+const spouseGrid=document.getElementById('svSpouseFolderGrid');
+if(standardGrid)standardGrid.style.display=isSpouse?'none':'grid';
+if(spouseGrid)spouseGrid.style.display=isSpouse?'grid':'none';
+const folderCard=standardGrid&&standardGrid.closest('.card');
+if(folderCard){
+ const heading=folderCard.querySelector('.card-header');
+ const explanation=folderCard.querySelector(':scope > p.sub');
+ if(heading)heading.style.display=isSpouse?'none':'';
+ if(explanation)explanation.style.display=isSpouse?'none':'';
+}
 closeModal('familyManagerModal');
 showView('sharedVaultView');
 await loadSharedVault();
+}
+function openSpouseSharedFolder(folder){
+const row=(sharedVaultRowsCache||[]).find(s=>s.documents&&classifySharedDoc(s.documents)===folder);
+if(row)openSharedDocument(row.documents.id);
 }
 async function openSharedChildVault(childId,name,ownerId){
 sharedVaultContext={kind:'child',childId,name,ownerId};
@@ -2778,7 +2892,7 @@ async function loadSharedVault(){
   const {data,error}=await q;
   if(error){if(box)box.innerHTML='<p class="sub" style="color:var(--danger)">❌ '+escHtml(error.message)+'</p>';return;}
   let rows=(data||[]).filter(s=>s.documents&&!s.documents.deleted_at);
-  if(sharedVaultContext.kind==='adult')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
+  if(sharedVaultContext.kind==='adult'||sharedVaultContext.kind==='spouse')rows=rows.filter(s=>s.documents.user_id===sharedVaultContext.userId);
   else if(sharedVaultContext.kind==='child')rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
   sharedVaultRowsCache=rows;
   setSvFolderBadges(rows);
