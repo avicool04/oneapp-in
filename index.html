@@ -1104,23 +1104,16 @@ body.dark .dropdown .email{color:var(--gray)}
   <input type="file" id="childPhotoInput" accept="image/*" style="display:none" onchange="uploadChildPhoto(this.files[0])">
 </div>
 <div class="card">
-<div class="card-header"><h3>Child Documents</h3></div>
-<p class="sub">Tap a saved Aadhaar or birth certificate to open it. Tap an empty icon to upload.</p>
 <div class="icon-grid">
-<div id="childAadhaarTile" class="icon-tile" role="button" tabindex="0" aria-label="Aadhaar. Tap to upload or view." onclick="openChildDocument('aadhaar')" onkeydown="activateChildTile(event,'aadhaar')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="chAadhaarBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f8fafc"/></linearGradient><linearGradient id="chTricolor" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF9933"/><stop offset="50%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#138808"/></linearGradient><radialGradient id="chHologram" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/></radialGradient></defs><rect x="3" y="11" width="58" height="42" rx="4" fill="url(#chAadhaarBg)" stroke="#cbd5e1" stroke-width="0.8"/><rect x="3" y="11" width="58" height="9" rx="4" fill="url(#chTricolor)" opacity="0.95"/><rect x="3" y="17" width="58" height="3" fill="#138808" opacity="0.9"/><circle cx="54" cy="15" r="3.5" fill="url(#chHologram)" stroke="#f59e0b" stroke-width="0.5"/><rect x="7" y="24" width="15" height="17" rx="2" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/><circle cx="14.5" cy="29" r="3.5" fill="#94a3b8"/><path d="M10.5 37c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" fill="#94a3b8"/><rect x="25" y="25" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/><rect x="25" y="29" width="27" height="2.5" rx="1" fill="#475569" opacity="0.7"/><rect x="25" y="33" width="19" height="2.5" rx="1" fill="#475569" opacity="0.7"/><text x="25" y="41" font-size="3" font-family="monospace" fill="#1e293b" font-weight="700">XXXX XXXX XXXX</text><rect x="47" y="33" width="11" height="11" fill="#1e293b"/><rect x="48" y="34" width="3" height="3" fill="#fff"/><rect x="52" y="34" width="3" height="3" fill="#fff"/><rect x="48" y="38" width="3" height="3" fill="#fff"/><rect x="52" y="38" width="3" height="3" fill="#fff"/><rect x="3" y="51" width="58" height="1.5" fill="#ef4444"/></svg><div id="childAadhaarIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Aadhaar</span></div>
-<div id="childBirthCertTile" class="icon-tile" role="button" tabindex="0" aria-label="Birth certificate. Tap to upload or view." onclick="openChildDocument('birth_cert')" onkeydown="activateChildTile(event,'birth_cert')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bcBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fffbeb"/><stop offset="100%" stop-color="#fef3c7"/></linearGradient></defs><rect x="8" y="6" width="48" height="52" rx="5" fill="url(#bcBg)" stroke="#f59e0b" stroke-width="1.5"/><rect x="12" y="10" width="40" height="44" rx="3" fill="none" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="2 1"/><circle cx="32" cy="16" r="3.5" fill="#f59e0b"/><circle cx="32" cy="16" r="2" fill="#fffbeb"/><rect x="18" y="23" width="28" height="2" rx="1" fill="#b45309"/><rect x="16" y="28" width="32" height="1.8" rx="0.9" fill="#d97706" opacity="0.7"/><rect x="16" y="32" width="26" height="1.8" rx="0.9" fill="#d97706" opacity="0.7"/><rect x="16" y="36" width="20" height="1.8" rx="0.9" fill="#d97706" opacity="0.7"/><ellipse cx="23" cy="45" rx="2.5" ry="3.5" fill="#f59e0b" opacity="0.85"/><circle cx="21" cy="40.5" r="0.8" fill="#f59e0b"/><circle cx="23" cy="40" r="0.8" fill="#f59e0b"/><circle cx="25" cy="40.8" r="0.8" fill="#f59e0b"/><circle cx="43" cy="45" r="4.5" fill="#f59e0b"/><circle cx="43" cy="45" r="3" fill="#fbbf24"/><path d="M41 48l-2 5 4-2 4 2-2-5" fill="#d97706"/></svg><div id="childBirthCertIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Birth Cert</span></div>
-<div class="icon-tile" onclick="triggerChildUpload('vaccine')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="vacBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ecfdf5"/><stop offset="100%" stop-color="#d1fae5"/></linearGradient></defs><rect x="6" y="6" width="52" height="52" rx="14" fill="url(#vacBg)" stroke="#10b981" stroke-width="1.5"/><path d="M46 14l4 4-3 3-4-4 3-3z" fill="#059669"/><path d="M44 16l-5 5" stroke="#047857" stroke-width="2.5" stroke-linecap="round"/><path d="M36 21l7 7" stroke="#047857" stroke-width="2.5" stroke-linecap="round"/><path d="M35 22l7 7-14 14-7-7 14-14z" fill="#ffffff" stroke="#10b981" stroke-width="1.8"/><path d="M31 26l7 7-6 6-7-7 6-6z" fill="#34d399"/><path d="M31 31l2-2M28 34l2-2M25 37l2-2" stroke="#059669" stroke-width="1.5"/><path d="M21 36l-3 3" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/><path d="M18 39l-6 6" stroke="#64748b" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="49" r="2.5" fill="#10b981"/><path d="M10 45l1.5 2.5h-3L10 45z" fill="#10b981"/></svg></div><span>Vaccine</span></div>
-<div class="icon-tile" onclick="triggerChildUpload('other')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="folBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#3730a3"/></linearGradient><linearGradient id="folFront" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#4338ca"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#folBg)"/><rect x="14" y="16" width="36" height="20" rx="2" fill="#ffffff" opacity="0.95"/><rect x="18" y="20" width="20" height="2" rx="1" fill="#94a3b8"/><rect x="18" y="24" width="28" height="2" rx="1" fill="#cbd5e1"/><path d="M6 26c0-2 1.5-3.6 3.5-3.9l17-2.1c1.2-.1 2.4.4 3 1.4l2.5 4.6H54c2.2 0 4 1.8 4 4v16c0 2.2-1.8 4-4 4H10c-2.2 0-4-1.8-4-4V26z" fill="url(#folFront)"/><circle cx="32" cy="38" r="3" fill="#ffffff" opacity="0.8"/></svg></div><span>Other</span></div>
+<div id="childAadhaarTile" class="icon-tile" role="button" tabindex="0" aria-label="Aadhaar. Tap to upload or view." onclick="openChildDocument('aadhaar')" onkeydown="activateChildTile(event,'aadhaar')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="AadhaarBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f8fafc"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#AadhaarBg)" stroke="#cbd5e1" stroke-width="1.5"/><rect x="14" y="25" width="36" height="18" rx="2" fill="#fff" opacity=".92"/><path d="M19 31h26M19 36h20" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" opacity=".65"/></svg><div id="childAadhaarIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Aadhaar</span></div>
+<div id="childPanTile" class="icon-tile" role="button" tabindex="0" aria-label="PAN Card. Tap to upload or view." onclick="openChildDocument('pan')" onkeydown="activateChildTile(event,'pan')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="PanBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fce7f3"/><stop offset="100%" stop-color="#f5d0e8"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#PanBg)" stroke="#c4b5d4" stroke-width="1.5"/><rect x="14" y="25" width="36" height="18" rx="2" fill="#fff" opacity=".92"/><path d="M19 31h26M19 36h20" stroke="#c4b5d4" stroke-width="2" stroke-linecap="round" opacity=".65"/></svg><div id="childPanIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>PAN Card</span></div>
+<div id="childVoterTile" class="icon-tile" role="button" tabindex="0" aria-label="Voter Card. Tap to upload or view." onclick="openChildDocument('voter')" onkeydown="activateChildTile(event,'voter')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="VoterBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#dbeafe"/><stop offset="100%" stop-color="#bfdbfe"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#VoterBg)" stroke="#60a5fa" stroke-width="1.5"/><rect x="14" y="25" width="36" height="18" rx="2" fill="#fff" opacity=".92"/><path d="M19 31h26M19 36h20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity=".65"/></svg><div id="childVoterIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Voter Card</span></div>
+<div id="childMedicalTile" class="icon-tile" role="button" tabindex="0" aria-label="Medical. Tap to upload or view." onclick="openChildDocument('medical')" onkeydown="activateChildTile(event,'medical')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="MedicalBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#dcfce7"/><stop offset="100%" stop-color="#a7f3d0"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#MedicalBg)" stroke="#10b981" stroke-width="1.5"/><rect x="14" y="25" width="36" height="18" rx="2" fill="#fff" opacity=".92"/><path d="M19 31h26M19 36h20" stroke="#10b981" stroke-width="2" stroke-linecap="round" opacity=".65"/></svg><div id="childMedicalIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Medical</span></div>
+<div id="childOtherTile" class="icon-tile" role="button" tabindex="0" aria-label="Others. Tap to upload or view." onclick="openChildDocument('other')" onkeydown="activateChildTile(event,'other')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="OtherBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ede9fe"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient></defs><path d="M8 18c0-2.2 1.8-4 4-4h14l5 5h21c2.2 0 4 1.8 4 4v22c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V18z" fill="url(#OtherBg)" stroke="#8b5cf6" stroke-width="1.5"/><rect x="14" y="25" width="36" height="18" rx="2" fill="#fff" opacity=".92"/><path d="M19 31h26M19 36h20" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" opacity=".65"/></svg><div id="childOtherIndicator" class="status-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div></div><span>Others</span></div>
 </div>
+<div id="childActiveDocs" style="display:none"></div>
 </div>
-<div class="card">
-<div class="card-header"><h3>Vaccine &amp; Other Documents</h3><span class="badge badge-ok">Private bucket</span></div>
-<div id="childActiveDocs"><p class="sub">Loading…</p></div>
-</div>
-<div class="card" id="childDupCard" style="display:none">
-<div class="card-header"><h3>Duplicate uploads — clean up</h3><span class="badge badge-warn">Extra copies</span></div>
-<div id="childDupDocs"></div>
-</div>
+<div class="card" id="childDupCard" style="display:none"><div id="childDupDocs"></div></div>
 </div>
 <div id="childAaModal" class="modal-overlay"><div class="modal">
 <h3 id="childAaTitle">Upload Aadhaar</h3>
@@ -2137,20 +2130,23 @@ const fl=document.getElementById('elderAadhaarFlipLabel');if(fl)fl.textContent=e
 openModal('fileViewerModal');
 }
 let childDocs=[],childAaCache={side:null,front:null,back:null,full:null},childAaRow=null,childAaFile=null;
-const TYPE_LABELS={aadhaar:'Aadhaar Card',birth_cert:'Birth Certificate',vaccine:'Vaccination Sheet',other:'Other Document'};
+const TYPE_LABELS={aadhaar:'Aadhaar Card',pan:'PAN Card',voter:'Voter Card',medical:'Medical Document',other:'Other Document',birth_cert:'Other Document',vaccine:'Medical Document'};
 function parseTypeFromUrl(url){
 const seg=(url||'').split('/').pop()||'';
 const prefix=(seg.split('-')[0]||'').toLowerCase();
-if(prefix.includes('aadhaar'))return 'aadhaar';
-if(prefix.includes('birth'))return 'birth_cert';
-return prefix||'other';
+if(prefix.includes('aadhaar')||prefix.includes('aadhar'))return 'aadhaar';
+if(prefix.includes('pan'))return 'pan';
+if(prefix.includes('voter'))return 'voter';
+if(prefix.includes('medical')||prefix.includes('vaccine'))return 'medical';
+if(prefix.includes('birth'))return 'other';
+return ['pan','voter','medical','other'].includes(prefix)?prefix:'other';
 }
 function setChildDocTileStatus(type,saved){
-const isAadhaar=type==='aadhaar';
-const badge=document.getElementById(isAadhaar?'childAadhaarIndicator':'childBirthCertIndicator');
-const tile=document.getElementById(isAadhaar?'childAadhaarTile':'childBirthCertTile');
-if(badge)badge.classList.toggle('show',saved);
-if(tile)tile.setAttribute('aria-label',`${isAadhaar?'Aadhaar':'Birth certificate'} ${saved?'saved. Tap to view.':'not saved. Tap to upload.'}`);
+const map={aadhaar:['childAadhaarIndicator','childAadhaarTile','Aadhaar'],pan:['childPanIndicator','childPanTile','PAN Card'],voter:['childVoterIndicator','childVoterTile','Voter Card'],medical:['childMedicalIndicator','childMedicalTile','Medical'],other:['childOtherIndicator','childOtherTile','Others']};
+const m=map[type];if(!m)return;
+const badge=document.getElementById(m[0]),tile=document.getElementById(m[1]);
+if(badge)badge.classList.toggle('show',!!saved);
+if(tile)tile.setAttribute('aria-label',m[2]+' '+(saved?'saved. Tap to view.':'not saved. Tap to upload.'));
 }
 function activateChildTile(event,type){
 if(event.key==='Enter'||event.key===' '){event.preventDefault();openChildDocument(type);}
@@ -2164,33 +2160,16 @@ return viewChildFile(row.id,path,ext,type);
 }
 async function renderChildDocs(){
 const list=document.getElementById('childActiveDocs');
-setChildDocTileStatus('aadhaar',childDocs.some(r=>parseTypeFromUrl(r.file_url)==='aadhaar')||!!childAaRow);
-setChildDocTileStatus('birth_cert',childDocs.some(r=>parseTypeFromUrl(r.file_url)==='birth_cert'));
-if(!childDocs.length){list.innerHTML='<p class="sub">No documents uploaded yet. Use the tiles above.</p>';return;}
-const types=['aadhaar','birth_cert','vaccine','other'];
-let html='';const dups=[];
+const types=['aadhaar','pan','voter','medical','other'];
+types.forEach(t=>setChildDocTileStatus(t,childDocs.some(r=>parseTypeFromUrl(r.file_url)===t)));
+if(!childDocs.length){childAaRow=null;return;}
 for(const t of types){
 const rows=childDocs.filter(r=>parseTypeFromUrl(r.file_url)===t);
 if(!rows.length)continue;
-const active=rows[0];
-for(let i=1;i<rows.length;i++)dups.push(rows[i]);
-if(t==='aadhaar'){
-childAaRow=active;
-await loadChildAaCache();
-continue;
-}else if(t==='birth_cert'){
-continue;
-}else{
-const fname=active.file_url.split('/').pop();
-const ext=fname.split('.').pop().toLowerCase();
-html+=`<div class="doc-row"><div class="doc-info"><h4>${TYPE_LABELS[t]}</h4><p>${fname} • ${new Date(active.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="viewChildFile('${active.id}','${active.file_url}','${ext}','${t}')">View</button></div></div>`;
+if(t==='aadhaar'){childAaRow=rows[0];await loadChildAaCache();}
 }
-}
-list.innerHTML=html||'<p class="sub">No vaccine or other documents yet.</p>';
-if(dups.length){
-document.getElementById('childDupCard').style.display='block';
-document.getElementById('childDupDocs').innerHTML=dups.map(d=>{const fname=d.file_url.split('/').pop();const ext=fname.split('.').pop().toLowerCase();return `<div class="doc-row"><div class="doc-info"><h4>${TYPE_LABELS[parseTypeFromUrl(d.file_url)]||'Document'} (extra)</h4><p>${fname} • ${new Date(d.created_at).toLocaleDateString()}</p></div><div style="display:flex;gap:.3rem"><button class="btn btn-outline btn-sm" onclick="viewChildFile('${d.id}','${d.file_url}','${ext}','${parseTypeFromUrl(d.file_url)}')">View</button><button class="btn btn-danger btn-sm" onclick="deleteChildOther('${d.id}','${d.file_url}')">Delete</button></div></div>`;}).join('');
-}
+if(list)list.innerHTML='';
+const dup=document.getElementById('childDupCard');if(dup)dup.style.display='none';
 }
 async function loadChildAaCache(){
 const fm=(familyMembers||[]).find(f=>f.id===currentChildId);
@@ -2761,8 +2740,8 @@ function classifySharedDoc(d){
 function setSvFolderBadges(rows){
   const counts={aadhaar:0,pan:0,passport:0,license:0,other:0};
   (rows||[]).forEach(s=>{const k=classifySharedDoc(s.documents);if(counts[k]!=null)counts[k]++;});
-  const map={aadhaar:'svBadgeAadhaar',pan:'svBadgePan',passport:'svBadgePassport',license:'svBadgeLicense',other:'svBadgeOther'};
-  Object.keys(map).forEach(k=>{const el=document.getElementById(map[k]);if(el)el.classList.toggle('show',counts[k]>0);});
+  const map={aadhaar:['svBadgeAadhaar','svSpouseAadhaarIndicator'],pan:['svBadgePan','svSpousePanIndicator'],passport:['svBadgePassport'],license:['svBadgeLicense'],other:['svBadgeOther']};
+  Object.keys(map).forEach(k=>map[k].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('show',counts[k]>0);}));
 }
 function openSharedFolder(folder){
   sharedVaultFolder=folder;
@@ -3819,10 +3798,10 @@ async function uploadChildPhoto(file){
 }
 async function loadChildDocs(){
   const list=document.getElementById('childActiveDocs');
-  list.innerHTML='<p class="sub">Loading…</p>';
+  if(list)list.innerHTML='';
   document.getElementById('childDupCard').style.display='none';
   childDocs=[];childAaRow=null;childAaCache={side:null,front:null,back:null,full:null};
-  setChildDocTileStatus('aadhaar',false);setChildDocTileStatus('birth_cert',false);
+  ['aadhaar','pan','voter','medical','other'].forEach(t=>setChildDocTileStatus(t,false));
   if(!currentUser||!currentChildId)return;
   const fm=(familyMembers||[]).find(f=>f.id===currentChildId);
   const owner=currentChildOwnerId||(fm&&fm.owner_id)||currentUser.id;
