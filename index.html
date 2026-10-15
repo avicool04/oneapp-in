@@ -484,7 +484,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <div class="card" style="padding:.7rem 1rem;margin-bottom:.75rem">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap">
 <strong style="font-size:.78rem">Site last updated</strong>
-<span id="siteLastUpdated" style="font-size:.78rem;color:var(--gray)">Live site loaded</span>
+<span id="siteLastUpdated" style="font-size:.78rem;color:var(--gray)">Checking…</span>
 </div>
 </div>
 <div class="card">
@@ -3342,24 +3342,20 @@ async function scanFinishGuided(){
 window.addEventListener('resize',()=>{if(document.getElementById('scanCropModal').classList.contains('show'))positionScanCorners();});
 
 // ===== SITE LAST UPDATED =====
-// Do not leave the label stuck on "Checking…" if the host does not answer HEAD requests.
 async function updateSiteLastUpdated(){
   const el=document.getElementById('siteLastUpdated');
   if(!el)return;
-  el.textContent='Live site loaded (timestamp unavailable)';
-  const controller=new AbortController();
-  const timeout=window.setTimeout(()=>controller.abort(),2500);
+  let lastModified='';
   try{
-    const r=await fetch(window.location.href,{method:'HEAD',cache:'no-store',signal:controller.signal});
-    const lastModified=r.headers.get('last-modified')||'';
-    const d=new Date(lastModified);
-    if(lastModified&&!isNaN(d.getTime())){
-      el.textContent=d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    }
-  }catch(e){
-    // Keep the immediate fallback message; HEAD may be unsupported or slow on static hosts.
-  }finally{
-    window.clearTimeout(timeout);
+    const r=await fetch(window.location.href,{method:'HEAD',cache:'no-store'});
+    lastModified=r.headers.get('last-modified')||'';
+  }catch(e){}
+  if(!lastModified)lastModified=document.lastModified||'';
+  const d=new Date(lastModified);
+  if(!isNaN(d.getTime())){
+    el.textContent=d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }else{
+    el.textContent='Unavailable';
   }
 }
 updateSiteLastUpdated();
