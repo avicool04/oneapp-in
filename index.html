@@ -2108,7 +2108,7 @@ if(act==='share'){
 if(p.share===false){alert('Share permission is not granted.');return;}
 if(/aadhaar|aadhar/i.test((c.document?.document_type||'')+' '+(c.document?.document_name||'')+' '+(c.path||''))){
  closeModal('fileViewerModal');
- (async()=>{try{let cache=await loadElderAaBundle(c.path);if(!cache||!cache.front)cache=await loadElderAaCacheFromPath(c.path);if(!cache||!cache.front)throw new Error('Aadhaar preview could not be prepared');sharedAaCache={side:cache.side||null,front:cache.front||null,back:cache.back||null,full:cache.full||null,pdfBlob:cache.pdfBlob||null};shareContext={kind:'shared',id:c.id,path:c.path};openModal('shareModal');}catch(e){alert('Could not prepare Aadhaar sharing: '+e.message);}})();
+ (async()=>{try{let cache=await loadSharedAadhaarBundle(c.path);if(!cache||!cache.front)throw new Error('Aadhaar preview could not be prepared');shareContext={kind:'shared',id:c.id,path:c.path};openModal('shareModal');}catch(e){alert('Could not prepare Aadhaar sharing: '+e.message);}})();
 }else shareSharedDocument(c);
 }
 if(act==='familyShare'){if(p.share===false)alert('Share permission is not granted.');else shareSharedDocumentById(c.id);}
@@ -2906,6 +2906,34 @@ const {data,error}=await sb.from('document_shares').select('*,documents(*)').eq(
 if(error||!data||!data.documents||data.documents.deleted_at)return null;
 return data;
 }
+async function loadSharedAadhaarBundle(path){
+  if(/\/aadhaar-full\.jpg$/i.test(String(path||''))){
+    const base=String(path).replace(/aadhaar-full\.jpg$/i,'');
+    const getImage=async name=>{
+      try{
+        const{data,error}=await sb.storage.from('vault').download(base+name);
+        if(error||!data)return null;
+        const bmp=await createImageBitmap(data),canvas=document.createElement('canvas');
+        canvas.width=bmp.width;canvas.height=bmp.height;
+        canvas.getContext('2d').drawImage(bmp,0,0);
+        return canvas;
+      }catch(e){return null;}
+    };
+    let pdfBlob=null;
+    try{const{data,error}=await sb.storage.from('vault').download(base+'aadhaar-original.pdf');if(!error&&data)pdfBlob=data;}catch(e){}
+    const[side,front,back,full]=await Promise.all([
+      getImage('aadhaar-side.jpg'),getImage('aadhaar-front.jpg'),
+      getImage('aadhaar-back.jpg'),getImage('aadhaar-full.jpg')
+    ]);
+    sharedAaCache={side,front,back,full,pdfBlob};
+    return sharedAaCache;
+  }
+  let cache=await loadElderAaBundle(path);
+  if(!cache||!cache.front)cache=await loadElderAaCacheFromPath(path);
+  sharedAaCache={side:cache.side||null,front:cache.front||null,back:cache.back||null,full:cache.full||null,pdfBlob:cache.pdfBlob||null};
+  return sharedAaCache;
+}
+
 async function openSharedDocument(docId){
 const record=await getSharedRecord(docId); if(!record){alert('Access is no longer available.');return;}
 const d=record.documents,p=record.permissions||{};
@@ -2924,7 +2952,7 @@ try{
   const isAa=/aadhaar|aadhar/i.test((d.document_type||'')+' '+(d.document_name||'')+' '+(d.file_url||''));
   if(isAa){
     let cache=null;
-    try{cache=await loadElderAaBundle(d.file_url);if(!cache||!cache.front)cache=await loadElderAaCacheFromPath(d.file_url);}catch(e){cache=null;}
+    try{cache=await loadSharedAadhaarBundle(d.file_url);}catch(e){cache=null;}
     if(cache&&cache.front){
       sharedAaCache={side:cache.side||null,front:cache.front||null,back:cache.back||null,full:cache.full||null,pdfBlob:cache.pdfBlob||null};
       elderFlipCache={front:sharedAaCache.front,back:sharedAaCache.back};
@@ -2986,8 +3014,8 @@ const s=await getSharedRecord(docId);if(!s)return alert('Access is no longer ava
 if(s.permissions?.share===false)return alert('Share permission is not granted.');
 const d=s.documents;
 if((d.document_type||'').toLowerCase().includes('aadhaar') || (d.file_url||'').includes('/aadhaar-')){
-const loaded=await loadSharedAaCache(d.file_url);
-if(!loaded)return alert('Aadhaar share versions are not available.');
+const loaded=await loadSharedAadhaarBundle(d.file_url);
+if(!loaded||(!loaded.front&&!loaded.full&&!loaded.side))return alert('Aadhaar share versions are not available.');
 shareContext={kind:'shared',docId:d.id,ownerId:d.user_id,path:d.file_url};
 closeModal('fileViewerModal');openModal('shareModal');return;
 }
