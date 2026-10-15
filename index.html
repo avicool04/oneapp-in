@@ -1043,6 +1043,9 @@ body.dark .dropdown .email{color:var(--gray)}
 <div class="rotate-controls" id="rotateControls" style="display:none;justify-content:flex-end;align-items:center">
 <button class="btn btn-outline btn-sm" id="saveRotationBtn" onclick="rotateAndSaveImage()" title="Rotate 90° and save" aria-label="Rotate 90 degrees and save" style="width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:1.35rem;line-height:1">↻</button>
 </div>
+<div id="elderAadhaarFlipControls" style="display:none;justify-content:center;gap:.5rem;margin:.35rem 0">
+<button class="btn btn-outline btn-sm" onclick="flipElderAadhaar()">↻ Flip to <span id="elderAadhaarFlipLabel">Back</span></button>
+</div>
 <div id="fileViewerStage" style="width:100%;display:flex;justify-content:center;align-items:center;overflow:auto">
 <img id="fileViewerImg" class="viewer-img" alt="document">
 <div id="fileViewerPdf" class="pdf-viewer-pages" style="display:none" aria-label="PDF document pages"></div>
@@ -2396,7 +2399,8 @@ return bestY;
 }
 function cardCanvas(s){const W=1000,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const r=Math.min(W/s.width,H/s.height),w=Math.round(s.width*r),h=Math.round(s.height*r);ctx.drawImage(s,Math.round((W-w)/2),Math.round((H-h)/2),w,h);return c;}
 function composeCanvasFor(layout,cache){
-if(!cache.front||!cache.back)return null;
+if(!cache.front)return null;
+if(!cache.back){if(layout==='side'&&cache.side)return cache.side;return cardCanvas(cache.front);}
 if(layout==='side'&&cache.side)return cache.side;
 const a=cardCanvas(cache.front),b=cardCanvas(cache.back),c=document.createElement('canvas'),ctx=c.getContext('2d');
 if(layout==='stack'){c.width=a.width;c.height=a.height+b.height+24;ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(a,0,0);ctx.drawImage(b,0,a.height+24);}
@@ -4075,18 +4079,16 @@ async function shareElderDocumentFormats(c){
   const isPdf=c.isPdf===true || /\.pdf($|\?)/i.test(path) || (!looksImage && isAa);
   if(isAa){
     const bundle=await loadElderAaBundle(path);
-    if(bundle&&bundle.front&&bundle.back){
-      // two sides (UIDAI PDF gives 5 options, two photos give 4)
-      elderAaCache=bundle;shareContext={kind:'elder',id:c.id,path:path};
-      openModal('shareModal');return;
-    }
-    if(!bundle&&isPdf){alert('This Aadhaar was saved as a plain PDF. Open the Aadhaar folder, choose Update and upload it again to get all sharing options.');return;}
-    // single side or an older single picture: same as PAN (JPG or PDF)
-    const single=(bundle&&bundle.frontPath)||path;
-    viewerCtx={kind:'generic',id:c.id,path:single,actualPath:single,label:c.label||'Aadhaar',isImage:true,isPdf:false,documentType:'Aadhaar'};
-    document.getElementById('genericShareImageOptions').style.display='block';
-    document.getElementById('genericSharePdfOptions').style.display='none';
-    openModal('genericShareModal');
+    try{
+      const cache=bundle||await loadElderAaCacheFromPath(path);
+      if(cache&&cache.front){
+        elderAaCache=cache;
+        shareContext={kind:'elder',id:c.id,path:path};
+        openModal('shareModal');
+        return;
+      }
+    }catch(e){console.warn('Aadhaar share preparation failed',e);}
+    alert('Could not prepare this Aadhaar for sharing. Please open the Aadhaar folder and upload the card again.');
     return;
   }
   // PAN / Medical
@@ -4099,6 +4101,16 @@ async function shareElderDocumentFormats(c){
 
 
 
+async let elderFlipCache=null,elderFlipSide='front';
+async function flipElderAadhaar(){
+  if(!elderFlipCache)return;
+  if(!elderFlipCache.back){alert('Only one side is saved for this Aadhaar. Upload the back side to enable flipping.');return;}
+  elderFlipSide=elderFlipSide==='front'?'back':'front';
+  const c=elderFlipCache[elderFlipSide],img=document.getElementById('fileViewerImg');
+  if(img&&c)img.src=c.toDataURL('image/jpeg',0.92);
+  const label=document.getElementById('elderAadhaarFlipLabel');
+  if(label)label.textContent=elderFlipSide==='front'?'Back':'Front';
+}
 async function viewElderDoc(id,path){
   try{
     const{data}=await sb.storage.from('vault').createSignedUrl(path,3600);
@@ -4107,6 +4119,26 @@ async function viewElderDoc(id,path){
     viewerCtx={kind:'elderfile',id:id,path:path,elderKind:kind,label:(currentElderName||'Parent')+' '+(kind||'document'),isPdf:/\.pdf($|\?)/i.test(path||'')};
     document.getElementById('fileViewerTitle').textContent=(currentElderName||'Parent')+' — '+(elderFolderNames[kind]||kind||'Document');
     const isPdf=/\.pdf($|\?)/i.test(path||'')||/\.pdf($|\?)/i.test(data.signedUrl||'');
+    const flipControls=document.getElementById('elderAadhaarFlipControls');
+    if(flipControls)flipControls.style.display='none';
+    elderFlipCache=null;elderFlipSide='front';
+    if(kind==='aadhaar'){
+      try{
+        elderFlipCache=await loadElderAaBundle(path);
+        if(!elderFlipCache||!elderFlipCache.front)elderFlipCache=await loadElderAaCacheFromPath(path);
+      }catch(e){elderFlipCache=null;}
+      if(elderFlipCache&&elderFlipCache.front){
+        clearPdfViewer();
+        const pdfBox=document.getElementById('fileViewerPdf');
+        if(pdfBox){pdfBox.style.display='none';pdfBox.innerHTML='';}
+        const img=document.getElementById('fileViewerImg');
+        img.style.display='block';img.src=elderFlipCache.front.toDataURL('image/jpeg',0.92);
+        const rot=document.getElementById('rotateControls');if(rot)rot.style.display='none';
+        if(flipControls)flipControls.style.display='flex';
+        const label=document.getElementById('elderAadhaarFlipLabel');if(label)label.textContent=elderFlipCache.back?'Back':'Back (not uploaded)';
+        openModal('fileViewerModal');return;
+      }
+    }
     if(isPdf){
       clearPdfViewer();
       const img=document.getElementById('fileViewerImg');
