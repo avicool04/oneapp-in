@@ -1,6 +1,6 @@
 // ===== OneApp Service Worker — Push + Offline Cache =====
 
-const CACHE_NAME = 'oneapp-v1';
+const CACHE_NAME = 'oneapp-v2';
 const CORE_ASSETS = [
   '/',
   '/index.html',
