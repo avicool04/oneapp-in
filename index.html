@@ -1412,6 +1412,15 @@ body.dark .dropdown .email{color:var(--gray)}
     <button class="btn btn-outline btn-sm" onclick="scanAutoDetectEdges()">✨ Auto-detect edges</button>
     <button class="btn btn-outline btn-sm" onclick="scanReadText()">🔎 Read text (OCR)</button>
   </div>
+  <div style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-top:.65rem">
+    <strong style="font-size:.82rem">Straighten</strong>
+    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(-5)">−5°</button>
+    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(-1)">−1°</button>
+    <span id="scanRotationLabel" style="font-size:.82rem;min-width:42px;text-align:center">0°</span>
+    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(1)">+1°</button>
+    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateBy(5)">+5°</button>
+    <button class="btn btn-outline btn-sm" type="button" onclick="scanRotateReset()">Reset</button>
+  </div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:.65rem;flex-wrap:wrap">
     <label style="font-weight:700;font-size:.82rem">Filter <select id="scanFilter" style="max-width:170px;padding:.4rem;border-radius:8px;border:1px solid #cbd5e1"><option value="enhanced">Enhanced colour</option><option value="original">Original colour</option><option value="gray">Grayscale</option><option value="bw">Black &amp; white</option><option value="light">Lighten</option><option value="dark">Darken</option></select></label>
     <button class="btn btn-primary btn-sm" onclick="scanAcceptCrop()">Accept crop</button>
@@ -1898,23 +1907,15 @@ document.getElementById('genericFileInput').click();
 closeModal('uploadMethodModal');
 }
 async function handleGenericFileSelect(file){
-if(!file) return;
-tempFile = file;
-// Voter ID images must go through the same edge-adjustable crop editor as scans.
-if(tempUploadType === 'Voter Card' && file.type && file.type.startsWith('image/')){
-  window._oneAppCropForVoterUpload = true;
-  scanCurrentSide = 'front';
-  scanDetectedQuad = false;
-  openScanCropFor(file);
-  return;
+if(!file)return;tempFile=file;
+if(file.type&&file.type.startsWith('image/')){
+  window._oneAppCropForVoterUpload=tempUploadType==='Voter Card';window._oneAppCropForGenericUpload=true;
+  window._oneAppCropForPassportPage2=false;scanCurrentSide='front';scanDetectedQuad=false;openScanCropFor(file);return;
 }
-if(tempUploadType === 'Other'){ openModal('customNameModal'); }
-else if (tempUploadType === 'Driving License') { openModal('expiryDateModal'); }
-else if (tempUploadType === 'Passport') {
-passportPage1File = file;
-openModal('passportPage2Modal');
-}
-else { await saveGenericDocument(null); }
+if(tempUploadType==='Other'){openModal('customNameModal');}
+else if(tempUploadType==='Driving License'){openModal('expiryDateModal');}
+else if(tempUploadType==='Passport'){passportPage1File=file;openModal('passportPage2Modal');}
+else{await saveGenericDocument(null);}
 }
 function triggerPassportPage2Camera(){
 const input = document.getElementById('passportPage2Input');
@@ -1929,10 +1930,9 @@ closeModal('passportPage2Modal');
 saveGenericDocument(null, null, true);
 }
 async function handlePassportPage2Select(file){
-if(!file) return;
-closeModal('passportPage2Modal');
-await savePassportWithTwoPages(passportPage1File, file);
-passportPage1File = null;
+if(!file)return;closeModal('passportPage2Modal');
+if(file.type&&file.type.startsWith('image/')){window._oneAppCropForGenericUpload=true;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=true;scanCurrentSide='back';scanDetectedQuad=false;openScanCropFor(file);return;}
+await savePassportWithTwoPages(passportPage1File,file);passportPage1File=null;
 }
 async function savePassportWithTwoPages(page1File, page2File){
 if(!currentUser) return;
@@ -2659,7 +2659,10 @@ async function aaOnImage(file){
 }
 async function aaOnFile(file){
 if(!file)return;
-if((file.type||'').indexOf('image/')===0){await aaOnImage(file);return;}
+if((file.type||'').indexOf('image/')===0){
+  window._oneAppCropForAadhaarImage=true;window._oneAppCropForGenericUpload=true;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;
+  tempUploadType='Aadhaar Photo';scanCurrentSide='front';scanDetectedQuad=false;openScanCropFor(file);return;
+}
 aaFile=file;const st=document.getElementById('aaStatus');st.textContent='Reading PDF…';
 const uid=currentUser?currentUser.id:'guest';
 const pw=document.getElementById('aaPass').value||getSavedPdfPassword(uid,'aadhaar')||undefined;
@@ -3444,26 +3447,31 @@ async function captureScanPhoto(){
   openScanCropFor(blob);
 }
 function handleScanUpload(file){if(file)openScanCropFor(file);}
+function scanCreateRotatedCanvas(img,angle){
+  const rad=(angle||0)*Math.PI/180,cos=Math.abs(Math.cos(rad)),sin=Math.abs(Math.sin(rad));
+  const c=document.createElement('canvas');
+  c.width=Math.max(1,Math.ceil(img.naturalWidth*cos+img.naturalHeight*sin));
+  c.height=Math.max(1,Math.ceil(img.naturalWidth*sin+img.naturalHeight*cos));
+  const x=c.getContext('2d');x.translate(c.width/2,c.height/2);x.rotate(rad);x.drawImage(img,-img.naturalWidth/2,-img.naturalHeight/2);return c;
+}
+var scanRotationDeg=0,scanRotationSource=null;
+function scanRotateBy(delta){if(!scanSourceFile)return;scanRotationDeg=Math.max(-45,Math.min(45,Math.round((scanRotationDeg+delta)*10)/10));openScanCropFor(scanSourceFile);}
+function scanRotateReset(){scanRotationDeg=0;if(scanSourceFile)openScanCropFor(scanSourceFile);}
 function openScanCropFor(file){
-  // Keep camera running under crop modal so Retake can go back quickly
+  if(file!==scanRotationSource){scanRotationSource=file;scanRotationDeg=0;}
   scanSourceFile=file;
-  const url=URL.createObjectURL(file);
-  const img=new Image();
+  const url=URL.createObjectURL(file),img=new Image();
   img.onload=()=>{
-    const c=document.getElementById('scanCropCanvas');
-    const maxW=1200,scale=Math.min(1,maxW/img.naturalWidth);
-    c.width=Math.round(img.naturalWidth*scale);
-    c.height=Math.round(img.naturalHeight*scale);
-    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-    // Pre-place corners near typical ID card region
+    const c=document.getElementById('scanCropCanvas'),rot=scanCreateRotatedCanvas(img,scanRotationDeg);
+    const maxW=1200,scale=Math.min(1,maxW/rot.width);
+    c.width=Math.max(1,Math.round(rot.width*scale));c.height=Math.max(1,Math.round(rot.height*scale));
+    c.getContext('2d').drawImage(rot,0,0,c.width,c.height);
     scanCorners=[[.10,.18],[.90,.18],[.90,.82],[.10,.82]];
-    const title=document.getElementById('scanCropTitle');
-    if(title)title.textContent=scanCurrentSide==='back'?'Adjust back side':'Adjust front side';
-    openModal('scanCropModal');
-    setTimeout(()=>{positionScanCorners();initScanCornerDrag();},40);
-    URL.revokeObjectURL(url);
+    const title=document.getElementById('scanCropTitle');if(title)title.textContent=scanCurrentSide==='back'?'Adjust back side':'Adjust document edges';
+    const label=document.getElementById('scanRotationLabel');if(label)label.textContent=(scanRotationDeg>0?'+':'')+scanRotationDeg+'°';
+    openModal('scanCropModal');setTimeout(()=>{positionScanCorners();initScanCornerDrag();},40);URL.revokeObjectURL(url);
   };
-  img.src=url;
+  img.onerror=()=>{URL.revokeObjectURL(url);showToast('Could not open this image.','warn');};img.src=url;
 }
 function positionScanCorners(){
   const stage=document.getElementById('scanCropStage');
@@ -3552,11 +3560,17 @@ async function scanAcceptCrop(){
     const cropped=await makeScannedBlob();
     if(!cropped)throw new Error('The crop could not be created. Please adjust the corners and try again.');
     closeModal('scanCropModal');
-    if(window._oneAppCropForVoterUpload){
-      window._oneAppCropForVoterUpload=false;
-      tempFile=new File([cropped], 'OneApp-Voter-ID-'+Date.now()+'.jpg',{type:'image/jpeg'});
-      await saveGenericDocument(null);
-      return;
+    if(window._oneAppCropForGenericUpload){
+      const wasVoter=!!window._oneAppCropForVoterUpload,wasPassportPage2=!!window._oneAppCropForPassportPage2,wasAadhaarImage=!!window._oneAppCropForAadhaarImage;
+      window._oneAppCropForGenericUpload=false;window._oneAppCropForVoterUpload=false;window._oneAppCropForPassportPage2=false;window._oneAppCropForAadhaarImage=false;
+      const croppedFile=new File([cropped],(wasVoter?'OneApp-Voter-ID-':wasAadhaarImage?'OneApp-Aadhaar-':'OneApp-Scanned-')+Date.now()+'.jpg',{type:'image/jpeg'});
+      if(wasAadhaarImage){tempFile=null;tempUploadType=null;await aaOnImage(croppedFile);return;}
+      if(wasPassportPage2){await savePassportWithTwoPages(passportPage1File,croppedFile);passportPage1File=null;return;}
+      tempFile=croppedFile;
+      if(tempUploadType==='Passport'){passportPage1File=croppedFile;openModal('passportPage2Modal');return;}
+      if(tempUploadType==='Other'){openModal('customNameModal');return;}
+      if(tempUploadType==='Driving License'){openModal('expiryDateModal');return;}
+      await saveGenericDocument(null);return;
     }
     if(scanCurrentSide==='front'||!scanFrontBlob){
       scanFrontBlob=cropped;
@@ -5390,13 +5404,13 @@ async function scanCopyOcrText(){var el=document.getElementById("scanOcrText");t
 async function makeScannedBlob(){
  var src=scanSourceFile;if(!src)throw new Error("No scan selected.");
  var img=await new Promise(function(resolve,reject){var u=URL.createObjectURL(src),im=new Image();im.onload=function(){URL.revokeObjectURL(u);resolve(im);};im.onerror=function(){URL.revokeObjectURL(u);reject(new Error("Could not read image."));};im.src=u;});
- var cw=img.naturalWidth,ch=img.naturalHeight,out=document.createElement("canvas");
- if(scanDetectedQuad){try{var cv=await scanLoadOpenCV(),input=document.createElement("canvas");input.width=cw;input.height=ch;input.getContext("2d").drawImage(img,0,0);var mat=cv.imread(input),p=scanCorners.map(function(v){return [v[0]*cw,v[1]*ch];}),dist=function(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);};
+ var rotated=scanCreateRotatedCanvas(img,scanRotationDeg),cw=rotated.width,ch=rotated.height,out=document.createElement("canvas");
+ if(scanDetectedQuad){try{var cv=await scanLoadOpenCV(),input=document.createElement("canvas");input.width=cw;input.height=ch;input.getContext("2d").drawImage(rotated,0,0);var mat=cv.imread(input),p=scanCorners.map(function(v){return [v[0]*cw,v[1]*ch];}),dist=function(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);};
   var ow=Math.max(1,Math.round(Math.max(dist(p[0],p[1]),dist(p[3],p[2])))),oh=Math.max(1,Math.round(Math.max(dist(p[0],p[3]),dist(p[1],p[2]))));
   var srcPts=cv.matFromArray(4,1,cv.CV_32FC2,[p[0][0],p[0][1],p[1][0],p[1][1],p[2][0],p[2][1],p[3][0],p[3][1]]),dstPts=cv.matFromArray(4,1,cv.CV_32FC2,[0,0,ow-1,0,ow-1,oh-1,0,oh-1]),transform=cv.getPerspectiveTransform(srcPts,dstPts),warped=new cv.Mat();
   cv.warpPerspective(mat,warped,transform,new cv.Size(ow,oh),cv.INTER_CUBIC,cv.BORDER_REPLICATE,new cv.Scalar());out.width=ow;out.height=oh;cv.imshow(out,warped);mat.delete();srcPts.delete();dstPts.delete();transform.delete();warped.delete();
  }catch(e){scanDetectedQuad=false;scanSetStatus("Perspective correction unavailable; using manual crop.");}}
- if(!scanDetectedQuad){var pts=scanCorners.map(function(p){return [p[0]*cw,p[1]*ch];}),xs=pts.map(function(p){return p[0];}),ys=pts.map(function(p){return p[1];}),minX=Math.max(0,Math.floor(Math.min.apply(null,xs))),maxX=Math.min(cw,Math.ceil(Math.max.apply(null,xs))),minY=Math.max(0,Math.floor(Math.min.apply(null,ys))),maxY=Math.min(ch,Math.ceil(Math.max.apply(null,ys)));out.width=Math.max(1,maxX-minX);out.height=Math.max(1,maxY-minY);var cx=out.getContext("2d");cx.save();cx.beginPath();cx.moveTo(pts[0][0]-minX,pts[0][1]-minY);for(var k=1;k<pts.length;k++)cx.lineTo(pts[k][0]-minX,pts[k][1]-minY);cx.closePath();cx.clip();cx.drawImage(img,-minX,-minY);cx.restore();}
+ if(!scanDetectedQuad){var pts=scanCorners.map(function(p){return [p[0]*cw,p[1]*ch];}),xs=pts.map(function(p){return p[0];}),ys=pts.map(function(p){return p[1];}),minX=Math.max(0,Math.floor(Math.min.apply(null,xs))),maxX=Math.min(cw,Math.ceil(Math.max.apply(null,xs))),minY=Math.max(0,Math.floor(Math.min.apply(null,ys))),maxY=Math.min(ch,Math.ceil(Math.max.apply(null,ys)));out.width=Math.max(1,maxX-minX);out.height=Math.max(1,maxY-minY);var cx=out.getContext("2d");cx.save();cx.beginPath();cx.moveTo(pts[0][0]-minX,pts[0][1]-minY);for(var k=1;k<pts.length;k++)cx.lineTo(pts[k][0]-minX,pts[k][1]-minY);cx.closePath();cx.clip();cx.drawImage(rotated,-minX,-minY);cx.restore();}
  var ctx=out.getContext("2d"),filter=document.getElementById("scanFilter")?document.getElementById("scanFilter").value:"enhanced";
  if(filter!=="original"){var id=ctx.getImageData(0,0,out.width,out.height),d=id.data;for(var n=0;n<d.length;n+=4){var r=d[n],g=d[n+1],b=d[n+2];if(filter==="gray"||filter==="bw"){var y=.299*r+.587*g+.114*b,v=filter==="bw"?(y>165?255:Math.max(0,y-20)):y;r=g=b=v;}else if(filter==="light"){r=Math.min(255,r*1.18+12);g=Math.min(255,g*1.18+12);b=Math.min(255,b*1.18+12);}else if(filter==="dark"){r*=.82;g*=.82;b*=.82;}else{r=Math.min(255,(r-128)*1.18+131);g=Math.min(255,(g-128)*1.18+131);b=Math.min(255,(b-128)*1.18+131);}d[n]=r;d[n+1]=g;d[n+2]=b;}ctx.putImageData(id,0,0);}
  return await new Promise(function(resolve){out.toBlob(resolve,"image/jpeg",.94);});
