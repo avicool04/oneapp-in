@@ -2994,8 +2994,17 @@ showView('sharedVaultView');
 await loadSharedVault();
 }
 function openSpouseSharedFolder(folder){
-const row=(sharedVaultRowsCache||[]).find(s=>s.documents&&classifySharedDoc(s.documents)===folder);
-if(row)openSharedDocument(row.documents.id);
+  sharedVaultFolder=folder;
+  const titles={aadhaar:'Aadhaar',pan:'PAN Card',voter:'Voter ID',passport:'Passport',license:'Driving Licence',other:'Other Documents'};
+  const card=document.getElementById('svFolderCard');
+  const spouseGrid=document.getElementById('svSpouseFolderGrid');
+  const standardGrid=document.getElementById('svFolderGrid');
+  if(card)card.style.display='block';
+  if(spouseGrid)spouseGrid.style.display='none';
+  if(standardGrid)standardGrid.style.display='none';
+  const ft=document.getElementById('svFolderTitle');
+  if(ft)ft.textContent=titles[folder]||folder;
+  renderSharedFolderDocs();
 }
 async function openSharedChildVault(childId,name,ownerId){
 sharedVaultContext={kind:'child',childId,name,ownerId};
@@ -3012,9 +3021,21 @@ function classifySharedDoc(d){
   const u=t.toLowerCase();
   if(/aadhaar|aadhar/.test(u))return 'aadhaar';
   if(/\bpan\b|permanent account/.test(u))return 'pan';
+  if(/voter|election photo|epic/.test(u))return 'voter';
   if(/passport/.test(u))return 'passport';
   if(/license|licence|driving/.test(u))return 'license';
   return 'other';
+}
+function renderSpouseSharedFolders(rows){
+  const grid=document.getElementById('svSpouseFolderGrid');
+  if(!grid)return;
+  const defs=[
+    ['aadhaar','Aadhaar','🪪'],['pan','PAN Card','💳'],['voter','Voter ID','🗳️'],
+    ['passport','Passport','🛂'],['license','Driving Licence','🚗'],['other','Other Documents','📁']
+  ];
+  const available=defs.filter(([key])=>(rows||[]).some(s=>s.documents&&classifySharedDoc(s.documents)===key));
+  grid.innerHTML=available.map(([key,label,emoji])=>'<div class="icon-tile" onclick="openSpouseSharedFolder(\''+key+'\')"><div class="icon-box" style="font-size:38px;position:relative">'+emoji+'<div class="status-badge show"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div></div><span>'+label+'</span></div>').join('');
+  grid.style.display='grid';
 }
 function setSvFolderBadges(rows){
   const counts={aadhaar:0,pan:0,passport:0,license:0,other:0};
@@ -3157,6 +3178,7 @@ async function loadSharedVault(){
   else if(sharedVaultContext.kind==='child')rows=rows.filter(s=>docIsChild(s.documents)&&(s.documents.file_url||'').includes('/children/'+sharedVaultContext.childId+'/'));
   sharedVaultRowsCache=rows;
   setSvFolderBadges(rows);
+  if(sharedVaultContext.kind==='spouse')renderSpouseSharedFolders(rows);
   if(box)box.innerHTML='<p class="sub">Open a folder above. '+(rows.length?rows.length+' document(s) shared with you.':'Nothing shared yet.')+'</p>';
 }
 async function getSharedRecord(docId){
