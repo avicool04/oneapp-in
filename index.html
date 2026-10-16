@@ -2671,7 +2671,7 @@ let aaFull=null,aaFront=null,aaBack=null,aaSide=null,aaFile=null,aaHasOrig=false
 let sharedAaCache={side:null,front:null,back:null,full:null};
 function showAa(id){['aaStep1','aaStep2','aaStep3'].forEach(x=>document.getElementById(x).style.display=(x===id)?'block':'none');}
 function openAadhaar(){showAa('aaStep1');openModal('aadhaarModal');}
-function openAadhaarSmart(){if(aaFull){openViewerPersonal();}else{openAadhaar();}}
+async function openAadhaarSmart(){if(aaRowId){try{await ensureSavedAadhaarLoaded(currentUser?.id);if(aaFull)openViewerPersonal();else openAadhaar();}catch(e){console.warn('Aadhaar preview load failed',e);openAadhaar();}}else if(aaFull){openViewerPersonal();}else{openAadhaar();}}
 function aaUpdateFlow(){
 document.getElementById('aaCoach').style.display='none';
 document.getElementById('aaStep2Sub').textContent='Upload a fresh e-Aadhaar PDF. Saved password is used automatically.';
@@ -2791,12 +2791,27 @@ aaHasOrig=true;setSaved('Wallet card saved');closeModal('aadhaarModal');alert('â
 if(aaFacts&&aaFactsCount(aaFacts)){setTimeout(function(){openAadhaarFacts(aaFacts);},50);}}
 function setSaved(t){document.getElementById('aadhaarIndicator').classList.add('show');}
 function resetAadhaarUI(){aaFull=aaFront=aaBack=aaSide=null;aaHasOrig=false;aaRowId=null;document.getElementById('aadhaarIndicator').classList.remove('show');}
+let aaLoadPromise=null;
 async function loadSavedAadhaar(uid){
-const{data}=await sb.from('documents').select('id,file_url').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').is('deleted_at',null).limit(1);if(!data||!data.length){resetAadhaarUI();return;} aaRowId=data[0].id;
+const{data,error}=await sb.from('documents').select('id').eq('user_id',uid).eq('document_type','Aadhaar Card (Wallet)').is('deleted_at',null).limit(1);
+if(error){console.warn('Aadhaar status check failed',error.message);return;}
+if(!data||!data.length){resetAadhaarUI();return;}
+aaRowId=data[0].id;aaHasOrig=true;setSaved('Wallet card saved');
+}
+async function ensureSavedAadhaarLoaded(uid){
+if(aaFull)return;
+if(!uid)throw new Error('Sign in first.');
+if(aaLoadPromise)return aaLoadPromise;
+aaLoadPromise=(async()=>{
 const cfb=async b=>{const bmp=await createImageBitmap(b);const c=document.createElement('canvas');c.width=bmp.width;c.height=bmp.height;c.getContext('2d').drawImage(bmp,0,0);return c;};
-const{data:a}=await sb.storage.from('vault').download(uid+'/aadhaar-full.jpg');const{data:b}=await sb.storage.from('vault').download(uid+'/aadhaar-front.jpg');const{data:c}=await sb.storage.from('vault').download(uid+'/aadhaar-back.jpg');const{data:d}=await sb.storage.from('vault').download(uid+'/aadhaar-side.jpg');
+const paths=['aadhaar-full.jpg','aadhaar-front.jpg','aadhaar-back.jpg','aadhaar-side.jpg'];
+const results=await Promise.all(paths.map(path=>sb.storage.from('vault').download(uid+'/'+path)));
+const [a,b,c,d]=results.map(r=>{if(r.error)console.warn('Aadhaar image unavailable',r.error.message);return r.data;});
 if(a)aaFull=await cfb(a);if(b)aaFront=await cfb(b);if(c)aaBack=await cfb(c);if(d)aaSide=await cfb(d);
-aaHasOrig=true;setSaved('Wallet card saved');
+if(!aaFull&&aaFront)aaFull=aaFront;
+if(aaFull){aaHasOrig=true;setSaved('Wallet card saved');}
+})().finally(()=>{aaLoadPromise=null;});
+return aaLoadPromise;
 }
 async function aaDelete(){
 if(!confirm('Move all Aadhaar files to Bin? You can restore them for 30 days.'))return;
