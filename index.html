@@ -488,7 +488,7 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 </div>
 <div class="card">
-<div class="card-header"><h3>Identity Documents</h3><span class="badge badge-ok">Private bucket</span></div>
+<div class="card-header"><h3>Identity Documents</h3></div>
 <div class="icon-grid">
 <div class="icon-tile" onclick="openAadhaarSmart()">
 <div class="icon-box">
@@ -597,7 +597,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 13C8 17 8 21 8 27v22c0 4 3 7 7 7h34c4 0 7-3 7-7V10c0-4-3-7-7-7H22c-5 0-8 3-10 10Z" fill="#e7e8ff" stroke="#3d4f8b" stroke-width="2"/><rect x="16" y="10" width="16" height="40" rx="4" fill="#9885f5" stroke="#3d4f8b" stroke-width="2"/><path d="M16 20h16M16 30h16M16 40h16" stroke="#3d4f8b" stroke-width="1.5"/><g fill="#ffedb2" stroke="#3d4f8b" stroke-width="1.7"><rect x="36" y="12" width="13" height="5" rx="2.5"/><rect x="36" y="21" width="13" height="5" rx="2.5"/><rect x="36" y="30" width="13" height="5" rx="2.5"/><rect x="36" y="39" width="13" height="5" rx="2.5"/><rect x="36" y="48" width="13" height="5" rx="2.5"/></g><path d="M2 18c4 4 4 8 1 12l-2 4" stroke="#3d4f8b" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="51" r="10" fill="#ffedb2" stroke="#3d4f8b" stroke-width="2"/><path d="m13 51 3 3 6-7" stroke="#3d4f8b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 60v-9c0-2 3-2 3 0v-4c0-2 3-2 3 0v-3c0-2 3-2 3 0v9c0 3-2 5-2 7" fill="#fff" stroke="#3d4f8b" stroke-width="1.7" stroke-linejoin="round"/><path d="M44 52l-3-5c-1-2-4 0-3 2l4 8 2 3" fill="#fff" stroke="#3d4f8b" stroke-width="1.7" stroke-linejoin="round"/></svg>
 <div id="voterCardIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
 </div>
-<span>Voter Card</span>
+<span>Voter ID</span>
 </div>
 <div class="icon-tile" onclick="handleGenericIconClick('Passport')">
 <div class="icon-box">
@@ -616,7 +616,8 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 </div>
 <div class="card">
-<div class="card-header"><h3>Insurance</h3></div>
+<div class="card-header" style="display:flex;align-items:center;justify-content:space-between"><h3>Insurance</h3><button id="insuranceCollapseToggle" type="button" onclick="toggleInsuranceSection()" aria-expanded="true" aria-controls="insuranceSectionContent" aria-label="Hide Insurance section" style="width:28px;height:28px;min-width:28px;padding:0;border:1px solid var(--border);border-radius:50%;background:#fff;color:var(--dark);font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer">−</button></div>
+<div id="insuranceSectionContent">
 <div class="icon-grid">
 <div class="icon-tile" onclick="toggleVehicleInsuranceFolder()" role="button" aria-expanded="false" aria-controls="vehicleInsuranceSubfolders"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 4 L58 12 V31 C58 46 47 57 32 61 C17 57 6 46 6 31 V12 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/><path d="M13 33 L19 23 Q20 21 23 21 H41 Q44 21 45 23 L51 33 V42 H13 Z" fill="#2563eb"/><path d="M22 24 H42 L46 32 H18 Z" fill="#bfdbfe"/><circle cx="22" cy="42" r="5" fill="#0f172a"/><circle cx="22" cy="42" r="2" fill="#e2e8f0"/><circle cx="42" cy="42" r="5" fill="#0f172a"/><circle cx="42" cy="42" r="2" fill="#e2e8f0"/><path d="M15 35 H19 M45 35 H49" stroke="#fef08a" stroke-width="2.5" stroke-linecap="round"/></svg></div><span>Vehicle</span></div>
 
@@ -626,6 +627,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="vehicleInsuranceSubfolders" class="icon-grid" style="display:none;margin-top:.75rem;padding:.75rem;border:1px solid var(--border);border-radius:16px;background:#fafaff" aria-label="Vehicle insurance folders">
 <div class="icon-tile" onclick="alert('Bike Insurance — coming soon')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none"><path d="M32 4 L58 12 V31 C58 46 47 57 32 61 C17 57 6 46 6 31 V12 Z" fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"/><circle cx="18" cy="38" r="8" stroke="#7c3aed" stroke-width="3" fill="#ede9fe"/><circle cx="18" cy="38" r="2.5" fill="#7c3aed"/><circle cx="46" cy="38" r="8" stroke="#7c3aed" stroke-width="3" fill="#ede9fe"/><circle cx="46" cy="38" r="2.5" fill="#7c3aed"/><path d="M18 38 L25 24 H36 L46 38" stroke="#7c3aed" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M46 38 L38 16 H31" stroke="#7c3aed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="16" x2="42" y2="16" stroke="#4c1d95" stroke-width="3" stroke-linecap="round"/><path d="M22 24 H37" stroke="#4c1d95" stroke-width="4.5" stroke-linecap="round"/><path d="M29 23 C31 18 36 18 39 23 Z" fill="#7c3aed"/><circle cx="43" cy="20" r="2" fill="#fbbf24"/></svg></div><span>Bike</span></div>
 <div class="icon-tile" onclick="alert('Car Insurance — coming soon')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none"><path d="M32 4 L58 12 V31 C58 46 47 57 32 61 C17 57 6 46 6 31 V12 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/><path d="M18 29 L25 17 H39 L47 29 Z" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2" stroke-linejoin="round"/><line x1="32" y1="17" x2="32" y2="29" stroke="#1d4ed8" stroke-width="1.8"/><path d="M10 35 C10 31 13 28 17 28 H47 C51 28 54 31 54 35 V40 H10 Z" fill="#2563eb"/><path d="M51 32 H54" stroke="#fef08a" stroke-width="3" stroke-linecap="round"/><path d="M10 32 H13" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="40" r="6.5" fill="#0f172a"/><circle cx="19" cy="40" r="2.5" fill="#e2e8f0"/><circle cx="45" cy="40" r="6.5" fill="#0f172a"/><circle cx="45" cy="40" r="2.5" fill="#e2e8f0"/></svg></div><span>Car</span></div>
+</div>
 </div>
 </div>
 </div>
@@ -1159,7 +1161,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <rect x="3" y="51" width="58" height="1" fill="#1e3a8a" opacity="0.5"/>
 <rect x="3" y="11" width="58" height="42" rx="4" fill="url(#elderVaultpanHolo)" opacity="0.08"/>
 </svg><div id="elderPanIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>PAN Card</span></div>
-<div id="elderVoterTile" class="icon-tile" onclick="openElderDocument('voter')"><div class="icon-box">🗳️<div id="elderVoterIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Voter Card</span></div>
+<div id="elderVoterTile" class="icon-tile" onclick="openElderDocument('voter')"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 13C8 17 8 21 8 27v22c0 4 3 7 7 7h34c4 0 7-3 7-7V10c0-4-3-7-7-7H22c-5 0-8 3-10 10Z" fill="#e7e8ff" stroke="#3d4f8b" stroke-width="2"/><rect x="16" y="10" width="16" height="40" rx="4" fill="#9885f5" stroke="#3d4f8b" stroke-width="2"/><path d="M16 20h16M16 30h16M16 40h16" stroke="#3d4f8b" stroke-width="1.5"/><g fill="#ffedb2" stroke="#3d4f8b" stroke-width="1.7"><rect x="36" y="12" width="13" height="5" rx="2.5"/><rect x="36" y="21" width="13" height="5" rx="2.5"/><rect x="36" y="30" width="13" height="5" rx="2.5"/><rect x="36" y="39" width="13" height="5" rx="2.5"/><rect x="36" y="48" width="13" height="5" rx="2.5"/></g><path d="M2 18c4 4 4 8 1 12l-2 4" stroke="#3d4f8b" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="51" r="10" fill="#ffedb2" stroke="#3d4f8b" stroke-width="2"/><path d="m13 51 3 3 6-7" stroke="#3d4f8b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 60v-9c0-2 3-2 3 0v-4c0-2 3-2 3 0v-3c0-2 3-2 3 0v9c0 3-2 5-2 7" fill="#fff" stroke="#3d4f8b" stroke-width="1.7" stroke-linejoin="round"/><path d="M44 52l-3-5c-1-2-4 0-3 2l4 8 2 3" fill="#fff" stroke="#3d4f8b" stroke-width="1.7" stroke-linejoin="round"/></svg><div id="elderVoterIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Voter ID</span></div>
 <div id="elderMedicalTile" class="icon-tile" onclick="openElderDocument('medical')"><div class="icon-box">🏥<div id="elderMedicalIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Medical</span></div>
 <div id="elderOtherTile" class="icon-tile" onclick="openElderDocument('other')"><div class="icon-box">📁<div id="elderOtherIndicator" class="status-badge"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div></div><span>Others</span></div>
 </div>
@@ -3030,7 +3032,7 @@ function renderSpouseSharedFolders(rows){
   const grid=document.getElementById('svSpouseFolderGrid');
   if(!grid)return;
   const defs=[
-    ['aadhaar','Aadhaar','🪪'],['pan','PAN Card','💳'],['voter','Voter ID','🗳️'],
+    ['aadhaar','Aadhaar','🪪'],['pan','PAN Card','💳'],['voter','Voter ID',"<svg style=\"width:42px;height:42px\" viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 13C8 17 8 21 8 27v22c0 4 3 7 7 7h34c4 0 7-3 7-7V10c0-4-3-7-7-7H22c-5 0-8 3-10 10Z\" fill=\"#e7e8ff\" stroke=\"#3d4f8b\" stroke-width=\"2\"/><rect x=\"16\" y=\"10\" width=\"16\" height=\"40\" rx=\"4\" fill=\"#9885f5\" stroke=\"#3d4f8b\" stroke-width=\"2\"/><path d=\"M16 20h16M16 30h16M16 40h16\" stroke=\"#3d4f8b\" stroke-width=\"1.5\"/><g fill=\"#ffedb2\" stroke=\"#3d4f8b\" stroke-width=\"1.7\"><rect x=\"36\" y=\"12\" width=\"13\" height=\"5\" rx=\"2.5\"/><rect x=\"36\" y=\"21\" width=\"13\" height=\"5\" rx=\"2.5\"/><rect x=\"36\" y=\"30\" width=\"13\" height=\"5\" rx=\"2.5\"/><rect x=\"36\" y=\"39\" width=\"13\" height=\"5\" rx=\"2.5\"/><rect x=\"36\" y=\"48\" width=\"13\" height=\"5\" rx=\"2.5\"/></g><path d=\"M2 18c4 4 4 8 1 12l-2 4\" stroke=\"#3d4f8b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"18\" cy=\"51\" r=\"10\" fill=\"#ffedb2\" stroke=\"#3d4f8b\" stroke-width=\"2\"/><path d=\"m13 51 3 3 6-7\" stroke=\"#3d4f8b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M44 60v-9c0-2 3-2 3 0v-4c0-2 3-2 3 0v-3c0-2 3-2 3 0v9c0 3-2 5-2 7\" fill=\"#fff\" stroke=\"#3d4f8b\" stroke-width=\"1.7\" stroke-linejoin=\"round\"/><path d=\"M44 52l-3-5c-1-2-4 0-3 2l4 8 2 3\" fill=\"#fff\" stroke=\"#3d4f8b\" stroke-width=\"1.7\" stroke-linejoin=\"round\"/></svg>"],
     ['passport','Passport','🛂'],['license','Driving Licence','🚗'],['other','Other Documents','📁']
   ];
   const available=defs.filter(([key])=>(rows||[]).some(s=>s.documents&&classifySharedDoc(s.documents)===key));
@@ -4356,7 +4358,7 @@ async function handleElderDocFile(file){
       const{error:upErr}=await sb.storage.from('vault').upload(path,body,{contentType:ctype});
       if(upErr)throw upErr;
     }
-    const labels={aadhaar:'Aadhaar',pan:'PAN Card',voter:'Voter Card',medical:'Medical',other:'Other'};
+    const labels={aadhaar:'Aadhaar',pan:'PAN Card',voter:'Voter ID',medical:'Medical',other:'Other'};
     const{data:ins,error:dbErr}=await sb.from('documents').insert({
       user_id:currentUser.id,
       document_type:'elder_'+currentElderId+'_'+elderDocKind,
@@ -5476,6 +5478,16 @@ async function exportMyData(){
     observer.observe(document.body,{childList:true,subtree:true,characterData:true});
   });
 })();
+function toggleInsuranceSection(){
+  const content=document.getElementById('insuranceSectionContent');
+  const button=document.getElementById('insuranceCollapseToggle');
+  if(!content||!button)return;
+  const opening=content.style.display==='none';
+  content.style.display=opening?'block':'none';
+  button.textContent=opening?'−':'+';
+  button.setAttribute('aria-expanded',String(opening));
+  button.setAttribute('aria-label',opening?'Hide Insurance section':'Show Insurance section');
+}
 function toggleVehicleInsuranceFolder(){
   const panel=document.getElementById('vehicleInsuranceSubfolders');
   const tile=document.querySelector('[aria-controls="vehicleInsuranceSubfolders"]');
