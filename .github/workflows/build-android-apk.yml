@@ -25,6 +25,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Restore stable Android debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: oneapp-android-debug-signing-key-v1
       - name: Build debug APK
         run: gradle -p android-app assembleDebug --no-daemon
       - name: Upload APK
