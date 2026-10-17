@@ -2853,11 +2853,11 @@ if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.shar
 else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually. Opens WITHOUT password.');}
 };
 if(fmt==='a4pdf'){
-if(isElder&&elderAaCache.pdfBlob){sendFile(new File([elderAaCache.pdfBlob],'aadhaar-uidai.pdf',{type:'application/pdf'}));return;}
-if(isShared&&sharedAaCache.pdfBlob){sendFile(new File([sharedAaCache.pdfBlob],'aadhaar-uidai.pdf',{type:'application/pdf'}));return;}
-if(cache.full){sendFile(new File([makeA4Pdf(cache.full).output('blob')],'aadhaar-a4.pdf',{type:'application/pdf'}));return;}
-if(!isChild&&!isElder&&aaFile){sendFile(aaFile);return;}
-alert('No full page available.');return;
+// Always export a newly generated, unlocked PDF from the rendered canvas.
+// Never pass through the original UIDAI PDF, which may still be password-protected.
+const a4Canvas=cache.full||((cache.front||cache.back)?composeCanvasFor('stack',cache):(cache.side||null));
+if(a4Canvas){sendFile(new File([makeA4Pdf(a4Canvas).output('blob')],'aadhaar-a4.pdf',{type:'application/pdf'}));return;}
+alert('Aadhaar preview is not ready. Open the Aadhaar once and try sharing again.');return;
 }
 const c=composeCanvasFor(layout,cache);if(!c)return;
 let blob,name,mime;
