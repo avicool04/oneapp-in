@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -381,6 +381,41 @@ body.dark .toast{background:#262b52}
 body.dark .sos-box{background:#3a1522;border-color:#5b2135;color:#fecdd3}
 body.dark .bell-summary,body.dark .rights-note{background:#2a2456;border-color:#3b3670;color:#d6cfff}
 body.dark .dropdown .email{color:var(--gray)}
+
+
+/* ---------- MOBILE HEADER SAFE AREA FIX (header only) ---------- */
+@media(max-width:600px){
+  nav{
+    padding-top:calc(.55rem + max(env(safe-area-inset-top, 0px), 30px));
+    padding-left:max(.5rem, env(safe-area-inset-left, 0px));
+    padding-right:max(.5rem, env(safe-area-inset-right, 0px));
+    gap:.3rem;
+    min-width:0;
+  }
+  nav .logo{
+    min-width:0;
+    font-size:clamp(.68rem, 3.1vw, .88rem);
+    padding:.38rem .48rem;
+    letter-spacing:-.025em;
+  }
+  nav .nav-links{gap:.22rem;min-width:0;flex:0 0 auto}
+  nav .theme-toggle{width:34px;height:34px;font-size:.92rem}
+  nav .btn-emg{width:34px;height:34px}
+  nav .nav-profile{margin-left:0;min-width:0}
+  nav .btn-auth{
+    font-size:clamp(.65rem, 2.8vw, .76rem);
+    padding:.36rem .52rem;
+    border-radius:10px;
+  }
+}
+@media(max-width:380px){
+  nav{gap:.22rem;padding-left:.35rem;padding-right:.35rem}
+  nav .logo{font-size:.66rem;padding:.35rem .38rem}
+  nav .nav-links{gap:.15rem}
+  nav .theme-toggle,nav .btn-emg{width:31px;height:31px}
+  nav .btn-auth{font-size:.64rem;padding:.34rem .4rem}
+}
+/* ---------- END MOBILE HEADER SAFE AREA FIX ---------- */
 
 </style>
 <meta property="og:image" content="https://bolt.new/static/og_default.png">
