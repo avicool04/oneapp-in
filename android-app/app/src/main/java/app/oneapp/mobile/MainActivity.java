@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
         share.setIcon(android.R.drawable.ic_menu_share);
         share.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         share.setOnMenuItemClickListener(item -> {
-            String url = webView != null && webView.getUrl() != null ? webView.getUrl() : APP_URL;
+            String url = APP_URL;
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "OneApp — Secure Vault & Family");
