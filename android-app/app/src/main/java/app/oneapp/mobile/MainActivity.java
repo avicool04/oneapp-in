@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -23,10 +26,16 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(Color.rgb(85, 71, 216));
-        getWindow().setNavigationBarColor(Color.WHITE);
-        getWindow().getDecorView().setSystemUiVisibility(
-            getWindow().getDecorView().getSystemUiVisibility() | android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.setStatusBarColor(Color.rgb(85, 71, 216));
+        window.setNavigationBarColor(Color.WHITE);
+        window.getDecorView().setSystemUiVisibility(
+            window.getDecorView().getSystemUiVisibility()
+                & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
         );
 
         webView = new WebView(this);
@@ -78,11 +87,10 @@ public class MainActivity extends Activity {
         share.setIcon(android.R.drawable.ic_menu_share);
         share.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         share.setOnMenuItemClickListener(item -> {
-            String url = APP_URL;
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "OneApp — Secure Vault & Family");
-            intent.putExtra(Intent.EXTRA_TEXT, "OneApp — keep important documents organized and share what matters with family.\n" + url);
+            intent.putExtra(Intent.EXTRA_TEXT, "OneApp — keep important documents organized and share what matters with family.\n" + APP_URL);
             startActivity(Intent.createChooser(intent, "Share OneApp"));
             return true;
         });
