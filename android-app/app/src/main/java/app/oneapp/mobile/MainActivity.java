@@ -5,8 +5,6 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,17 +26,20 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
+                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        // Keep WebView content below Android's status bar and above its navigation bar.
+        // This prevents the website's Sign In/header controls from sitting under the clock,
+        // network, and battery indicators on newer Android versions.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(true);
+        }
         window.setStatusBarColor(Color.rgb(85, 71, 216));
         window.setNavigationBarColor(Color.WHITE);
-        window.getDecorView().setSystemUiVisibility(
-            window.getDecorView().getSystemUiVisibility()
-                & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-        );
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
         webView = new WebView(this);
+        webView.setFitsSystemWindows(true);
         webView.setBackgroundColor(Color.WHITE);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
@@ -79,22 +80,6 @@ public class MainActivity extends Activity {
         } else {
             webView.restoreState(savedInstanceState);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem share = menu.add("Share OneApp");
-        share.setIcon(android.R.drawable.ic_menu_share);
-        share.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        share.setOnMenuItemClickListener(item -> {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "OneApp — Secure Vault & Family");
-            intent.putExtra(Intent.EXTRA_TEXT, "OneApp — keep important documents organized and share what matters with family.\n" + APP_URL);
-            startActivity(Intent.createChooser(intent, "Share OneApp"));
-            return true;
-        });
-        return true;
     }
 
     @Override
