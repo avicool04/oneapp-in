@@ -3,3 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>OneApp — Secure Vault & Family</title>
+<meta name="description" content="OneApp keeps your important documents organized and helps you securely share documents and emergency details with family.">
+<link rel="canonical" href="https://oneapp-in.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OneApp">
+<meta property="og:title" content="OneApp — Secure Vault & Family">
+<meta property="og:description" content="Keep important documents organized and securely share what matters with family.">
+<meta property="og:url" content="https://oneapp-in.vercel.app/">
+<meta property="og:image" content="https://oneapp-in.vercel.app/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="OneApp app icon">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OneApp — Secure Vault & Family">
+<meta name="twitter:description" content="Keep important documents organized and securely share what matters with family.">
+<meta name="twitter:image" content="https://oneapp-in.vercel.app/icon-512.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#6d5df6">
+<style>
+/* ============================================================
+   OneApp.in — Design System v2 "Soft & Friendly"
+   ============================================================ */
+:root{
+  --primary:#6d5df6; --primary-2:#8b5cf6; --primary-soft:#efecfe; --primary-ring:rgba(109,93,246,.16);
+  --success:#10b981; --warn:#f59e0b; --danger:#f43f5e;
+  --bg:#f4f5fb; --dark:#1b2340; --text-2:#5f6880;
+  --border:#ebedf5; --gray:#8b93ab; --tile:#f2f3fa;
+  --radius:18px; --shadow:0 8px 28px rgba(27,35,64,.07); --shadow-sm:0 2px 10px rgba(27,35,64,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans','Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;}
+/* Status-bar safe area for hybrid APK / PWA */
+html{padding:0;}
+body{
+  background:
+    radial-gradient(620px 420px at 88% -8%, rgba(139,92,246,.12), transparent 60%),
+    radial-gradient(520px 400px at -12% 32%, rgba(96,165,250,.12), transparent 60%),
+    radial-gradient(480px 380px at 60% 110%, rgba(16,185,129,.08), transparent 60%),
+    var(--bg);
+  color:var(--dark); line-height:1.6; overflow-x:hidden; min-height:100vh;
+}
+::selection{background:var(--primary);color:#fff}
+
+/* ---------- NAV ---------- */
+nav{
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(16px) saturate(1.5); -webkit-backdrop-filter:blur(16px) saturate(1.5);
+  border-bottom:1px solid rgba(235,237,245,.9);
+  box-shadow:0 4px 22px rgba(27,35,64,.05);
+  /* Keep system status bar clear; push OneApp header below it */
+  padding-top: max(0.55rem, env(safe-area-inset-top, 0px));
+  padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+  padding-bottom: 0.55rem;
+  padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+  display:flex; justify-content:space-between; align-items:center;
+  position:sticky; top:0; z-index:100; gap:.5rem;
+}
