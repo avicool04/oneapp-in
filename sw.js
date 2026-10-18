@@ -1,13 +1,14 @@
 // ===== OneApp Service Worker — Push + Offline Cache =====
+// v4 — forces purge of old caches so share-fix is picked up immediately
 
-const CACHE_NAME = 'oneapp-v2';
+const CACHE_NAME = 'oneapp-v4';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json'
 ];
 
-// Install — pre-cache core files
+// Install — take control immediately and pre-cache
 self.addEventListener('install', e => {
   self.skipWaiting();
   e.waitUntil(
@@ -15,7 +16,7 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activate — clean old caches
+// Activate — delete EVERY old cache, then claim all clients
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -24,16 +25,14 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch — network-first, fall back to cache when offline
+// Fetch — always try network first (so new index.html is used when online)
 self.addEventListener('fetch', event => {
   const req = event.request;
-  // Only handle same-origin GET requests
   if(req.method !== 'GET' || !req.url.startsWith(self.location.origin)) return;
 
   event.respondWith(
     fetch(req)
       .then(res => {
-        // Cache a copy of successful responses
         const copy = res.clone();
         caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(()=>{});
         return res;
@@ -42,7 +41,7 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Push notifications (for later — VAPID setup)
+// Push notifications
 self.addEventListener('push', event => {
   let data = { title: 'OneApp alert', body: 'You have a new family alert.' };
   try { if(event.data) data = event.data.json(); } catch(_) {}
@@ -57,7 +56,6 @@ self.addEventListener('push', event => {
   );
 });
 
-// Tap notification → focus the app
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
