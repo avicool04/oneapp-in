@@ -1,0 +1,8 @@
+name: CI note
+on:
+  workflow_dispatch:
+jobs:
+  note:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build APK locally via Capacitor + Android Studio. See README."
