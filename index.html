@@ -1543,7 +1543,19 @@ let savedGenericDocs = {};
 let currentRotation = 0;
 let passportPage1File = null;
 let passportPage1Path = null;
-async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)showMsg(error.message);}
+async function signInWithGoogle(){
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/',
+      queryParams: {
+        prompt: 'select_account',   // force Google account chooser (shows saved Gmail profiles)
+        access_type: 'online'
+      }
+    }
+  });
+  if (error) showMsg(error.message);
+}
 function showMsg(t){const m=document.getElementById('authMsg');m.textContent=t;m.style.display='block';}
 async function submitAuth(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value;if(!e||!p){showMsg('Enter email and password.');return;}const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)showMsg(error.message);else closeModal('authModal');}
 // ✅ FIXED: Login button function
@@ -2568,7 +2580,7 @@ if(error)throw error;
 const blob=await(await fetch(data.signedUrl)).blob();
 const f=new File([blob],path.split('/').pop(),{type:blob.type});
 if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:label,text:SHARE_CAPTION});}
-else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually.');}
+else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('File saved to Downloads. Open Files or WhatsApp and attach it from there.');}
 }catch(err){alert('Share failed: '+err.message);}
 }
 function triggerChildUpload(type){
@@ -2849,34 +2861,34 @@ const isShared=!!shareContext&&shareContext.kind==='shared';
 const isElder=!!shareContext&&shareContext.kind==='elder';
 const cache=isShared?sharedAaCache:(isChild?childAaCache:(isElder?elderAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull}));
 const sendFile=async f=>{
-  // Prefer system share sheet with the file attached (works on most modern Android/iOS browsers & PWAs)
-  if(navigator.share){
-    try{
-      // Some Android WebViews report canShare(false) even when file share works — try anyway
-      if(!navigator.canShare || navigator.canShare({files:[f]})){
-        await navigator.share({files:[f], title:'Aadhaar Card', text:SHARE_CAPTION});
+  // Try native share sheet first (works on many phones + Chrome)
+  if (navigator.share) {
+    try {
+      if (!navigator.canShare || navigator.canShare({ files: [f] })) {
+        await navigator.share({ files: [f], title: 'Aadhaar Card', text: SHARE_CAPTION });
         return;
       }
-    }catch(e){
-      if(e && e.name==='AbortError') return; // user cancelled — do nothing
-      // fall through to download fallback
+    } catch (e) {
+      if (e && e.name === 'AbortError') return; // user cancelled
     }
   }
-  // Fallback: trigger download so the user can attach from gallery/files
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(f);
-  a.download=f.name || (f.type==='image/jpeg'?'aadhaar.jpg':'aadhaar.pdf');
+  // Fallback for Android WebView: download the file silently
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(f);
+  a.download = f.name || (f.type === 'image/jpeg' ? 'aadhaar-side.jpg' : 'aadhaar.pdf');
   document.body.appendChild(a);
   a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
-  a.remove();
-  // Soft notice instead of blocking alert
-  const msg = f.type==='image/jpeg'
-    ? 'JPG saved to Downloads. Open WhatsApp / Files and attach it from there.'
-    : 'PDF saved to Downloads. Open it from Files (no password).';
-  // Use a non-blocking toast-style feedback if possible, else short alert
-  if(window.showOneAppToast) showOneAppToast(msg);
-  else alert(msg);
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+  // Show a clean non-error instruction instead of the old alert
+  const isJpg = f.type === 'image/jpeg';
+  const box = document.createElement('div');
+  box.id = 'oneappShareToast';
+  box.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:9999;background:#1b2340;color:#fff;padding:14px 18px;border-radius:14px;font-size:14px;font-weight:600;max-width:90%;box-shadow:0 8px 28px rgba(0,0,0,.35);text-align:center;line-height:1.4';
+  box.innerHTML = isJpg
+    ? '✅ JPG saved to Downloads<br><span style="font-weight:500;opacity:.9">Open WhatsApp or Files and attach it</span>'
+    : '✅ PDF saved to Downloads<br><span style="font-weight:500;opacity:.9">Open it from Files (no password)</span>';
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 4500);
 };
 if(fmt==='a4pdf'){
 // Always export a newly generated, unlocked PDF from the rendered canvas.
@@ -3929,7 +3941,7 @@ updateSiteLastUpdated();
 // --- PWA SERVICE WORKER REGISTRATION ---
 if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
-navigator.serviceWorker.register('/sw.js').then(registration => {
+navigator.serviceWorker.register('/sw.js?v=4').then(registration => {
 console.log('SW registered: ', registration);
 }).catch(registrationError => {
 console.log('SW registration failed: ', registrationError);
