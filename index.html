@@ -1,1 +1,28 @@
-PLACEHOLDER_WILL_FAIL
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OneApp</title>
+<meta name="theme-color" content="#6d5df6">
+</head>
+<body>
+<p style="font-family:system-ui;text-align:center;margin-top:40vh;color:#5f6880">Loading OneApp…</p>
+<script>
+(async function () {
+  try {
+    var url = 'https://cdn.jsdelivr.net/gh/avicool04/oneapp-in@cbf481fd0bd1f275a9ef487058ca24c3593ae286/index.html';
+    var res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var html = await res.text();
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (e) {
+    document.body.innerHTML = '<p style="font-family:system-ui;padding:2rem;text-align:center">Could not load OneApp. Open <a href="https://oneapp-in.vercel.app/">oneapp-in.vercel.app</a> or retry.</p>';
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>
