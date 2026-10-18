@@ -636,7 +636,7 @@ body.dark .dropdown .email{color:var(--gray)}
 </div>
 </div>
 <div class="card">
-<div class="card-header" style="display:flex;align-items:center;justify-content:space-between"><h3>Insurance</h3><button id="insuranceCollapseToggle" type="button" onclick="toggleInsuranceSection()" aria-expanded="true" aria-controls="insuranceSectionContent" aria-label="Hide Insurance section" style="width:30px;height:30px;min-width:30px;box-sizing:border-box;padding:0;border:2px solid #1d4ed8;border-radius:50%;background:#2563eb;color:#ffffff;font-family:Arial,sans-serif;font-size:20px;font-weight:700;line-height:1;display:grid;place-items:center;text-align:center;cursor:pointer;appearance:none;-webkit-appearance:none">−</button></div>
+<div class="card-header"><h3>Insurance</h3></div>
 <div id="insuranceSectionContent">
 <div class="icon-grid">
 <div class="icon-tile" onclick="toggleVehicleInsuranceFolder()" role="button" aria-expanded="false" aria-controls="vehicleInsuranceSubfolders"><div class="icon-box"><svg style="width:42px;height:42px" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 4 L58 12 V31 C58 46 47 57 32 61 C17 57 6 46 6 31 V12 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/><path d="M13 33 L19 23 Q20 21 23 21 H41 Q44 21 45 23 L51 33 V42 H13 Z" fill="#2563eb"/><path d="M22 24 H42 L46 32 H18 Z" fill="#bfdbfe"/><circle cx="22" cy="42" r="5" fill="#0f172a"/><circle cx="22" cy="42" r="2" fill="#e2e8f0"/><circle cx="42" cy="42" r="5" fill="#0f172a"/><circle cx="42" cy="42" r="2" fill="#e2e8f0"/><path d="M15 35 H19 M45 35 H49" stroke="#fef08a" stroke-width="2.5" stroke-linecap="round"/></svg></div><span>Vehicle</span></div>
@@ -1520,7 +1520,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <div id="activeAlertBar" class="alert-bar severe"><span id="activeAlertText">🚨 Alert active</span><button onclick="stopActiveAlert()">■ STOP</button></div>
 <div id="incomingAlertBar" class="alert-bar severe"><span id="incomingAlertText"></span><a id="incomingAlertMap" target="_blank" rel="noopener" style="display:none">📍 Location</a><button onclick="dismissIncomingAlert()">Stop sound</button></div>
 <div id="toastContainer"></div>
-<footer>oneapp-in.vercel.app<br>© 2026 — DPDP Act & UIDAI compliant by design</footer>
+<footer>© 2026 — DPDP Act & UIDAI compliant by design</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -5552,16 +5552,6 @@ async function exportMyData(){
     observer.observe(document.body,{childList:true,subtree:true,characterData:true});
   });
 })();
-function toggleInsuranceSection(){
-  const content=document.getElementById('insuranceSectionContent');
-  const button=document.getElementById('insuranceCollapseToggle');
-  if(!content||!button)return;
-  const opening=content.style.display==='none';
-  content.style.display=opening?'block':'none';
-  button.textContent=opening?'−':'+';
-  button.setAttribute('aria-expanded',String(opening));
-  button.setAttribute('aria-label',opening?'Hide Insurance section':'Show Insurance section');
-}
 function toggleVehicleInsuranceFolder(){
   const panel=document.getElementById('vehicleInsuranceSubfolders');
   const tile=document.querySelector('[aria-controls="vehicleInsuranceSubfolders"]');
