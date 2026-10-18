@@ -1522,7 +1522,7 @@ body.dark .dropdown .email{color:var(--gray)}
 <script>
 const SUPABASE_URL='https://ylxxxmrbsllrncwcpcmb.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_Pu_bqx8BwJZoeZ_Z8JrRbw_PSnoVdZ7';
-let sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
 const VAPID_PUBLIC_KEY='PASTE_VAPID_PUBLIC_KEY_HERE';
 const SHARE_CAPTION='Shared via OneApp — trusted family vault. Open: https://oneapp-in.vercel.app';
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
