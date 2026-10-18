@@ -3,17 +3,19 @@ package app.oneapp.mobile;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowInsets;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.graphics.Color;
 
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 4102;
@@ -28,18 +30,28 @@ public class MainActivity extends Activity {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
                 | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        // Keep WebView content below Android's status bar and above its navigation bar.
-        // This prevents the website's Sign In/header controls from sitting under the clock,
-        // network, and battery indicators on newer Android versions.
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(true);
-        }
         window.setStatusBarColor(Color.rgb(85, 71, 216));
         window.setNavigationBarColor(Color.WHITE);
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
         webView = new WebView(this);
-        webView.setFitsSystemWindows(true);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            // Draw edge-to-edge deliberately, then apply the system-bar insets to the
+            // WebView itself so the web header never sits beneath the clock/battery.
+            window.setDecorFitsSystemWindows(false);
+            webView.setFitsSystemWindows(false);
+            webView.setOnApplyWindowInsetsListener((view, insets) -> {
+                Insets bars = insets.getInsets(
+                        WindowInsets.Type.statusBars()
+                                | WindowInsets.Type.navigationBars()
+                                | WindowInsets.Type.displayCutout());
+                view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                return insets;
+            });
+        } else {
+            // Older Android versions handle the safe area through the decor view.
+            webView.setFitsSystemWindows(true);
+        }
         webView.setBackgroundColor(Color.WHITE);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
