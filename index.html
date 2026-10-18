@@ -1576,6 +1576,7 @@ let _initUid=null;
 sb.auth.onAuthStateChange((ev,s)=>{
 const btn=document.getElementById('authBtn'),area=document.getElementById('userArea');
 if(s){
+closeModal('authModal');
 currentUser=s.user;
 const m=s.user.user_metadata||{},full=m.full_name||m.name||(s.user.email?s.user.email.split('@')[0]:'User');
 if(window.applyAppLanguage) window.applyAppLanguage(m.app_language||'en');
