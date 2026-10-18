@@ -2850,7 +2850,7 @@ const isElder=!!shareContext&&shareContext.kind==='elder';
 const cache=isShared?sharedAaCache:(isChild?childAaCache:(isElder?elderAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull}));
 const sendFile=async f=>{
 if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Aadhaar Card',text:SHARE_CAPTION});}catch(e){}}
-else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert('Downloaded — attach manually. Opens WITHOUT password.');}
+else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert(f.type==='image/jpeg'?'Downloaded — attach the JPG manually.':'Downloaded — attach manually. Opens WITHOUT password.');}
 };
 if(fmt==='a4pdf'){
 // Always export a newly generated, unlocked PDF from the rendered canvas.
