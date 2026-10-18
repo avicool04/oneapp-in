@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.WindowInsets;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -35,23 +33,13 @@ public class MainActivity extends Activity {
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
         webView = new WebView(this);
+        // Keep the WebView inside Android's normal content area. Do not use edge-to-edge
+        // padding here: it can shrink/offset the web viewport and make the sign-in UI
+        // unreachable on some Android devices.
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            // Draw edge-to-edge deliberately, then apply the system-bar insets to the
-            // WebView itself so the web header never sits beneath the clock/battery.
-            window.setDecorFitsSystemWindows(false);
-            webView.setFitsSystemWindows(false);
-            webView.setOnApplyWindowInsetsListener((view, insets) -> {
-                Insets bars = insets.getInsets(
-                        WindowInsets.Type.statusBars()
-                                | WindowInsets.Type.navigationBars()
-                                | WindowInsets.Type.displayCutout());
-                view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-                return insets;
-            });
-        } else {
-            // Older Android versions handle the safe area through the decor view.
-            webView.setFitsSystemWindows(true);
+            window.setDecorFitsSystemWindows(true);
         }
+        webView.setFitsSystemWindows(true);
         webView.setBackgroundColor(Color.WHITE);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
