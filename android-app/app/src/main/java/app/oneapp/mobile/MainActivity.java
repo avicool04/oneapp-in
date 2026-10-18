@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -32,20 +33,35 @@ public class MainActivity extends Activity {
         window.setNavigationBarColor(Color.WHITE);
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
-        webView = new WebView(this);
-        // Keep the WebView inside Android's normal content area. Do not use edge-to-edge
-        // padding here: it can shrink/offset the web viewport and make the sign-in UI
-        // unreachable on some Android devices.
+        // Lay out edge-to-edge and apply the actual system-bar insets directly to
+        // the WebView. This prevents the website header from sitting underneath
+        // the clock/network/battery area on devices with edge-to-edge enforcement.
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(true);
+            window.setDecorFitsSystemWindows(false);
         }
-        webView.setFitsSystemWindows(true);
+
+        webView = new WebView(this);
         webView.setBackgroundColor(Color.WHITE);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setAllowFileAccess(false);
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setSupportMultipleWindows(false);
+
+        webView.setOnApplyWindowInsetsListener((view, insets) -> {
+            int topInset;
+            int bottomInset;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                topInset = insets.getInsets(WindowInsets.Type.statusBars()).top;
+                bottomInset = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
+            } else {
+                topInset = insets.getSystemWindowInsetTop();
+                bottomInset = insets.getSystemWindowInsetBottom();
+            }
+            view.setPadding(0, topInset, 0, bottomInset);
+            return insets;
+        });
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -74,6 +90,7 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
+
         setContentView(webView);
         if (savedInstanceState == null) {
             webView.loadUrl(APP_URL);
