@@ -2849,8 +2849,34 @@ const isShared=!!shareContext&&shareContext.kind==='shared';
 const isElder=!!shareContext&&shareContext.kind==='elder';
 const cache=isShared?sharedAaCache:(isChild?childAaCache:(isElder?elderAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull}));
 const sendFile=async f=>{
-if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Aadhaar Card',text:SHARE_CAPTION});}catch(e){}}
-else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();alert(f.type==='image/jpeg'?'Downloaded — attach the JPG manually.':'Downloaded — attach manually. Opens WITHOUT password.');}
+  // Prefer system share sheet with the file attached (works on most modern Android/iOS browsers & PWAs)
+  if(navigator.share){
+    try{
+      // Some Android WebViews report canShare(false) even when file share works — try anyway
+      if(!navigator.canShare || navigator.canShare({files:[f]})){
+        await navigator.share({files:[f], title:'Aadhaar Card', text:SHARE_CAPTION});
+        return;
+      }
+    }catch(e){
+      if(e && e.name==='AbortError') return; // user cancelled — do nothing
+      // fall through to download fallback
+    }
+  }
+  // Fallback: trigger download so the user can attach from gallery/files
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(f);
+  a.download=f.name || (f.type==='image/jpeg'?'aadhaar.jpg':'aadhaar.pdf');
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  a.remove();
+  // Soft notice instead of blocking alert
+  const msg = f.type==='image/jpeg'
+    ? 'JPG saved to Downloads. Open WhatsApp / Files and attach it from there.'
+    : 'PDF saved to Downloads. Open it from Files (no password).';
+  // Use a non-blocking toast-style feedback if possible, else short alert
+  if(window.showOneAppToast) showOneAppToast(msg);
+  else alert(msg);
 };
 if(fmt==='a4pdf'){
 // Always export a newly generated, unlocked PDF from the rendered canvas.
@@ -2859,7 +2885,7 @@ const a4Canvas=cache.full||((cache.front||cache.back)?composeCanvasFor('stack',c
 if(a4Canvas){sendFile(new File([makeA4Pdf(a4Canvas).output('blob')],'aadhaar-a4.pdf',{type:'application/pdf'}));return;}
 alert('Aadhaar preview is not ready. Open the Aadhaar once and try sharing again.');return;
 }
-const c=composeCanvasFor(layout,cache);if(!c)return;
+const c=composeCanvasFor(layout,cache);if(!c){alert('Could not prepare the Aadhaar image. Open the card once, then try sharing again.');return;}
 let blob,name,mime;
 if(fmt==='jpg'){blob=await(await fetch(c.toDataURL('image/jpeg',0.92))).blob();name='aadhaar-'+layout+'.jpg';mime='image/jpeg';}
 else{blob=makePdf(c).output('blob');name='aadhaar-'+layout+'.pdf';mime='application/pdf';}
