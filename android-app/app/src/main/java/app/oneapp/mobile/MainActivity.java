@@ -15,11 +15,11 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
-import androidx.webkit.WebViewAssetLoader;
 
 import java.util.concurrent.Executor;
 
@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
             cookies.setAcceptThirdPartyCookies(webView, true);
         }
 
-        webView.setWebViewClient(new android.webkit.WebViewClient() {
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String scheme = request.getUrl().getScheme();
