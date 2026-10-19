@@ -177,7 +177,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     @android.webkit.JavascriptInterface
-    public boolean shareFile(String base64Data, String fileName, String mimeType) {
+    public boolean shareFile(String base64Data, String fileName, String mimeType, String caption) {
         try {
             byte[] bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT);
             File shareDir = new File(getCacheDir(), "shared");
@@ -193,6 +193,7 @@ public class MainActivity extends FragmentActivity {
             Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.setType(mimeType == null || mimeType.isEmpty() ? "application/octet-stream" : mimeType);
             sendIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            if (caption != null && !caption.isEmpty()) sendIntent.putExtra(Intent.EXTRA_TEXT, caption);
             sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             sendIntent.setClipData(ClipData.newUri(getContentResolver(), safeName, contentUri));
             runOnUiThread(() -> startActivity(Intent.createChooser(sendIntent, "Share using")));
