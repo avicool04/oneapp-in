@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.ClipData;
 import android.content.Intent;
+import android.webkit.JavascriptInterface;
+import androidx.core.content.FileProvider;
+import java.io.File;
+import java.io.FileOutputStream;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,6 +55,7 @@ public class MainActivity extends FragmentActivity {
         webView = new WebView(this);
         webView.setBackgroundColor(Color.WHITE);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(this, "OneAppNative");
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setAllowFileAccess(false);
@@ -169,6 +174,32 @@ public class MainActivity extends FragmentActivity {
             builder.setDeviceCredentialAllowed(true);
         }
         prompt.authenticate(builder.build());
+    }
+
+    @android.webkit.JavascriptInterface
+    public boolean shareFile(String base64Data, String fileName, String mimeType) {
+        try {
+            byte[] bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT);
+            File shareDir = new File(getCacheDir(), "shared");
+            if (!shareDir.exists() && !shareDir.mkdirs()) return false;
+            String safeName = (fileName == null ? "document" : fileName).replaceAll("[^A-Za-z0-9._-]", "_");
+            File file = new File(shareDir, safeName);
+            try (FileOutputStream output = new FileOutputStream(file)) {
+                output.write(bytes);
+                output.flush();
+            }
+            Uri contentUri = FileProvider.getUriForFile(
+                    MainActivity.this, getPackageName() + ".fileprovider", file);
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType(mimeType == null || mimeType.isEmpty() ? "application/octet-stream" : mimeType);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            sendIntent.setClipData(ClipData.newUri(getContentResolver(), safeName, contentUri));
+            runOnUiThread(() -> startActivity(Intent.createChooser(sendIntent, "Share using")));
+            return true;
+        } catch (Exception error) {
+            return false;
+        }
     }
 
     @Override
