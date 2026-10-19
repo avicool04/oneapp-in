@@ -2870,7 +2870,7 @@ const sendFile=async f=>{
         reader.onerror = () => reject(new Error('Could not prepare file for sharing'));
         reader.readAsDataURL(f);
       });
-      if (window.OneAppNative.shareFile(base64, f.name || 'aadhaar.jpg', f.type || 'image/jpeg')) return;
+      if (window.OneAppNative.shareFile(base64, f.name || 'aadhaar.jpg', f.type || 'image/jpeg', SHARE_CAPTION)) return;
     } catch (e) {
       console.warn('Native share sheet unavailable; trying browser sharing', e);
     }
