@@ -160,8 +160,14 @@ public class MainActivity extends FragmentActivity {
 
         BiometricPrompt.PromptInfo.Builder builder = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Unlock OneApp")
-                .setSubtitle("Use your fingerprint, face, or device screen lock")
-                .setAllowedAuthenticators(authenticators);
+                .setSubtitle("Use your fingerprint, face, or device screen lock");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            builder.setAllowedAuthenticators(authenticators);
+        } else {
+            // Android 10 and earlier cannot combine biometric and device
+            // credential authenticators in one allowed-authenticator bitmask.
+            builder.setDeviceCredentialAllowed(true);
+        }
         prompt.authenticate(builder.build());
     }
 
