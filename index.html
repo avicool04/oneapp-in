@@ -2860,7 +2860,22 @@ const isShared=!!shareContext&&shareContext.kind==='shared';
 const isElder=!!shareContext&&shareContext.kind==='elder';
 const cache=isShared?sharedAaCache:(isChild?childAaCache:(isElder?elderAaCache:{side:aaSide,front:aaFront,back:aaBack,full:aaFull}));
 const sendFile=async f=>{
-  // Try native share sheet first (works on many phones + Chrome)
+  // In the Android app, use Android's native chooser so WhatsApp, Gmail,
+  // and other installed apps receive the actual JPG/PDF file.
+  if (window.OneAppNative && typeof window.OneAppNative.shareFile === 'function') {
+    try {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+        reader.onerror = () => reject(new Error('Could not prepare file for sharing'));
+        reader.readAsDataURL(f);
+      });
+      if (window.OneAppNative.shareFile(base64, f.name || 'aadhaar.jpg', f.type || 'image/jpeg')) return;
+    } catch (e) {
+      console.warn('Native share sheet unavailable; trying browser sharing', e);
+    }
+  }
+  // Browser share sheet for supported browsers outside the Android app.
   if (navigator.share) {
     try {
       if (!navigator.canShare || navigator.canShare({ files: [f] })) {
