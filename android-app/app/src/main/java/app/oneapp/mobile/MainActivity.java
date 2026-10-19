@@ -17,13 +17,14 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
 import java.util.concurrent.Executor;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
     private static final int FILE_CHOOSER_REQUEST = 4102;
     private static final String APP_URL = "https://oneapp-in.vercel.app/";
     private WebView webView;
