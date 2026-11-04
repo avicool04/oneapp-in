@@ -3096,10 +3096,10 @@ function renderSharedFolderDocs(){
   box.innerHTML=rows.map(s=>{
     const d=s.documents,p=s.permissions||{};
     const actions=[];
-    if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="openSharedDocument('${d.id}')">View</button>`);
-    if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" onclick="downloadSharedDocument('${d.id}')">Download</button>`);
-    if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" onclick="updateSharedDocumentById('${d.id}')">Update</button>`);
-    if(p.share)actions.push(`<button class="btn btn-primary btn-sm" onclick="shareSharedDocumentById('${d.id}')">Share</button>`);
+    if(p.view!==false)actions.push(`<button class="btn btn-outline btn-sm" aria-label="View document" onclick="openSharedDocument('${d.id}')">👁️ View</button>`);
+    if(p.download!==false)actions.push(`<button class="btn btn-outline btn-sm" aria-label="Download document" onclick="downloadSharedDocument('${d.id}')">⬇️ Download</button>`);
+    if(p.edit)actions.push(`<button class="btn btn-outline btn-sm" aria-label="Update document" onclick="updateSharedDocumentById('${d.id}')">🔄 Update</button>`);
+    if(p.share)actions.push(`<button class="btn btn-primary btn-sm" aria-label="Share document" onclick="shareSharedDocumentById('${d.id}')">📤 Share</button>`);
     if(p.delete)actions.push(`<button class="btn btn-danger btn-sm" onclick="deleteSharedDocumentById('${d.id}')">Delete</button>`);
     const rights=['view','download','edit','share','delete'].filter(k=>p[k]||(k==='view'&&p.view!==false)||(k==='download'&&p.download!==false)).join(' · ');
     return `<div class="doc-row"><div class="doc-info"><h4>${escHtml(docLabel(d))}</h4><p style="font-size:.72rem;color:var(--gray)">${escHtml(rights||'view')}</p></div><div class="shared-doc-actions" style="display:flex;flex-wrap:wrap;gap:.3rem">${actions.join('')}</div></div>`;
