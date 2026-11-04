@@ -3056,7 +3056,12 @@ function renderSpouseSharedFolders(rows){
     ['passport','Passport','🛂'],['license','Driving Licence','🚗'],['other','Other Documents','📁']
   ];
   const available=defs.filter(([key])=>(rows||[]).some(s=>s.documents&&classifySharedDoc(s.documents)===key));
-  grid.innerHTML=available.map(([key,label,emoji])=>'<div class="icon-tile" onclick="openSpouseSharedFolder(\''+key+'\')"><div class="icon-box" style="font-size:38px;position:relative">'+emoji+'<div class="status-badge show"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div></div><span>'+label+'</span></div>').join('');
+  grid.innerHTML=available.map(([key,label,emoji])=>{
+    const aadhaar=(key==='aadhaar')?(rows||[]).find(s=>s.documents&&classifySharedDoc(s.documents)==='aadhaar'&&s.permissions?.view!==false):null;
+    const docId=aadhaar?String(aadhaar.documents.id||'').replace(/[^a-zA-Z0-9_-]/g,''):'';
+    const action=docId?"openSharedDocument('"+docId+"')":"openSpouseSharedFolder('"+key+"')";
+    return '<div class="icon-tile" onclick="'+action+'"><div class="icon-box" style="font-size:38px;position:relative">'+emoji+'<div class="status-badge show"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div></div><span>'+label+'</span></div>';
+  }).join('');
   grid.style.display='grid';
 }
 function setSvFolderBadges(rows){
